@@ -1,0 +1,54 @@
+@import "font/5by7.css";
+
+/* CSS reset */
+
+*
+{
+    margin:     0;
+    padding:    0;
+    box-sizing: border-box;
+}
+
+body, html
+{
+    width:  100%;
+    height: 100%;
+}
+
+var
+{
+    font-style: normal;
+}
+
+/* Parts */
+body
+{
+    display: flex;
+}
+
+.signage
+{
+    flex-grow: 1;
+
+    border:     1em #666 inset;
+    background: #000;
+    color:      orange;
+    padding:    1em;
+    font-family: "5by7", sans-serif;
+    font-size:   3em;
+    line-height: 1.5em;
+
+    overflow: auto;
+    cursor: pointer;
+}
+
+/* Responsive */
+
+@media(max-width: 500px)
+{
+    .signage
+    {
+        font-size:   1em;
+        line-height: 1.5em;
+    }
+}
