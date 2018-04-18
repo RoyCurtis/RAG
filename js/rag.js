@@ -122,7 +122,10 @@ function randData(slot, state)
             return randStations(1).names[0];
 
         case 'STATION_LIST':
-            var stations = randStations( randInt(1, 16) );
+            var stations = randStations( randInt(1, 18) );
+
+            // Make sure last station is actually the destination
+            stations.names[stations.count - 1] = state['STATION'];
 
             if (stations.count === 1)
                 return stations.names[0] + ' only';
