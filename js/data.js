@@ -69,6 +69,45 @@ var DATA_SERVICES = [
     "West Midlands Trains",
 ];
 
+/**
+ * List of running named trains, as of 2018. Courtesy of
+ * https://en.wikipedia.org/wiki/List_of_named_passenger_trains_of_the_United_Kingdom
+ */
+var DATA_NAMED = [
+    "Atlantic Coast Express",
+    "Bristolian",
+    "Caledonian Sleeper",
+    "Capitals United",
+    "Cathedrals Express",
+    "Cheltenham Spa Express",
+    "Cornish Riviera Express",
+    "East Anglian",
+    "Enterprise",
+    "Flying Scotsman",
+    "Golden Hind",
+    "Highland Chieftain",
+    "Master Cutler",
+    "Mayflower",
+    "Merchant Venturer",
+    "Night Riviera",
+    "Northern Lights",
+    "Olympic Javelin",
+    "Pembroke Coast Express",
+    "Red Dragon",
+    "Robin Hood",
+    "Royal Duchy",
+    "Saint David",
+    "St Mungo",
+    "Sheffield Continental",
+    "South Yorkshireman",
+    "Torbay Express",
+    "Virgin Invader",
+    "Welsh Dragon",
+    "West Riding Limited",
+    "Weymouth Wizard",
+    "Premier Service",
+];
+
 var DATA_STATIONS = {
     "ABW" : "Abbey Wood",
     "ABE" : "Aber",
