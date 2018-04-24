@@ -25,7 +25,7 @@
     <phraseset ref="platform_wait_intro" />
     Calling at <stationlist id="calling" max="12"/>.
     <phraseset ref="change_at" chance="5"/>
-    <phrase ref="request_stop" chance="5"/>
+    <phraseset ref="request_stop" chance="5"/>
     <phraseset ref="trolley_service" chance="5"/>
     <phrase ref="coach_count" chance="90"/>
     <phraseset ref="shop_service" chance="5"/>
@@ -192,10 +192,18 @@
   </phrase>
 </phraseset>
 
-<phrase id="request_stop">
-  <station list="calling"/> is a request stop, and passengers for this station should ask
-  the conductor on the train to arrange for the train to stop, to allow them to leave.
-</phrase>
+<phraseset id="request_stop">
+  <phrase>
+    <station list="calling"/> is a request stop, and passengers for this station should
+    ask the conductor on the train to arrange for the train to stop, to allow them to
+    <phraseset ref="leave"/>.
+  </phrase>
+  <phrase>
+    <stationlist id="calling" max="-1"/> are request stops, and passengers for these
+    stations should ask the conductor on the train to arrange for the train to stop, to
+    allow them to <phraseset ref="leave"/>.
+  </phrase>
+</phraseset>
 
 <phraseset id="trolley_service">
   <phrase>
@@ -271,6 +279,11 @@
 <phraseset id="front_rear">
   <phrase>front</phrase>
   <phrase>rear</phrase>
+</phraseset>
+
+<phraseset id="leave">
+  <phrase>leave</phrase>
+  <phrase>alight</phrase>
 </phraseset>
 
 </messages>
