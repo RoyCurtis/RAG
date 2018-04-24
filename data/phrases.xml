@@ -4,6 +4,9 @@
           xsi:schemaLocation="urn:RAG.Phrases ./phrases.xsd" >
 
 <!--
+  Although the XML structure and schema are my work, please assume the contents of this
+  XML (especially the phrases themselves) are copyright of National Rail. Unlicensed.
+
   Sources for these phrases:
 
   * https://youtube.com/watch?v=ftiB6HLjWCM (Crewe)
