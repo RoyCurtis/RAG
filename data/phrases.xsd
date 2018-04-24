@@ -4,17 +4,107 @@
            xmlns="urn:RAG.Phrases"
            elementFormDefault="qualified">
 
-<xs:complexType name="phraseset">
-  <xs:attribute name="id" type="xs:string" />
-</xs:complexType>
-
 <!-- Root tag -->
 <xs:element name="messages">
   <xs:complexType>
-    <xs:all>
-      <xs:element name="phraseset" type="phraseset"/>
-    </xs:all>
+    <xs:choice maxOccurs="unbounded">
+      <xs:element name="phraseset" type="phraseset_def"/>
+      <xs:element name="phrase" type="phrase_root_def"/>
+    </xs:choice>
   </xs:complexType>
 </xs:element>
+
+<!-- Defining types -->
+<xs:complexType name="phraseset_def">
+  <xs:sequence>
+    <xs:element name="phrase" type="phrase_def" maxOccurs="unbounded"/>
+  </xs:sequence>
+  <xs:attribute name="id" type="xs:string" use="required" />
+</xs:complexType>
+
+<xs:complexType name="phrase_def" mixed="true">
+  <xs:group ref="phrase_elements" minOccurs="0" maxOccurs="unbounded"/>
+  <xs:attribute name="id" type="xs:string"/>
+</xs:complexType>
+
+<xs:complexType name="phrase_root_def">
+  <xs:complexContent>
+    <xs:extension base="phrase_def">
+      <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:extension>
+  </xs:complexContent>
+</xs:complexType>
+
+<!-- Elements -->
+<xs:group name="phrase_elements">
+  <xs:choice>
+    <xs:element name="excuse"/>
+    <xs:element name="integer" type="integer"/>
+    <xs:element name="letter"/>
+    <xs:element name="named" type="named"/>
+    <xs:element name="optional" type="optional"/>
+    <xs:element name="platform" type="platform"/>
+    <xs:element name="phrase" type="chance_ref"/>
+    <xs:element name="phraseset" type="chance_ref"/>
+    <xs:element name="service" type="service"/>
+    <xs:element name="station" type="station"/>
+    <xs:element name="stationlist" type="stationlist"/>
+    <xs:element name="time"/>
+  </xs:choice>
+</xs:group>
+
+<xs:simpleType name="chance">
+  <xs:restriction base="xs:int">
+    <xs:minInclusive value="0"/>
+    <xs:maxInclusive value="100"/>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:complexType name="chance_ref">
+  <xs:attribute name="ref" type="xs:string" use="required"/>
+  <xs:attribute name="chance" type="chance"/>
+</xs:complexType>
+
+<xs:complexType name="integer">
+  <xs:attribute name="min" type="xs:int"/>
+  <xs:attribute name="max" type="xs:int"/>
+  <xs:attribute name="singular" type="xs:string"/>
+  <xs:attribute name="plural" type="xs:string"/>
+  <xs:attribute name="words" type="xs:string"/>
+</xs:complexType>
+
+<xs:complexType name="named">
+  <xs:attribute name="chance" type="chance"/>
+  <xs:attribute name="prefix" type="xs:string"/>
+  <xs:attribute name="postfix" type="xs:string"/>
+</xs:complexType>
+
+<xs:complexType name="optional" mixed="true">
+  <xs:group ref="phrase_elements" minOccurs="0" maxOccurs="unbounded"/>
+  <xs:attribute name="chance" type="chance"/>
+</xs:complexType>
+
+<xs:complexType name="phrase_ref">
+  <xs:attribute name="ref" type="xs:string" use="required"/>
+</xs:complexType>
+
+<xs:complexType name="platform">
+  <xs:attribute name="ref" type="xs:string"/>
+</xs:complexType>
+
+<xs:complexType name="service">
+  <xs:attribute name="chance" type="chance"/>
+</xs:complexType>
+
+<xs:complexType name="station">
+  <xs:attribute name="list" type="xs:string"/>
+  <xs:attribute name="ref" type="xs:string"/>
+</xs:complexType>
+
+<xs:complexType name="stationlist">
+  <xs:attribute name="id" type="xs:string"/>
+  <xs:attribute name="min" type="xs:int"/>
+  <xs:attribute name="max" type="xs:int"/>
+</xs:complexType>
 
 </xs:schema>
