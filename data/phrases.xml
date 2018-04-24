@@ -22,8 +22,8 @@
 <phraseset id="root">
   <!-- Train waiting at platform -->
   <phrase>
-    <phraseset ref="platform_wait_intro" />
-    Calling at <stationlist id="calling" max="12"/>.
+    <phraseset ref="platform_wait_intro"/>
+    <phrase ref="calling_at"/>
     <phraseset ref="change_at" chance="5"/>
     <phraseset ref="request_stop" chance="5"/>
     <phraseset ref="trolley_service" chance="5"/>
@@ -164,6 +164,10 @@
 
 <phrase id="service_from">
   This is the service from <station context="source"/>.
+</phrase>
+
+<phrase id="calling_at">
+  Calling at <stationlist id="calling" max="16"/>.
 </phrase>
 
 <phrase id="mind_the_gap">
