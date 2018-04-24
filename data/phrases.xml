@@ -19,6 +19,7 @@
 -->
 
 <!-- Main set of phrases -->
+
 <phraseset id="root">
   <!-- Train waiting at platform -->
   <phrase>
@@ -47,6 +48,14 @@
     <phrase ref="service"/> to <phrase ref="destination"/>.
     <phrase ref="service_from" chance="50"/>
     <phrase ref="mind_the_gap" chance="50"/>
+  </phrase>
+
+  <!-- Train departing from platform -->
+  <phrase>
+    The train at platform <platform/> is the <optional>delayed</optional>
+    <phrase ref="service"/> to <phrase ref="destination"/>. <phrase ref="calling_at"/>
+    Will passengers intending to travel on this service please join the train now, as it
+    is ready to leave. <phrase ref="platform_wait"/>, which is ready to leave.
   </phrase>
 
   <!-- Terminating train -->
@@ -81,6 +90,7 @@
 </phraseset>
 
 <!-- Main set of notices -->
+
 <phraseset id="notices">
   <phrase>
     Please note, to ensure a timely departure, train doors will be locked shut up to 40
@@ -94,7 +104,7 @@
   </phrase>
   <phrase>
     24 hour C.C.T.V. recording is in operation at this station for the purpose of security
-    and safety.
+    and safety management.
   </phrase>
   <phrase>
     Please do not leave your personal belongings unattended on the station. Any personal
@@ -121,6 +131,8 @@
   </phrase>
 </phraseset>
 
+<!-- Various parts of other phrases -->
+
 <phraseset id="delayed">
   <phrase>is delayed.</phrase>
   <phrase>
@@ -136,7 +148,7 @@
 
 <phraseset id="platform_wait_intro">
   <phrase>
-    <phrase ref="platform_wait"/>
+    <phrase ref="platform_wait"/>.
   </phrase>
   <phrase>
     The next train to depart from platform <platform/> will be the <phrase ref="service"/>
@@ -149,7 +161,7 @@
 </phraseset>
 
 <phrase id="platform_wait">
-  Platform <platform/> for <phrase ref="service"/> to <phrase ref="destination"/>.
+  Platform <platform/> for <phrase ref="service"/> to <phrase ref="destination"/>
 </phrase>
 
 <phrase id="destination">
