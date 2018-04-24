@@ -64,10 +64,16 @@
     terminate here.
   </phrase>
 
-  <!-- Delayed trains -->
+  <!-- Delayed and cancelled trains -->
   <phrase>
     We are sorry to announce that <phrase ref="service"/> to <phrase ref="destination"/>
-    <phraseset ref="delayed"/>
+    <phraseset ref="delayed_or_cancelled"/><phraseset ref="excuse" chance="50"/>
+    <phraseset ref="apology" chance="50"/>
+  </phrase>
+
+  <phrase>
+    We are sorry that services are subject to delay because of <excuse/>.
+    <optional>We apologise for the inconvenience this may cause you.</optional>
   </phrase>
 
   <!-- Platform alterations -->
@@ -133,13 +139,12 @@
 
 <!-- Various parts of other phrases -->
 
-<phraseset id="delayed">
-  <phrase>is delayed.</phrase>
+<phraseset id="delayed_or_cancelled">
   <phrase>
-    is delayed by approximately <integer min="5" max="120" plural="minutes"/>
-    <phraseset ref="excuse" chance="50"/>
-    <phraseset ref="apology" chance="50"/>
+    is delayed
+    <optional>by approximately <integer min="5" max="120" plural="minutes"/></optional>
   </phrase>
+  <phrase>is cancelled</phrase>
 </phraseset>
 
 <phrase id="attention_please">
