@@ -270,12 +270,6 @@
     First class coaches can be found at the <phraseset ref="front_rear"/> of the train,
     standard can be found at the <phraseset ref="front_rear" op="cycle"/>.
   </phrase>
-  <!-- TODO: Make the zone ranges slottable -->
-  <phrase>
-    First class coaches can be found at the <phraseset ref="front_rear"/> of the train in
-    zones 1-4. Standard coaches are at the <phraseset ref="front_rear" op="cycle"/> of
-    the train in zones 5-10.
-  </phrase>
 </phraseset>
 
 <phraseset id="train_seating">
