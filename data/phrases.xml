@@ -20,7 +20,8 @@
   <!-- Train waiting at platform -->
   <phrase>
     <phraseset ref="platform_wait_intro" />
-    Calling at <stationlist id="calling" max="12"/>. <phraseset ref="change_at" chance="5"/>
+    Calling at <stationlist id="calling" max="12"/>.
+    <phraseset ref="change_at" chance="5"/>
     <phrase ref="request_stop" chance="5"/>
     <phraseset ref="trolley_service" chance="5"/>
     <phrase ref="coach_count" chance="90"/>
@@ -64,8 +65,8 @@
 
   <!-- Non-stop trains -->
   <phrase>
-    The train now approaching platform <platform ref="nonstop"/> does not stop here. Stand
-    back from the edge of platform <platform ref="nonstop"/>. The next train is not
+    The train now approaching platform <platform/> does not stop here. Stand
+    back from the edge of platform <platform/>. The next train is not
     scheduled to stop.
   </phrase>
 
@@ -148,15 +149,17 @@
 </phrase>
 
 <phrase id="destination">
-  <station ref="destination"/> <optional chance="10">via <station ref="via"/></optional>
+  <station context="destination"/>
+  <optional chance="10">via <station context="via"/></optional>
 </phrase>
 
 <phrase id="service">
-  <named chance="5" prefix="the" postfix=","/> the <time/> <service chance="90" /> service
+  <optional chance="5">the <named />,</optional> the <time/> <service chance="90" />
+  service
 </phrase>
 
 <phrase id="service_from">
-  This is the service from <station ref="source"/>.
+  This is the service from <station context="source"/>.
 </phrase>
 
 <phrase id="mind_the_gap">
@@ -186,8 +189,8 @@
 </phraseset>
 
 <phrase id="request_stop">
-  <station ref="list"/> is a request stop, and passengers for this station should ask the
-  conductor on the train to arrange for the train to stop, to allow them to leave.
+  <station list="calling"/> is a request stop, and passengers for this station should ask
+  the conductor on the train to arrange for the train to stop, to allow them to leave.
 </phrase>
 
 <phraseset id="trolley_service">

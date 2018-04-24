@@ -4,9 +4,27 @@
            xmlns="urn:RAG.Phrases"
            elementFormDefault="qualified">
 
+<xs:annotation>
+  <xs:documentation>
+    This schema describes how the RAG phrases data is structured, to help validation.
+    I have written a lot of comments here, because XSD can be confusing and verbose.
+
+    Schema by Roy Curtis, 2018, MIT licensed.
+  </xs:documentation>
+</xs:annotation>
+
 <!-- Root tag -->
+
 <xs:element name="messages">
+  <xs:annotation>
+    <xs:documentation>
+      Holds a collection of phrases and phrasesets. Each one must have an `id` to be
+      referenced by, elsewhere.
+    </xs:documentation>
+  </xs:annotation>
+
   <xs:complexType>
+    <!-- Allow unlimited mixed collection of phrase and phrasesets -->
     <xs:choice maxOccurs="unbounded">
       <xs:element name="phraseset" type="phraseset_def"/>
       <xs:element name="phrase" type="phrase_root_def"/>
@@ -15,19 +33,60 @@
 </xs:element>
 
 <!-- Defining types -->
+
 <xs:complexType name="phraseset_def">
+  <xs:annotation>
+    <xs:documentation>
+      Represents a collection of related phrases, that will either be picked randomly from
+      or chosen by the user from a list.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!-- Allow unlimited amount of phrase elements, but require at least one -->
   <xs:sequence>
     <xs:element name="phrase" type="phrase_def" maxOccurs="unbounded"/>
   </xs:sequence>
-  <xs:attribute name="id" type="xs:string" use="required" />
+
+  <xs:attribute name="id" type="xs:string" use="required">
+    <xs:annotation>
+      <xs:documentation>
+        Unique ID to give this phraseset, to be referenced from within other phrases.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
 </xs:complexType>
+
 
 <xs:complexType name="phrase_def" mixed="true">
+  <xs:annotation>
+    <xs:documentation>
+      Represents a phrase made up of text content and "reference" tags, that tell RAG
+      where to slot in specific types of generated or chosen data.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!-- Allow unlimited amount of acceptable inner elements, or just text -->
   <xs:group ref="phrase_elements" minOccurs="0" maxOccurs="unbounded"/>
-  <xs:attribute name="id" type="xs:string"/>
+
+  <xs:attribute name="id" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Unique ID to give this phrase, to be referenced from within other phrases.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
 </xs:complexType>
 
+
 <xs:complexType name="phrase_root_def">
+  <xs:annotation>
+    <xs:documentation>
+      Represents a phrase that's a direct child of the root tag. `id` is required, so that
+      it can be referenced from within other phrases.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!-- Extends from phrase_def, to make the id attribute required -->
   <xs:complexContent>
     <xs:extension base="phrase_def">
       <xs:attribute name="id" type="xs:string" use="required"/>
@@ -36,75 +95,251 @@
 </xs:complexType>
 
 <!-- Elements -->
+
 <xs:group name="phrase_elements">
   <xs:choice>
-    <xs:element name="excuse"/>
-    <xs:element name="integer" type="integer"/>
-    <xs:element name="letter"/>
-    <xs:element name="named" type="named"/>
-    <xs:element name="optional" type="optional"/>
-    <xs:element name="platform" type="platform"/>
-    <xs:element name="phrase" type="chance_ref"/>
-    <xs:element name="phraseset" type="chance_ref"/>
-    <xs:element name="service" type="service"/>
-    <xs:element name="station" type="station"/>
-    <xs:element name="stationlist" type="stationlist"/>
-    <xs:element name="time"/>
+    <xs:element name="excuse">
+      <xs:annotation>
+        <xs:documentation>
+          Picks an official excuse for a delay or cancellation from National Rail.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
+    <xs:element name="integer" type="integer">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a whole number, with optional limits, noun and in word form.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
+    <xs:element name="letter">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a coach letter from A to Z, limited by amount of coaches.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
+    <xs:element name="named">
+      <xs:annotation>
+        <xs:documentation>
+          Picks an official National Rail named train.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
+    <xs:element name="optional" type="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Contents of this tag may optionally appear or not.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
+    <xs:element name="platform">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a platform number, sometimes with letter.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
+    <xs:element name="phrase" type="phrase_ref">
+      <xs:annotation>
+        <xs:documentation>
+          Includes a previously defined phrase, by its `id`.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
+    <xs:element name="phraseset" type="phraseset_ref">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a phrase from a previously defined phraseset, by its `id`.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
+    <xs:element name="service" type="service">
+      <xs:annotation>
+        <xs:documentation>
+          Picks an official National Rail network name.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
+    <xs:element name="station" type="station">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a station name from the official National Rail network.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
+    <xs:element name="stationlist" type="stationlist">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a selection of stations from the official National Rail network.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
+    <xs:element name="time">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a 24 hour time, with hours and minutes.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
   </xs:choice>
 </xs:group>
 
+
+<xs:complexType name="integer">
+  <xs:attribute name="min" type="xs:int"/>
+  <xs:attribute name="max" type="xs:int"/>
+
+  <xs:attribute name="singular" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Optional noun to append after chosen integer, if it is one.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="plural" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Optional noun to append after chosen integer, if it is many.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="words" type="xs:boolean" default="false">
+    <xs:annotation>
+      <xs:documentation>
+        If true, the integer is printed as a word, than in digits.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+</xs:complexType>
+
+
+<xs:complexType name="optional" mixed="true">
+  <!-- Allow unlimited amount of acceptable inner elements, or just text -->
+  <xs:group ref="phrase_elements" minOccurs="0" maxOccurs="unbounded"/>
+  <xs:attribute name="chance" type="chance"/>
+</xs:complexType>
+
+
+<xs:complexType name="phrase_ref">
+  <xs:attribute name="ref" type="xs:string" use="required">
+    <xs:annotation>
+      <xs:documentation>
+        Must be a valid `id` of a previously defined phrase.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="chance" type="chance"/>
+</xs:complexType>
+
+
+<xs:complexType name="phraseset_ref">
+  <xs:attribute name="ref" type="xs:string" use="required">
+    <xs:annotation>
+      <xs:documentation>
+        Must be a valid `id` of a previously defined phraseset.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="chance" type="chance"/>
+</xs:complexType>
+
+
+<xs:complexType name="service">
+  <xs:attribute name="chance" type="chance"/>
+</xs:complexType>
+
+
+<xs:complexType name="station">
+  <xs:attribute name="context" type="station_context">
+    <xs:annotation>
+      <xs:documentation>
+        Optionally specifies a different context to pick a station from, rather than pick
+        from the default list of "calling at" stations.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="list" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        If given the `id` for a station list, picks a random station from that list.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+</xs:complexType>
+
+
+<xs:complexType name="stationlist">
+  <xs:attribute name="id" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Optionally defines an `id` for a list to create, or to repeat if already exists.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <xs:attribute name="min" type="xs:int"/>
+  <xs:attribute name="max" type="xs:int"/>
+</xs:complexType>
+
+<!-- Value types -->
+
 <xs:simpleType name="chance">
+  <xs:annotation>
+    <xs:documentation>
+      An integer between 0 and 100; percent likelihood this element will appear.
+    </xs:documentation>
+  </xs:annotation>
+
   <xs:restriction base="xs:int">
     <xs:minInclusive value="0"/>
     <xs:maxInclusive value="100"/>
   </xs:restriction>
 </xs:simpleType>
 
-<xs:complexType name="chance_ref">
-  <xs:attribute name="ref" type="xs:string" use="required"/>
-  <xs:attribute name="chance" type="chance"/>
-</xs:complexType>
 
-<xs:complexType name="integer">
-  <xs:attribute name="min" type="xs:int"/>
-  <xs:attribute name="max" type="xs:int"/>
-  <xs:attribute name="singular" type="xs:string"/>
-  <xs:attribute name="plural" type="xs:string"/>
-  <xs:attribute name="words" type="xs:string"/>
-</xs:complexType>
+<xs:simpleType name="station_context">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="destination">
+      <xs:annotation>
+        <xs:documentation>
+          Picks the station that's the final stop of a calling list, or at random.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
 
-<xs:complexType name="named">
-  <xs:attribute name="chance" type="chance"/>
-  <xs:attribute name="prefix" type="xs:string"/>
-  <xs:attribute name="postfix" type="xs:string"/>
-</xs:complexType>
+    <xs:enumeration value="via">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a station in the middle of a calling list, as a "via" stop.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
 
-<xs:complexType name="optional" mixed="true">
-  <xs:group ref="phrase_elements" minOccurs="0" maxOccurs="unbounded"/>
-  <xs:attribute name="chance" type="chance"/>
-</xs:complexType>
-
-<xs:complexType name="phrase_ref">
-  <xs:attribute name="ref" type="xs:string" use="required"/>
-</xs:complexType>
-
-<xs:complexType name="platform">
-  <xs:attribute name="ref" type="xs:string"/>
-</xs:complexType>
-
-<xs:complexType name="service">
-  <xs:attribute name="chance" type="chance"/>
-</xs:complexType>
-
-<xs:complexType name="station">
-  <xs:attribute name="list" type="xs:string"/>
-  <xs:attribute name="ref" type="xs:string"/>
-</xs:complexType>
-
-<xs:complexType name="stationlist">
-  <xs:attribute name="id" type="xs:string"/>
-  <xs:attribute name="min" type="xs:int"/>
-  <xs:attribute name="max" type="xs:int"/>
-</xs:complexType>
+    <xs:enumeration value="source">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a station not on any list, or at random, as a "from" stop.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+  </xs:restriction>
+</xs:simpleType>
 
 </xs:schema>
