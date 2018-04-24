@@ -31,7 +31,8 @@
     <phraseset ref="shop_service" chance="5"/>
     <phrase ref="train_full" chance="5"/>
     <phraseset ref="train_layout" chance="5"/>
-    <phrase ref="platform_wait" chance="50" />
+    <phraseset ref="train_seating" chance="5"/>
+    <phrase ref="platform_wait" chance="50" />.
   </phrase>
 
   <!-- Train scheduled to arrive at platform -->
@@ -253,9 +254,10 @@
   </phrase>
 </phraseset>
 
+<phraseset id="train_seating">
   <phrase>
-    First class coaches can be found at the rear of the train, standard can be found at
-    the front.
+    Standard unreserved seating can be found in coaches <letter/> and <letter/>, with
+    First class unreserved seating in coach <letter/>.
   </phrase>
 </phraseset>
 
