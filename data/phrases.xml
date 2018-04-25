@@ -28,6 +28,7 @@
     <phraseset ref="calling_at" chance="50"/>
     <phraseset ref="mind_the_gap" chance="5"/>
     <phraseset ref="change_at" chance="5"/>
+    <phrase ref="not_stopping" chance="5"/>
     <phraseset ref="request_stop" chance="5"/>
     <phraseset ref="trolley_service" chance="5"/>
     <phrase ref="coach_count" chance="90"/>
@@ -217,11 +218,11 @@
   <phrase>
     is delayed
     <optional>by approximately <integer min="5" max="120" plural="minutes"/></optional>
-    <phraseset ref="excuse" chance="50"/>
+    <phraseset ref="excuse_or_wait" chance="50"/>
     <phraseset ref="service_apology_delay" chance="50"/>
   </phrase>
   <phrase>
-    has been cancelled <phraseset ref="excuse" chance="50"/>
+    has been cancelled <phraseset ref="excuse_or_wait" chance="50"/>
     <phraseset ref="service_apology" chance="50"/>
   </phrase>
 </phraseset>
@@ -229,6 +230,10 @@
 <phraseset id="excuse">
   <phrase>, due to <excuse/>.</phrase>
   <phrase>. This is due to <excuse/>.</phrase>
+</phraseset>
+
+<phraseset id="excuse_or_wait">
+  <phrase><phraseset ref="excuse"/></phrase>
   <phrase>. Please listen for further announcements.</phrase>
 </phraseset>
 
@@ -259,6 +264,11 @@
     <stationlist id="changes" max="4"/>.
   </phrase>
 </phraseset>
+
+<phrase id="not_stopping">
+  This train will not be calling at <stationlist id="not_stopping" max="8"/> today.
+  <phraseset ref="excuse"/>
+</phrase>
 
 <phraseset id="request_stop">
   <phrase>
