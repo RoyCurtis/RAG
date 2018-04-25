@@ -110,6 +110,10 @@
     Smoking is not permitted at this station.
   </phrase>
   <phrase>
+    All of our trains and stations are no-smoking areas. Please do not smoke until you
+    have left the station premesis.
+  </phrase>
+  <phrase>
     24 hour C.C.T.V. recording is in operation at this station for the purpose of security
     and safety management.
   </phrase>
@@ -135,6 +139,11 @@
     This is a safety announcement. Please take care when using the escalators located on
     this station. If you have luggage or a bicycle, then please use the passenger lifts
     and ask for assistance if you need it. Thank you.
+  </phrase>
+  <phrase>
+    In the interests of safety, the riding of skateboards, rollerblades, and cycles on
+    this station are prohibited. Offenders may be prosecuted under the railway bylaw
+    number 30.
   </phrase>
 </phraseset>
 
@@ -184,9 +193,14 @@
   Calling at <stationlist id="calling" max="16"/>.
 </phrase>
 
-<phrase id="mind_the_gap">
-  Mind the gap between the train and the platform. Mind the gap.
-</phrase>
+<phraseset id="mind_the_gap">
+  <phrase>
+    Mind the gap between the train and the platform. Mind the gap.
+  </phrase>
+  <phrase>
+    When boarding the train, please mind the gap between the train and the platform edge.
+  </phrase>
+</phraseset>
 
 <phraseset id="apology_begin">
   <phrase>We are sorry to announce that</phrase>
