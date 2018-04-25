@@ -66,14 +66,13 @@
 
   <!-- Delayed and cancelled trains -->
   <phrase>
-    We are sorry to announce that <phrase ref="service"/> to <phrase ref="destination"/>
-    <phraseset ref="delayed_or_cancelled"/><phraseset ref="excuse" chance="50"/>
-    <phraseset ref="apology" chance="50"/>
+    <phrase ref="apology_begin"/> <phrase ref="service"/> to <phrase ref="destination"/>
+    <phraseset ref="delayed_or_cancelled"/>
   </phrase>
 
   <phrase>
     We are sorry that services are subject to delay because of <excuse/>.
-    <optional>We apologise for the inconvenience this may cause you.</optional>
+    <phraseset ref="general_apology_delay" chance="50"/>
   </phrase>
 
   <!-- Platform alterations -->
@@ -139,14 +138,6 @@
 
 <!-- Various parts of other phrases -->
 
-<phraseset id="delayed_or_cancelled">
-  <phrase>
-    is delayed
-    <optional>by approximately <integer min="5" max="120" plural="minutes"/></optional>
-  </phrase>
-  <phrase>is cancelled</phrase>
-</phraseset>
-
 <phrase id="attention_please">
   May I have your attention please.
 </phrase>
@@ -190,15 +181,42 @@
 <phrase id="mind_the_gap">
   Mind the gap between the train and the platform. Mind the gap.
 </phrase>
+  
+<phraseset id="apology_begin">
+  <phrase>We are sorry to announce that</phrase>
+  <phrase>We are sorry that</phrase>
+</phraseset>
+
+<phraseset id="delayed_or_cancelled">
+  <phrase>
+    is delayed
+    <optional>by approximately <integer min="5" max="120" plural="minutes"/></optional>
+    <phraseset ref="excuse" chance="50"/>
+    <phraseset ref="service_apology_delay" chance="50"/>
+  </phrase>
+  <phrase>
+    is cancelled <phraseset ref="excuse" chance="50"/>
+    <phraseset ref="service_apology_cancelled" chance="50"/>
+  </phrase>
+</phraseset>
 
 <phraseset id="excuse">
   <phrase>, due to <excuse/>.</phrase>
-  <phrase>This is due to <excuse/>.</phrase>
+  <phrase>. This is due to <excuse/>.</phrase>
+  <phrase>. Please listen for further announcements.</phrase>
 </phraseset>
 
-<phraseset id="apology">
-  <phrase><service/> apologises for this delay.</phrase>
+<phraseset id="general_apology_delay">
   <phrase>National Rail apologises for this delay.</phrase>
+  <phrase>We apologise for the inconvenience this may cause you.</phrase>
+</phraseset>
+
+<phraseset id="service_apology_delay">
+  <phrase><service/> apologises for this delay.</phrase>
+  <phrase><phraseset ref="general_apology_delay"/></phrase>
+</phraseset>
+
+<phraseset id="service_apology_cancelled">
   <phrase>We apologise for the inconvenience this may cause you.</phrase>
 </phraseset>
 
