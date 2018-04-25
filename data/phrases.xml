@@ -11,6 +11,7 @@
 
   * https://youtube.com/watch?v=ftiB6HLjWCM (Crewe)
   * https://youtube.com/watch?v=14B_6H5QusI (Reading)
+  * https://youtube.com/watch?v=OOUQ0V7wS5U (Shrewsbury)
   * https://youtube.com/watch?v=v-eqKjbXlaw (Southampton)
   * https://youtube.com/watch?v=2Qe6PRLTvnI (Swindon)
   * https://www.scribd.com/document/105631178/National-Rail-Delay-Phrases
@@ -24,7 +25,8 @@
   <!-- Train waiting at platform -->
   <phrase>
     <phraseset ref="platform_wait_intro"/>
-    <phrase ref="calling_at"/>
+    <phrase ref="calling_at" chance="50"/>
+    <phraseset ref="mind_the_gap" chance="5"/>
     <phraseset ref="change_at" chance="5"/>
     <phraseset ref="request_stop" chance="5"/>
     <phraseset ref="trolley_service" chance="5"/>
@@ -36,26 +38,12 @@
     <phrase ref="platform_wait" chance="50" />.
   </phrase>
 
-  <!-- Train scheduled to arrive at platform -->
-  <phrase>
-    The next train to arrive at platform <platform/> will be <phrase ref="service"/> to
-    <phrase ref="destination"/>. <phrase ref="service_from" chance="50"/>
-  </phrase>
-
-  <!-- Train arriving at platform -->
-  <phrase>
-    The train now approaching platform <platform/> is the <optional>delayed</optional>
-    <phrase ref="service"/> to <phrase ref="destination"/>.
-    <phrase ref="service_from" chance="50"/>
-    <phrase ref="mind_the_gap" chance="50"/>
-  </phrase>
-
   <!-- Train departing from platform -->
   <phrase>
-    The train at platform <platform/> is the <optional>delayed</optional>
-    <phrase ref="service"/> to <phrase ref="destination"/>. <phrase ref="calling_at"/>
-    Will passengers intending to travel on this service please join the train now, as it
-    is ready to leave. <phrase ref="platform_wait"/>, which is ready to leave.
+    The train at platform <platform/> is <phrase ref="service_to"/>.
+    <phrase ref="calling_at"/> Will passengers intending to travel on this service please
+    join the train now, as it is ready to leave. <phrase ref="platform_wait"/>, which is
+    ready to leave.
   </phrase>
 
   <!-- Terminating train -->
@@ -162,17 +150,17 @@
     <phrase ref="platform_wait"/>.
   </phrase>
   <phrase>
-    The next train to depart from platform <platform/> will be the <phrase ref="service"/>
-    to <phrase ref="destination"/>.
+    The next train to <phraseset ref="depart_arrive"/> from platform <platform/> will be
+    <phrase ref="service_to"/>.
   </phrase>
   <phrase>
-    The next train to arrive at platform <platform/> will be the <phrase ref="service"/>
-    to <phrase ref="destination"/>.
+    The train now approaching platform <platform/> is <phrase ref="service_to"/>.
+    <phrase ref="service_from" chance="50"/>
   </phrase>
 </phraseset>
 
 <phrase id="platform_wait">
-  Platform <platform/> for <phrase ref="service"/> to <phrase ref="destination"/>
+  Platform <platform/> for the <phrase ref="service"/> to <phrase ref="destination"/>
 </phrase>
 
 <phrase id="destination">
@@ -180,9 +168,13 @@
   <optional chance="10">via <station context="via"/></optional>
 </phrase>
 
+<phrase id="service_to">
+  the <optional chance="5">delayed</optional> <phrase ref="service"/> to
+  <phrase ref="destination"/>
+</phrase>
+
 <phrase id="service">
-  <optional chance="5">the <named />,</optional> the <time/> <service chance="90" />
-  service
+  <optional chance="5"><named />, the</optional> <time/> <service chance="90" /> service
 </phrase>
 
 <phrase id="service_from">
