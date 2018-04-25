@@ -73,9 +73,14 @@
 
   <!-- Non-stop trains -->
   <phrase>
-    The train now approaching platform <platform/> does not stop here. Stand
-    back from the edge of platform <platform/>. The next train is not
-    scheduled to stop.
+    The train now approaching platform <platform/> does not stop here. Stand back from the
+    edge of platform <platform/>. The next train is not scheduled to stop.
+  </phrase>
+
+  <!-- Out of service trains -->
+  <phrase>
+    The next train to arrive at platform <platform/> is not in passenger service. Please
+    do not board the next train at platform <platform/>.
   </phrase>
 
   <!-- Various notices and reminders (e.g. security) -->
