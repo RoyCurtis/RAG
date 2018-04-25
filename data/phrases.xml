@@ -66,6 +66,7 @@
 
   <!-- Delayed and cancelled trains -->
   <phrase>
+    <phrase ref="attention_please_platform" chance="25"/>
     <phrase ref="apology_begin"/> <phrase ref="service"/> to <phrase ref="destination"/>
     <phraseset ref="delayed_or_cancelled"/>
   </phrase>
@@ -143,6 +144,10 @@
   May I have your attention please.
 </phrase>
 
+<phrase id="attention_please_platform">
+  May I have your attention please on platform <platform/>.
+</phrase>
+
 <phraseset id="platform_wait_intro">
   <phrase>
     <phrase ref="platform_wait"/>.
@@ -182,7 +187,7 @@
 <phrase id="mind_the_gap">
   Mind the gap between the train and the platform. Mind the gap.
 </phrase>
-  
+
 <phraseset id="apology_begin">
   <phrase>We are sorry to announce that</phrase>
   <phrase>We are sorry that</phrase>
@@ -196,8 +201,8 @@
     <phraseset ref="service_apology_delay" chance="50"/>
   </phrase>
   <phrase>
-    is cancelled <phraseset ref="excuse" chance="50"/>
-    <phraseset ref="service_apology_cancelled" chance="50"/>
+    has been cancelled <phraseset ref="excuse" chance="50"/>
+    <phraseset ref="service_apology" chance="50"/>
   </phrase>
 </phraseset>
 
@@ -215,10 +220,13 @@
 <phraseset id="service_apology_delay">
   <phrase><service/> apologises for this delay.</phrase>
   <phrase><phraseset ref="general_apology_delay"/></phrase>
+  <phrase><phraseset ref="service_apology"/></phrase>
 </phraseset>
 
-<phraseset id="service_apology_cancelled">
+<phraseset id="service_apology">
   <phrase>We apologise for the inconvenience this may cause you.</phrase>
+  <phrase>We apologise for the disruption to your journey today.</phrase>
+  <phrase><service/> apologises for the disruption to your journey today.</phrase>
 </phraseset>
 
 <phraseset id="change_at">
