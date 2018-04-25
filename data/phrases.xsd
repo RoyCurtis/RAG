@@ -341,10 +341,28 @@
       </xs:annotation>
     </xs:enumeration>
 
+    <xs:enumeration value="destination2">
+      <xs:annotation>
+        <xs:documentation>
+          For a split train, picks the station that's the final stop of the second half
+          of a calling list, or at random.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
     <xs:enumeration value="via">
       <xs:annotation>
         <xs:documentation>
           Picks a station in the middle of a calling list, as a "via" stop.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="via2">
+      <xs:annotation>
+        <xs:documentation>
+          For a split train, picks a station in the middle of the second half of a calling
+          list, as a "via" stop.
         </xs:documentation>
       </xs:annotation>
     </xs:enumeration>

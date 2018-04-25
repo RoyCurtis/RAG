@@ -25,7 +25,7 @@
   <!-- Train waiting at platform -->
   <phrase>
     <phraseset ref="platform_wait_intro"/>
-    <phrase ref="calling_at" chance="50"/>
+    <phraseset ref="calling_at" chance="50"/>
     <phraseset ref="mind_the_gap" chance="5"/>
     <phraseset ref="change_at" chance="5"/>
     <phraseset ref="request_stop" chance="5"/>
@@ -41,7 +41,7 @@
   <!-- Train departing from platform -->
   <phrase>
     The train at platform <platform/> is <phrase ref="service_to"/>.
-    <phrase ref="calling_at"/> Will passengers intending to travel on this service please
+    <phraseset ref="calling_at"/> Will passengers intending to travel on this service please
     join the train now, as it is ready to leave. <phrase ref="platform_wait"/>, which is
     ready to leave.
   </phrase>
@@ -171,6 +171,10 @@
 <phrase id="destination">
   <station context="destination"/>
   <optional chance="10">via <station context="via"/></optional>
+  <optional chance="5">
+    <station context="destination2"/>
+    <optional chance="10">via <station context="via2"/></optional>
+  </optional>
 </phrase>
 
 <phrase id="service_to">
@@ -186,9 +190,14 @@
   This is the service from <station context="source"/>.
 </phrase>
 
-<phrase id="calling_at">
-  Calling at <stationlist id="calling" max="16"/>.
-</phrase>
+<phraseset id="calling_at">
+  <phrase>Calling at <stationlist id="calling"/>.</phrase>
+  <phrase>
+    For <stationlist id="calling"/>, travel in the front <integer min="2" max="5"/>
+    coaches of the train. And for <stationlist id="calling2"/>, travel in the rear
+    <integer min="2" max="5"/> coaches of the train.
+  </phrase>
+</phraseset>
 
 <phraseset id="mind_the_gap">
   <phrase>
