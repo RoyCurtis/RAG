@@ -77,8 +77,9 @@
 
   <!-- Platform alterations -->
   <phrase>
-    This is a platform alteration. <phrase ref="service"/> to <phrase ref="destination"/>
-    will now depart from platform <platform/>
+    This is a platform alteration. <phrase ref="service"/>
+    <phraseset ref="destination_from_to"/> will now <phraseset ref="depart_arrive"/>
+    platform <platform/>
   </phrase>
 
   <!-- Non-stop trains -->
@@ -317,6 +318,16 @@
 <phraseset id="leave">
   <phrase>leave</phrase>
   <phrase>alight</phrase>
+</phraseset>
+
+<phraseset id="depart_arrive">
+  <phrase>depart from</phrase>
+  <phrase>arrive at</phrase>
+</phraseset>
+
+<phraseset id="destination_from_to">
+  <phrase>to <phrase ref="destination"/></phrase>
+  <phrase>from <station context="source"/></phrase>
 </phraseset>
 
 </messages>
