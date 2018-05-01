@@ -199,8 +199,8 @@
 <phraseset id="calling_at">
   <phrase>Calling at <stationlist id="calling"/>.</phrase>
   <phrase>
-    For <stationlist id="calling"/>, travel in the front <integer min="2" max="5"/>
-    coaches of the train. And for <stationlist id="calling2"/>, travel in the rear
+    For <stationlist id="calling_half1"/>, travel in the front <integer min="2" max="5"/>
+    coaches of the train. And for <stationlist id="calling_half2"/>, travel in the rear
     <integer min="2" max="5"/> coaches of the train.
   </phrase>
 </phraseset>
