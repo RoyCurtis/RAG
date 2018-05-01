@@ -42,9 +42,9 @@
   <!-- Train departing from platform -->
   <phrase>
     The train at platform <platform/> is <phrase ref="service_to"/>.
-    <phraseset ref="calling_at"/> Will passengers intending to travel on this service please
-    join the train now, as it is ready to leave. <phrase ref="platform_wait"/>, which is
-    ready to leave.
+    <phraseset ref="calling_at"/> Will passengers intending to travel on this service
+    please join the train now, as it is ready to leave. <phrase ref="platform_wait"/>,
+    which is ready to leave.
   </phrase>
 
   <!-- Terminating train -->
