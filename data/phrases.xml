@@ -188,7 +188,8 @@
 </phrase>
 
 <phrase id="service">
-  <optional chance="5"><named />, the</optional> <time/> <service chance="90" /> service
+  <optional chance="5"><named />, the</optional> <time/>
+  <optional chance="90"><service/></optional> service
 </phrase>
 
 <phrase id="service_from">

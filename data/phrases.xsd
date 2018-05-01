@@ -162,7 +162,7 @@
       </xs:annotation>
     </xs:element>
 
-    <xs:element name="service" type="service">
+    <xs:element name="service">
       <xs:annotation>
         <xs:documentation>
           Picks an official National Rail network name.
@@ -264,11 +264,6 @@
     </xs:annotation>
   </xs:attribute>
 
-  <xs:attribute name="chance" type="chance"/>
-</xs:complexType>
-
-
-<xs:complexType name="service">
   <xs:attribute name="chance" type="chance"/>
 </xs:complexType>
 
