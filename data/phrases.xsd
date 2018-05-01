@@ -198,8 +198,8 @@
 
 
 <xs:complexType name="integer">
-  <xs:attribute name="min" type="xs:int"/>
-  <xs:attribute name="max" type="xs:int"/>
+  <xs:attribute name="min" type="xs:int" use="required"/>
+  <xs:attribute name="max" type="xs:int" use="required"/>
 
   <xs:attribute name="singular" type="xs:string">
     <xs:annotation>
