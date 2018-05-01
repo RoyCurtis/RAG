@@ -1,0 +1,18 @@
+{
+  "name": "rag",
+  "description": "Generates National Rail-style announcements",
+  "repository": "https://github.com/RoyCurtis/RAG",
+  "license": "MIT",
+  "version": "0.0.1",
+  "dependencies": {},
+  "devDependencies": {
+    "npm-run-all": "^4.1.2",
+    "stylus": "^0.54.5",
+    "typescript": "^2.8.3"
+  },
+  "scripts": {
+    "watch-tsc": "tsc -w",
+    "watch-stylus": "stylus -m -w css/index.styl",
+    "watch": "npm-run-all --parallel watch-tsc watch-stylus"
+  }
+}
