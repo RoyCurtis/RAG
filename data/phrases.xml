@@ -56,8 +56,8 @@
   <!-- Delayed and cancelled trains -->
   <phrase>
     <phrase ref="attention_please_platform" chance="25"/>
-    <phrase ref="apology_begin"/> <phrase ref="service"/> to <phrase ref="destination"/>
-    <phraseset ref="delayed_or_cancelled"/>
+    <phraseset ref="apology_begin"/> <phrase ref="service"/> to
+    <phrase ref="destination"/><phraseset ref="delayed_or_cancelled"/>
   </phrase>
 
   <phrase>
@@ -68,8 +68,8 @@
   <!-- Platform alterations -->
   <phrase>
     This is a platform alteration. <phrase ref="service"/>
-    <phraseset ref="destination_from_to"/> will now <phraseset ref="depart_arrive"/>
-    platform <platform/>
+    <phraseset ref="destination_from_to"/>, will now <phraseset ref="depart_arrive"/>
+    platform <platform/>.
   </phrase>
 
   <!-- Non-stop trains -->
@@ -177,7 +177,7 @@
   <station context="destination"/>
   <optional chance="10">via <station context="via"/></optional>
   <optional chance="5">
-    <station context="destination2"/>
+    and <station context="destination2"/>
     <optional chance="10">via <station context="via2"/></optional>
   </optional>
 </phrase>
@@ -276,7 +276,7 @@
 </phraseset>
 
 <phrase id="not_stopping">
-  This train will not be calling at <stationlist id="not_stopping" max="8"/> today.
+  This train will not be calling at <stationlist id="not_stopping" max="8"/> today
   <phrase ref="excuse"/>
 </phrase>
 
