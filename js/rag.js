@@ -1,147 +1,105 @@
-var synth   = window.speechSynthesis;
-var signage = document.querySelector('.signage');
-
-window.onbeforeunload = function (ev)
-{
-    synth.cancel();
-};
-
-function randInt(min, max)
-{
-    return Math.floor( Math.random() * (max - min) ) + min;
+"use strict";
+class Random {
+    static int(min = 0, max = 1) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+    static array(arr) {
+        let idx = Random.int(0, arr.length - 1);
+        return arr[idx];
+    }
+    static objectKey(obj) {
+        return Random.array(Object.keys(obj));
+    }
+    static bool(chance = 50) {
+        return Random.int(0, 100) < chance;
+    }
 }
-
-function randArray(arr, min, max)
-{
-    if ( !Number.isInteger(min) )
-        min = 0;
-
-    if ( !Number.isInteger(max) )
-        max = arr.length;
-
-    return arr[ randInt(min, max) ];
+class Database {
+    constructor(config) {
+        this.excuses = [];
+        this.named = [];
+        this.services = [];
+        this.stations = {};
+        this.excuses = config.excusesData;
+        this.named = config.namedData;
+        this.services = config.servicesData;
+        this.stations = config.stationsData;
+        console.log("[Database] Entries loaded:");
+        console.log("\tExcuses:", this.excuses.length);
+        console.log("\tNamed trains:", this.named.length);
+        console.log("\tServices:", this.services.length);
+        console.log("\tStations:", Object.keys(this.stations).length);
+    }
+    pickExcuse() {
+        return Random.array(this.excuses);
+    }
+    pickNamed() {
+        return Random.array(this.named);
+    }
+    pickService() {
+        return Random.array(this.services);
+    }
+    pickStation() {
+        let code = Random.objectKey(this.stations);
+        return this.stations[code];
+    }
 }
-
-function randBool(chance)
-{
-    if ( !Number.isInteger(chance) )
-        chance = 50;
-
-    return randInt(0, 100) < chance;
+class DOM {
+    static require(query) {
+        let result = document.querySelector(query);
+        if (!result)
+            throw new Error(`Required DOM element is missing: '${query}'`);
+        return result;
+    }
 }
-
-function randTime()
-{
-    var hour   = randInt(0, 23).toString().padStart(2, '0');
-    var minute = randInt(0, 59).toString().padStart(2, '0');
-
-    return hour + ':' + minute;
+class Strings {
+    static isNullOrEmpty(str) {
+        return !str || !str.trim();
+    }
 }
-
-function randStations(count)
-{
-    var keys  = Object.keys(DATA_STATIONS);
-    var codes = [];
-    var names = [];
-
-    while (codes.length < count)
-    {
-        var key = randArray(keys);
-
-        if ( codes.indexOf(key) === -1 )
-        {
-            codes.push(key);
-            names.push(DATA_STATIONS[key]);
+class Phraser {
+    constructor(config) {
+        let iframe = DOM.require(config.phraseSetEmbed);
+        if (!iframe.contentDocument)
+            throw new Error("Configured phraseset element is not an iframe embed");
+        this.document = iframe.contentDocument;
+        let setCount = this.document.querySelectorAll('messages > phraseset').length;
+        console.log("[Phraser] Phrases loaded:");
+        console.log("\tSets:", setCount);
+    }
+    getPhraseSet(id) {
+        return this.document.querySelector('phraseset#' + id);
+    }
+    process(node) {
+        let parent = node.parentNode;
+        if (!parent)
+            throw new Error('Element is missing parent');
+        switch (node.nodeName.toLowerCase()) {
+            case "excuse":
+                node.textContent = Random.array(["a fatality", "a signal failure"]);
+                break;
+            case "platform":
+                node.textContent = Random.int(0, 16).toString();
+                break;
+            case "station":
+                node.textContent = Random.array(["Crewe", "Tring"]);
+                break;
         }
-    }
-
-    return {
-        count: codes.length,
-        codes: codes,
-        names: names
-    };
-}
-
-signage.onclick = function(ev)
-{
-    var phrase = "";
-
-    do {
-        var data = {};
-
-        phrase = randArray(PHRASES).replace(/\{([A-Z0-9_]+)\}/gi, function(match, token)
-        {
-            token = token.toUpperCase();
-
-            if ( !data[token] )
-                data[token] = randData(token, data);
-
-            return data[token];
-        });
-
-    } while (phrase === signage.innerText)
-
-    synth.cancel();
-
-    signage.innerText = phrase;
-    signage.innerText.split('. ').forEach(function (value)
-    {
-        var utter = new SpeechSynthesisUtterance(value);
-
-        synth.speak(utter);
-    });
-};
-
-function randData(slot, state)
-{
-    switch (slot)
-    {
-        case 'PLATFORM':
-            return randInt(1, 18)
-                + ( randBool(10) ? randArray(['A', 'B', 'C']) : '' );
-
-        case 'TIME':
-            return randTime();
-
-        case 'MINUTES':
-            return randInt(5, 60);
-
-        case 'SERVICE':
-            return randArray(DATA_SERVICES);
-
-        case 'EXCUSE':
-            return randArray(DATA_EXCUSES);
-
-        case 'DELAY':
-            return state['MINUTES'] > 15
-                ? ' ' + state['SERVICE'] + ' apologises for this delay.'
-                : '';
-
-        case 'STATION':
-        case 'STATION2':
-            return randStations(1).names[0];
-
-        case 'STATION_LIST':
-            var stations = randStations( randInt(1, 18) );
-
-            // Make sure last station is actually the destination
-            stations.names[stations.count - 1] = state['STATION'];
-
-            if (stations.count === 1)
-                return stations.names[0] + ' only';
-
-            var last = 'and ' + stations.names[stations.count - 1];
-            stations.names[stations.count - 1] = last;
-
-            return stations.names.join(', ');
-
-        case 'COACHES':
-            var coaches = randInt(1, 8);
-
-            return VOCAB_DIGITS[coaches] + ' '
-                + ( coaches === 1 ? 'coach' : 'coaches' );
-
-        default:
-            return slot.innerText;
+        console.log(node);
+        if (node.firstChild)
+            this.process(node.firstChild);
+        if (node.nextSibling)
+            this.process(node.nextSibling);
     }
 }
+class RAG {
+    static main(config) {
+        RAG.domSignage = DOM.require('.signage');
+        RAG.domEditor = DOM.require('.editor');
+        RAG.domSignage.textContent = "Please wait...";
+        RAG.domEditor.textContent = "";
+        RAG.database = new Database(config);
+        RAG.phraser = new Phraser(config);
+    }
+}
+//# sourceMappingURL=rag.js.map

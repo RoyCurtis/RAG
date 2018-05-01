@@ -20,8 +20,6 @@
 </body>
 
 <scripts>
-  <script src="js/data.js" type="text/javascript"></script>
-  <script src="js/rag.js"  type="text/javascript"></script>
   <!-- National Rail phrase sets -->
   <iframe id="phraseset" src="data/phrases.xml" ></iframe>
 
@@ -30,6 +28,19 @@
   <script src="data/nr_named.js"    type="text/javascript"></script>
   <script src="data/nr_services.js" type="text/javascript"></script>
   <script src="data/nr_stations.js" type="text/javascript"></script>
+
+  <!-- Application logic -->
+  <script src="js/rag.js" type="text/javascript"></script>
+
+  <script type="application/javascript">
+    RAG.main({
+        phraseSetEmbed: "#phraseset",
+        excusesData:    DATA_EXCUSES,
+        namedData:      DATA_NAMED,
+        servicesData:   DATA_SERVICES,
+        stationsData:   DATA_STATIONS
+    });
+  </script>
 </scripts>
 
 </html>
