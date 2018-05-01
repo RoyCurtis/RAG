@@ -287,9 +287,9 @@
     <phraseset ref="leave"/>.
   </phrase>
   <phrase>
-    <stationlist id="calling" max="-1"/> are request stops, and passengers for these
-    stations should ask the conductor on the train to arrange for the train to stop, to
-    allow them to <phraseset ref="leave"/>.
+    <stationlist id="request"/> are request stops, and passengers for these stations
+    should ask the conductor on the train to arrange for the train to stop, to allow them
+    to <phraseset ref="leave"/>.
   </phrase>
 </phraseset>
 

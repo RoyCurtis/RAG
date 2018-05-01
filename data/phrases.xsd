@@ -297,17 +297,8 @@
     </xs:annotation>
   </xs:attribute>
 
-  <xs:attribute name="min" type="xs:int"/>
-
-  <xs:attribute name="max" type="xs:int" default="16">
-    <xs:annotation>
-      <xs:documentation>
-        Specifies the maximum amount of stations to list. If given a negative number and
-        the list already exists, the maximum becomes the length of the existing list minus
-        the amount given.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:attribute>
+  <xs:attribute name="min" type="xs:int" default="1"/>
+  <xs:attribute name="max" type="xs:int" default="16"/>
 </xs:complexType>
 
 <!-- Value types -->
