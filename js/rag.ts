@@ -9,8 +9,8 @@ class RAG
     static database : Database;
     static phraser  : Phraser;
 
-    static domSignage : Element;
-    static domEditor  : Element;
+    public static domSignage : Element;
+    public static domEditor  : Element;
 
     public static main(config: RAGConfig)
     {
@@ -26,5 +26,10 @@ class RAG
 
         RAG.database = new Database(config);
         RAG.phraser  = new Phraser(config);
+
+        // Begin
+
+        RAG.domSignage.textContent = "Hello, world!";
+        RAG.phraser.randomPhrase();
     }
 }

@@ -1,6 +1,6 @@
 class DOM
 {
-    public static require(query: string) : Element
+    public static require(query: string, document: Document = window.document) : Element
     {
         let result = document.querySelector(query);
 

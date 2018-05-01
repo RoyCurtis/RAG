@@ -43,4 +43,24 @@ class Database
 
         return this.stations[code];
     }
+
+    public pickStations(min = 1, max = 16): string[]
+    {
+        if (max - min > Object.keys(this.stations).length)
+            throw new Error("Picking too many stations than there are available");
+
+        let result: string[] = [];
+
+        let length = Random.int(min, max);
+        let cloned = Object.assign({}, this.stations);
+
+        while (result.length < length)
+        {
+            let key = Random.objectKey(cloned);
+            result.push(cloned[key]);
+            delete cloned[key];
+        }
+
+        return result;
+    }
 }
