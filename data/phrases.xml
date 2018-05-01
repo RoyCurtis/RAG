@@ -231,13 +231,18 @@
   </phrase>
 </phraseset>
 
-<phraseset id="excuse">
-  <phrase>, due to <excuse/>.</phrase>
-  <phrase>. This is due to <excuse/>.</phrase>
+<phraseset id="excuse_pre">
+  <phrase>, </phrase>
+  <phrase>. This is </phrase>
 </phraseset>
 
+<phrase id="excuse">
+  <phraseset ref="excuse_pre"/>due to <excuse/>
+  <optional chance="50"> <phraseset ref="at_near"/> <station/></optional>.
+</phrase>
+
 <phraseset id="excuse_or_wait">
-  <phrase><phraseset ref="excuse"/></phrase>
+  <phrase><phrase ref="excuse"/></phrase>
   <phrase>. Please listen for further announcements.</phrase>
 </phraseset>
 
@@ -271,7 +276,7 @@
 
 <phrase id="not_stopping">
   This train will not be calling at <stationlist id="not_stopping" max="8"/> today.
-  <phraseset ref="excuse"/>
+  <phrase ref="excuse"/>
 </phrase>
 
 <phraseset id="request_stop">
@@ -370,6 +375,11 @@
 <phraseset id="destination_from_to">
   <phrase>to <phrase ref="destination"/></phrase>
   <phrase>from <station context="source"/></phrase>
+</phraseset>
+
+<phraseset id="at_near">
+  <phrase>at</phrase>
+  <phrase>near</phrase>
 </phraseset>
 
 </messages>
