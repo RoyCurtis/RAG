@@ -30,16 +30,13 @@ class Phraser
     public randomPhrase()
     {
         let domEditor = RAG.domEditor;
-        let phrase    = Random.array(this.rootPhrases.children) as Element;
+        let phraseSet = document.createElement('phraseset');
 
-        phrase = phrase.cloneNode(true) as Element;
+        phraseSet.setAttribute('ref', 'root');
 
-        if (!phrase.firstChild)
-            throw new Error(`Empty phrase: '${phrase}'`);
+        domEditor.appendChild(phraseSet);
 
-        this.process(phrase.firstChild as Element);
-
-        domEditor.appendChild(phrase);
+        this.process(phraseSet as Element);
     }
 
     private getPhraseSet(id: string) : Element | null
