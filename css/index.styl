@@ -11,6 +11,19 @@ body, html
   width  100%
   height 100%
 
+// Classes
+
+pressable()
+  background  #222
+  border      none
+  box-shadow  0 0 8px #222
+  color       whitesmoke
+  cursor      pointer
+
+activePressable()
+  color      #AAA
+  box-shadow 0 0 4px #000 inset
+
 // Parts
 
 body
@@ -36,19 +49,14 @@ body
   padding-bottom  0.5em
 
 .toolbar > button
-  background  #222
-  border      none
-  box-shadow  0 0 8px #222
-  color       whitesmoke
-  cursor      pointer
+  pressable()
   font-weight bold
   list-style  none
   margin      0 1em
   padding     0.5em
 
-.toolbar > button:active
-  color      #AAA
-  box-shadow 0 0 4px #000 inset
+  &:active
+    activePressable()
 
 .editor
   background  #222
@@ -79,3 +87,26 @@ body
     &:hover
       background rgba(128, 128, 128, 0.1)
       border-color white
+
+  // Optional elements
+  optional
+    cursor pointer
+
+    &[hidden]
+      border  none
+      //margin  0
+      padding 0
+
+      *
+        display none
+
+      &:active::before
+        activePressable()
+
+      &::before
+        pressable()
+        content '⋮'
+        display inline-block
+        font-size x-large
+        padding 2px
+        transform translateY(-9px)

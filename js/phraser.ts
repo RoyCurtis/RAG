@@ -97,7 +97,15 @@ class Phraser
                 break;
 
             case "optional":
-                element.innerHTML = element.innerHTML.trim();
+                element.addEventListener('click', _ =>
+                {
+                    if (element.hasAttribute('hidden'))
+                        element.removeAttribute('hidden');
+                    else
+                        element.setAttribute('hidden', '');
+                });
+
+                element.innerHTML = `<span>${element.innerHTML.trim()}</span>`;
                 break;
 
             case "phrase":
