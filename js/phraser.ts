@@ -126,14 +126,41 @@ class Phraser
 
                 if (phrase)
                 {
-                    let newPhrase = phrase.cloneNode(true);
+                    let newPhrase = phrase.cloneNode(true) as Element;
+
+                    if ( element.hasAttribute('chance') )
+                    {
+                        let chance = element.getAttribute('chance') || '50';
+                        newPhrase.setAttribute('chance', chance);
+                    }
+
                     element.parentElement.replaceChild(newPhrase, element);
-                    element = newPhrase as Element;
+                    element = newPhrase;
                 }
                 else
                     element.textContent = `(UNKNOWN PHRASE: ${refId})`;
 
-                element.innerHTML = element.innerHTML.trim();
+                let pChance = element.getAttribute('chance') || '';
+
+                if ( !Strings.isNullOrEmpty(pChance) )
+                {
+                    element.addEventListener('click', ev =>
+                    {
+                        ev.stopPropagation();
+
+                        if (element.hasAttribute('collapsed'))
+                            element.removeAttribute('collapsed');
+                        else
+                            element.setAttribute('collapsed', '');
+                    });
+
+                    let pChanceValue = parseInt(pChance);
+
+                    if ( !Random.bool(pChanceValue) )
+                        element.setAttribute('collapsed', '');
+                }
+
+                element.innerHTML = `<span>${element.innerHTML.trim()}</span>`;
                 break;
 
             case "phraseset":
