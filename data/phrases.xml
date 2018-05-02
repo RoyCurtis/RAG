@@ -215,8 +215,8 @@
 </phraseset>
 
 <phraseset id="apology_begin">
-  <phrase>We are sorry to announce that</phrase>
-  <phrase>We are sorry that</phrase>
+  <phrase>We are sorry to announce that the</phrase>
+  <phrase>We are sorry that the</phrase>
 </phraseset>
 
 <phraseset id="delayed_or_cancelled">
