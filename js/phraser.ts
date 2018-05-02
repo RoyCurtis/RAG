@@ -101,18 +101,18 @@ class Phraser
                     chance = '50';
 
                 let chanceValue = parseInt(chance);
-
-                if ( Random.bool(chanceValue) )
-                    element.setAttribute('hidden', '');
+                
+                if ( !Random.bool(chanceValue) )
+                    element.setAttribute('collapsed', '');
 
                 element.addEventListener('click', ev =>
                 {
                     ev.stopPropagation();
 
-                    if (element.hasAttribute('hidden'))
-                        element.removeAttribute('hidden');
+                    if (element.hasAttribute('collapsed'))
+                        element.removeAttribute('collapsed');
                     else
-                        element.setAttribute('hidden', '');
+                        element.setAttribute('collapsed', '');
                 });
 
                 element.innerHTML = `<span>${element.innerHTML.trim()}</span>`;
@@ -158,16 +158,16 @@ class Phraser
                     {
                         ev.stopPropagation();
 
-                        if (element.hasAttribute('hidden'))
-                            element.removeAttribute('hidden');
+                        if (element.hasAttribute('collapsed'))
+                            element.removeAttribute('collapsed');
                         else
-                            element.setAttribute('hidden', '');
+                            element.setAttribute('collapsed', '');
                     });
 
                     let psChanceValue = parseInt(psChance);
 
-                    if ( Random.bool(psChanceValue) )
-                        element.setAttribute('hidden', '');
+                    if ( !Random.bool(psChanceValue) )
+                        element.setAttribute('collapsed', '');
                 }
 
                 break;
