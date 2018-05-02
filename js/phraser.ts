@@ -99,6 +99,10 @@ class Phraser
                 element.textContent = RAG.database.pickNamed();
                 break;
 
+            case "optional":
+                element.innerHTML = element.innerHTML.trim();
+                break;
+
             case "phrase":
                 if (!refId)
                     break;
@@ -114,6 +118,7 @@ class Phraser
                 else
                     element.textContent = `(UNKNOWN PHRASE: ${refId.value})`;
 
+                element.innerHTML = element.innerHTML.trim();
                 break;
 
             case "phraseset":
