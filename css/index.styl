@@ -61,3 +61,21 @@ body
 
 #phraseset
   display: none;
+
+// Editor
+
+.editor
+
+  // All selectable elements
+  excuse, integer, letter, named, optional, phrase[id], phraseset, platform, service,
+  station, stationlist, time
+    border        2px solid grey
+    border-top    none
+    border-bottom none
+    border-radius 8px
+    padding       0 4px
+    margin        0 4px
+
+    &:hover
+      background rgba(128, 128, 128, 0.1)
+      border-color white
