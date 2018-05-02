@@ -160,7 +160,7 @@
     <phrase ref="platform_wait"/>.
   </phrase>
   <phrase>
-    The next train to <phraseset ref="depart_arrive"/> from platform <platform/> will be
+    The next train to <phraseset ref="depart_arrive"/> platform <platform/> will be
     <phrase ref="service_to"/>.
   </phrase>
   <phrase>
@@ -222,8 +222,9 @@
 <phraseset id="delayed_or_cancelled">
   <phrase>
     is delayed
-    <optional>by approximately <integer min="5" max="120" plural="minutes"/></optional>
-    <phraseset ref="excuse_or_wait" chance="50"/>
+    <optional>
+      by approximately <integer min="5" max="120" plural="minutes"/>
+    </optional><phraseset ref="excuse_or_wait" chance="50"/>
     <phraseset ref="service_apology_delay" chance="50"/>
   </phrase>
   <phrase>
