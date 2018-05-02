@@ -49,7 +49,7 @@
 
   <!-- Terminating train -->
   <phrase>
-    Platform <platform/> for <phrase ref="service"/> from <station/>. This train will
+    Platform <platform/> for the <phrase ref="service"/> from <station/>. This train will
     terminate here.
   </phrase>
 
@@ -67,7 +67,7 @@
 
   <!-- Platform alterations -->
   <phrase>
-    This is a platform alteration. <phrase ref="service"/>
+    This is a platform alteration. The <phrase ref="service"/>
     <phraseset ref="destination_from_to"/>, will now <phraseset ref="depart_arrive"/>
     platform <platform/>.
   </phrase>
