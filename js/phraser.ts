@@ -105,8 +105,10 @@ class Phraser
                 if ( Random.bool(chanceValue) )
                     element.setAttribute('hidden', '');
 
-                element.addEventListener('click', _ =>
+                element.addEventListener('click', ev =>
                 {
+                    ev.stopPropagation();
+
                     if (element.hasAttribute('hidden'))
                         element.removeAttribute('hidden');
                     else
@@ -147,6 +149,26 @@ class Phraser
                 }
                 else
                     element.textContent = `(UNKNOWN PHRASE: ${refId})`;
+
+                let psChance = element.getAttribute('chance') || '';
+
+                if ( !Strings.isNullOrEmpty(psChance) )
+                {
+                    element.addEventListener('click', ev =>
+                    {
+                        ev.stopPropagation();
+
+                        if (element.hasAttribute('hidden'))
+                            element.removeAttribute('hidden');
+                        else
+                            element.setAttribute('hidden', '');
+                    });
+
+                    let psChanceValue = parseInt(psChance);
+
+                    if ( Random.bool(psChanceValue) )
+                        element.setAttribute('hidden', '');
+                }
 
                 break;
 
