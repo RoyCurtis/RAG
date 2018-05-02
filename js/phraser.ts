@@ -49,9 +49,7 @@ class Phraser
         if (!element.parentElement)
             throw new Error(`Phrase element has no parent: '${element}'`);
 
-        let refId = element.attributes
-            ? element.attributes.getNamedItem('ref')
-            : null;
+        let refId = element.getAttribute('ref') || '';
 
         switch ( element.nodeName.toLowerCase() )
         {
@@ -97,6 +95,16 @@ class Phraser
                 break;
 
             case "optional":
+                let chance = element.getAttribute('chance') || '';
+
+                if ( Strings.isNullOrEmpty(chance) )
+                    chance = '50';
+
+                let chanceValue = parseInt(chance);
+
+                if ( Random.bool(chanceValue) )
+                    element.setAttribute('hidden', '');
+
                 element.addEventListener('click', _ =>
                 {
                     if (element.hasAttribute('hidden'))
@@ -109,10 +117,10 @@ class Phraser
                 break;
 
             case "phrase":
-                if (!refId)
+                if ( Strings.isNullOrEmpty(refId) )
                     break;
 
-                let phrase = this.document.querySelector('phrase#' + refId.value);
+                let phrase = this.document.querySelector('phrase#' + refId);
 
                 if (phrase)
                 {
@@ -121,16 +129,16 @@ class Phraser
                     element = newPhrase as Element;
                 }
                 else
-                    element.textContent = `(UNKNOWN PHRASE: ${refId.value})`;
+                    element.textContent = `(UNKNOWN PHRASE: ${refId})`;
 
                 element.innerHTML = element.innerHTML.trim();
                 break;
 
             case "phraseset":
-                if (!refId)
+                if ( Strings.isNullOrEmpty(refId) )
                     break;
 
-                let phraseset = this.getPhraseSet(refId.value);
+                let phraseset = this.getPhraseSet(refId);
 
                 if (phraseset)
                 {
@@ -138,7 +146,7 @@ class Phraser
                     element.appendChild( phrase.cloneNode(true) );
                 }
                 else
-                    element.textContent = `(UNKNOWN PHRASE: ${refId.value})`;
+                    element.textContent = `(UNKNOWN PHRASE: ${refId})`;
 
                 break;
 
@@ -187,10 +195,10 @@ class Phraser
                 break;
         }
 
-        if (element.firstChild)
-            this.process(element.firstChild as Element);
+        if (element.firstElementChild)
+            this.process(element.firstElementChild);
 
-        if (element.nextSibling)
-            this.process(element.nextSibling as Element);
+        if (element.nextElementSibling)
+            this.process(element.nextElementSibling);
     }
 }
