@@ -230,7 +230,7 @@
 <xs:complexType name="optional" mixed="true">
   <!-- Allow unlimited amount of acceptable inner elements, or just text -->
   <xs:group ref="phrase_elements" minOccurs="0" maxOccurs="unbounded"/>
-  <xs:attribute name="chance" type="chance"/>
+  <xs:attribute name="chance" type="chance" default="50"/>
 </xs:complexType>
 
 
