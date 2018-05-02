@@ -9,7 +9,7 @@ class Random
 
     public static array(arr: Lengthable) : any
     {
-        let idx: number = Random.int(0, arr.length - 1);
+        let idx: number = Random.int(0, arr.length);
 
         return arr[idx];
     }
