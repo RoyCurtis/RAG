@@ -1,3 +1,5 @@
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+
 /**
  * Handles the transformation of phrase XML data, into HTML elements with their data
  * filled in and their UI logic wired.
@@ -20,18 +22,19 @@ class Phraser
         this.phraseSets = iframe.contentDocument;
     }
 
-    public randomPhrase()
+    /** Generates a random phrase and loads it into the editor */
+    public generate()
     {
         let domEditor = RAG.domEditor;
         let phraseSet = document.createElement('phraseset');
 
         phraseSet.setAttribute('ref', 'root');
-
         domEditor.appendChild(phraseSet);
 
         this.process(phraseSet as Element);
     }
 
+    /** Recursively processes elements, filling in data and applying transforms */
     private process(element: Element)
     {
         if (!element.parentElement)

@@ -1,15 +1,21 @@
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+
+/** Holds methods for processing each type of phrase element into HTML, with data */
 class ElementProcessors
 {
+    /** Picks a coach letter from A to Z, limited by amount of coaches */
     public static coach(ctx: PhraseContext)
     {
         ctx.element.textContent = Random.array("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     }
 
+    /** Picks an excuse for a delay or cancellation */
     public static excuse(ctx: PhraseContext)
     {
         ctx.element.textContent = RAG.database.pickExcuse();
     }
 
+    /** Picks a whole number, with optional limits, noun and in word form */
     public static integer(ctx: PhraseContext)
     {
         let attrMin      = ctx.element.getAttribute('min');
@@ -37,11 +43,13 @@ class ElementProcessors
         ctx.element.textContent = intStr;
     }
 
+    /** Picks a named train */
     public static named(ctx: PhraseContext)
     {
         ctx.element.textContent = RAG.database.pickNamed();
     }
 
+    /** Makes the content of this tag optionally hidden, by chance or user choice */
     public static optional(ctx: PhraseContext)
     {
         let chance = ctx.element.getAttribute('chance') || '';
@@ -68,12 +76,13 @@ class ElementProcessors
         ctx.element.innerHTML = `<span>${ctx.element.innerHTML.trim()}</span>`;
     }
 
+    /** Includes a previously defined phrase, by its `id` */
     public static phrase(ctx: PhraseContext)
     {
         let ref = ctx.element.getAttribute('ref') || '';
 
         if ( Strings.isNullOrEmpty(ref) )
-            return ctx.element;
+            return;
 
         let phrase = ctx.phraseSet.querySelector('phrase#' + ref);
 
@@ -105,12 +114,13 @@ class ElementProcessors
         ctx.element.innerHTML = `<span>${ctx.element.innerHTML.trim()}</span>`;
     }
 
+    /** Picks a phrase from a previously defined phraseset, by its `id` */
     public static phraseset(ctx: PhraseContext)
     {
         let ref = ctx.element.getAttribute('ref') || '';
 
         if ( Strings.isNullOrEmpty(ref) )
-            return ctx.element;
+            return;
 
         let phraseset = ctx.phraseSet.querySelector('phraseset#' + ref);
 
@@ -143,6 +153,7 @@ class ElementProcessors
         }
     }
 
+    /** Picks a platform number, sometimes with letter */
     public static platform(ctx: PhraseContext)
     {
         // Only 2% chance for platform 0, since it's rare
@@ -155,16 +166,19 @@ class ElementProcessors
             ctx.element.textContent += Random.array('ABC');
     }
 
+    /** Picks a rail network name */
     public static service(ctx: PhraseContext)
     {
         ctx.element.textContent = RAG.database.pickService();
     }
 
+    /** Picks a station name */
     public static station(ctx: PhraseContext)
     {
         ctx.element.textContent = RAG.database.pickStation();
     }
 
+    /** Picks a selection of stations */
     public static stationlist(ctx: PhraseContext)
     {
         let stations    = RAG.database.pickStations();
@@ -185,6 +199,7 @@ class ElementProcessors
         ctx.element.textContent = stationList;
     }
 
+    /** Picks a 24 hour time, with hours and minutes */
     public static time(ctx: PhraseContext)
     {
         let hour   = Random.int(0, 23).toString().padStart(2, '0');

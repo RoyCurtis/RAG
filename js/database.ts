@@ -1,9 +1,12 @@
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+
+/** Manages data for excuses, trains, services and stations. */
 class Database
 {
-    private excuses  : string[]   = [];
-    private named    : string[]   = [];
-    private services : string[]   = [];
-    private stations : StationsDB = {};
+    private readonly excuses  : string[]   = [];
+    private readonly named    : string[]   = [];
+    private readonly services : string[]   = [];
+    private readonly stations : StationsDB = {};
 
     constructor(config: RAGConfig)
     {
@@ -19,21 +22,25 @@ class Database
         console.log("\tStations:",     Object.keys(this.stations).length);
     }
 
+    /** Picks a random excuse for a delay or cancellation */
     public pickExcuse(): string
     {
         return Random.array(this.excuses);
     }
 
+    /** Picks a random named train */
     public pickNamed(): string
     {
         return Random.array(this.named);
     }
 
+    /** Picks a random rail network name */
     public pickService(): string
     {
         return Random.array(this.services);
     }
 
+    /** Picks a random station name */
     public pickStation(): string
     {
         let code = Random.objectKey(this.stations);
@@ -41,6 +48,13 @@ class Database
         return this.stations[code];
     }
 
+    /**
+     * Picks a random range of stations, ensuring there are no duplicates.
+     *
+     * @param {number} min Minimum amount of stations to pick
+     * @param {number} max Maximum amount of stations to pick
+     * @returns {string[]} A list of unique station names
+     */
     public pickStations(min = 1, max = 16): string[]
     {
         if (max - min > Object.keys(this.stations).length)
