@@ -53,6 +53,10 @@ class Phraser
 
         switch ( element.nodeName.toLowerCase() )
         {
+            case "coach":
+                element.textContent = Random.array("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+                break;
+
             case "excuse":
                 element.textContent = RAG.database.pickExcuse();
                 break;
@@ -86,10 +90,6 @@ class Phraser
                 element.textContent = intStr;
                 break;
 
-            case "letter":
-                element.textContent = Random.array("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-                break;
-
             case "named":
                 element.textContent = RAG.database.pickNamed();
                 break;
@@ -101,7 +101,7 @@ class Phraser
                     chance = '50';
 
                 let chanceValue = parseInt(chance);
-                
+
                 if ( !Random.bool(chanceValue) )
                     element.setAttribute('collapsed', '');
 

@@ -315,7 +315,7 @@
 
 <phraseset id="shop_service">
   <phrase>
-    You can find the shop in coach <letter/> for delicious hot and cold refreshments.
+    You can find the shop in coach <coach/> for delicious hot and cold refreshments.
   </phrase>
 </phraseset>
 
@@ -347,8 +347,8 @@
 
 <phraseset id="train_seating">
   <phrase>
-    Standard unreserved seating can be found in coaches <letter/> and <letter/>, with
-    First class unreserved seating in coach <letter/>.
+    Standard unreserved seating can be found in coaches <coach/> and <coach/>, with
+    First class unreserved seating in coach <coach/>.
   </phrase>
 </phraseset>
 
