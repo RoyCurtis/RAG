@@ -98,10 +98,18 @@
 
 <xs:group name="phrase_elements">
   <xs:choice>
+    <xs:element name="coach">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a coach letter from A to Z, limited by amount of coaches.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
     <xs:element name="excuse">
       <xs:annotation>
         <xs:documentation>
-          Picks an official excuse for a delay or cancellation from National Rail.
+          Picks an excuse for a delay or cancellation.
         </xs:documentation>
       </xs:annotation>
     </xs:element>
@@ -114,18 +122,10 @@
       </xs:annotation>
     </xs:element>
 
-    <xs:element name="coach">
-      <xs:annotation>
-        <xs:documentation>
-          Picks a coach letter from A to Z, limited by amount of coaches.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:element>
-
     <xs:element name="named">
       <xs:annotation>
         <xs:documentation>
-          Picks an official National Rail named train.
+          Picks a named train.
         </xs:documentation>
       </xs:annotation>
     </xs:element>
@@ -133,15 +133,7 @@
     <xs:element name="optional" type="optional">
       <xs:annotation>
         <xs:documentation>
-          Contents of this tag may optionally appear or not.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:element>
-
-    <xs:element name="platform">
-      <xs:annotation>
-        <xs:documentation>
-          Picks a platform number, sometimes with letter.
+          Makes the content of this tag optionally hidden, by chance or user choice.
         </xs:documentation>
       </xs:annotation>
     </xs:element>
@@ -162,10 +154,18 @@
       </xs:annotation>
     </xs:element>
 
+    <xs:element name="platform">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a platform number, sometimes with letter.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
+
     <xs:element name="service">
       <xs:annotation>
         <xs:documentation>
-          Picks an official National Rail network name.
+          Picks a rail network name.
         </xs:documentation>
       </xs:annotation>
     </xs:element>
@@ -173,7 +173,7 @@
     <xs:element name="station" type="station">
       <xs:annotation>
         <xs:documentation>
-          Picks a station name from the official National Rail network.
+          Picks a station name.
         </xs:documentation>
       </xs:annotation>
     </xs:element>
@@ -181,7 +181,7 @@
     <xs:element name="stationlist" type="stationlist">
       <xs:annotation>
         <xs:documentation>
-          Picks a selection of stations from the official National Rail network.
+          Picks a selection of stations.
         </xs:documentation>
       </xs:annotation>
     </xs:element>
