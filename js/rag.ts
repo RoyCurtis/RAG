@@ -1,9 +1,3 @@
-/// <reference path="database.ts" />
-/// <reference path="phraser.ts" />
-/// <reference path="util/dom.ts" />
-/// <reference path="util/random.ts" />
-/// <reference path="util/types.ts" />
-
 class RAG
 {
     static database : Database;
@@ -20,7 +14,7 @@ class RAG
         RAG.domEditor  = DOM.require('.editor');
 
         RAG.domSignage.textContent = "Please wait...";
-        RAG.domEditor.textContent = "";
+        RAG.domEditor.textContent  = "";
 
         // Manager setup
 

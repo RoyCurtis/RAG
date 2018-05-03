@@ -21,7 +21,8 @@
   "compileOnSave": true,
 
   "include": [
-    "js/rag.ts"
+    "js/*/*.ts",
+    "js/*.ts"
   ],
 
   "exclude": [

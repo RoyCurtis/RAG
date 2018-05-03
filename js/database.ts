@@ -1,6 +1,3 @@
-/// <reference path="util/random.ts" />
-/// <reference path="util/types.ts" />
-
 class Database
 {
     private excuses  : string[]   = [];

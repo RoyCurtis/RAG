@@ -1,6 +1,3 @@
-/// <reference path="../util/dom.ts" />
-/// <reference path="../util/strings.ts" />
-
 /**
  * Handles the transformation of phrase XML data, into HTML elements with their data
  * filled in and their UI logic wired.
