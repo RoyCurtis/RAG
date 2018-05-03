@@ -1,8 +1,13 @@
-/// <reference path="util/dom.ts" />
-/// <reference path="util/strings.ts" />
+/// <reference path="../util/dom.ts" />
+/// <reference path="../util/strings.ts" />
 
+/**
+ * Handles the transformation of phrase XML data, into HTML elements with their data
+ * filled in and their UI logic wired.
+ */
 class Phraser
 {
+    // TODO: Move to language file
     readonly DIGITS: string[] = ['zero', 'one', 'two', 'three', 'four', 'five', 'six',
         'seven', 'eight', 'nine', 'ten'];
 
