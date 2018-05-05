@@ -52,7 +52,7 @@ class ElementProcessors
     /** Makes the content of this tag optionally hidden, by chance or user choice */
     public static optional(ctx: PhraseContext)
     {
-        let chance = ctx.element.getAttribute('chance') || '';
+        let chance = ctx.element.getAttribute('chance') || '50';
 
         if ( Strings.isNullOrEmpty(chance) )
             chance = '50';
@@ -73,7 +73,17 @@ class ElementProcessors
                 ctx.element.setAttribute('collapsed', '');
         });
 
-        ctx.element.innerHTML = `<span>${ctx.element.innerHTML.trim()}</span>`;
+        // Wrap the contents of this optional tag into a span, so that its contents can
+        // be hidden when collapsed.
+        // Using innerHTML would be easier, however it handles self-closing tags poorly.
+
+        let innerSpan = document.createElement('span');
+
+        // Transfer all the optional's inner elements to the inner span
+        while (ctx.element.firstChild)
+            innerSpan.appendChild(ctx.element.firstChild);
+
+        ctx.element.appendChild(innerSpan);
     }
 
     /** Includes a previously defined phrase, by its `id` */
@@ -81,15 +91,47 @@ class ElementProcessors
     {
         let ref = ctx.element.getAttribute('ref') || '';
 
+        // Skip ref-less picked phrase elements inside phrasesets
         if ( Strings.isNullOrEmpty(ref) )
             return;
 
         let phrase = ctx.phraseSet.querySelector('phrase#' + ref);
 
-        ctx.element.innerHTML = phrase
-            ? phrase.innerHTML
-            : `(UNKNOWN PHRASE: ${ref})`;
+        if (!phrase)
+        {
+            ctx.element.textContent = `(UNKNOWN PHRASE: ${ref})`;
+            return;
+        }
 
+        // Clone the referenced phrase element and transfer the necessary attributes.
+        // Using innerHTML would be easier, however it handles self-closing tags poorly.
+
+        let phraseClone = phrase.cloneNode(true) as Element;
+        let innerSpan   = document.createElement('span');
+        let attrChance  = ctx.element.getAttribute('chance');
+
+        phraseClone.removeAttribute('id');
+        phraseClone.setAttribute('ref', ref);
+
+        if (attrChance)
+            phraseClone.setAttribute('chance', attrChance);
+
+        if (!ctx.element.parentElement)
+            throw new Error('Expected parent of processed element is missing');
+
+        // Transfer all the phrase's inner elements to the inner span
+        while (phraseClone.firstChild)
+            innerSpan.appendChild(phraseClone.firstChild);
+
+        phraseClone.appendChild(innerSpan);
+
+        // Swap out the currently processed element for the one cloned from phraseset.
+        // Using innerHTML would be easier, however it handles self-closing tags poorly.
+
+        ctx.element.parentElement.replaceChild(phraseClone, ctx.element);
+        ctx.element = phraseClone as Element;
+
+        // Handle collapsible (optional) phrases
         let chance = ctx.element.getAttribute('chance') || '';
 
         if ( !Strings.isNullOrEmpty(chance) )
@@ -110,8 +152,6 @@ class ElementProcessors
             if ( !Random.bool(chanceInt) )
                 ctx.element.setAttribute('collapsed', '');
         }
-
-        ctx.element.innerHTML = `<span>${ctx.element.innerHTML.trim()}</span>`;
     }
 
     /** Picks a phrase from a previously defined phraseset, by its `id` */

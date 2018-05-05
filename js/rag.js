@@ -30,7 +30,7 @@ class ElementProcessors {
         ctx.element.textContent = RAG.database.pickNamed();
     }
     static optional(ctx) {
-        let chance = ctx.element.getAttribute('chance') || '';
+        let chance = ctx.element.getAttribute('chance') || '50';
         if (Strings.isNullOrEmpty(chance))
             chance = '50';
         let chanceInt = parseInt(chance);
@@ -43,16 +43,34 @@ class ElementProcessors {
             else
                 ctx.element.setAttribute('collapsed', '');
         });
-        ctx.element.innerHTML = `<span>${ctx.element.innerHTML.trim()}</span>`;
+        let innerSpan = document.createElement('span');
+        while (ctx.element.firstChild)
+            innerSpan.appendChild(ctx.element.firstChild);
+        ctx.element.appendChild(innerSpan);
     }
     static phrase(ctx) {
         let ref = ctx.element.getAttribute('ref') || '';
         if (Strings.isNullOrEmpty(ref))
             return;
         let phrase = ctx.phraseSet.querySelector('phrase#' + ref);
-        ctx.element.innerHTML = phrase
-            ? phrase.innerHTML
-            : `(UNKNOWN PHRASE: ${ref})`;
+        if (!phrase) {
+            ctx.element.textContent = `(UNKNOWN PHRASE: ${ref})`;
+            return;
+        }
+        let phraseClone = phrase.cloneNode(true);
+        let innerSpan = document.createElement('span');
+        let attrChance = ctx.element.getAttribute('chance');
+        phraseClone.removeAttribute('id');
+        phraseClone.setAttribute('ref', ref);
+        if (attrChance)
+            phraseClone.setAttribute('chance', attrChance);
+        if (!ctx.element.parentElement)
+            throw new Error('Expected parent of processed element is missing');
+        while (phraseClone.firstChild)
+            innerSpan.appendChild(phraseClone.firstChild);
+        phraseClone.appendChild(innerSpan);
+        ctx.element.parentElement.replaceChild(phraseClone, ctx.element);
+        ctx.element = phraseClone;
         let chance = ctx.element.getAttribute('chance') || '';
         if (!Strings.isNullOrEmpty(chance)) {
             ctx.element.addEventListener('click', ev => {
@@ -66,7 +84,6 @@ class ElementProcessors {
             if (!Random.bool(chanceInt))
                 ctx.element.setAttribute('collapsed', '');
         }
-        ctx.element.innerHTML = `<span>${ctx.element.innerHTML.trim()}</span>`;
     }
     static phraseset(ctx) {
         let ref = ctx.element.getAttribute('ref') || '';
@@ -185,6 +202,7 @@ class Phraser {
                 ElementProcessors.time(context);
                 break;
         }
+        element = context.element;
         if (element.firstElementChild)
             this.process(element.firstElementChild);
         if (element.nextElementSibling)
@@ -207,6 +225,7 @@ class ViewController {
         this.btnRecall = DOM.require('#btn_load');
         this.btnOption = DOM.require('#btn_settings');
         this.btnPlay.onclick = () => this.handlePlay();
+        this.btnGenerate.onclick = () => this.handleGenerate();
         this.domSignage.innerHTML = '';
         this.domSignage.appendChild(this.domSignageSpan);
         this.domEditor.textContent = "Please wait...";
@@ -236,6 +255,9 @@ class ViewController {
         RAG.speechSynth.cancel();
         text.split('. ').forEach(segment => RAG.speechSynth.speak(new SpeechSynthesisUtterance(segment)));
         this.setMarquee(text);
+    }
+    handleGenerate() {
+        RAG.phraser.generate();
     }
 }
 class DOM {

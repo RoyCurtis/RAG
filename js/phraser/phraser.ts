@@ -63,6 +63,9 @@ class Phraser
             case 'time':        ElementProcessors.time(context);        break;
         }
 
+        // If a processor replaced the element, make sure to get reference to it
+        element = context.element;
+
         if (element.firstElementChild)
             this.process(element.firstElementChild);
 
