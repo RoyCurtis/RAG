@@ -36,7 +36,7 @@
     <phrase ref="train_full" chance="5"/>
     <phraseset ref="train_layout" chance="5"/>
     <phraseset ref="train_seating" chance="5"/>
-    <phrase ref="platform_wait" chance="50" />.
+    <phrase ref="platform_wait" chance="50" />
   </phrase>
 
   <!-- Train departing from platform -->

@@ -1,10 +1,268 @@
 "use strict";
+class ElementProcessors {
+    static coach(ctx) {
+        ctx.element.textContent = Random.array("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    }
+    static excuse(ctx) {
+        ctx.element.textContent = RAG.database.pickExcuse();
+    }
+    static integer(ctx) {
+        let attrMin = ctx.element.getAttribute('min');
+        let attrMax = ctx.element.getAttribute('max');
+        let attrSingular = ctx.element.getAttribute('singular');
+        let attrPlural = ctx.element.getAttribute('plural');
+        let attrWords = ctx.element.getAttribute('words');
+        if (!attrMin || !attrMax)
+            throw new Error("Integer tag is missing required attributes");
+        let intMin = parseInt(attrMin);
+        let intMax = parseInt(attrMax);
+        let int = Random.int(intMin, intMax);
+        let intStr = attrWords && attrWords.toLowerCase() === 'true'
+            ? Phraser.DIGITS[int]
+            : int.toString();
+        if (int === 1 && attrSingular)
+            intStr += ` ${attrSingular}`;
+        else if (int !== 1 && attrPlural)
+            intStr += ` ${attrPlural}`;
+        ctx.element.textContent = intStr;
+    }
+    static named(ctx) {
+        ctx.element.textContent = RAG.database.pickNamed();
+    }
+    static optional(ctx) {
+        let chance = ctx.element.getAttribute('chance') || '';
+        if (Strings.isNullOrEmpty(chance))
+            chance = '50';
+        let chanceInt = parseInt(chance);
+        if (!Random.bool(chanceInt))
+            ctx.element.setAttribute('collapsed', '');
+        ctx.element.addEventListener('click', ev => {
+            ev.stopPropagation();
+            if (ctx.element.hasAttribute('collapsed'))
+                ctx.element.removeAttribute('collapsed');
+            else
+                ctx.element.setAttribute('collapsed', '');
+        });
+        ctx.element.innerHTML = `<span>${ctx.element.innerHTML.trim()}</span>`;
+    }
+    static phrase(ctx) {
+        let ref = ctx.element.getAttribute('ref') || '';
+        if (Strings.isNullOrEmpty(ref))
+            return;
+        let phrase = ctx.phraseSet.querySelector('phrase#' + ref);
+        ctx.element.innerHTML = phrase
+            ? phrase.innerHTML
+            : `(UNKNOWN PHRASE: ${ref})`;
+        let chance = ctx.element.getAttribute('chance') || '';
+        if (!Strings.isNullOrEmpty(chance)) {
+            ctx.element.addEventListener('click', ev => {
+                ev.stopPropagation();
+                if (ctx.element.hasAttribute('collapsed'))
+                    ctx.element.removeAttribute('collapsed');
+                else
+                    ctx.element.setAttribute('collapsed', '');
+            });
+            let chanceInt = parseInt(chance);
+            if (!Random.bool(chanceInt))
+                ctx.element.setAttribute('collapsed', '');
+        }
+        ctx.element.innerHTML = `<span>${ctx.element.innerHTML.trim()}</span>`;
+    }
+    static phraseset(ctx) {
+        let ref = ctx.element.getAttribute('ref') || '';
+        if (Strings.isNullOrEmpty(ref))
+            return;
+        let phraseset = ctx.phraseSet.querySelector('phraseset#' + ref);
+        if (phraseset) {
+            let phrase = Random.array(phraseset.children);
+            ctx.element.appendChild(phrase.cloneNode(true));
+        }
+        else
+            ctx.element.textContent = `(UNKNOWN PHRASESET: ${ref})`;
+        let chance = ctx.element.getAttribute('chance') || '';
+        if (!Strings.isNullOrEmpty(chance)) {
+            ctx.element.addEventListener('click', ev => {
+                ev.stopPropagation();
+                if (ctx.element.hasAttribute('collapsed'))
+                    ctx.element.removeAttribute('collapsed');
+                else
+                    ctx.element.setAttribute('collapsed', '');
+            });
+            let chanceInt = parseInt(chance);
+            if (!Random.bool(chanceInt))
+                ctx.element.setAttribute('collapsed', '');
+        }
+    }
+    static platform(ctx) {
+        ctx.element.textContent = Random.bool(98)
+            ? Random.int(1, 16).toString()
+            : '0';
+        if (Random.bool(10))
+            ctx.element.textContent += Random.array('ABC');
+    }
+    static service(ctx) {
+        ctx.element.textContent = RAG.database.pickService();
+    }
+    static station(ctx) {
+        ctx.element.textContent = RAG.database.pickStation();
+    }
+    static stationlist(ctx) {
+        let stations = RAG.database.pickStations();
+        let stationList = '';
+        if (stations.length === 1)
+            stationList = (ctx.element.id === 'calling')
+                ? `${stations[0]} only`
+                : stations[0];
+        else {
+            let lastStation = stations.pop();
+            stationList = stations.join(', ');
+            stationList += ` and ${lastStation}`;
+        }
+        ctx.element.textContent = stationList;
+    }
+    static time(ctx) {
+        let hour = Random.int(0, 23).toString().padStart(2, '0');
+        let minute = Random.int(0, 59).toString().padStart(2, '0');
+        ctx.element.textContent = `${hour}:${minute}`;
+    }
+}
+class Phraser {
+    constructor(config) {
+        let iframe = DOM.require(config.phraseSetEmbed);
+        if (!iframe.contentDocument)
+            throw new Error("Configured phraseset element is not an iframe embed");
+        this.phraseSets = iframe.contentDocument;
+    }
+    generate() {
+        let phraseSet = document.createElement('phraseset');
+        phraseSet.setAttribute('ref', 'root');
+        RAG.viewController.setEditor(phraseSet);
+        this.process(phraseSet);
+    }
+    process(element) {
+        if (!element.parentElement)
+            throw new Error(`Phrase element has no parent: '${element}'`);
+        let elementName = element.nodeName.toLowerCase();
+        let context = {
+            element: element,
+            phraseSet: this.phraseSets
+        };
+        switch (elementName) {
+            case 'coach':
+                ElementProcessors.coach(context);
+                break;
+            case 'excuse':
+                ElementProcessors.excuse(context);
+                break;
+            case 'integer':
+                ElementProcessors.integer(context);
+                break;
+            case 'named':
+                ElementProcessors.named(context);
+                break;
+            case 'optional':
+                ElementProcessors.optional(context);
+                break;
+            case 'phrase':
+                ElementProcessors.phrase(context);
+                break;
+            case 'phraseset':
+                ElementProcessors.phraseset(context);
+                break;
+            case 'platform':
+                ElementProcessors.platform(context);
+                break;
+            case 'service':
+                ElementProcessors.service(context);
+                break;
+            case 'station':
+                ElementProcessors.station(context);
+                break;
+            case 'stationlist':
+                ElementProcessors.stationlist(context);
+                break;
+            case 'time':
+                ElementProcessors.time(context);
+                break;
+        }
+        if (element.firstElementChild)
+            this.process(element.firstElementChild);
+        if (element.nextElementSibling)
+            this.process(element.nextElementSibling);
+    }
+}
+Phraser.DIGITS = ['zero', 'one', 'two', 'three', 'four',
+    'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+class ViewController {
+    constructor() {
+        this.signageTimer = 0;
+        this.signageOffset = 0;
+        this.domEditor = DOM.require('#editor');
+        this.domSignage = DOM.require('#signage');
+        this.domToolbar = DOM.require('#toolbar');
+        this.domSignageSpan = document.createElement('span');
+        this.btnPlay = DOM.require('#btn_play');
+        this.btnGenerate = DOM.require('#btn_shuffle');
+        this.btnSave = DOM.require('#btn_save');
+        this.btnRecall = DOM.require('#btn_load');
+        this.btnOption = DOM.require('#btn_settings');
+        this.btnPlay.onclick = () => this.handlePlay();
+        this.domSignage.innerHTML = '';
+        this.domSignage.appendChild(this.domSignageSpan);
+        this.domEditor.textContent = "Please wait...";
+        this.domSignageSpan.textContent = "Please wait...";
+    }
+    setMarquee(msg) {
+        window.cancelAnimationFrame(this.signageTimer);
+        this.domSignageSpan.textContent = msg;
+        this.signageOffset = this.domSignage.clientWidth;
+        let limit = -this.domSignageSpan.clientWidth - 100;
+        let anim = () => {
+            this.signageOffset -= 6;
+            this.domSignageSpan.style.transform = `translateX(${this.signageOffset}px)`;
+            if (this.signageOffset < limit)
+                this.domSignageSpan.style.transform = '';
+            else
+                this.signageTimer = window.requestAnimationFrame(anim);
+        };
+        anim();
+    }
+    setEditor(element) {
+        this.domEditor.innerHTML = '';
+        this.domEditor.appendChild(element);
+    }
+    handlePlay() {
+        let text = DOM.getVisibleText(this.domEditor);
+        RAG.speechSynth.cancel();
+        text.split('. ').forEach(segment => RAG.speechSynth.speak(new SpeechSynthesisUtterance(segment)));
+        this.setMarquee(text);
+    }
+}
+class DOM {
+    static require(query, parent = window.document) {
+        let result = parent.querySelector(query);
+        if (!result)
+            throw new Error(`Required DOM element is missing: '${query}'`);
+        return result;
+    }
+    static getVisibleText(element) {
+        if (element.nodeType === Node.TEXT_NODE)
+            return element.textContent || '';
+        let style = getComputedStyle(element);
+        if (style && style.display === 'none')
+            return '';
+        let text = '';
+        for (let i = 0; i < element.childNodes.length; i++)
+            text += DOM.getVisibleText(element.childNodes[i]);
+        return text;
+    }
+}
 class Random {
     static int(min = 0, max = 1) {
         return Math.floor(Math.random() * (max - min)) + min;
     }
     static array(arr) {
-        let idx = Random.int(0, arr.length - 1);
+        let idx = Random.int(0, arr.length);
         return arr[idx];
     }
     static objectKey(obj) {
@@ -12,6 +270,11 @@ class Random {
     }
     static bool(chance = 50) {
         return Random.int(0, 100) < chance;
+    }
+}
+class Strings {
+    static isNullOrEmpty(str) {
+        return !str || !str.trim();
     }
 }
 class Database {
@@ -57,156 +320,26 @@ class Database {
         return result;
     }
 }
-class DOM {
-    static require(query, document = window.document) {
-        let result = document.querySelector(query);
-        if (!result)
-            throw new Error(`Required DOM element is missing: '${query}'`);
-        return result;
-    }
-}
-class Strings {
-    static isNullOrEmpty(str) {
-        return !str || !str.trim();
-    }
-}
-class Phraser {
-    constructor(config) {
-        this.DIGITS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six',
-            'seven', 'eight', 'nine', 'ten'];
-        let iframe = DOM.require(config.phraseSetEmbed);
-        if (!iframe.contentDocument)
-            throw new Error("Configured phraseset element is not an iframe embed");
-        this.document = iframe.contentDocument;
-        this.rootPhrases = DOM.require('#root', this.document);
-        let setCount = this.document.querySelectorAll('messages > phraseset').length;
-        let rootCount = this.rootPhrases.children.length;
-        console.log("[Phraser] Phrases loaded:");
-        console.log("\tSets:", setCount);
-        console.log("\tRoot phrases:", rootCount);
-    }
-    randomPhrase() {
-        let domEditor = RAG.domEditor;
-        let phrase = Random.array(this.rootPhrases.children);
-        phrase = phrase.cloneNode(true);
-        if (!phrase.firstChild)
-            throw new Error(`Empty phrase: '${phrase}'`);
-        this.process(phrase.firstChild);
-        domEditor.appendChild(phrase);
-    }
-    getPhraseSet(id) {
-        return this.document.querySelector('phraseset#' + id);
-    }
-    process(element) {
-        if (!element.parentElement)
-            throw new Error(`Phrase element has no parent: '${element}'`);
-        let refId = element.attributes
-            ? element.attributes.getNamedItem('ref')
-            : null;
-        switch (element.nodeName.toLowerCase()) {
-            case "excuse":
-                element.textContent = RAG.database.pickExcuse();
-                break;
-            case "integer":
-                if (!element.attributes)
-                    throw new Error("Integer tag is missing required attributes");
-                let attrMin = element.attributes.getNamedItem('min');
-                let attrMax = element.attributes.getNamedItem('max');
-                let attrSingular = element.attributes.getNamedItem('singular');
-                let attrPlural = element.attributes.getNamedItem('plural');
-                let attrWords = element.attributes.getNamedItem('words');
-                if (!attrMin || !attrMax)
-                    throw new Error("Integer tag is missing required attributes");
-                let intMin = parseInt(attrMin.value);
-                let intMax = parseInt(attrMax.value);
-                let int = Random.int(intMin, intMax);
-                let intStr = attrWords && attrWords.value.toLowerCase() === 'true'
-                    ? this.DIGITS[int]
-                    : int.toString();
-                if (int === 1 && attrSingular)
-                    intStr += ` ${attrSingular.value}`;
-                else if (int !== 1 && attrPlural)
-                    intStr += ` ${attrPlural.value}`;
-                element.textContent = intStr;
-                break;
-            case "letter":
-                element.textContent = Random.array("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-                break;
-            case "named":
-                element.textContent = RAG.database.pickNamed();
-                break;
-            case "phrase":
-                if (!refId)
-                    break;
-                let phrase = this.document.querySelector('phrase#' + refId.value);
-                if (phrase) {
-                    let newPhrase = phrase.cloneNode(true);
-                    element.parentElement.replaceChild(newPhrase, element);
-                    element = newPhrase;
-                }
-                else
-                    element.textContent = `(UNKNOWN PHRASE: ${refId.value})`;
-                break;
-            case "phraseset":
-                if (!refId)
-                    break;
-                let phraseset = this.getPhraseSet(refId.value);
-                if (phraseset) {
-                    let phrase = Random.array(phraseset.children);
-                    element.appendChild(phrase.cloneNode(true));
-                }
-                else
-                    element.textContent = `(UNKNOWN PHRASE: ${refId.value})`;
-                break;
-            case "platform":
-                element.textContent = Random.bool(98)
-                    ? Random.int(1, 16).toString()
-                    : '0';
-                if (Random.bool(10))
-                    element.textContent += Random.array('ABC');
-                break;
-            case "service":
-                element.textContent = RAG.database.pickService();
-                break;
-            case "station":
-                element.textContent = RAG.database.pickStation();
-                break;
-            case "stationlist":
-                let stations = RAG.database.pickStations();
-                let stationList = '';
-                if (stations.length === 1)
-                    stationList = element.id === 'calling'
-                        ? `${stations[0]} only`
-                        : stations[0];
-                else {
-                    let lastStation = stations.pop();
-                    stationList = stations.join(', ');
-                    stationList += ` and ${lastStation}`;
-                }
-                element.textContent = stationList;
-                break;
-            case "time":
-                let hour = Random.int(0, 23).toString().padStart(2, '0');
-                let minute = Random.int(0, 59).toString().padStart(2, '0');
-                element.textContent = `${hour}:${minute}`;
-                break;
-        }
-        if (element.firstChild)
-            this.process(element.firstChild);
-        if (element.nextSibling)
-            this.process(element.nextSibling);
-    }
-}
 class RAG {
     static main(config) {
-        RAG.domSignage = DOM.require('.signage');
-        RAG.domEditor = DOM.require('.editor');
-        RAG.domSignage.textContent = "Please wait...";
-        RAG.domEditor.textContent = "";
+        RAG.viewController = new ViewController();
         RAG.database = new Database(config);
         RAG.phraser = new Phraser(config);
-        RAG.domSignage.textContent = "Hello, world!";
-        RAG.phraser.randomPhrase();
+        RAG.speechSynth = window.speechSynthesis;
+        RAG.viewController.setMarquee("Welcome to RAG.");
+        RAG.phraser.generate();
+        window.onbeforeunload = _ => {
+            RAG.speechSynth.cancel();
+        };
+    }
+    static panic(msg = "Unknown error") {
+        msg = `PANIC: ${msg} (see console)`;
+        try {
+            this.viewController.setMarquee(msg);
+        }
+        catch (_) {
+            document.body.innerHTML = `<div class="panic">${msg}</div>`;
+        }
     }
 }
 //# sourceMappingURL=rag.js.map

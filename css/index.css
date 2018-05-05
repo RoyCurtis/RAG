@@ -1,4 +1,21 @@
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 @import "font/5by7.css";
+#signage {
+  border: 0.5em solid;
+  border-color: #222 #444 #444 #222;
+  background: #000;
+  color: #ffa500;
+  font-family: "5by7", sans-serif;
+  font-size: 3em;
+  min-height: 131px;
+  overflow: hidden;
+  padding: 0.5em;
+  position: relative;
+  white-space: nowrap;
+}
+#signage > span {
+  position: absolute;
+}
 * {
   margin: 0;
   padding: 0;
@@ -14,25 +31,116 @@ body {
   display: flex;
   flex-direction: column;
 }
-.signage {
-  border: 0.5em #666 inset;
-  background: #000;
+#toolbar {
+  background: linear-gradient(to bottom, #444 50%, #222 100%);
+  display: flex;
+  justify-content: center;
+  min-height: 2.5em;
+  padding-bottom: 0.5em;
+}
+#toolbar > button {
+  background: #222;
+  border: none;
+  box-shadow: 0 0 8px #222;
+  color: #f5f5f5;
   cursor: pointer;
-  color: #ffa500;
-  font-family: "5by7", sans-serif;
-  font-size: 3em;
-  overflow: auto;
+  fill: #f5f5f5;
+  font-weight: bold;
+  list-style: none;
+  margin: 0 1em;
   padding: 0.5em;
 }
-.editor {
+#toolbar > button:active {
+  color: #aaa;
+  box-shadow: 0 0 4px #000 inset;
+  fill: #aaa;
+}
+#toolbar > button svg {
+  width: 24px;
+  height: 24px;
+}
+#editor {
   background: #222;
   color: #f5f5f5;
   flex-grow: 1;
   font-family: sans-serif;
   font-size: 3em;
   padding: 0.5em;
+  overflow: auto;
 }
-#phraseset {
+iframe {
   display: none;
+}
+#editor excuse,
+#editor integer,
+#editor coach,
+#editor named,
+#editor optional,
+#editor phrase[ref],
+#editor phraseset,
+#editor platform,
+#editor service,
+#editor station,
+#editor stationlist,
+#editor time {
+  border: 2px solid transparent;
+  border-top: none;
+  border-bottom: none;
+  border-radius: 8px;
+  padding: 0 4px;
+  margin: 0 4px;
+}
+#editor excuse:hover,
+#editor integer:hover,
+#editor coach:hover,
+#editor named:hover,
+#editor optional:hover,
+#editor phrase[ref]:hover,
+#editor phraseset:hover,
+#editor platform:hover,
+#editor service:hover,
+#editor station:hover,
+#editor stationlist:hover,
+#editor time:hover {
+  background: rgba(128,128,128,0.1);
+  border-color: #fff;
+}
+#editor optional,
+#editor phraseset[chance],
+#editor phrase[chance] {
+  cursor: pointer;
+}
+#editor optional[collapsed],
+#editor phraseset[chance][collapsed],
+#editor phrase[chance][collapsed] {
+  border: none;
+  padding: 0;
+}
+#editor optional[collapsed] *,
+#editor phraseset[chance][collapsed] *,
+#editor phrase[chance][collapsed] * {
+  display: none;
+}
+#editor optional[collapsed]:active::before,
+#editor phraseset[chance][collapsed]:active::before,
+#editor phrase[chance][collapsed]:active::before {
+  color: #aaa;
+  box-shadow: 0 0 4px #000 inset;
+  fill: #aaa;
+}
+#editor optional[collapsed]::before,
+#editor phraseset[chance][collapsed]::before,
+#editor phrase[chance][collapsed]::before {
+  background: #222;
+  border: none;
+  box-shadow: 0 0 8px #222;
+  color: #f5f5f5;
+  cursor: pointer;
+  fill: #f5f5f5;
+  content: '⋮';
+  display: inline-block;
+  font-size: x-large;
+  padding: 2px;
+  transform: translateY(-9px);
 }
 /*# sourceMappingURL=css/index.css.map */
