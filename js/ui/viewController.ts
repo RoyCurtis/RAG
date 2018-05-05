@@ -30,7 +30,8 @@ class ViewController
         this.btnRecall   = DOM.require('#btn_load');
         this.btnOption   = DOM.require('#btn_settings');
 
-        this.btnPlay.onclick = () => this.handlePlay();
+        this.btnPlay.onclick     = () => this.handlePlay();
+        this.btnGenerate.onclick = () => this.handleGenerate();
 
         this.domSignage.innerHTML = '';
         this.domSignage.appendChild(this.domSignageSpan);
@@ -81,5 +82,10 @@ class ViewController
         );
 
         this.setMarquee(text);
+    }
+
+    private handleGenerate() : void
+    {
+        RAG.phraser.generate();
     }
 }
