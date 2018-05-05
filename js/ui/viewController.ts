@@ -8,6 +8,12 @@ class ViewController
     private domSignageSpan : HTMLElement;
     private domToolbar     : Element;
 
+    private btnPlay     : HTMLElement;
+    private btnGenerate : HTMLElement;
+    private btnSave     : HTMLElement;
+    private btnRecall   : HTMLElement;
+    private btnOption   : HTMLElement;
+
     private signageTimer  : number = 0;
     private signageOffset : number = 0;
 
@@ -17,6 +23,14 @@ class ViewController
         this.domSignage     = DOM.require('#signage');
         this.domToolbar     = DOM.require('#toolbar');
         this.domSignageSpan = document.createElement('span');
+
+        this.btnPlay     = DOM.require('#btn_play');
+        this.btnGenerate = DOM.require('#btn_shuffle');
+        this.btnSave     = DOM.require('#btn_save');
+        this.btnRecall   = DOM.require('#btn_load');
+        this.btnOption   = DOM.require('#btn_settings');
+
+        this.btnPlay.onclick = () => this.handlePlay();
 
         this.domSignage.innerHTML = '';
         this.domSignage.appendChild(this.domSignageSpan);
@@ -38,7 +52,7 @@ class ViewController
         let limit = -this.domSignageSpan.clientWidth - 100;
         let anim  = () =>
         {
-            this.signageOffset -= 5;
+            this.signageOffset -= 6;
             this.domSignageSpan.style.transform = `translateX(${this.signageOffset}px)`;
 
             if (this.signageOffset < limit)
@@ -55,5 +69,17 @@ class ViewController
     {
         this.domEditor.innerHTML = '';
         this.domEditor.appendChild(element);
+    }
+
+    private handlePlay() : void
+    {
+        let text = DOM.getVisibleText(this.domEditor);
+
+        RAG.speechSynth.cancel();
+        text.split('. ').forEach(segment =>
+            RAG.speechSynth.speak( new SpeechSynthesisUtterance(segment) )
+        );
+
+        this.setMarquee(text);
     }
 }
