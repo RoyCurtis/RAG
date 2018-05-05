@@ -220,11 +220,13 @@ class ViewController {
         this.domToolbar = DOM.require('#toolbar');
         this.domSignageSpan = document.createElement('span');
         this.btnPlay = DOM.require('#btn_play');
+        this.btnStop = DOM.require('#btn_stop');
         this.btnGenerate = DOM.require('#btn_shuffle');
         this.btnSave = DOM.require('#btn_save');
         this.btnRecall = DOM.require('#btn_load');
         this.btnOption = DOM.require('#btn_settings');
         this.btnPlay.onclick = () => this.handlePlay();
+        this.btnStop.onclick = () => this.handleStop();
         this.btnGenerate.onclick = () => this.handleGenerate();
         this.btnSave.onclick = () => alert('Unimplemented');
         this.btnRecall.onclick = () => alert('Unimplemented');
@@ -249,15 +251,24 @@ class ViewController {
         };
         anim();
     }
+    stopMarquee() {
+        window.cancelAnimationFrame(this.signageTimer);
+        this.domSignageSpan.style.transform = '';
+    }
     setEditor(element) {
         this.domEditor.innerHTML = '';
         this.domEditor.appendChild(element);
     }
     handlePlay() {
         let text = DOM.getVisibleText(this.domEditor);
+        let parts = text.trim().split(/\.\s/i);
         RAG.speechSynth.cancel();
-        text.split('. ').forEach(segment => RAG.speechSynth.speak(new SpeechSynthesisUtterance(segment)));
+        parts.forEach(segment => RAG.speechSynth.speak(new SpeechSynthesisUtterance(segment)));
         this.setMarquee(text);
+    }
+    handleStop() {
+        RAG.speechSynth.cancel();
+        this.stopMarquee();
     }
     handleGenerate() {
         RAG.phraser.generate();

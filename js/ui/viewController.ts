@@ -9,6 +9,7 @@ class ViewController
     private domToolbar     : Element;
 
     private btnPlay     : HTMLElement;
+    private btnStop     : HTMLElement;
     private btnGenerate : HTMLElement;
     private btnSave     : HTMLElement;
     private btnRecall   : HTMLElement;
@@ -25,12 +26,14 @@ class ViewController
         this.domSignageSpan = document.createElement('span');
 
         this.btnPlay     = DOM.require('#btn_play');
+        this.btnStop     = DOM.require('#btn_stop');
         this.btnGenerate = DOM.require('#btn_shuffle');
         this.btnSave     = DOM.require('#btn_save');
         this.btnRecall   = DOM.require('#btn_load');
         this.btnOption   = DOM.require('#btn_settings');
 
         this.btnPlay.onclick     = () => this.handlePlay();
+        this.btnStop.onclick     = () => this.handleStop();
         this.btnGenerate.onclick = () => this.handleGenerate();
         this.btnSave.onclick     = () => alert('Unimplemented');
         this.btnRecall.onclick   = () => alert('Unimplemented');
@@ -68,6 +71,12 @@ class ViewController
         anim();
     }
 
+    public stopMarquee() : void
+    {
+        window.cancelAnimationFrame(this.signageTimer);
+        this.domSignageSpan.style.transform = '';
+    }
+
     /** Sets the phrase editor to the given phrase element */
     public setEditor(element: Element) : void
     {
@@ -77,14 +86,25 @@ class ViewController
 
     private handlePlay() : void
     {
-        let text = DOM.getVisibleText(this.domEditor);
+        // Note: It would be nice to have the play button change to the stop button and
+        // automatically change back. However, speech's 'onend' event was found to be
+        // unreliable, so I decided to keep play and stop separate.
+
+        let text  = DOM.getVisibleText(this.domEditor);
+        let parts = text.trim().split(/\.\s/i);
 
         RAG.speechSynth.cancel();
-        text.split('. ').forEach(segment =>
+        parts.forEach( segment =>
             RAG.speechSynth.speak( new SpeechSynthesisUtterance(segment) )
         );
 
         this.setMarquee(text);
+    }
+
+    private handleStop() : void
+    {
+        RAG.speechSynth.cancel();
+        this.stopMarquee();
     }
 
     private handleGenerate() : void
