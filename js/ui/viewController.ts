@@ -32,6 +32,9 @@ class ViewController
 
         this.btnPlay.onclick     = () => this.handlePlay();
         this.btnGenerate.onclick = () => this.handleGenerate();
+        this.btnSave.onclick     = () => alert('Unimplemented');
+        this.btnRecall.onclick   = () => alert('Unimplemented');
+        this.btnOption.onclick   = () => alert('Unimplemented');
 
         this.domSignage.innerHTML = '';
         this.domSignage.appendChild(this.domSignageSpan);
