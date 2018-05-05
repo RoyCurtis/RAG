@@ -3,28 +3,55 @@
 /** Manages UI elements and their logic */
 class ViewController
 {
-    public isReady: boolean = false;
+    private domEditor      : Element;
+    private domSignage     : Element;
+    private domSignageSpan : HTMLElement;
+    private domToolbar     : Element;
 
-    private domEditor  : Element;
-    private domSignage : Element;
-    private domToolbar : Element;
+    private signageTimer  : number = 0;
+    private signageOffset : number = 0;
 
     constructor()
     {
-        this.domEditor  = DOM.require('#editor');
-        this.domSignage = DOM.require('#signage');
-        this.domToolbar = DOM.require('#toolbar');
+        this.domEditor      = DOM.require('#editor');
+        this.domSignage     = DOM.require('#signage');
+        this.domToolbar     = DOM.require('#toolbar');
+        this.domSignageSpan = document.createElement('span');
 
-        this.domEditor.textContent  = "Please wait...";
-        this.domSignage.textContent = "Please wait...";
+        this.domSignage.innerHTML = '';
+        this.domSignage.appendChild(this.domSignageSpan);
+
+        this.domEditor.textContent      = "Please wait...";
+        this.domSignageSpan.textContent = "Please wait...";
     }
 
-    public setMarquee(msg: string)
+    /** Sets the message on the scrolling marquee, and starts animating it */
+    public setMarquee(msg: string) : void
     {
-        this.domSignage.innerHTML = `<span>${msg}</span>`;
+        window.cancelAnimationFrame(this.signageTimer);
+
+        this.domSignageSpan.textContent = msg;
+        this.signageOffset              = this.domSignage.clientWidth;
+
+        // I tried to use CSS animation for this, but couldn't figure out how for a
+        // dynamically sized element like the span.
+        let limit = -this.domSignageSpan.clientWidth - 100;
+        let anim  = () =>
+        {
+            this.signageOffset -= 5;
+            this.domSignageSpan.style.transform = `translateX(${this.signageOffset}px)`;
+
+            if (this.signageOffset < limit)
+                this.domSignageSpan.style.transform = '';
+            else
+                this.signageTimer = window.requestAnimationFrame(anim);
+        };
+
+        anim();
     }
 
-    setEditor(element: Element)
+    /** Sets the phrase editor to the given phrase element */
+    public setEditor(element: Element) : void
     {
         this.domEditor.innerHTML = '';
         this.domEditor.appendChild(element);

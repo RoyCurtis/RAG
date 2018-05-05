@@ -25,7 +25,7 @@ class RAG
 
         // Begin
 
-        RAG.viewController.setMarquee("this is a scroll test");
+        RAG.viewController.setMarquee("Welcome to RAG.");
         RAG.phraser.generate();
     }
 
@@ -33,9 +33,7 @@ class RAG
     {
         msg = `PANIC: ${msg} (see console)`;
 
-        if (this.viewController && this.viewController.isReady)
-            this.viewController.setMarquee(msg);
-        else
-            document.body.innerHTML = `<div class="panic">${msg}</div>`;
+        try       { this.viewController.setMarquee(msg); }
+        catch (_) { document.body.innerHTML = `<div class="panic">${msg}</div>`; }
     }
 }
