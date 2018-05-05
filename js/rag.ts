@@ -9,8 +9,8 @@ class RAG
     public static phraser        : Phraser;
     /** Gets the view controller, which manages UI interaction */
     public static viewController : ViewController;
-
-
+    /** Gets the speech synthesizer */
+    public static speechSynth    : SpeechSynthesis;
 
     /**
      * Entry point for RAG, to be called from Javascript.
@@ -22,11 +22,17 @@ class RAG
         RAG.viewController = new ViewController();
         RAG.database       = new Database(config);
         RAG.phraser        = new Phraser(config);
+        RAG.speechSynth    = window.speechSynthesis;
 
         // Begin
 
         RAG.viewController.setMarquee("Welcome to RAG.");
         RAG.phraser.generate();
+
+        window.onbeforeunload = _ =>
+        {
+            RAG.speechSynth.cancel();
+        };
     }
 
     public static panic(msg: string = "Unknown error")
