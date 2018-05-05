@@ -22,10 +22,12 @@ pressable()
   box-shadow  0 0 8px #222
   color       whitesmoke
   cursor      pointer
+  fill        whitesmoke
 
 activePressable()
   color      #AAA
   box-shadow 0 0 4px #000 inset
+  fill       #AAA
 
 // Parts
 
@@ -35,7 +37,7 @@ body
   flex-direction column
 
 #toolbar
-  background      #444
+  background      linear-gradient(to bottom, #444 50%, #222 100%)
   display         flex
   justify-content center
   min-height      2.5em
@@ -50,6 +52,10 @@ body
 
   &:active
     activePressable()
+
+  svg
+    width  24px
+    height 24px
 
 #editor
   background  #222
