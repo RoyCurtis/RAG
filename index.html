@@ -42,7 +42,7 @@
     function init()
     {
       RAG.main({
-        phraseSetEmbed: "#phraseset",
+        phraseSetEmbed: '#nr_phraseset',
         excusesData:    DATA_EXCUSES,
         namedData:      DATA_NAMED,
         servicesData:   DATA_SERVICES,
@@ -53,7 +53,7 @@
 
   <!-- National Rail phrase sets -->
   <!-- Has to be down here, so the phraseset can load synchronously. -->
-  <iframe id="phraseset" src="data/phrases.xml" onload="init()"></iframe>
+  <iframe id="nr_phraseset" src="data/phrases.xml" onload="init()"></iframe>
 </scripts>
 
 </html>

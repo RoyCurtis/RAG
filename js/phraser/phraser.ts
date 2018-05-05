@@ -25,11 +25,10 @@ class Phraser
     /** Generates a random phrase and loads it into the editor */
     public generate()
     {
-        let domEditor = RAG.domEditor;
         let phraseSet = document.createElement('phraseset');
 
         phraseSet.setAttribute('ref', 'root');
-        domEditor.appendChild(phraseSet);
+        RAG.viewController.setEditor(phraseSet);
 
         this.process(phraseSet as Element);
     }

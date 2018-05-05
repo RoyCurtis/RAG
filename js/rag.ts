@@ -4,12 +4,13 @@
 class RAG
 {
     /** Gets the database manager, which holds station and train data */
-    public static database : Database;
+    public static database       : Database;
     /** Gets the phrase manager, which generates HTML phrases from XML */
-    public static phraser  : Phraser;
+    public static phraser        : Phraser;
+    /** Gets the view controller, which manages UI interaction */
+    public static viewController : ViewController;
 
-    public static domSignage : Element;
-    public static domEditor  : Element;
+
 
     /**
      * Entry point for RAG, to be called from Javascript.
@@ -18,22 +19,13 @@ class RAG
      */
     public static main(config: RAGConfig)
     {
-        // DOM setup
-
-        RAG.domSignage = DOM.require('.signage');
-        RAG.domEditor  = DOM.require('.editor');
-
-        RAG.domSignage.textContent = "Please wait...";
-        RAG.domEditor.textContent  = "";
-
-        // Manager setup
-
-        RAG.database = new Database(config);
-        RAG.phraser  = new Phraser(config);
+        RAG.viewController = new ViewController();
+        RAG.database       = new Database(config);
+        RAG.phraser        = new Phraser(config);
 
         // Begin
 
-        RAG.domSignage.textContent = "Hello, world!";
+        RAG.viewController.setMarquee("this is a scroll test");
         RAG.phraser.generate();
     }
 }
