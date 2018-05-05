@@ -28,4 +28,14 @@ class RAG
         RAG.viewController.setMarquee("this is a scroll test");
         RAG.phraser.generate();
     }
+
+    public static panic(msg: string = "Unknown error")
+    {
+        msg = `PANIC: ${msg} (see console)`;
+
+        if (this.viewController && this.viewController.isReady)
+            this.viewController.setMarquee(msg);
+        else
+            document.body.innerHTML = `<div class="panic">${msg}</div>`;
+    }
 }
