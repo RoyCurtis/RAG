@@ -61,7 +61,8 @@
   </phrase>
 
   <phrase>
-    We are sorry that services are subject to delay because of <excuse/>.
+    We are sorry that services are subject to delay because of <excuse/>
+    <optional> <phraseset ref="at_near"/> <station/></optional>.
     <phraseset ref="general_apology_delay" chance="50"/>
   </phrase>
 
@@ -240,7 +241,7 @@
 
 <phrase id="excuse">
   <phraseset ref="excuse_pre"/>due to <excuse/>
-  <optional chance="50"> <phraseset ref="at_near"/> <station/></optional>.
+  <optional> <phraseset ref="at_near"/> <station/></optional>.
 </phrase>
 
 <phraseset id="excuse_or_wait">
