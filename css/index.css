@@ -74,6 +74,18 @@ body {
 iframe {
   display: none;
 }
+.panic {
+  background: #c21d1d;
+  color: #fff;
+  flex-grow: 1;
+  padding: 1em;
+}
+.panic h1 {
+  font-style: italic;
+}
+.panic p {
+  margin: 1em;
+}
 #editor excuse,
 #editor integer,
 #editor coach,
