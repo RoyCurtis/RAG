@@ -225,11 +225,11 @@
     is delayed
     <optional>
       by approximately <integer min="5" max="120" plural="minutes"/>
-    </optional><phraseset ref="excuse_or_wait" chance="50"/>
+    </optional><phraseset ref="excuse_or_wait" chance="50"/>.
     <phraseset ref="service_apology_delay" chance="50"/>
   </phrase>
   <phrase>
-    has been cancelled <phraseset ref="excuse_or_wait" chance="50"/>
+    has been cancelled <phraseset ref="excuse_or_wait" chance="50"/>.
     <phraseset ref="service_apology" chance="50"/>
   </phrase>
 </phraseset>
@@ -241,7 +241,7 @@
 
 <phrase id="excuse">
   <phraseset ref="excuse_pre"/>due to <excuse/>
-  <optional> <phraseset ref="at_near"/> <station/></optional>.
+  <optional> <phraseset ref="at_near"/> <station/></optional>
 </phrase>
 
 <phraseset id="excuse_or_wait">

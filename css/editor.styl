@@ -1,0 +1,50 @@
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+
+#editor
+  background  #222
+  flex-grow   1
+  font-family sans-serif
+  font-size   3em
+  padding     0.5em
+  overflow-x  hidden
+  overflow-y  auto
+
+  // All selectable elements
+  excuse, integer, coach, named, optional, phrase[ref], phraseset, platform, service,
+  station, stationlist, time
+    border        2px solid transparent
+    border-top    none
+    border-bottom none
+    border-radius 8px
+    padding       0 4px
+    margin        0 4px
+
+    &:hover
+      background   rgba(128, 128, 128, 0.1)
+      border-color white
+
+  // Optional elements
+  optional, phraseset[chance], phrase[chance], platform
+    cursor pointer
+
+    &[editing]
+      background #CC7E00
+      color      white
+
+    &[collapsed]
+      border  none
+      padding 0
+
+      *
+        display none
+
+      &:active::before
+        activePressable()
+
+      &::before
+        pressable()
+        content '⋮'
+        display inline-block
+        font-size x-large
+        padding 2px
+        transform translateY(-9px)

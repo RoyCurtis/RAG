@@ -1,6 +1,8 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 @import "font/5by7.css"
+@import "dialogs.styl"
+@import "editor.styl"
 @import "signage.styl"
 
 // CSS reset
@@ -20,9 +22,7 @@ pressable()
   background  #222
   border      none
   box-shadow  0 0 8px #222
-  color       whitesmoke
   cursor      pointer
-  fill        whitesmoke
 
 activePressable()
   color      #AAA
@@ -36,6 +36,8 @@ activePressable()
 
 body
   background     black
+  color          whitesmoke
+  fill           whitesmoke
   display        flex
   flex-direction column
 
@@ -60,21 +62,11 @@ body
     width  24px
     height 24px
 
-#editor
-  background  #222
-  color       whitesmoke
-  flex-grow   1
-  font-family sans-serif
-  font-size   3em
-  padding     0.5em
-  overflow    auto
-
 iframe
   display none
 
 .panic
   background #C21D1D
-  color      white
   flex-grow  1
   padding    1em
 
@@ -83,44 +75,3 @@ iframe
 
   p
     margin 1em
-
-// Editor
-
-#editor
-
-  // All selectable elements
-  excuse, integer, coach, named, optional, phrase[ref], phraseset, platform, service,
-  station, stationlist, time
-    border        2px solid transparent
-    border-top    none
-    border-bottom none
-    border-radius 8px
-    padding       0 4px
-    margin        0 4px
-
-    &:hover
-      background   rgba(128, 128, 128, 0.1)
-      border-color white
-
-  // Optional elements
-  optional, phraseset[chance], phrase[chance]
-    cursor pointer
-
-    &[collapsed]
-      border  none
-      //margin  0
-      padding 0
-
-      *
-        display none
-
-      &:active::before
-        activePressable()
-
-      &::before
-        pressable()
-        content '⋮'
-        display inline-block
-        font-size x-large
-        padding 2px
-        transform translateY(-9px)

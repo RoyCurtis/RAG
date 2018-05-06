@@ -129,7 +129,7 @@ class ElementProcessors
         // Using innerHTML would be easier, however it handles self-closing tags poorly.
 
         ctx.element.parentElement.replaceChild(phraseClone, ctx.element);
-        ctx.element = phraseClone as Element;
+        ctx.element = phraseClone as HTMLElement;
 
         // Handle collapsible (optional) phrases
         let chance = ctx.element.getAttribute('chance') || '';
@@ -196,7 +196,23 @@ class ElementProcessors
     /** Gets the current platform number */
     public static platform(ctx: PhraseContext)
     {
-        ctx.element.textContent = ctx.state.platform;
+        ctx.element.addEventListener('click', ev =>
+        {
+            ev.stopPropagation();
+            ctx.element.setAttribute('editing', 'true');
+
+            let platEditor = document.getElementById('platformPicker');
+            let dialogX    = ctx.element.clientLeft;
+            let dialogY    = ctx.element.clientTop;
+
+            if (!platEditor) return;
+
+            platEditor.classList.remove('hidden');
+            platEditor.style.transform = `translate(${dialogX}px, ${dialogY}px`;
+
+        }, true);
+
+        ctx.element.textContent = RAG.state.platform;
     }
 
     /** Picks a rail network name */

@@ -11,38 +11,58 @@
 </head>
 
 <body>
+  <!-- The electronic scrolling text board at the top -->
   <div id="signage">
     Is Javascript enabled?
   </div>
 
+  <!-- Toolbar of RAG operations -->
   <menu id="toolbar">
-    <button tabindex="1" id="btn_play" title="Play phrase">
+    <button tabindex="1" id="btnPlay" title="Play phrase">
       <svg class="play"><use xlink:href="css/icons/icoMoon.svg#icon-play"></use></svg>
     </button>
 
-    <button tabindex="1" id="btn_stop" title="Stop playing phrase">
+    <button tabindex="1" id="btnStop" title="Stop playing phrase">
       <svg class="stop"><use xlink:href="css/icons/icoMoon.svg#icon-stop"></use></svg>
     </button>
 
-    <button tabindex="2" id="btn_shuffle" title="Generate random phrase">
+    <button tabindex="2" id="btnShuffle" title="Generate random phrase">
       <svg><use xlink:href="css/icons/icoMoon.svg#icon-shuffle"></use></svg>
     </button>
 
-    <button tabindex="3" id="btn_save" title="Save phrase to storage">
+    <button tabindex="3" id="btnSave" title="Save phrase to storage">
       <svg><use xlink:href="css/icons/icoMoon.svg#icon-save"></use></svg>
     </button>
 
-    <button tabindex="4" id="btn_load" title="Recall phrase from storage">
+    <button tabindex="4" id="btnLoad" title="Recall phrase from storage">
       <svg><use xlink:href="css/icons/icoMoon.svg#icon-recall"></use></svg>
     </button>
 
-    <button tabindex="5" id="btn_settings" title="Open settings">
+    <button tabindex="5" id="btnSettings" title="Open settings">
       <svg><use xlink:href="css/icons/icoMoon.svg#icon-settings"></use></svg>
     </button>
   </menu>
 
+  <!-- The phrase editor -->
   <div id="editor">
     Is Javascript enabled?
+  </div>
+
+  <!-- UI definitions for phrase element editor dialogs -->
+
+  <div id="platformPicker" class="dialog hidden">
+    <header>Pick a platform</header>
+
+    <form>
+      <input id="platformNumber" type="number" title="Platform number" min="0" max="99">
+
+      <select id="platformLetter" name="text" title="Optional platform letter">
+        <option value=""></option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+      </select>
+    </form>
   </div>
 </body>
 
@@ -60,7 +80,7 @@
     function init()
     {
       RAG.main({
-        phraseSetEmbed: '#nr_phraseset',
+        phraseSetEmbed: '#nrPhraseset',
         excusesData:    DATA_EXCUSES,
         namedData:      DATA_NAMED,
         servicesData:   DATA_SERVICES,
@@ -71,7 +91,7 @@
 
   <!-- National Rail phrase sets -->
   <!-- Has to be down here, so the phraseset can load synchronously. -->
-  <iframe id="nr_phraseset" src="data/phrases.xml" onload="init()"></iframe>
+  <iframe id="nrPhraseset" src="data/phrases.xml" onload="init()"></iframe>
 </scripts>
 
 </html>

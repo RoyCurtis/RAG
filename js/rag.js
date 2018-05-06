@@ -111,7 +111,18 @@ class ElementProcessors {
         }
     }
     static platform(ctx) {
-        ctx.element.textContent = ctx.state.platform;
+        ctx.element.addEventListener('click', ev => {
+            ev.stopPropagation();
+            ctx.element.setAttribute('editing', 'true');
+            let platEditor = document.getElementById('platformPicker');
+            let dialogX = ctx.element.clientLeft;
+            let dialogY = ctx.element.clientTop;
+            if (!platEditor)
+                return;
+            platEditor.classList.remove('hidden');
+            platEditor.style.transform = `translate(${dialogX}px, ${dialogY}px`;
+        }, true);
+        ctx.element.textContent = RAG.state.platform;
     }
     static service(ctx) {
         ctx.element.textContent = RAG.database.pickService();
@@ -158,8 +169,7 @@ class Phraser {
         let elementName = element.nodeName.toLowerCase();
         let context = {
             element: element,
-            phraseSet: this.phraseSets,
-            state: RAG.state
+            phraseSet: this.phraseSets
         };
         switch (elementName) {
             case 'coach':
@@ -216,12 +226,12 @@ class ViewController {
         this.domSignage = DOM.require('#signage');
         this.domToolbar = DOM.require('#toolbar');
         this.domSignageSpan = document.createElement('span');
-        this.btnPlay = DOM.require('#btn_play');
-        this.btnStop = DOM.require('#btn_stop');
-        this.btnGenerate = DOM.require('#btn_shuffle');
-        this.btnSave = DOM.require('#btn_save');
-        this.btnRecall = DOM.require('#btn_load');
-        this.btnOption = DOM.require('#btn_settings');
+        this.btnPlay = DOM.require('#btnPlay');
+        this.btnStop = DOM.require('#btnStop');
+        this.btnGenerate = DOM.require('#btnShuffle');
+        this.btnSave = DOM.require('#btnSave');
+        this.btnRecall = DOM.require('#btnLoad');
+        this.btnOption = DOM.require('#btnSettings');
         this.btnPlay.onclick = () => this.handlePlay();
         this.btnStop.onclick = () => this.handleStop();
         this.btnGenerate.onclick = () => RAG.generate();

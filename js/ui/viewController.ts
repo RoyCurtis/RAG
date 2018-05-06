@@ -25,12 +25,12 @@ class ViewController
         this.domToolbar     = DOM.require('#toolbar');
         this.domSignageSpan = document.createElement('span');
 
-        this.btnPlay     = DOM.require('#btn_play');
-        this.btnStop     = DOM.require('#btn_stop');
-        this.btnGenerate = DOM.require('#btn_shuffle');
-        this.btnSave     = DOM.require('#btn_save');
-        this.btnRecall   = DOM.require('#btn_load');
-        this.btnOption   = DOM.require('#btn_settings');
+        this.btnPlay     = DOM.require('#btnPlay');
+        this.btnStop     = DOM.require('#btnStop');
+        this.btnGenerate = DOM.require('#btnShuffle');
+        this.btnSave     = DOM.require('#btnSave');
+        this.btnRecall   = DOM.require('#btnLoad');
+        this.btnOption   = DOM.require('#btnSettings');
 
         this.btnPlay.onclick     = () => this.handlePlay();
         this.btnStop.onclick     = () => this.handleStop();
