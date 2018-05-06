@@ -111,11 +111,7 @@ class ElementProcessors {
         }
     }
     static platform(ctx) {
-        ctx.element.textContent = Random.bool(98)
-            ? Random.int(1, 16).toString()
-            : '0';
-        if (Random.bool(10))
-            ctx.element.textContent += Random.array('ABC');
+        ctx.element.textContent = ctx.state.platform;
     }
     static service(ctx) {
         ctx.element.textContent = RAG.database.pickService();
@@ -162,7 +158,8 @@ class Phraser {
         let elementName = element.nodeName.toLowerCase();
         let context = {
             element: element,
-            phraseSet: this.phraseSets
+            phraseSet: this.phraseSets,
+            state: RAG.state
         };
         switch (elementName) {
             case 'coach':
@@ -227,7 +224,7 @@ class ViewController {
         this.btnOption = DOM.require('#btn_settings');
         this.btnPlay.onclick = () => this.handlePlay();
         this.btnStop.onclick = () => this.handleStop();
-        this.btnGenerate.onclick = () => this.handleGenerate();
+        this.btnGenerate.onclick = () => RAG.generate();
         this.btnSave.onclick = () => alert('Unimplemented');
         this.btnRecall.onclick = () => alert('Unimplemented');
         this.btnOption.onclick = () => alert('Unimplemented');
@@ -269,9 +266,6 @@ class ViewController {
     handleStop() {
         RAG.speechSynth.cancel();
         this.stopMarquee();
-    }
-    handleGenerate() {
-        RAG.phraser.generate();
     }
 }
 class DOM {
@@ -364,10 +358,14 @@ class RAG {
         RAG.phraser = new Phraser(config);
         RAG.speechSynth = window.speechSynthesis;
         RAG.viewController.setMarquee("Welcome to RAG.");
-        RAG.phraser.generate();
+        RAG.generate();
         window.onbeforeunload = _ => {
             RAG.speechSynth.cancel();
         };
+    }
+    static generate() {
+        RAG.state = new State();
+        RAG.phraser.generate();
     }
     static panic(error = "Unknown error") {
         let msg = '<div class="panic">';
@@ -376,6 +374,21 @@ class RAG {
         msg += `<p>Please open the console for more information.</p>`;
         msg += '</div>';
         document.body.innerHTML = msg;
+    }
+}
+class State {
+    get platform() {
+        if (!this._platform) {
+            this._platform = Random.bool(98)
+                ? Random.int(1, 26).toString()
+                : '0';
+            if (Random.bool(10))
+                this._platform += Random.array('ABC');
+        }
+        return this._platform;
+    }
+    set platform(value) {
+        this._platform = value;
     }
 }
 //# sourceMappingURL=rag.js.map

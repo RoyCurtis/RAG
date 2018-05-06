@@ -11,6 +11,8 @@ class RAG
     public static viewController : ViewController;
     /** Gets the speech synthesizer */
     public static speechSynth    : SpeechSynthesis;
+    /** Gets the current train and station state */
+    public static state          : State;
 
     /**
      * Entry point for RAG, to be called from Javascript.
@@ -29,7 +31,7 @@ class RAG
         // Begin
 
         RAG.viewController.setMarquee("Welcome to RAG.");
-        RAG.phraser.generate();
+        RAG.generate();
 
         window.onbeforeunload = _ =>
         {
@@ -37,6 +39,14 @@ class RAG
         };
     }
 
+    /** Generates a new random phrase and state */
+    public static generate() : void
+    {
+        RAG.state = new State();
+        RAG.phraser.generate();
+    }
+
+    /** Global error handler; throws up a big red panic screen on uncaught error */
     public static panic(error: string | Event = "Unknown error")
     {
         let msg = '<div class="panic">';

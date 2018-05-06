@@ -7,4 +7,6 @@ interface PhraseContext
     element:   Element;
     /** Gets the XML document representing all the loaded phrase sets */
     phraseSet: Document;
+    /** Gets the train, station and schedule state to use */
+    state:     State;
 }

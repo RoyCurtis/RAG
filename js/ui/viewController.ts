@@ -34,7 +34,7 @@ class ViewController
 
         this.btnPlay.onclick     = () => this.handlePlay();
         this.btnStop.onclick     = () => this.handleStop();
-        this.btnGenerate.onclick = () => this.handleGenerate();
+        this.btnGenerate.onclick = () => RAG.generate();
         this.btnSave.onclick     = () => alert('Unimplemented');
         this.btnRecall.onclick   = () => alert('Unimplemented');
         this.btnOption.onclick   = () => alert('Unimplemented');
@@ -105,10 +105,5 @@ class ViewController
     {
         RAG.speechSynth.cancel();
         this.stopMarquee();
-    }
-
-    private handleGenerate() : void
-    {
-        RAG.phraser.generate();
     }
 }

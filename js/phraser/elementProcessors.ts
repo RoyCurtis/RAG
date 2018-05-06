@@ -193,17 +193,10 @@ class ElementProcessors
         }
     }
 
-    /** Picks a platform number, sometimes with letter */
+    /** Gets the current platform number */
     public static platform(ctx: PhraseContext)
     {
-        // Only 2% chance for platform 0, since it's rare
-        ctx.element.textContent = Random.bool(98)
-            ? Random.int(1, 16).toString()
-            : '0';
-
-        // Only 10% chance for platform letter, since it's uncommon
-        if ( Random.bool(10) )
-            ctx.element.textContent += Random.array('ABC');
+        ctx.element.textContent = ctx.state.platform;
     }
 
     /** Picks a rail network name */

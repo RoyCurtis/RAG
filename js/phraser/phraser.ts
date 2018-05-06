@@ -42,7 +42,8 @@ class Phraser
         let elementName = element.nodeName.toLowerCase();
         let context     = {
             element:   element,
-            phraseSet: this.phraseSets
+            phraseSet: this.phraseSets,
+            state:     RAG.state
         };
 
         // I wanted to use an index on ElementProcessors for this, but it caused every
