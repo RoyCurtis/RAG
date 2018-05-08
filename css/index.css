@@ -1,5 +1,8 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 @import "font/5by7.css";
+.hidden {
+  display: none;
+}
 .dialog {
   background: #111;
   border: 2px solid #cc7e00;
@@ -82,8 +85,18 @@
 #editor span[data-chance][collapsed] * {
   display: none;
 }
+#editor span[data-type=optional][collapsed]:active::before,
+#editor span[data-chance][collapsed]:active::before {
+  color: #aaa;
+  box-shadow: 0 0 4px #000 inset;
+  fill: #aaa;
+}
 #editor span[data-type=optional][collapsed]::before,
 #editor span[data-chance][collapsed]::before {
+  background: #222;
+  border: none;
+  box-shadow: 0 0 8px #222;
+  cursor: pointer;
   content: '⋮';
   display: inline-block;
   font-size: x-large;
@@ -115,9 +128,6 @@ body,
 html {
   width: 100%;
   height: 100%;
-}
-.hidden {
-  display: none;
 }
 body {
   background: #000;

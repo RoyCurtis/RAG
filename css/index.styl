@@ -1,6 +1,9 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+// Must be up here, else CSS will fail to load the font
 @import "font/5by7.css"
+// Must be up here, else global function calls will fail elsewhere (order is important)
+@import "globals.styl"
 @import "dialogs.styl"
 @import "editor.styl"
 @import "signage.styl"
@@ -15,22 +18,6 @@
 body, html
   width  100%
   height 100%
-
-// Classes
-
-pressable()
-  background  #222
-  border      none
-  box-shadow  0 0 8px #222
-  cursor      pointer
-
-activePressable()
-  color      #AAA
-  box-shadow 0 0 4px #000 inset
-  fill       #AAA
-
-.hidden
-  display none
 
 // Parts
 
