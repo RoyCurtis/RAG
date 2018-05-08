@@ -6,23 +6,23 @@ class ElementProcessors
     /** Picks a coach letter from A to Z, limited by amount of coaches */
     public static coach(ctx: PhraseContext)
     {
-        ctx.element.textContent = Random.array("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        ctx.newElement.textContent = Random.array("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     }
 
     /** Picks an excuse for a delay or cancellation */
     public static excuse(ctx: PhraseContext)
     {
-        ctx.element.textContent = RAG.database.pickExcuse();
+        ctx.newElement.textContent = RAG.database.pickExcuse();
     }
 
     /** Picks a whole number, with optional limits, noun and in word form */
     public static integer(ctx: PhraseContext)
     {
-        let attrMin      = ctx.element.getAttribute('min');
-        let attrMax      = ctx.element.getAttribute('max');
-        let attrSingular = ctx.element.getAttribute('singular');
-        let attrPlural   = ctx.element.getAttribute('plural');
-        let attrWords    = ctx.element.getAttribute('words');
+        let attrMin      = ctx.xmlElement.getAttribute('min');
+        let attrMax      = ctx.xmlElement.getAttribute('max');
+        let attrSingular = ctx.xmlElement.getAttribute('singular');
+        let attrPlural   = ctx.xmlElement.getAttribute('plural');
+        let attrWords    = ctx.xmlElement.getAttribute('words');
 
         if (!attrMin || !attrMax)
             throw new Error("Integer tag is missing required attributes");
@@ -40,170 +40,159 @@ class ElementProcessors
         else if (int !== 1 && attrPlural)
             intStr += ` ${attrPlural}`;
 
-        ctx.element.textContent = intStr;
+        ctx.newElement.textContent = intStr;
     }
 
     /** Picks a named train */
     public static named(ctx: PhraseContext)
     {
-        ctx.element.textContent = RAG.database.pickNamed();
+        ctx.newElement.textContent = RAG.database.pickNamed();
     }
 
     /** Makes the content of this tag optionally hidden, by chance or user choice */
     public static optional(ctx: PhraseContext)
     {
-        let chance = ctx.element.getAttribute('chance') || '50';
-
-        if ( Strings.isNullOrEmpty(chance) )
-            chance = '50';
-
+        let chance    = ctx.xmlElement.getAttribute('chance') || '50';
         let chanceInt = parseInt(chance);
 
         if ( !Random.bool(chanceInt) )
-            ctx.element.setAttribute('collapsed', '');
+            ctx.newElement.setAttribute('collapsed', '');
+
+        ctx.newElement.dataset['chance'] = chance;
 
         // TODO: Eventually move this elsewhere
-        ctx.element.addEventListener('click', ev =>
+        ctx.newElement.addEventListener('click', ev =>
         {
             ev.stopPropagation();
 
-            if (ctx.element.hasAttribute('collapsed'))
-                ctx.element.removeAttribute('collapsed');
+            if (ctx.newElement.hasAttribute('collapsed'))
+                ctx.newElement.removeAttribute('collapsed');
             else
-                ctx.element.setAttribute('collapsed', '');
+                ctx.newElement.setAttribute('collapsed', '');
         });
 
         // Wrap the contents of this optional tag into a span, so that its contents can
-        // be hidden when collapsed.
-        // Using innerHTML would be easier, however it handles self-closing tags poorly.
+        // be hidden when collapsed. Using innerHTML would be easier, however it handles
+        // self-closing tags poorly.
 
-        let innerSpan = document.createElement('span');
+        let inner = document.createElement('span');
 
-        // Transfer all the optional's inner elements to the inner span
-        while (ctx.element.firstChild)
-            innerSpan.appendChild(ctx.element.firstChild);
+        // Copy all the optional's inner elements to the inner span
+        for (let i = 0; i < ctx.xmlElement.childNodes.length; i ++)
+            inner.appendChild( ctx.xmlElement.childNodes[i].cloneNode(true) );
 
-        ctx.element.appendChild(innerSpan);
+        ctx.newElement.appendChild(inner);
     }
 
     /** Includes a previously defined phrase, by its `id` */
     public static phrase(ctx: PhraseContext)
     {
-        let ref = ctx.element.getAttribute('ref') || '';
-
-        // Skip ref-less picked phrase elements inside phrasesets
-        if ( Strings.isNullOrEmpty(ref) )
-            return;
-
+        let ref    = ctx.xmlElement.getAttribute('ref') || '';
         let phrase = ctx.phraseSet.querySelector('phrase#' + ref);
 
         if (!phrase)
         {
-            ctx.element.textContent = `(UNKNOWN PHRASE: ${ref})`;
+            ctx.newElement.textContent = `(UNKNOWN PHRASE: ${ref})`;
             return;
         }
 
-        // Clone the referenced phrase element and transfer the necessary attributes.
-        // Using innerHTML would be easier, however it handles self-closing tags poorly.
+        // Copy the contents of the referenced phrase into an inner span, so that its
+        // contents can be hidden when collapsed. Using innerHTML would be easier, however
+        // it handles self-closing tags poorly.
 
-        let phraseClone = phrase.cloneNode(true) as Element;
-        let innerSpan   = document.createElement('span');
-        let attrChance  = ctx.element.getAttribute('chance');
+        let inner  = document.createElement('span');
+        let chance = ctx.xmlElement.getAttribute('chance') || '';
 
-        phraseClone.removeAttribute('id');
-        phraseClone.setAttribute('ref', ref);
+        // Copy all the phrases's inner elements to the inner span
+        for (let i = 0; i < phrase.childNodes.length; i ++)
+            inner.appendChild( phrase.childNodes[i].cloneNode(true) );
 
-        if (attrChance)
-            phraseClone.setAttribute('chance', attrChance);
+        ctx.newElement.dataset['ref'] = ref;
 
-        if (!ctx.element.parentElement)
-            throw new Error('Expected parent of processed element is missing');
-
-        // Transfer all the phrase's inner elements to the inner span
-        while (phraseClone.firstChild)
-            innerSpan.appendChild(phraseClone.firstChild);
-
-        phraseClone.appendChild(innerSpan);
-
-        // Swap out the currently processed element for the one cloned from phraseset.
-        // Using innerHTML would be easier, however it handles self-closing tags poorly.
-
-        ctx.element.parentElement.replaceChild(phraseClone, ctx.element);
-        ctx.element = phraseClone as HTMLElement;
+        ctx.newElement.appendChild(inner);
 
         // Handle collapsible (optional) phrases
-        let chance = ctx.element.getAttribute('chance') || '';
-
         if ( !Strings.isNullOrEmpty(chance) )
         {
+            ctx.newElement.dataset['chance'] = chance;
+
             // TODO: Eventually move this elsewhere
-            ctx.element.addEventListener('click', ev =>
+            ctx.newElement.addEventListener('click', ev =>
             {
                 ev.stopPropagation();
 
-                if (ctx.element.hasAttribute('collapsed'))
-                    ctx.element.removeAttribute('collapsed');
+                if (ctx.newElement.hasAttribute('collapsed'))
+                    ctx.newElement.removeAttribute('collapsed');
                 else
-                    ctx.element.setAttribute('collapsed', '');
+                    ctx.newElement.setAttribute('collapsed', '');
             });
 
             let chanceInt = parseInt(chance);
 
             if ( !Random.bool(chanceInt) )
-                ctx.element.setAttribute('collapsed', '');
+                ctx.newElement.setAttribute('collapsed', '');
         }
     }
 
     /** Picks a phrase from a previously defined phraseset, by its `id` */
     public static phraseset(ctx: PhraseContext)
     {
-        let ref = ctx.element.getAttribute('ref') || '';
+        let ref = ctx.xmlElement.getAttribute('ref') || '';
 
         if ( Strings.isNullOrEmpty(ref) )
-            return;
+            throw new Error('phraseset element missing a ref attribute');
 
         let phraseset = ctx.phraseSet.querySelector('phraseset#' + ref);
 
-        if (phraseset)
+        if (!phraseset)
         {
-            let phrase = Random.array(phraseset.children);
-            ctx.element.appendChild( phrase.cloneNode(true) );
+            ctx.newElement.textContent = `(UNKNOWN PHRASESET: ${ref})`;
+            return;
         }
-        else
-            ctx.element.textContent = `(UNKNOWN PHRASESET: ${ref})`;
 
-        let chance = ctx.element.getAttribute('chance') || '';
+        let inner  = document.createElement('span');
+        let phrase = Random.array(phraseset.children) as Element;
+        let chance = ctx.xmlElement.getAttribute('chance') || '';
+
+        // Copy the children of the randomly picked phrase into the new element
+        for (let i = 0; i < phrase.childNodes.length; i ++)
+            inner.appendChild( phrase.childNodes[i].cloneNode(true) );
+
+        ctx.newElement.appendChild(inner);
 
         if ( !Strings.isNullOrEmpty(chance) )
         {
-            ctx.element.addEventListener('click', ev =>
+            ctx.newElement.dataset['chance'] = chance;
+
+            // TODO: Eventually move this elsewhere
+            ctx.newElement.addEventListener('click', ev =>
             {
                 ev.stopPropagation();
 
-                if (ctx.element.hasAttribute('collapsed'))
-                    ctx.element.removeAttribute('collapsed');
+                if (ctx.newElement.hasAttribute('collapsed'))
+                    ctx.newElement.removeAttribute('collapsed');
                 else
-                    ctx.element.setAttribute('collapsed', '');
+                    ctx.newElement.setAttribute('collapsed', '');
             });
 
             let chanceInt = parseInt(chance);
 
             if ( !Random.bool(chanceInt) )
-                ctx.element.setAttribute('collapsed', '');
+                ctx.newElement.setAttribute('collapsed', '');
         }
     }
 
     /** Gets the current platform number */
     public static platform(ctx: PhraseContext)
     {
-        ctx.element.addEventListener('click', ev =>
+        ctx.newElement.addEventListener('click', ev =>
         {
             ev.stopPropagation();
-            ctx.element.setAttribute('editing', 'true');
+            ctx.xmlElement.setAttribute('editing', 'true');
 
             let platEditor = document.getElementById('platformPicker');
-            let dialogX    = ctx.element.clientLeft;
-            let dialogY    = ctx.element.clientTop;
+            let dialogX    = ctx.xmlElement.clientLeft;
+            let dialogY    = ctx.xmlElement.clientTop;
 
             if (!platEditor) return;
 
@@ -212,19 +201,19 @@ class ElementProcessors
 
         }, true);
 
-        ctx.element.textContent = RAG.state.platform;
+        ctx.newElement.textContent = RAG.state.platform;
     }
 
     /** Picks a rail network name */
     public static service(ctx: PhraseContext)
     {
-        ctx.element.textContent = RAG.database.pickService();
+        ctx.newElement.textContent = RAG.database.pickService();
     }
 
     /** Picks a station name */
     public static station(ctx: PhraseContext)
     {
-        ctx.element.textContent = RAG.database.pickStation();
+        ctx.newElement.textContent = RAG.database.pickStation();
     }
 
     /** Picks a selection of stations */
@@ -234,7 +223,7 @@ class ElementProcessors
         let stationList = '';
 
         if (stations.length === 1)
-            stationList = (ctx.element.id === 'calling')
+            stationList = (ctx.xmlElement.id === 'calling')
                 ? `${stations[0]} only`
                 : stations[0];
         else
@@ -245,7 +234,7 @@ class ElementProcessors
             stationList += ` and ${lastStation}`;
         }
 
-        ctx.element.textContent = stationList;
+        ctx.newElement.textContent = stationList;
     }
 
     /** Picks a 24 hour time, with hours and minutes */
@@ -254,6 +243,13 @@ class ElementProcessors
         let hour   = Random.int(0, 23).toString().padStart(2, '0');
         let minute = Random.int(0, 59).toString().padStart(2, '0');
 
-        ctx.element.textContent = `${hour}:${minute}`;
+        ctx.newElement.textContent = `${hour}:${minute}`;
+    }
+
+    public static unknown(ctx: PhraseContext)
+    {
+        let name = ctx.xmlElement.nodeName;
+
+        ctx.newElement.textContent = `(UNKNOWN XML ELEMENT: ${name})`;
     }
 }

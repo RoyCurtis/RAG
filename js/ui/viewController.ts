@@ -3,10 +3,10 @@
 /** Manages UI elements and their logic */
 class ViewController
 {
-    private domEditor      : Element;
-    private domSignage     : Element;
+    private domEditor      : HTMLElement;
+    private domSignage     : HTMLElement;
     private domSignageSpan : HTMLElement;
-    private domToolbar     : Element;
+    private domToolbar     : HTMLElement;
 
     private btnPlay     : HTMLElement;
     private btnStop     : HTMLElement;
@@ -77,11 +77,9 @@ class ViewController
         this.domSignageSpan.style.transform = '';
     }
 
-    /** Sets the phrase editor to the given phrase element */
-    public setEditor(element: Element) : void
+    public getEditor() : HTMLElement
     {
-        this.domEditor.innerHTML = '';
-        this.domEditor.appendChild(element);
+        return this.domEditor;
     }
 
     private handlePlay() : void

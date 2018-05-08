@@ -10,8 +10,10 @@
   overflow-y  auto
 
   // All selectable elements
-  excuse, integer, coach, named, optional, phrase[ref], phraseset, platform, service,
-  station, stationlist, time
+  span[data-type=excuse],    span[data-type=integer],     span[data-type=coach],
+  span[data-type=named],     span[data-type=optional],    span[data-type=phrase],
+  span[data-type=phraseset], span[data-type=platform],    span[data-type=service],
+  span[data-type=station],   span[data-type=stationlist], span[data-type=time]
     border        2px solid transparent
     border-top    none
     border-bottom none
@@ -24,7 +26,7 @@
       border-color white
 
   // Optional elements
-  optional, phraseset[chance], phrase[chance], platform
+  span[data-type=optional], span[data-chance]
     cursor pointer
 
     &[editing]

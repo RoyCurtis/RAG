@@ -246,7 +246,7 @@
 
 <phraseset id="excuse_or_wait">
   <phrase><phrase ref="excuse"/></phrase>
-  <phrase>. Please listen for further announcements.</phrase>
+  <phrase>. Please listen for further announcements</phrase>
 </phraseset>
 
 <phraseset id="general_apology_delay">

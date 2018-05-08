@@ -30,18 +30,18 @@
   overflow-x: hidden;
   overflow-y: auto;
 }
-#editor excuse,
-#editor integer,
-#editor coach,
-#editor named,
-#editor optional,
-#editor phrase[ref],
-#editor phraseset,
-#editor platform,
-#editor service,
-#editor station,
-#editor stationlist,
-#editor time {
+#editor span[data-type=excuse],
+#editor span[data-type=integer],
+#editor span[data-type=coach],
+#editor span[data-type=named],
+#editor span[data-type=optional],
+#editor span[data-type=phrase],
+#editor span[data-type=phraseset],
+#editor span[data-type=platform],
+#editor span[data-type=service],
+#editor span[data-type=station],
+#editor span[data-type=stationlist],
+#editor span[data-type=time] {
   border: 2px solid transparent;
   border-top: none;
   border-bottom: none;
@@ -49,51 +49,41 @@
   padding: 0 4px;
   margin: 0 4px;
 }
-#editor excuse:hover,
-#editor integer:hover,
-#editor coach:hover,
-#editor named:hover,
-#editor optional:hover,
-#editor phrase[ref]:hover,
-#editor phraseset:hover,
-#editor platform:hover,
-#editor service:hover,
-#editor station:hover,
-#editor stationlist:hover,
-#editor time:hover {
+#editor span[data-type=excuse]:hover,
+#editor span[data-type=integer]:hover,
+#editor span[data-type=coach]:hover,
+#editor span[data-type=named]:hover,
+#editor span[data-type=optional]:hover,
+#editor span[data-type=phrase]:hover,
+#editor span[data-type=phraseset]:hover,
+#editor span[data-type=platform]:hover,
+#editor span[data-type=service]:hover,
+#editor span[data-type=station]:hover,
+#editor span[data-type=stationlist]:hover,
+#editor span[data-type=time]:hover {
   background: rgba(128,128,128,0.1);
   border-color: #fff;
 }
-#editor optional,
-#editor phraseset[chance],
-#editor phrase[chance],
-#editor platform {
+#editor span[data-type=optional],
+#editor span[data-chance] {
   cursor: pointer;
 }
-#editor optional[editing],
-#editor phraseset[chance][editing],
-#editor phrase[chance][editing],
-#editor platform[editing] {
+#editor span[data-type=optional][editing],
+#editor span[data-chance][editing] {
   background: #cc7e00;
   color: #fff;
 }
-#editor optional[collapsed],
-#editor phraseset[chance][collapsed],
-#editor phrase[chance][collapsed],
-#editor platform[collapsed] {
+#editor span[data-type=optional][collapsed],
+#editor span[data-chance][collapsed] {
   border: none;
   padding: 0;
 }
-#editor optional[collapsed] *,
-#editor phraseset[chance][collapsed] *,
-#editor phrase[chance][collapsed] *,
-#editor platform[collapsed] * {
+#editor span[data-type=optional][collapsed] *,
+#editor span[data-chance][collapsed] * {
   display: none;
 }
-#editor optional[collapsed]::before,
-#editor phraseset[chance][collapsed]::before,
-#editor phrase[chance][collapsed]::before,
-#editor platform[collapsed]::before {
+#editor span[data-type=optional][collapsed]::before,
+#editor span[data-chance][collapsed]::before {
   content: '⋮';
   display: inline-block;
   font-size: x-large;

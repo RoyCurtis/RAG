@@ -1,17 +1,17 @@
 "use strict";
 class ElementProcessors {
     static coach(ctx) {
-        ctx.element.textContent = Random.array("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        ctx.newElement.textContent = Random.array("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     }
     static excuse(ctx) {
-        ctx.element.textContent = RAG.database.pickExcuse();
+        ctx.newElement.textContent = RAG.database.pickExcuse();
     }
     static integer(ctx) {
-        let attrMin = ctx.element.getAttribute('min');
-        let attrMax = ctx.element.getAttribute('max');
-        let attrSingular = ctx.element.getAttribute('singular');
-        let attrPlural = ctx.element.getAttribute('plural');
-        let attrWords = ctx.element.getAttribute('words');
+        let attrMin = ctx.xmlElement.getAttribute('min');
+        let attrMax = ctx.xmlElement.getAttribute('max');
+        let attrSingular = ctx.xmlElement.getAttribute('singular');
+        let attrPlural = ctx.xmlElement.getAttribute('plural');
+        let attrWords = ctx.xmlElement.getAttribute('words');
         if (!attrMin || !attrMax)
             throw new Error("Integer tag is missing required attributes");
         let intMin = parseInt(attrMin);
@@ -24,117 +24,110 @@ class ElementProcessors {
             intStr += ` ${attrSingular}`;
         else if (int !== 1 && attrPlural)
             intStr += ` ${attrPlural}`;
-        ctx.element.textContent = intStr;
+        ctx.newElement.textContent = intStr;
     }
     static named(ctx) {
-        ctx.element.textContent = RAG.database.pickNamed();
+        ctx.newElement.textContent = RAG.database.pickNamed();
     }
     static optional(ctx) {
-        let chance = ctx.element.getAttribute('chance') || '50';
-        if (Strings.isNullOrEmpty(chance))
-            chance = '50';
+        let chance = ctx.xmlElement.getAttribute('chance') || '50';
         let chanceInt = parseInt(chance);
         if (!Random.bool(chanceInt))
-            ctx.element.setAttribute('collapsed', '');
-        ctx.element.addEventListener('click', ev => {
+            ctx.newElement.setAttribute('collapsed', '');
+        ctx.newElement.dataset['chance'] = chance;
+        ctx.newElement.addEventListener('click', ev => {
             ev.stopPropagation();
-            if (ctx.element.hasAttribute('collapsed'))
-                ctx.element.removeAttribute('collapsed');
+            if (ctx.newElement.hasAttribute('collapsed'))
+                ctx.newElement.removeAttribute('collapsed');
             else
-                ctx.element.setAttribute('collapsed', '');
+                ctx.newElement.setAttribute('collapsed', '');
         });
-        let innerSpan = document.createElement('span');
-        while (ctx.element.firstChild)
-            innerSpan.appendChild(ctx.element.firstChild);
-        ctx.element.appendChild(innerSpan);
+        let inner = document.createElement('span');
+        for (let i = 0; i < ctx.xmlElement.childNodes.length; i++)
+            inner.appendChild(ctx.xmlElement.childNodes[i].cloneNode(true));
+        ctx.newElement.appendChild(inner);
     }
     static phrase(ctx) {
-        let ref = ctx.element.getAttribute('ref') || '';
-        if (Strings.isNullOrEmpty(ref))
-            return;
+        let ref = ctx.xmlElement.getAttribute('ref') || '';
         let phrase = ctx.phraseSet.querySelector('phrase#' + ref);
         if (!phrase) {
-            ctx.element.textContent = `(UNKNOWN PHRASE: ${ref})`;
+            ctx.newElement.textContent = `(UNKNOWN PHRASE: ${ref})`;
             return;
         }
-        let phraseClone = phrase.cloneNode(true);
-        let innerSpan = document.createElement('span');
-        let attrChance = ctx.element.getAttribute('chance');
-        phraseClone.removeAttribute('id');
-        phraseClone.setAttribute('ref', ref);
-        if (attrChance)
-            phraseClone.setAttribute('chance', attrChance);
-        if (!ctx.element.parentElement)
-            throw new Error('Expected parent of processed element is missing');
-        while (phraseClone.firstChild)
-            innerSpan.appendChild(phraseClone.firstChild);
-        phraseClone.appendChild(innerSpan);
-        ctx.element.parentElement.replaceChild(phraseClone, ctx.element);
-        ctx.element = phraseClone;
-        let chance = ctx.element.getAttribute('chance') || '';
+        let inner = document.createElement('span');
+        let chance = ctx.xmlElement.getAttribute('chance') || '';
+        for (let i = 0; i < phrase.childNodes.length; i++)
+            inner.appendChild(phrase.childNodes[i].cloneNode(true));
+        ctx.newElement.dataset['ref'] = ref;
+        ctx.newElement.appendChild(inner);
         if (!Strings.isNullOrEmpty(chance)) {
-            ctx.element.addEventListener('click', ev => {
+            ctx.newElement.dataset['chance'] = chance;
+            ctx.newElement.addEventListener('click', ev => {
                 ev.stopPropagation();
-                if (ctx.element.hasAttribute('collapsed'))
-                    ctx.element.removeAttribute('collapsed');
+                if (ctx.newElement.hasAttribute('collapsed'))
+                    ctx.newElement.removeAttribute('collapsed');
                 else
-                    ctx.element.setAttribute('collapsed', '');
+                    ctx.newElement.setAttribute('collapsed', '');
             });
             let chanceInt = parseInt(chance);
             if (!Random.bool(chanceInt))
-                ctx.element.setAttribute('collapsed', '');
+                ctx.newElement.setAttribute('collapsed', '');
         }
     }
     static phraseset(ctx) {
-        let ref = ctx.element.getAttribute('ref') || '';
+        let ref = ctx.xmlElement.getAttribute('ref') || '';
         if (Strings.isNullOrEmpty(ref))
-            return;
+            throw new Error('phraseset element missing a ref attribute');
         let phraseset = ctx.phraseSet.querySelector('phraseset#' + ref);
-        if (phraseset) {
-            let phrase = Random.array(phraseset.children);
-            ctx.element.appendChild(phrase.cloneNode(true));
+        if (!phraseset) {
+            ctx.newElement.textContent = `(UNKNOWN PHRASESET: ${ref})`;
+            return;
         }
-        else
-            ctx.element.textContent = `(UNKNOWN PHRASESET: ${ref})`;
-        let chance = ctx.element.getAttribute('chance') || '';
+        let inner = document.createElement('span');
+        let phrase = Random.array(phraseset.children);
+        let chance = ctx.xmlElement.getAttribute('chance') || '';
+        for (let i = 0; i < phrase.childNodes.length; i++)
+            inner.appendChild(phrase.childNodes[i].cloneNode(true));
+        ctx.newElement.appendChild(inner);
         if (!Strings.isNullOrEmpty(chance)) {
-            ctx.element.addEventListener('click', ev => {
+            ctx.newElement.dataset['chance'] = chance;
+            ctx.newElement.addEventListener('click', ev => {
                 ev.stopPropagation();
-                if (ctx.element.hasAttribute('collapsed'))
-                    ctx.element.removeAttribute('collapsed');
+                if (ctx.newElement.hasAttribute('collapsed'))
+                    ctx.newElement.removeAttribute('collapsed');
                 else
-                    ctx.element.setAttribute('collapsed', '');
+                    ctx.newElement.setAttribute('collapsed', '');
             });
             let chanceInt = parseInt(chance);
             if (!Random.bool(chanceInt))
-                ctx.element.setAttribute('collapsed', '');
+                ctx.newElement.setAttribute('collapsed', '');
         }
     }
     static platform(ctx) {
-        ctx.element.addEventListener('click', ev => {
+        ctx.newElement.addEventListener('click', ev => {
             ev.stopPropagation();
-            ctx.element.setAttribute('editing', 'true');
+            ctx.xmlElement.setAttribute('editing', 'true');
             let platEditor = document.getElementById('platformPicker');
-            let dialogX = ctx.element.clientLeft;
-            let dialogY = ctx.element.clientTop;
+            let dialogX = ctx.xmlElement.clientLeft;
+            let dialogY = ctx.xmlElement.clientTop;
             if (!platEditor)
                 return;
             platEditor.classList.remove('hidden');
             platEditor.style.transform = `translate(${dialogX}px, ${dialogY}px`;
         }, true);
-        ctx.element.textContent = RAG.state.platform;
+        ctx.newElement.textContent = RAG.state.platform;
     }
     static service(ctx) {
-        ctx.element.textContent = RAG.database.pickService();
+        ctx.newElement.textContent = RAG.database.pickService();
     }
     static station(ctx) {
-        ctx.element.textContent = RAG.database.pickStation();
+        ctx.newElement.textContent = RAG.database.pickStation();
     }
     static stationlist(ctx) {
         let stations = RAG.database.pickStations();
         let stationList = '';
         if (stations.length === 1)
-            stationList = (ctx.element.id === 'calling')
+            stationList = (ctx.xmlElement.id === 'calling')
                 ? `${stations[0]} only`
                 : stations[0];
         else {
@@ -142,12 +135,16 @@ class ElementProcessors {
             stationList = stations.join(', ');
             stationList += ` and ${lastStation}`;
         }
-        ctx.element.textContent = stationList;
+        ctx.newElement.textContent = stationList;
     }
     static time(ctx) {
         let hour = Random.int(0, 23).toString().padStart(2, '0');
         let minute = Random.int(0, 59).toString().padStart(2, '0');
-        ctx.element.textContent = `${hour}:${minute}`;
+        ctx.newElement.textContent = `${hour}:${minute}`;
+    }
+    static unknown(ctx) {
+        let name = ctx.xmlElement.nodeName;
+        ctx.newElement.textContent = `(UNKNOWN XML ELEMENT: ${name})`;
     }
 }
 class Phraser {
@@ -158,62 +155,70 @@ class Phraser {
         this.phraseSets = iframe.contentDocument;
     }
     generate() {
-        let phraseSet = document.createElement('phraseset');
-        phraseSet.setAttribute('ref', 'root');
-        RAG.viewController.setEditor(phraseSet);
-        this.process(phraseSet);
+        let editor = RAG.viewController.getEditor();
+        editor.innerHTML = '<phraseset ref="root" />';
+        this.process(editor);
     }
-    process(element) {
-        if (!element.parentElement)
-            throw new Error(`Phrase element has no parent: '${element}'`);
-        let elementName = element.nodeName.toLowerCase();
-        let context = {
-            element: element,
-            phraseSet: this.phraseSets
-        };
-        switch (elementName) {
-            case 'coach':
-                ElementProcessors.coach(context);
-                break;
-            case 'excuse':
-                ElementProcessors.excuse(context);
-                break;
-            case 'integer':
-                ElementProcessors.integer(context);
-                break;
-            case 'named':
-                ElementProcessors.named(context);
-                break;
-            case 'optional':
-                ElementProcessors.optional(context);
-                break;
-            case 'phrase':
-                ElementProcessors.phrase(context);
-                break;
-            case 'phraseset':
-                ElementProcessors.phraseset(context);
-                break;
-            case 'platform':
-                ElementProcessors.platform(context);
-                break;
-            case 'service':
-                ElementProcessors.service(context);
-                break;
-            case 'station':
-                ElementProcessors.station(context);
-                break;
-            case 'stationlist':
-                ElementProcessors.stationlist(context);
-                break;
-            case 'time':
-                ElementProcessors.time(context);
-                break;
-        }
-        element = context.element;
-        if (element.firstElementChild)
-            this.process(element.firstElementChild);
-        if (element.nextElementSibling)
-            this.process(element.nextElementSibling);
+    process(container, level = 0) {
+        let pending = container.querySelectorAll(':not(span)');
+        if (pending.length === 0)
+            return;
+        pending.forEach(element => {
+            let elementName = element.nodeName.toLowerCase();
+            let newElement = document.createElement('span');
+            let context = {
+                xmlElement: element,
+                newElement: newElement,
+                phraseSet: this.phraseSets
+            };
+            newElement.dataset['type'] = elementName;
+            switch (elementName) {
+                case 'coach':
+                    ElementProcessors.coach(context);
+                    break;
+                case 'excuse':
+                    ElementProcessors.excuse(context);
+                    break;
+                case 'integer':
+                    ElementProcessors.integer(context);
+                    break;
+                case 'named':
+                    ElementProcessors.named(context);
+                    break;
+                case 'optional':
+                    ElementProcessors.optional(context);
+                    break;
+                case 'phrase':
+                    ElementProcessors.phrase(context);
+                    break;
+                case 'phraseset':
+                    ElementProcessors.phraseset(context);
+                    break;
+                case 'platform':
+                    ElementProcessors.platform(context);
+                    break;
+                case 'service':
+                    ElementProcessors.service(context);
+                    break;
+                case 'station':
+                    ElementProcessors.station(context);
+                    break;
+                case 'stationlist':
+                    ElementProcessors.stationlist(context);
+                    break;
+                case 'time':
+                    ElementProcessors.time(context);
+                    break;
+                default:
+                    ElementProcessors.unknown(context);
+                    break;
+            }
+            element.parentElement.replaceChild(newElement, element);
+        });
+        if (level < 20)
+            this.process(container, level + 1);
+        else
+            throw new Error("Too many levels of recursion, when processing phrase.");
     }
 }
 Phraser.DIGITS = ['zero', 'one', 'two', 'three', 'four',
@@ -262,9 +267,8 @@ class ViewController {
         window.cancelAnimationFrame(this.signageTimer);
         this.domSignageSpan.style.transform = '';
     }
-    setEditor(element) {
-        this.domEditor.innerHTML = '';
-        this.domEditor.appendChild(element);
+    getEditor() {
+        return this.domEditor;
     }
     handlePlay() {
         let text = DOM.getVisibleText(this.domEditor);
