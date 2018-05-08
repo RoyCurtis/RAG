@@ -30,22 +30,8 @@ class ElementProcessors {
         ctx.newElement.textContent = RAG.database.pickNamed();
     }
     static optional(ctx) {
-        let chance = ctx.xmlElement.getAttribute('chance') || '50';
-        let chanceInt = parseInt(chance);
-        if (!Random.bool(chanceInt))
-            ctx.newElement.setAttribute('collapsed', '');
-        ctx.newElement.dataset['chance'] = chance;
-        ctx.newElement.addEventListener('click', ev => {
-            ev.stopPropagation();
-            if (ctx.newElement.hasAttribute('collapsed'))
-                ctx.newElement.removeAttribute('collapsed');
-            else
-                ctx.newElement.setAttribute('collapsed', '');
-        });
-        let inner = document.createElement('span');
-        for (let i = 0; i < ctx.xmlElement.childNodes.length; i++)
-            inner.appendChild(ctx.xmlElement.childNodes[i].cloneNode(true));
-        ctx.newElement.appendChild(inner);
+        this.makeCollapsible(ctx, '50');
+        ctx.newElement.appendChild(this.cloneIntoInner(ctx.xmlElement));
     }
     static phrase(ctx) {
         let ref = ctx.xmlElement.getAttribute('ref') || '';
@@ -54,54 +40,22 @@ class ElementProcessors {
             ctx.newElement.textContent = `(UNKNOWN PHRASE: ${ref})`;
             return;
         }
-        let inner = document.createElement('span');
-        let chance = ctx.xmlElement.getAttribute('chance') || '';
-        for (let i = 0; i < phrase.childNodes.length; i++)
-            inner.appendChild(phrase.childNodes[i].cloneNode(true));
         ctx.newElement.dataset['ref'] = ref;
-        ctx.newElement.appendChild(inner);
-        if (!Strings.isNullOrEmpty(chance)) {
-            ctx.newElement.dataset['chance'] = chance;
-            ctx.newElement.addEventListener('click', ev => {
-                ev.stopPropagation();
-                if (ctx.newElement.hasAttribute('collapsed'))
-                    ctx.newElement.removeAttribute('collapsed');
-                else
-                    ctx.newElement.setAttribute('collapsed', '');
-            });
-            let chanceInt = parseInt(chance);
-            if (!Random.bool(chanceInt))
-                ctx.newElement.setAttribute('collapsed', '');
-        }
+        this.makeCollapsible(ctx);
+        ctx.newElement.appendChild(this.cloneIntoInner(phrase));
     }
     static phraseset(ctx) {
         let ref = ctx.xmlElement.getAttribute('ref') || '';
+        let phraseset = ctx.phraseSet.querySelector('phraseset#' + ref);
         if (Strings.isNullOrEmpty(ref))
             throw new Error('phraseset element missing a ref attribute');
-        let phraseset = ctx.phraseSet.querySelector('phraseset#' + ref);
         if (!phraseset) {
             ctx.newElement.textContent = `(UNKNOWN PHRASESET: ${ref})`;
             return;
         }
-        let inner = document.createElement('span');
         let phrase = Random.array(phraseset.children);
-        let chance = ctx.xmlElement.getAttribute('chance') || '';
-        for (let i = 0; i < phrase.childNodes.length; i++)
-            inner.appendChild(phrase.childNodes[i].cloneNode(true));
-        ctx.newElement.appendChild(inner);
-        if (!Strings.isNullOrEmpty(chance)) {
-            ctx.newElement.dataset['chance'] = chance;
-            ctx.newElement.addEventListener('click', ev => {
-                ev.stopPropagation();
-                if (ctx.newElement.hasAttribute('collapsed'))
-                    ctx.newElement.removeAttribute('collapsed');
-                else
-                    ctx.newElement.setAttribute('collapsed', '');
-            });
-            let chanceInt = parseInt(chance);
-            if (!Random.bool(chanceInt))
-                ctx.newElement.setAttribute('collapsed', '');
-        }
+        this.makeCollapsible(ctx);
+        ctx.newElement.appendChild(this.cloneIntoInner(phrase));
     }
     static platform(ctx) {
         ctx.newElement.addEventListener('click', ev => {
@@ -145,6 +99,27 @@ class ElementProcessors {
     static unknown(ctx) {
         let name = ctx.xmlElement.nodeName;
         ctx.newElement.textContent = `(UNKNOWN XML ELEMENT: ${name})`;
+    }
+    static cloneIntoInner(element) {
+        let inner = document.createElement('span');
+        for (let i = 0; i < element.childNodes.length; i++)
+            inner.appendChild(element.childNodes[i].cloneNode(true));
+        return inner;
+    }
+    static makeCollapsible(ctx, defChance = '') {
+        let chance = ctx.xmlElement.getAttribute('chance') || defChance;
+        if (Strings.isNullOrEmpty(chance))
+            return;
+        ctx.newElement.dataset['chance'] = chance;
+        if (!Random.bool(parseInt(chance)))
+            ctx.newElement.setAttribute('collapsed', '');
+        ctx.newElement.addEventListener('click', ev => {
+            ev.stopPropagation();
+            if (ctx.newElement.hasAttribute('collapsed'))
+                ctx.newElement.removeAttribute('collapsed');
+            else
+                ctx.newElement.setAttribute('collapsed', '');
+        });
     }
 }
 class Phraser {
