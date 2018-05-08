@@ -113,7 +113,7 @@
   padding: 2px;
   transform: translateY(-9px);
 }
-#signage {
+#marquee {
   border: 0.5em solid;
   border-color: #222 #444 #444 #222;
   background: #000;
@@ -126,7 +126,7 @@
   position: relative;
   white-space: nowrap;
 }
-#signage > span {
+#marquee > span {
   position: absolute;
 }
 * {

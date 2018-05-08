@@ -59,6 +59,7 @@ class ElementProcessors {
     }
     static platform(ctx) {
         ctx.newElement.addEventListener('click', ev => RAG.viewController.platformPicker.onClick(ev, ctx), true);
+        ctx.newElement.title = "Click to change the platform number";
         ctx.newElement.textContent = RAG.state.platform.join('');
     }
     static service(ctx) {
@@ -83,6 +84,7 @@ class ElementProcessors {
     }
     static time(ctx) {
         ctx.newElement.addEventListener('click', ev => RAG.viewController.timePicker.onClick(ev, ctx), true);
+        ctx.newElement.title = "Click to change the time";
         ctx.newElement.textContent = RAG.state.time;
     }
     static unknown(ctx) {
@@ -187,8 +189,40 @@ class Phraser {
 }
 Phraser.DIGITS = ['zero', 'one', 'two', 'three', 'four',
     'five', 'six', 'seven', 'eight', 'nine', 'ten'];
-class PlatformPicker {
+class Marquee {
     constructor() {
+        this.timer = 0;
+        this.offset = 0;
+        this.dom = DOM.require('#marquee');
+        this.domSpan = document.createElement('span');
+        this.dom.innerHTML = '';
+        this.dom.appendChild(this.domSpan);
+    }
+    set(msg) {
+        window.cancelAnimationFrame(this.timer);
+        this.domSpan.textContent = msg;
+        this.offset = this.dom.clientWidth;
+        let limit = -this.domSpan.clientWidth - 100;
+        let anim = () => {
+            this.offset -= 6;
+            this.domSpan.style.transform = `translateX(${this.offset}px)`;
+            if (this.offset < limit)
+                this.domSpan.style.transform = '';
+            else
+                this.timer = window.requestAnimationFrame(anim);
+        };
+        anim();
+    }
+    stop() {
+        window.cancelAnimationFrame(this.timer);
+        this.domSpan.style.transform = '';
+    }
+}
+class Picker {
+}
+class PlatformPicker extends Picker {
+    constructor() {
+        super();
         let self = this;
         this.dom = DOM.require('#platformPicker');
         this.domForm = DOM.require('form', this.dom);
@@ -234,8 +268,9 @@ class PlatformPicker {
         this.onChange(ev);
     }
 }
-class TimePicker {
+class TimePicker extends Picker {
     constructor() {
+        super();
         let self = this;
         this.dom = DOM.require('#timePicker');
         this.domForm = DOM.require('form', this.dom);
@@ -283,7 +318,7 @@ class TimePicker {
 }
 class Toolbar {
     constructor() {
-        this.domToolbar = DOM.require('#toolbar');
+        this.dom = DOM.require('#toolbar');
         this.btnPlay = DOM.require('#btnPlay');
         this.btnStop = DOM.require('#btnStop');
         this.btnGenerate = DOM.require('#btnShuffle');
@@ -302,46 +337,22 @@ class Toolbar {
         let parts = text.trim().split(/\.\s/i);
         RAG.speechSynth.cancel();
         parts.forEach(segment => RAG.speechSynth.speak(new SpeechSynthesisUtterance(segment)));
-        RAG.viewController.setMarquee(text);
+        RAG.viewController.marquee.set(text);
     }
     handleStop() {
         RAG.speechSynth.cancel();
-        RAG.viewController.stopMarquee();
+        RAG.viewController.marquee.stop();
     }
 }
 class ViewController {
     constructor() {
-        this.signageTimer = 0;
-        this.signageOffset = 0;
         this.platformPicker = new PlatformPicker();
         this.timePicker = new TimePicker();
         this.toolbar = new Toolbar();
+        this.marquee = new Marquee();
         this.domEditor = DOM.require('#editor');
-        this.domSignage = DOM.require('#signage');
-        this.domSignageSpan = document.createElement('span');
-        this.domSignage.innerHTML = '';
-        this.domSignage.appendChild(this.domSignageSpan);
         this.domEditor.textContent = "Please wait...";
-        this.domSignageSpan.textContent = "Please wait...";
-    }
-    setMarquee(msg) {
-        window.cancelAnimationFrame(this.signageTimer);
-        this.domSignageSpan.textContent = msg;
-        this.signageOffset = this.domSignage.clientWidth;
-        let limit = -this.domSignageSpan.clientWidth - 100;
-        let anim = () => {
-            this.signageOffset -= 6;
-            this.domSignageSpan.style.transform = `translateX(${this.signageOffset}px)`;
-            if (this.signageOffset < limit)
-                this.domSignageSpan.style.transform = '';
-            else
-                this.signageTimer = window.requestAnimationFrame(anim);
-        };
-        anim();
-    }
-    stopMarquee() {
-        window.cancelAnimationFrame(this.signageTimer);
-        this.domSignageSpan.style.transform = '';
+        this.marquee.set('Please wait...');
     }
     getEditor() {
         return this.domEditor;
@@ -436,7 +447,7 @@ class RAG {
         RAG.database = new Database(config);
         RAG.phraser = new Phraser(config);
         RAG.speechSynth = window.speechSynthesis;
-        RAG.viewController.setMarquee("Welcome to RAG.");
+        RAG.viewController.marquee.set("Welcome to RAG.");
         RAG.generate();
         window.onbeforeunload = _ => {
             RAG.speechSynth.cancel();

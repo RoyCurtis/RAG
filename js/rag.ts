@@ -30,7 +30,7 @@ class RAG
 
         // Begin
 
-        RAG.viewController.setMarquee("Welcome to RAG.");
+        RAG.viewController.marquee.set("Welcome to RAG.");
         RAG.generate();
 
         window.onbeforeunload = _ =>

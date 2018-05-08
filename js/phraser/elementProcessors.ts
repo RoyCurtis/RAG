@@ -104,6 +104,7 @@ class ElementProcessors
             true
         );
 
+        ctx.newElement.title       = "Click to change the platform number";
         ctx.newElement.textContent = RAG.state.platform.join('');
     }
 
@@ -149,6 +150,7 @@ class ElementProcessors
             true
         );
 
+        ctx.newElement.title       = "Click to change the time";
         ctx.newElement.textContent = RAG.state.time;
     }
 

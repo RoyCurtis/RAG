@@ -3,7 +3,7 @@
 /** Controller for the top toolbar */
 class Toolbar
 {
-    private domToolbar  : HTMLElement;
+    private dom         : HTMLElement;
     private btnPlay     : HTMLElement;
     private btnStop     : HTMLElement;
     private btnGenerate : HTMLElement;
@@ -13,7 +13,7 @@ class Toolbar
 
     constructor()
     {
-        this.domToolbar  = DOM.require('#toolbar');
+        this.dom         = DOM.require('#toolbar');
         this.btnPlay     = DOM.require('#btnPlay');
         this.btnStop     = DOM.require('#btnStop');
         this.btnGenerate = DOM.require('#btnShuffle');
@@ -43,12 +43,12 @@ class Toolbar
             RAG.speechSynth.speak( new SpeechSynthesisUtterance(segment) )
         );
 
-        RAG.viewController.setMarquee(text);
+        RAG.viewController.marquee.set(text);
     }
 
     private handleStop() : void
     {
         RAG.speechSynth.cancel();
-        RAG.viewController.stopMarquee();
+        RAG.viewController.marquee.stop();
     }
 }
