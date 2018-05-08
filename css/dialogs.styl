@@ -1,17 +1,17 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 .dialog
-  background #111
-  border     2px solid #CC7E00
+  background    #111
+  border        8px solid #CC7E00
   border-radius 4px
-  box-shadow    2px 2px 4px #000
-  position absolute
-  z-index  100
+  box-shadow    8px 8px 8px rgba(0, 0, 0, 0.5)
+  position      absolute
+  z-index       100
 
   > header
-    background  #CC7E00
-    font-weight bold
-    padding     0.5em
+    background     #CC7E00
+    font-weight    bold
+    padding-bottom 4px
 
 #platformPicker
 
@@ -19,5 +19,7 @@
     display flex
 
     input, select
+      border    none
       flex-grow 1
       font-size x-large
+      padding   0 4px

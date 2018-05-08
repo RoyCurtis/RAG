@@ -26,12 +26,14 @@
       border-color white
 
   // Optional elements
-  span[data-type=optional], span[data-chance]
+  span[data-type=optional], span[data-chance], span[data-type=platform]
     cursor pointer
 
     &[editing]
-      background #CC7E00
-      color      white
+      background    #CC7E00
+      color         white
+      border-radius 8px 8px 0 0
+      box-shadow    8px 8px 8px rgba(0, 0, 0, 0.5)
 
     &[collapsed]
       border  none

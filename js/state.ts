@@ -3,27 +3,37 @@
 /** Disposable class that holds state for the current schedule, train, etc. */
 class State
 {
-    private _platform?: string;
+    private platform?: Platform;
 
-    get platform(): string
+    public getPlatform(): Platform
     {
-        if (!this._platform)
-        {
-            // Only 2% chance for platform 0, since it's rare
-            this._platform = Random.bool(98)
-                ? Random.int(1, 26).toString()
-                : '0';
+        if (!this.platform)
+            this.platform = new Platform();
 
-            // Only 10% chance for platform letter, since it's uncommon
-            if ( Random.bool(10) )
-                this._platform += Random.array('ABC');
-        }
+        return this.platform;
+    }
+}
 
-        return this._platform;
+class Platform
+{
+    public digit:  number;
+    public letter: string;
+
+    constructor()
+    {
+        // Only 2% chance for platform 0, since it's rare
+        this.digit = Random.bool(98)
+            ? Random.int(1, 26)
+            : 0;
+
+        // Only 10% chance for platform letter, since it's uncommon
+        this.letter = Random.bool(10)
+            ? Random.array('ABC')
+            : '';
     }
 
-    set platform(value: string)
+    public toString() : string
     {
-        this._platform = value;
+        return `${this.digit}${this.letter}`;
     }
 }

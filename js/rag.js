@@ -58,18 +58,8 @@ class ElementProcessors {
         ctx.newElement.appendChild(this.cloneIntoInner(phrase));
     }
     static platform(ctx) {
-        ctx.newElement.addEventListener('click', ev => {
-            ev.stopPropagation();
-            ctx.xmlElement.setAttribute('editing', 'true');
-            let platEditor = document.getElementById('platformPicker');
-            let dialogX = ctx.xmlElement.clientLeft;
-            let dialogY = ctx.xmlElement.clientTop;
-            if (!platEditor)
-                return;
-            platEditor.classList.remove('hidden');
-            platEditor.style.transform = `translate(${dialogX}px, ${dialogY}px`;
-        }, true);
-        ctx.newElement.textContent = RAG.state.platform;
+        ctx.newElement.addEventListener('click', ev => RAG.viewController.platformPicker.onClick(ev, ctx), true);
+        ctx.newElement.textContent = RAG.state.getPlatform().toString();
     }
     static service(ctx) {
         ctx.newElement.textContent = RAG.database.pickService();
@@ -198,14 +188,59 @@ class Phraser {
 }
 Phraser.DIGITS = ['zero', 'one', 'two', 'three', 'four',
     'five', 'six', 'seven', 'eight', 'nine', 'ten'];
-class ViewController {
+class PlatformPicker {
     constructor() {
-        this.signageTimer = 0;
-        this.signageOffset = 0;
-        this.domEditor = DOM.require('#editor');
-        this.domSignage = DOM.require('#signage');
+        let self = this;
+        this.dom = DOM.require('#platformPicker');
+        this.domForm = DOM.require('form', this.dom);
+        this.inputDigit = DOM.require('input', this.dom);
+        this.inputLetter = DOM.require('select', this.dom);
+        this.domForm.onchange = ev => self.onChange(ev);
+        this.domForm.onsubmit = ev => self.onSubmit(ev);
+    }
+    onClick(ev, ctx) {
+        ev.stopPropagation();
+        if (this.editing) {
+            this.editing.removeAttribute('editing');
+            if (ev.target === this.editing) {
+                this.editing = undefined;
+                this.dom.classList.add('hidden');
+                return;
+            }
+        }
+        this.dom.classList.remove('hidden');
+        ctx.newElement.setAttribute('editing', 'true');
+        this.editing = ev.target;
+        let rect = ctx.newElement.getBoundingClientRect();
+        let dialogX = (rect.left | 0) - 8;
+        let dialogY = rect.bottom | 0;
+        let value = RAG.state.getPlatform();
+        this.inputDigit.value = value.digit.toString();
+        this.inputLetter.value = value.letter;
+        if (dialogX + this.dom.offsetWidth > document.body.clientWidth) {
+            console.log("readjusting box", rect);
+            dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
+        }
+        this.dom.style.transform = `translate(${dialogX}px, ${dialogY}px)`;
+    }
+    onChange(ev) {
+        let elements = RAG.viewController.getEditor()
+            .querySelectorAll('span[data-type=platform]');
+        RAG.state.getPlatform().digit = this.inputDigit.valueAsNumber;
+        RAG.state.getPlatform().letter = this.inputLetter.value;
+        elements.forEach(element => {
+            element.textContent = RAG.state.getPlatform().toString();
+        });
+        ev;
+    }
+    onSubmit(ev) {
+        ev.preventDefault();
+        this.onChange(ev);
+    }
+}
+class Toolbar {
+    constructor() {
         this.domToolbar = DOM.require('#toolbar');
-        this.domSignageSpan = document.createElement('span');
         this.btnPlay = DOM.require('#btnPlay');
         this.btnStop = DOM.require('#btnStop');
         this.btnGenerate = DOM.require('#btnShuffle');
@@ -218,6 +253,28 @@ class ViewController {
         this.btnSave.onclick = () => alert('Unimplemented');
         this.btnRecall.onclick = () => alert('Unimplemented');
         this.btnOption.onclick = () => alert('Unimplemented');
+    }
+    handlePlay() {
+        let text = DOM.getVisibleText(RAG.viewController.getEditor());
+        let parts = text.trim().split(/\.\s/i);
+        RAG.speechSynth.cancel();
+        parts.forEach(segment => RAG.speechSynth.speak(new SpeechSynthesisUtterance(segment)));
+        RAG.viewController.setMarquee(text);
+    }
+    handleStop() {
+        RAG.speechSynth.cancel();
+        RAG.viewController.stopMarquee();
+    }
+}
+class ViewController {
+    constructor() {
+        this.signageTimer = 0;
+        this.signageOffset = 0;
+        this.platformPicker = new PlatformPicker();
+        this.toolbar = new Toolbar();
+        this.domEditor = DOM.require('#editor');
+        this.domSignage = DOM.require('#signage');
+        this.domSignageSpan = document.createElement('span');
         this.domSignage.innerHTML = '';
         this.domSignage.appendChild(this.domSignageSpan);
         this.domEditor.textContent = "Please wait...";
@@ -244,17 +301,6 @@ class ViewController {
     }
     getEditor() {
         return this.domEditor;
-    }
-    handlePlay() {
-        let text = DOM.getVisibleText(this.domEditor);
-        let parts = text.trim().split(/\.\s/i);
-        RAG.speechSynth.cancel();
-        parts.forEach(segment => RAG.speechSynth.speak(new SpeechSynthesisUtterance(segment)));
-        this.setMarquee(text);
-    }
-    handleStop() {
-        RAG.speechSynth.cancel();
-        this.stopMarquee();
     }
 }
 class DOM {
@@ -366,18 +412,23 @@ class RAG {
     }
 }
 class State {
-    get platform() {
-        if (!this._platform) {
-            this._platform = Random.bool(98)
-                ? Random.int(1, 26).toString()
-                : '0';
-            if (Random.bool(10))
-                this._platform += Random.array('ABC');
-        }
-        return this._platform;
+    getPlatform() {
+        if (!this.platform)
+            this.platform = new Platform();
+        return this.platform;
     }
-    set platform(value) {
-        this._platform = value;
+}
+class Platform {
+    constructor() {
+        this.digit = Random.bool(98)
+            ? Random.int(1, 26)
+            : 0;
+        this.letter = Random.bool(10)
+            ? Random.array('ABC')
+            : '';
+    }
+    toString() {
+        return `${this.digit}${this.letter}`;
     }
 }
 //# sourceMappingURL=rag.js.map

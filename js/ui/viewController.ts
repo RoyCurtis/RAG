@@ -3,18 +3,21 @@
 /** Manages UI elements and their logic */
 class ViewController
 {
+    public readonly platformPicker : PlatformPicker;
+    public readonly toolbar        : Toolbar;
+
     private domEditor      : HTMLElement;
     private domSignage     : HTMLElement;
     private domSignageSpan : HTMLElement;
-
-    private toolbar : Toolbar;
 
     private signageTimer  : number = 0;
     private signageOffset : number = 0;
 
     constructor()
     {
+        this.platformPicker = new PlatformPicker();
         this.toolbar        = new Toolbar();
+
         this.domEditor      = DOM.require('#editor');
         this.domSignage     = DOM.require('#signage');
         this.domSignageSpan = document.createElement('span');

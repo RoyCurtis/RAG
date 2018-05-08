@@ -5,24 +5,26 @@
 }
 .dialog {
   background: #111;
-  border: 2px solid #cc7e00;
+  border: 8px solid #cc7e00;
   border-radius: 4px;
-  box-shadow: 2px 2px 4px #000;
+  box-shadow: 8px 8px 8px rgba(0,0,0,0.5);
   position: absolute;
   z-index: 100;
 }
 .dialog > header {
   background: #cc7e00;
   font-weight: bold;
-  padding: 0.5em;
+  padding-bottom: 4px;
 }
 #platformPicker form {
   display: flex;
 }
 #platformPicker form input,
 #platformPicker form select {
+  border: none;
   flex-grow: 1;
   font-size: x-large;
+  padding: 0 4px;
 }
 #editor {
   background: #222;
@@ -68,31 +70,39 @@
   border-color: #fff;
 }
 #editor span[data-type=optional],
-#editor span[data-chance] {
+#editor span[data-chance],
+#editor span[data-type=platform] {
   cursor: pointer;
 }
 #editor span[data-type=optional][editing],
-#editor span[data-chance][editing] {
+#editor span[data-chance][editing],
+#editor span[data-type=platform][editing] {
   background: #cc7e00;
   color: #fff;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 8px 8px 8px rgba(0,0,0,0.5);
 }
 #editor span[data-type=optional][collapsed],
-#editor span[data-chance][collapsed] {
+#editor span[data-chance][collapsed],
+#editor span[data-type=platform][collapsed] {
   border: none;
   padding: 0;
 }
 #editor span[data-type=optional][collapsed] *,
-#editor span[data-chance][collapsed] * {
+#editor span[data-chance][collapsed] *,
+#editor span[data-type=platform][collapsed] * {
   display: none;
 }
 #editor span[data-type=optional][collapsed]:active::before,
-#editor span[data-chance][collapsed]:active::before {
+#editor span[data-chance][collapsed]:active::before,
+#editor span[data-type=platform][collapsed]:active::before {
   color: #aaa;
   box-shadow: 0 0 4px #000 inset;
   fill: #aaa;
 }
 #editor span[data-type=optional][collapsed]::before,
-#editor span[data-chance][collapsed]::before {
+#editor span[data-chance][collapsed]::before,
+#editor span[data-type=platform][collapsed]::before {
   background: #222;
   border: none;
   box-shadow: 0 0 8px #222;
@@ -128,6 +138,7 @@ body,
 html {
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 body {
   background: #000;

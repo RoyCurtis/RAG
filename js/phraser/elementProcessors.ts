@@ -98,23 +98,13 @@ class ElementProcessors
     /** Gets the current platform number */
     public static platform(ctx: PhraseContext)
     {
-        ctx.newElement.addEventListener('click', ev =>
-        {
-            ev.stopPropagation();
-            ctx.xmlElement.setAttribute('editing', 'true');
+        ctx.newElement.addEventListener(
+            'click',
+            ev => RAG.viewController.platformPicker.onClick(ev, ctx),
+            true
+        );
 
-            let platEditor = document.getElementById('platformPicker');
-            let dialogX    = ctx.xmlElement.clientLeft;
-            let dialogY    = ctx.xmlElement.clientTop;
-
-            if (!platEditor) return;
-
-            platEditor.classList.remove('hidden');
-            platEditor.style.transform = `translate(${dialogX}px, ${dialogY}px`;
-
-        }, true);
-
-        ctx.newElement.textContent = RAG.state.platform;
+        ctx.newElement.textContent = RAG.state.getPlatform().toString();
     }
 
     /** Picks a rail network name */
@@ -159,6 +149,7 @@ class ElementProcessors
         ctx.newElement.textContent = `${hour}:${minute}`;
     }
 
+    /** Handles unknown elements in an inline error message */
     public static unknown(ctx: PhraseContext)
     {
         let name = ctx.xmlElement.nodeName;
