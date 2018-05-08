@@ -3,6 +3,9 @@
 /** Union type for iterable types with a .length property */
 type Lengthable = Array<any> | NodeList | HTMLCollection | string;
 
+/** Represents a platform as a digit and optional letter tuple */
+type Platform = [string, string];
+
 /** Represents the format of the National Rail station name dataset */
 type StationsDB = { [index: string]: string };
 

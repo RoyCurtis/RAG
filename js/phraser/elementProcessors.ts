@@ -104,7 +104,7 @@ class ElementProcessors
             true
         );
 
-        ctx.newElement.textContent = RAG.state.getPlatform().toString();
+        ctx.newElement.textContent = RAG.state.platform.join('');
     }
 
     /** Picks a rail network name */
@@ -143,10 +143,13 @@ class ElementProcessors
     /** Picks a 24 hour time, with hours and minutes */
     public static time(ctx: PhraseContext)
     {
-        let hour   = Random.int(0, 23).toString().padStart(2, '0');
-        let minute = Random.int(0, 59).toString().padStart(2, '0');
+        ctx.newElement.addEventListener(
+            'click',
+            ev => RAG.viewController.timePicker.onClick(ev, ctx),
+            true
+        );
 
-        ctx.newElement.textContent = `${hour}:${minute}`;
+        ctx.newElement.textContent = RAG.state.time;
     }
 
     /** Handles unknown elements in an inline error message */

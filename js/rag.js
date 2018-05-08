@@ -59,7 +59,7 @@ class ElementProcessors {
     }
     static platform(ctx) {
         ctx.newElement.addEventListener('click', ev => RAG.viewController.platformPicker.onClick(ev, ctx), true);
-        ctx.newElement.textContent = RAG.state.getPlatform().toString();
+        ctx.newElement.textContent = RAG.state.platform.join('');
     }
     static service(ctx) {
         ctx.newElement.textContent = RAG.database.pickService();
@@ -82,9 +82,8 @@ class ElementProcessors {
         ctx.newElement.textContent = stationList;
     }
     static time(ctx) {
-        let hour = Random.int(0, 23).toString().padStart(2, '0');
-        let minute = Random.int(0, 59).toString().padStart(2, '0');
-        ctx.newElement.textContent = `${hour}:${minute}`;
+        ctx.newElement.addEventListener('click', ev => RAG.viewController.timePicker.onClick(ev, ctx), true);
+        ctx.newElement.textContent = RAG.state.time;
     }
     static unknown(ctx) {
         let name = ctx.xmlElement.nodeName;
@@ -214,22 +213,66 @@ class PlatformPicker {
         let rect = ctx.newElement.getBoundingClientRect();
         let dialogX = (rect.left | 0) - 8;
         let dialogY = rect.bottom | 0;
-        let value = RAG.state.getPlatform();
-        this.inputDigit.value = value.digit.toString();
-        this.inputLetter.value = value.letter;
-        if (dialogX + this.dom.offsetWidth > document.body.clientWidth) {
-            console.log("readjusting box", rect);
+        let value = RAG.state.platform;
+        this.inputDigit.value = value[0];
+        this.inputLetter.value = value[1];
+        if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
             dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
-        }
         this.dom.style.transform = `translate(${dialogX}px, ${dialogY}px)`;
     }
     onChange(ev) {
         let elements = RAG.viewController.getEditor()
             .querySelectorAll('span[data-type=platform]');
-        RAG.state.getPlatform().digit = this.inputDigit.valueAsNumber;
-        RAG.state.getPlatform().letter = this.inputLetter.value;
+        RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
         elements.forEach(element => {
-            element.textContent = RAG.state.getPlatform().toString();
+            element.textContent = RAG.state.platform.join('');
+        });
+        ev;
+    }
+    onSubmit(ev) {
+        ev.preventDefault();
+        this.onChange(ev);
+    }
+}
+class TimePicker {
+    constructor() {
+        let self = this;
+        this.dom = DOM.require('#timePicker');
+        this.domForm = DOM.require('form', this.dom);
+        this.inputTime = DOM.require('input', this.dom);
+        this.domForm.onchange = ev => self.onChange(ev);
+        this.domForm.onsubmit = ev => self.onSubmit(ev);
+    }
+    onClick(ev, ctx) {
+        ev.stopPropagation();
+        if (this.editing) {
+            this.editing.removeAttribute('editing');
+            if (ev.target === this.editing) {
+                this.editing = undefined;
+                this.dom.classList.add('hidden');
+                return;
+            }
+        }
+        this.dom.classList.remove('hidden');
+        ctx.newElement.setAttribute('editing', 'true');
+        this.editing = ev.target;
+        let rect = ctx.newElement.getBoundingClientRect();
+        let dialogX = (rect.left | 0) - 8;
+        let dialogY = rect.bottom | 0;
+        let width = (rect.width | 0) + 16;
+        let value = RAG.state.time;
+        this.dom.style.minWidth = `${width}px`;
+        this.inputTime.value = value;
+        if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
+            dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
+        this.dom.style.transform = `translate(${dialogX}px, ${dialogY}px)`;
+    }
+    onChange(ev) {
+        let elements = RAG.viewController.getEditor()
+            .querySelectorAll('span[data-type=time]');
+        RAG.state.time = this.inputTime.value;
+        elements.forEach(element => {
+            element.textContent = RAG.state.time.toString();
         });
         ev;
     }
@@ -271,6 +314,7 @@ class ViewController {
         this.signageTimer = 0;
         this.signageOffset = 0;
         this.platformPicker = new PlatformPicker();
+        this.timePicker = new TimePicker();
         this.toolbar = new Toolbar();
         this.domEditor = DOM.require('#editor');
         this.domSignage = DOM.require('#signage');
@@ -412,23 +456,32 @@ class RAG {
     }
 }
 class State {
-    getPlatform() {
-        if (!this.platform)
-            this.platform = new Platform();
-        return this.platform;
-    }
-}
-class Platform {
-    constructor() {
-        this.digit = Random.bool(98)
-            ? Random.int(1, 26)
-            : 0;
-        this.letter = Random.bool(10)
+    get platform() {
+        if (this._platform)
+            return this._platform;
+        let platform = ['', ''];
+        platform[0] = Random.bool(98)
+            ? Random.int(1, 26).toString()
+            : '0';
+        platform[1] = Random.bool(10)
             ? Random.array('ABC')
             : '';
+        this._platform = platform;
+        return this._platform;
     }
-    toString() {
-        return `${this.digit}${this.letter}`;
+    set platform(value) {
+        this._platform = value;
+    }
+    get time() {
+        if (!this._time) {
+            let hour = Random.int(0, 23).toString().padStart(2, '0');
+            let minute = Random.int(0, 59).toString().padStart(2, '0');
+            this._time = `${hour}:${minute}`;
+        }
+        return this._time;
+    }
+    set time(value) {
+        this._time = value;
     }
 }
 //# sourceMappingURL=rag.js.map

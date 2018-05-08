@@ -1,22 +1,20 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/** Controller for the platform picker dialog */
-class PlatformPicker
+/** Controller for the time picker dialog */
+class TimePicker
 {
-    private dom:         HTMLElement;
-    private domForm:     HTMLFormElement;
-    private inputDigit:  HTMLInputElement;
-    private inputLetter: HTMLSelectElement;
-    private editing?:    HTMLElement;
+    private dom:       HTMLElement;
+    private domForm:   HTMLFormElement;
+    private inputTime: HTMLInputElement;
+    private editing?:  HTMLElement;
 
     constructor()
     {
         let self = this;
 
-        this.dom         = DOM.require('#platformPicker');
-        this.domForm     = DOM.require('form', this.dom)   as HTMLFormElement;
-        this.inputDigit  = DOM.require('input', this.dom)  as HTMLInputElement;
-        this.inputLetter = DOM.require('select', this.dom) as HTMLSelectElement;
+        this.dom       = DOM.require('#timePicker');
+        this.domForm   = DOM.require('form', this.dom)   as HTMLFormElement;
+        this.inputTime = DOM.require('input', this.dom)  as HTMLInputElement;
 
         // Self needed here, as 'this' breaks inside event delegates
         this.domForm.onchange = ev => self.onChange(ev);
@@ -46,10 +44,11 @@ class PlatformPicker
         let rect     = ctx.newElement.getBoundingClientRect();
         let dialogX  = (rect.left | 0) - 8;
         let dialogY  = rect.bottom | 0;
-        let value    = RAG.state.platform;
+        let width    = (rect.width | 0) + 16;
+        let value    = RAG.state.time;
 
-        this.inputDigit.value  = value[0];
-        this.inputLetter.value = value[1];
+        this.dom.style.minWidth = `${width}px`;
+        this.inputTime.value    = value;
 
         // Adjust if off screen
         if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
@@ -61,13 +60,13 @@ class PlatformPicker
     private onChange(ev: Event)
     {
         let elements = RAG.viewController.getEditor()
-            .querySelectorAll('span[data-type=platform]');
+            .querySelectorAll('span[data-type=time]');
 
-        RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
+        RAG.state.time = this.inputTime.value;
 
         elements.forEach(element =>
         {
-            element.textContent = RAG.state.platform.join('');
+            element.textContent = RAG.state.time.toString();
         });
 
         ev;

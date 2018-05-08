@@ -4,6 +4,7 @@
 class ViewController
 {
     public readonly platformPicker : PlatformPicker;
+    public readonly timePicker     : TimePicker;
     public readonly toolbar        : Toolbar;
 
     private domEditor      : HTMLElement;
@@ -16,6 +17,7 @@ class ViewController
     constructor()
     {
         this.platformPicker = new PlatformPicker();
+        this.timePicker     = new TimePicker();
         this.toolbar        = new Toolbar();
 
         this.domEditor      = DOM.require('#editor');
