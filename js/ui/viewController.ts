@@ -6,38 +6,18 @@ class ViewController
     private domEditor      : HTMLElement;
     private domSignage     : HTMLElement;
     private domSignageSpan : HTMLElement;
-    private domToolbar     : HTMLElement;
 
-    private btnPlay     : HTMLElement;
-    private btnStop     : HTMLElement;
-    private btnGenerate : HTMLElement;
-    private btnSave     : HTMLElement;
-    private btnRecall   : HTMLElement;
-    private btnOption   : HTMLElement;
+    private toolbar : Toolbar;
 
     private signageTimer  : number = 0;
     private signageOffset : number = 0;
 
     constructor()
     {
+        this.toolbar        = new Toolbar();
         this.domEditor      = DOM.require('#editor');
         this.domSignage     = DOM.require('#signage');
-        this.domToolbar     = DOM.require('#toolbar');
         this.domSignageSpan = document.createElement('span');
-
-        this.btnPlay     = DOM.require('#btnPlay');
-        this.btnStop     = DOM.require('#btnStop');
-        this.btnGenerate = DOM.require('#btnShuffle');
-        this.btnSave     = DOM.require('#btnSave');
-        this.btnRecall   = DOM.require('#btnLoad');
-        this.btnOption   = DOM.require('#btnSettings');
-
-        this.btnPlay.onclick     = () => this.handlePlay();
-        this.btnStop.onclick     = () => this.handleStop();
-        this.btnGenerate.onclick = () => RAG.generate();
-        this.btnSave.onclick     = () => alert('Unimplemented');
-        this.btnRecall.onclick   = () => alert('Unimplemented');
-        this.btnOption.onclick   = () => alert('Unimplemented');
 
         this.domSignage.innerHTML = '';
         this.domSignage.appendChild(this.domSignageSpan);
@@ -71,6 +51,7 @@ class ViewController
         anim();
     }
 
+    /** Stops the current marquee animation */
     public stopMarquee() : void
     {
         window.cancelAnimationFrame(this.signageTimer);
@@ -80,28 +61,5 @@ class ViewController
     public getEditor() : HTMLElement
     {
         return this.domEditor;
-    }
-
-    private handlePlay() : void
-    {
-        // Note: It would be nice to have the play button change to the stop button and
-        // automatically change back. However, speech's 'onend' event was found to be
-        // unreliable, so I decided to keep play and stop separate.
-
-        let text  = DOM.getVisibleText(this.domEditor);
-        let parts = text.trim().split(/\.\s/i);
-
-        RAG.speechSynth.cancel();
-        parts.forEach( segment =>
-            RAG.speechSynth.speak( new SpeechSynthesisUtterance(segment) )
-        );
-
-        this.setMarquee(text);
-    }
-
-    private handleStop() : void
-    {
-        RAG.speechSynth.cancel();
-        this.stopMarquee();
     }
 }
