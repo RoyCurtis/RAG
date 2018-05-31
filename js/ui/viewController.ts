@@ -4,6 +4,7 @@
 class ViewController
 {
     public readonly platformPicker : PlatformPicker;
+    public readonly servicePicker  : ServicePicker;
     public readonly timePicker     : TimePicker;
     public readonly toolbar        : Toolbar;
     public readonly marquee        : Marquee;
@@ -13,6 +14,7 @@ class ViewController
     constructor()
     {
         this.platformPicker = new PlatformPicker();
+        this.servicePicker  = new ServicePicker();
         this.timePicker     = new TimePicker();
         this.toolbar        = new Toolbar();
         this.marquee        = new Marquee();

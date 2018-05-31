@@ -1,7 +1,7 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 @import "font/5by7.css";
 .hidden {
-  display: none;
+  display: none !important;
 }
 .dialog {
   background: #111;
@@ -28,6 +28,28 @@
   flex-grow: 1;
   font-size: x-large;
   padding: 0 4px;
+}
+#servicePicker {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  height: 50%;
+}
+#servicePicker form {
+  overflow: auto;
+}
+#servicePicker form .picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+#servicePicker form .picker option {
+  cursor: pointer;
+  padding: 1em;
+}
+#servicePicker form .picker option:hover,
+#servicePicker form .picker option[selected] {
+  background: #cc7e00;
 }
 #editor {
   background: #222;
@@ -74,17 +96,34 @@
 #editor span[data-type=optional],
 #editor span[data-chance],
 #editor span[data-type=platform],
+#editor span[data-type=service],
 #editor span[data-type=time] {
   cursor: pointer;
 }
 #editor span[data-type=optional][editing],
 #editor span[data-chance][editing],
 #editor span[data-type=platform][editing],
+#editor span[data-type=service][editing],
 #editor span[data-type=time][editing] {
   background: #cc7e00;
   color: #fff;
-  border-radius: 8px 8px 0 0;
   box-shadow: 8px 8px 8px rgba(0,0,0,0.5);
+}
+#editor span[data-type=optional][editing].above,
+#editor span[data-chance][editing].above,
+#editor span[data-type=platform][editing].above,
+#editor span[data-type=service][editing].above,
+#editor span[data-type=time][editing].above {
+  border-radius: 8px 8px 0 0;
+}
+#editor span[data-type=optional][editing].below,
+#editor span[data-chance][editing].below,
+#editor span[data-type=platform][editing].below,
+#editor span[data-type=service][editing].below,
+#editor span[data-type=time][editing].below {
+  border-radius: 0 0 8px 8px;
+  position: relative;
+  z-index: 150;
 }
 #editor span[data-type=optional][collapsed],
 #editor span[data-chance][collapsed] {

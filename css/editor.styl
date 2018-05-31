@@ -26,14 +26,21 @@
 
   // Editable elements
   span[data-type=optional], span[data-chance], span[data-type=platform],
-  span[data-type=time]
+  span[data-type=service], span[data-type=time]
     cursor pointer
 
     &[editing]
-      background    #CC7E00
-      color         white
-      border-radius 8px 8px 0 0
-      box-shadow    8px 8px 8px rgba(0, 0, 0, 0.5)
+      background #CC7E00
+      color      white
+      box-shadow 8px 8px 8px rgba(0, 0, 0, 0.5)
+
+      &.above
+        border-radius 8px 8px 0 0
+
+      &.below
+        border-radius 0 0 8px 8px
+        position      relative
+        z-index       150
 
   // Optional elements
   span[data-type=optional], span[data-chance]

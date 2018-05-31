@@ -56,12 +56,22 @@
     <form>
       <input type="number" title="Platform number" min="0" max="99">
 
-      <select name="text" title="Optional platform letter">
+      <select title="Optional platform letter">
         <option value=""></option>
         <option value="A">A</option>
         <option value="B">B</option>
         <option value="C">C</option>
       </select>
+    </form>
+  </div>
+
+  <div id="servicePicker" class="dialog hidden">
+    <header>Pick a service</header>
+
+    <form>
+      <div class="picker" title="Service name">
+
+      </div>
     </form>
   </div>
 
@@ -72,6 +82,7 @@
       <input type="time" title="Time" pattern="[0-9]{2}:[0-9]{2}" required>
     </form>
   </div>
+
 </body>
 
 <scripts>

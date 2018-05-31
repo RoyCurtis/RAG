@@ -21,10 +21,11 @@ class RAG
      */
     public static main(config: RAGConfig)
     {
-        window.onerror = error => RAG.panic(error);
+        window.onerror        = error => RAG.panic(error);
+        window.onbeforeunload = _ => RAG.speechSynth.cancel();
 
-        RAG.viewController = new ViewController();
         RAG.database       = new Database(config);
+        RAG.viewController = new ViewController();
         RAG.phraser        = new Phraser(config);
         RAG.speechSynth    = window.speechSynthesis;
 
@@ -32,11 +33,6 @@ class RAG
 
         RAG.viewController.marquee.set("Welcome to RAG.");
         RAG.generate();
-
-        window.onbeforeunload = _ =>
-        {
-            RAG.speechSynth.cancel();
-        };
     }
 
     /** Generates a new random phrase and state */

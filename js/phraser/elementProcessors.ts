@@ -46,7 +46,7 @@ class ElementProcessors
     /** Picks a named train */
     public static named(ctx: PhraseContext)
     {
-        ctx.newElement.textContent = RAG.database.pickNamed();
+        ctx.newElement.textContent = RAG.state.named;
     }
 
     /** Makes the content of this tag optionally hidden, by chance or user choice */
@@ -111,7 +111,14 @@ class ElementProcessors
     /** Picks a rail network name */
     public static service(ctx: PhraseContext)
     {
-        ctx.newElement.textContent = RAG.database.pickService();
+        ctx.newElement.addEventListener(
+            'click',
+            ev => RAG.viewController.servicePicker.onClick(ev, ctx),
+            true
+        );
+
+        ctx.newElement.title       = "Click to change this train's network";
+        ctx.newElement.textContent = RAG.state.service;
     }
 
     /** Picks a station name */

@@ -1,7 +1,9 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+/// <reference path="Picker.ts"/>
+
 /** Controller for the platform picker dialog */
-class PlatformPicker
+class PlatformPicker extends Picker
 {
     private dom:         HTMLElement;
     private domForm:     HTMLFormElement;
@@ -11,6 +13,7 @@ class PlatformPicker
 
     constructor()
     {
+        super();
         let self = this;
 
         this.dom         = DOM.require('#platformPicker');

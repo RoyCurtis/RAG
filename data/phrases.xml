@@ -279,7 +279,7 @@
 
 <phrase id="not_stopping">
   This train will not be calling at <stationlist id="not_stopping" max="8"/> today
-  <phrase ref="excuse"/>
+  <phrase ref="excuse"/>.
 </phrase>
 
 <phraseset id="request_stop">

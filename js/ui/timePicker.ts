@@ -1,7 +1,9 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+/// <reference path="Picker.ts"/>
+
 /** Controller for the time picker dialog */
-class TimePicker
+class TimePicker extends Picker
 {
     private dom:       HTMLElement;
     private domForm:   HTMLFormElement;
@@ -10,11 +12,12 @@ class TimePicker
 
     constructor()
     {
+        super();
         let self = this;
 
         this.dom       = DOM.require('#timePicker');
-        this.domForm   = DOM.require('form', this.dom)   as HTMLFormElement;
-        this.inputTime = DOM.require('input', this.dom)  as HTMLInputElement;
+        this.domForm   = DOM.require('form', this.dom)  as HTMLFormElement;
+        this.inputTime = DOM.require('input', this.dom) as HTMLInputElement;
 
         // Self needed here, as 'this' breaks inside event delegates
         this.domForm.onchange = ev => self.onChange(ev);

@@ -27,7 +27,7 @@ class ElementProcessors {
         ctx.newElement.textContent = intStr;
     }
     static named(ctx) {
-        ctx.newElement.textContent = RAG.database.pickNamed();
+        ctx.newElement.textContent = RAG.state.named;
     }
     static optional(ctx) {
         this.makeCollapsible(ctx, '50');
@@ -63,7 +63,9 @@ class ElementProcessors {
         ctx.newElement.textContent = RAG.state.platform.join('');
     }
     static service(ctx) {
-        ctx.newElement.textContent = RAG.database.pickService();
+        ctx.newElement.addEventListener('click', ev => RAG.viewController.servicePicker.onClick(ev, ctx), true);
+        ctx.newElement.title = "Click to change this train's network";
+        ctx.newElement.textContent = RAG.state.service;
     }
     static station(ctx) {
         ctx.newElement.textContent = RAG.database.pickStation();
@@ -268,6 +270,75 @@ class PlatformPicker extends Picker {
         this.onChange(ev);
     }
 }
+class ServicePicker extends Picker {
+    constructor() {
+        super();
+        let self = this;
+        this.dom = DOM.require('#servicePicker');
+        this.domForm = DOM.require('form', this.dom);
+        this.domChoices = [];
+        this.inputService = DOM.require('.picker', this.dom);
+        RAG.database.services.forEach(value => {
+            let service = document.createElement('option');
+            service.text = value;
+            service.value = value;
+            service.title = value;
+            this.domChoices.push(service);
+            this.inputService.appendChild(service);
+        });
+        this.domForm.onclick = ev => self.onChange(ev);
+        this.domForm.onsubmit = ev => self.onSubmit(ev);
+    }
+    onClick(ev, ctx) {
+        ev.stopPropagation();
+        if (this.editing) {
+            this.editing.removeAttribute('editing');
+            if (ev.target === this.editing) {
+                this.editing = undefined;
+                this.dom.classList.add('hidden');
+                return;
+            }
+        }
+        this.dom.classList.remove('hidden');
+        ctx.newElement.setAttribute('editing', 'true');
+        this.editing = ev.target;
+        let rect = ctx.newElement.getBoundingClientRect();
+        let dialogY = rect.bottom | 0;
+        let value = RAG.state.service;
+        if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
+            dialogY = (rect.top | 0) - this.dom.offsetHeight;
+            ctx.newElement.classList.add('below');
+        }
+        else
+            ctx.newElement.classList.add('above');
+        this.dom.style.transform = `translateY(${dialogY}px)`;
+        this.domChoices.some(service => {
+            if (value !== service.value)
+                return false;
+            service.setAttribute('selected', 'true');
+            return true;
+        });
+    }
+    onChange(ev) {
+        let target = ev.target;
+        let elements = RAG.viewController.getEditor()
+            .querySelectorAll('span[data-type=service]');
+        if (!target || target instanceof HTMLSelectElement)
+            return;
+        RAG.state.service = target.value;
+        this.domChoices.forEach(service => {
+            service.removeAttribute('selected');
+        });
+        elements.forEach(element => {
+            element.textContent = RAG.state.service;
+        });
+        ev;
+    }
+    onSubmit(ev) {
+        ev.preventDefault();
+        this.onChange(ev);
+    }
+}
 class TimePicker extends Picker {
     constructor() {
         super();
@@ -347,6 +418,7 @@ class Toolbar {
 class ViewController {
     constructor() {
         this.platformPicker = new PlatformPicker();
+        this.servicePicker = new ServicePicker();
         this.timePicker = new TimePicker();
         this.toolbar = new Toolbar();
         this.marquee = new Marquee();
@@ -443,15 +515,13 @@ class Database {
 class RAG {
     static main(config) {
         window.onerror = error => RAG.panic(error);
-        RAG.viewController = new ViewController();
+        window.onbeforeunload = _ => RAG.speechSynth.cancel();
         RAG.database = new Database(config);
+        RAG.viewController = new ViewController();
         RAG.phraser = new Phraser(config);
         RAG.speechSynth = window.speechSynthesis;
         RAG.viewController.marquee.set("Welcome to RAG.");
         RAG.generate();
-        window.onbeforeunload = _ => {
-            RAG.speechSynth.cancel();
-        };
     }
     static generate() {
         RAG.state = new State();
@@ -482,6 +552,24 @@ class State {
     }
     set platform(value) {
         this._platform = value;
+    }
+    get named() {
+        if (this._named)
+            return this._named;
+        this._named = RAG.database.pickNamed();
+        return this._named;
+    }
+    set named(value) {
+        this._named = value;
+    }
+    get service() {
+        if (this._service)
+            return this._service;
+        this._service = RAG.database.pickService();
+        return this._service;
+    }
+    set service(value) {
+        this._service = value;
     }
     get time() {
         if (!this._time) {

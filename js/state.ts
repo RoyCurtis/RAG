@@ -4,6 +4,8 @@
 class State
 {
     private _platform?: Platform;
+    private _named?:    string;
+    private _service?:  string;
     private _time?:     string;
 
     get platform() : Platform
@@ -30,6 +32,34 @@ class State
     set platform(value: Platform)
     {
         this._platform = value;
+    }
+
+    get named(): string
+    {
+        if (this._named)
+            return this._named;
+
+        this._named = RAG.database.pickNamed();
+        return this._named;
+    }
+
+    set named(value: string)
+    {
+        this._named = value;
+    }
+
+    get service(): string
+    {
+        if (this._service)
+            return this._service;
+
+        this._service = RAG.database.pickService();
+        return this._service;
+    }
+
+    set service(value: string)
+    {
+        this._service = value;
     }
 
     get time(): string
