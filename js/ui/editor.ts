@@ -76,10 +76,22 @@ class Editor
         // Cancel any open editors
         this.closeDialog();
 
-        // Only continue if we're handling an editor tag and a picker is available
-        if (!target || !type || !picker)
-            return;
+        if (type === 'optional')
+            this.toggleOptional(target);
+        else if (target && type && picker)
+            this.openPicker(target, picker);
+    }
 
+    private toggleOptional(target: HTMLElement)
+    {
+        if (target.hasAttribute('collapsed'))
+            target.removeAttribute('collapsed');
+        else
+            target.setAttribute('collapsed', '');
+    }
+
+    private openPicker(target: HTMLElement, picker: Picker)
+    {
         target.setAttribute('editing', 'true');
 
         this.currentPicker = picker;
