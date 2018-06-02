@@ -3,10 +3,10 @@
 /** Disposable class that holds state for the current schedule, train, etc. */
 class State
 {
-    private _platform?: Platform;
-    private _named?:    string;
-    private _service?:  string;
-    private _time?:     string;
+    private _platform? : Platform;
+    private _named?    : string;
+    private _service?  : string;
+    private _time?     : string;
 
     get platform() : Platform
     {

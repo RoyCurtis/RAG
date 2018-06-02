@@ -98,11 +98,11 @@ class ElementProcessors
     /** Gets the current platform number */
     public static platform(ctx: PhraseContext)
     {
-        ctx.newElement.addEventListener(
-            'click',
-            ev => RAG.viewController.platformPicker.onClick(ev, ctx),
-            true
-        );
+        // ctx.newElement.addEventListener(
+        //     'click',
+        //     ev => RAG.viewController.platformPicker.onClick(ev, ctx),
+        //     true
+        // );
 
         ctx.newElement.title       = "Click to change the platform number";
         ctx.newElement.textContent = RAG.state.platform.join('');
@@ -111,11 +111,11 @@ class ElementProcessors
     /** Picks a rail network name */
     public static service(ctx: PhraseContext)
     {
-        ctx.newElement.addEventListener(
-            'click',
-            ev => RAG.viewController.servicePicker.onClick(ev, ctx),
-            true
-        );
+        // ctx.newElement.addEventListener(
+        //     'click',
+        //     ev => RAG.viewController.servicePicker.onClick(ev, ctx),
+        //     true
+        // );
 
         ctx.newElement.title       = "Click to change this train's network";
         ctx.newElement.textContent = RAG.state.service;
@@ -151,11 +151,11 @@ class ElementProcessors
     /** Picks a 24 hour time, with hours and minutes */
     public static time(ctx: PhraseContext)
     {
-        ctx.newElement.addEventListener(
-            'click',
-            ev => RAG.viewController.timePicker.onClick(ev, ctx),
-            true
-        );
+        // ctx.newElement.addEventListener(
+        //     'click',
+        //     ev => RAG.viewController.timePicker.onClick(ev, ctx),
+        //     true
+        // );
 
         ctx.newElement.title       = "Click to change the time";
         ctx.newElement.textContent = RAG.state.time;
@@ -199,14 +199,14 @@ class ElementProcessors
             ctx.newElement.setAttribute('collapsed', '');
 
         // TODO: Eventually move this elsewhere
-        ctx.newElement.addEventListener('click', ev =>
-        {
-            ev.stopPropagation();
-
-            if (ctx.newElement.hasAttribute('collapsed'))
-                ctx.newElement.removeAttribute('collapsed');
-            else
-                ctx.newElement.setAttribute('collapsed', '');
-        });
+        // ctx.newElement.addEventListener('click', ev =>
+        // {
+        //     ev.stopPropagation();
+        //
+        //     if (ctx.newElement.hasAttribute('collapsed'))
+        //         ctx.newElement.removeAttribute('collapsed');
+        //     else
+        //         ctx.newElement.setAttribute('collapsed', '');
+        // });
     }
 }

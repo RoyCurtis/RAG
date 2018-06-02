@@ -22,18 +22,8 @@ class Phraser
         this.phraseSets = iframe.contentDocument;
     }
 
-    /** Picks a random root phrase, loads it into the editor and processes it into HTML */
-    public generate()
-    {
-        let editor = RAG.viewController.getEditor();
-
-        editor.innerHTML = '<phraseset ref="root" />';
-
-        this.process(editor);
-    }
-
     /** Recursively processes elements, filling in data and applying transforms */
-    private process(container: HTMLElement, level: number = 0)
+    public process(container: HTMLElement, level: number = 0)
     {
         // Initially, this method was supposed to just add the XML elements directly into
         // the document. However, this caused a lot of problems (e.g. title not working).

@@ -3,29 +3,29 @@
 /** Manages UI elements and their logic */
 class ViewController
 {
-    public readonly platformPicker : PlatformPicker;
-    public readonly servicePicker  : ServicePicker;
-    public readonly timePicker     : TimePicker;
-    public readonly toolbar        : Toolbar;
-    public readonly marquee        : Marquee;
+    // Main components
+    public readonly editor  : Editor;
+    public readonly marquee : Marquee;
+    public readonly toolbar : Toolbar;
 
-    private domEditor      : HTMLElement;
+    private pickers : PickerDictionary;
 
     constructor()
     {
-        this.platformPicker = new PlatformPicker();
-        this.servicePicker  = new ServicePicker();
-        this.timePicker     = new TimePicker();
-        this.toolbar        = new Toolbar();
-        this.marquee        = new Marquee();
-        this.domEditor      = DOM.require('#editor');
+        this.editor  = new Editor();
+        this.marquee = new Marquee();
+        this.toolbar = new Toolbar();
+        this.pickers = {};
 
-        this.domEditor.textContent = "Please wait...";
-        this.marquee.set('Please wait...');
+        [
+            new PlatformPicker(),
+            new ServicePicker(),
+            new TimePicker()
+        ].forEach(picker => this.pickers[picker.xmlTag] = picker);
     }
 
-    public getEditor() : HTMLElement
+    public getPicker(xmlTag: string) : Picker
     {
-        return this.domEditor;
+        return this.pickers[xmlTag];
     }
 }

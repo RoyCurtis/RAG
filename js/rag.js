@@ -58,12 +58,10 @@ class ElementProcessors {
         ctx.newElement.appendChild(this.cloneIntoInner(phrase));
     }
     static platform(ctx) {
-        ctx.newElement.addEventListener('click', ev => RAG.viewController.platformPicker.onClick(ev, ctx), true);
         ctx.newElement.title = "Click to change the platform number";
         ctx.newElement.textContent = RAG.state.platform.join('');
     }
     static service(ctx) {
-        ctx.newElement.addEventListener('click', ev => RAG.viewController.servicePicker.onClick(ev, ctx), true);
         ctx.newElement.title = "Click to change this train's network";
         ctx.newElement.textContent = RAG.state.service;
     }
@@ -85,7 +83,6 @@ class ElementProcessors {
         ctx.newElement.textContent = stationList;
     }
     static time(ctx) {
-        ctx.newElement.addEventListener('click', ev => RAG.viewController.timePicker.onClick(ev, ctx), true);
         ctx.newElement.title = "Click to change the time";
         ctx.newElement.textContent = RAG.state.time;
     }
@@ -106,13 +103,6 @@ class ElementProcessors {
         ctx.newElement.dataset['chance'] = chance;
         if (!Random.bool(parseInt(chance)))
             ctx.newElement.setAttribute('collapsed', '');
-        ctx.newElement.addEventListener('click', ev => {
-            ev.stopPropagation();
-            if (ctx.newElement.hasAttribute('collapsed'))
-                ctx.newElement.removeAttribute('collapsed');
-            else
-                ctx.newElement.setAttribute('collapsed', '');
-        });
     }
 }
 class Phraser {
@@ -121,11 +111,6 @@ class Phraser {
         if (!iframe.contentDocument)
             throw new Error("Configured phraseset element is not an iframe embed");
         this.phraseSets = iframe.contentDocument;
-    }
-    generate() {
-        let editor = RAG.viewController.getEditor();
-        editor.innerHTML = '<phraseset ref="root" />';
-        this.process(editor);
     }
     process(container, level = 0) {
         let pending = container.querySelectorAll(':not(span)');
@@ -191,6 +176,50 @@ class Phraser {
 }
 Phraser.DIGITS = ['zero', 'one', 'two', 'three', 'four',
     'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+class Editor {
+    constructor() {
+        this.dom = DOM.require('#editor');
+        document.body.onclick = this.handleClick.bind(this);
+        this.dom.textContent = "Please wait...";
+    }
+    generate() {
+        this.dom.innerHTML = '<phraseset ref="root" />';
+        RAG.phraser.process(this.dom);
+    }
+    getElements(type) {
+        return this.dom.querySelectorAll(`span[data-type=${type}]`);
+    }
+    getText() {
+        return DOM.getVisibleText(this.dom);
+    }
+    closeDialog() {
+        if (this.currentPicker)
+            this.currentPicker.close();
+        if (this.domEditing) {
+            this.domEditing.removeAttribute('editing');
+            this.domEditing.classList.remove('above', 'below');
+        }
+        this.currentPicker = undefined;
+        this.domEditing = undefined;
+    }
+    handleClick(ev) {
+        let target = ev.target;
+        let type = target ? target.dataset['type'] : undefined;
+        let picker = type ? RAG.viewController.getPicker(type) : undefined;
+        if (target && this.currentPicker)
+            if (this.currentPicker.dom.contains(target))
+                return;
+        if (target && target === this.domEditing)
+            return this.closeDialog();
+        this.closeDialog();
+        if (!target || !type || !picker)
+            return;
+        target.setAttribute('editing', 'true');
+        this.currentPicker = picker;
+        this.domEditing = target;
+        picker.open(target);
+    }
+}
 class Marquee {
     constructor() {
         this.timer = 0;
@@ -221,44 +250,60 @@ class Marquee {
     }
 }
 class Picker {
+    constructor(xmlTag) {
+        this.dom = DOM.require(`#${xmlTag}Picker`);
+        this.xmlTag = xmlTag;
+    }
+    open(target) {
+        this.dom.classList.remove('hidden');
+        this.domEditing = target;
+        this.layout();
+    }
+    layout() {
+        if (!this.domEditing)
+            return;
+        let rect = this.domEditing.getBoundingClientRect();
+        let fullWidth = this.dom.classList.contains('fullWidth');
+        let dialogX = (rect.left | 0) - 8;
+        let dialogY = rect.bottom | 0;
+        let width = (rect.width | 0) + 16;
+        if (!fullWidth) {
+            this.dom.style.minWidth = `${width}px`;
+            if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
+                dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
+        }
+        if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
+            dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
+            this.domEditing.classList.add('below');
+        }
+        else
+            this.domEditing.classList.add('above');
+        this.dom.style.transform = fullWidth
+            ? `translateY(${dialogY}px)`
+            : `translate(${dialogX}px, ${dialogY}px)`;
+    }
+    close() {
+        this.dom.classList.add('hidden');
+    }
 }
 class PlatformPicker extends Picker {
     constructor() {
-        super();
+        super('platform');
         let self = this;
-        this.dom = DOM.require('#platformPicker');
         this.domForm = DOM.require('form', this.dom);
         this.inputDigit = DOM.require('input', this.dom);
         this.inputLetter = DOM.require('select', this.dom);
         this.domForm.onchange = ev => self.onChange(ev);
         this.domForm.onsubmit = ev => self.onSubmit(ev);
     }
-    onClick(ev, ctx) {
-        ev.stopPropagation();
-        if (this.editing) {
-            this.editing.removeAttribute('editing');
-            if (ev.target === this.editing) {
-                this.editing = undefined;
-                this.dom.classList.add('hidden');
-                return;
-            }
-        }
-        this.dom.classList.remove('hidden');
-        ctx.newElement.setAttribute('editing', 'true');
-        this.editing = ev.target;
-        let rect = ctx.newElement.getBoundingClientRect();
-        let dialogX = (rect.left | 0) - 8;
-        let dialogY = rect.bottom | 0;
+    open(target) {
+        super.open(target);
         let value = RAG.state.platform;
         this.inputDigit.value = value[0];
         this.inputLetter.value = value[1];
-        if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
-            dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
-        this.dom.style.transform = `translate(${dialogX}px, ${dialogY}px)`;
     }
     onChange(ev) {
-        let elements = RAG.viewController.getEditor()
-            .querySelectorAll('span[data-type=platform]');
+        let elements = RAG.viewController.editor.getElements('platform');
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
         elements.forEach(element => {
             element.textContent = RAG.state.platform.join('');
@@ -272,9 +317,8 @@ class PlatformPicker extends Picker {
 }
 class ServicePicker extends Picker {
     constructor() {
-        super();
+        super('service');
         let self = this;
-        this.dom = DOM.require('#servicePicker');
         this.domForm = DOM.require('form', this.dom);
         this.domChoices = [];
         this.inputService = DOM.require('.picker', this.dom);
@@ -289,29 +333,9 @@ class ServicePicker extends Picker {
         this.domForm.onclick = ev => self.onChange(ev);
         this.domForm.onsubmit = ev => self.onSubmit(ev);
     }
-    onClick(ev, ctx) {
-        ev.stopPropagation();
-        if (this.editing) {
-            this.editing.removeAttribute('editing');
-            if (ev.target === this.editing) {
-                this.editing = undefined;
-                this.dom.classList.add('hidden');
-                return;
-            }
-        }
-        this.dom.classList.remove('hidden');
-        ctx.newElement.setAttribute('editing', 'true');
-        this.editing = ev.target;
-        let rect = ctx.newElement.getBoundingClientRect();
-        let dialogY = rect.bottom | 0;
+    open(target) {
+        super.open(target);
         let value = RAG.state.service;
-        if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
-            dialogY = (rect.top | 0) - this.dom.offsetHeight;
-            ctx.newElement.classList.add('below');
-        }
-        else
-            ctx.newElement.classList.add('above');
-        this.dom.style.transform = `translateY(${dialogY}px)`;
         this.domChoices.some(service => {
             if (value !== service.value)
                 return false;
@@ -321,8 +345,7 @@ class ServicePicker extends Picker {
     }
     onChange(ev) {
         let target = ev.target;
-        let elements = RAG.viewController.getEditor()
-            .querySelectorAll('span[data-type=service]');
+        let elements = RAG.viewController.editor.getElements('service');
         if (!target || target instanceof HTMLSelectElement)
             return;
         RAG.state.service = target.value;
@@ -341,41 +364,19 @@ class ServicePicker extends Picker {
 }
 class TimePicker extends Picker {
     constructor() {
-        super();
+        super('time');
         let self = this;
-        this.dom = DOM.require('#timePicker');
         this.domForm = DOM.require('form', this.dom);
         this.inputTime = DOM.require('input', this.dom);
         this.domForm.onchange = ev => self.onChange(ev);
         this.domForm.onsubmit = ev => self.onSubmit(ev);
     }
-    onClick(ev, ctx) {
-        ev.stopPropagation();
-        if (this.editing) {
-            this.editing.removeAttribute('editing');
-            if (ev.target === this.editing) {
-                this.editing = undefined;
-                this.dom.classList.add('hidden');
-                return;
-            }
-        }
-        this.dom.classList.remove('hidden');
-        ctx.newElement.setAttribute('editing', 'true');
-        this.editing = ev.target;
-        let rect = ctx.newElement.getBoundingClientRect();
-        let dialogX = (rect.left | 0) - 8;
-        let dialogY = rect.bottom | 0;
-        let width = (rect.width | 0) + 16;
-        let value = RAG.state.time;
-        this.dom.style.minWidth = `${width}px`;
-        this.inputTime.value = value;
-        if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
-            dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
-        this.dom.style.transform = `translate(${dialogX}px, ${dialogY}px)`;
+    open(target) {
+        super.open(target);
+        this.inputTime.value = RAG.state.time;
     }
     onChange(ev) {
-        let elements = RAG.viewController.getEditor()
-            .querySelectorAll('span[data-type=time]');
+        let elements = RAG.viewController.editor.getElements('time');
         RAG.state.time = this.inputTime.value;
         elements.forEach(element => {
             element.textContent = RAG.state.time.toString();
@@ -404,7 +405,7 @@ class Toolbar {
         this.btnOption.onclick = () => alert('Unimplemented');
     }
     handlePlay() {
-        let text = DOM.getVisibleText(RAG.viewController.getEditor());
+        let text = RAG.viewController.editor.getText();
         let parts = text.trim().split(/\.\s/i);
         RAG.speechSynth.cancel();
         parts.forEach(segment => RAG.speechSynth.speak(new SpeechSynthesisUtterance(segment)));
@@ -417,17 +418,18 @@ class Toolbar {
 }
 class ViewController {
     constructor() {
-        this.platformPicker = new PlatformPicker();
-        this.servicePicker = new ServicePicker();
-        this.timePicker = new TimePicker();
-        this.toolbar = new Toolbar();
+        this.editor = new Editor();
         this.marquee = new Marquee();
-        this.domEditor = DOM.require('#editor');
-        this.domEditor.textContent = "Please wait...";
-        this.marquee.set('Please wait...');
+        this.toolbar = new Toolbar();
+        this.pickers = {};
+        [
+            new PlatformPicker(),
+            new ServicePicker(),
+            new TimePicker()
+        ].forEach(picker => this.pickers[picker.xmlTag] = picker);
     }
-    getEditor() {
-        return this.domEditor;
+    getPicker(xmlTag) {
+        return this.pickers[xmlTag];
     }
 }
 class DOM {
@@ -525,7 +527,7 @@ class RAG {
     }
     static generate() {
         RAG.state = new State();
-        RAG.phraser.generate();
+        RAG.viewController.editor.generate();
     }
     static panic(error = "Unknown error") {
         let msg = '<div class="panic">';

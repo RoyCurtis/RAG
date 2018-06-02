@@ -5,18 +5,15 @@
 /** Controller for the time picker dialog */
 class ServicePicker extends Picker
 {
-    private dom:          HTMLElement;
     private domForm:      HTMLFormElement;
     private domChoices:   HTMLOptionElement[];
     private inputService: HTMLElement;
-    private editing?:     HTMLElement;
 
     constructor()
     {
-        super();
+        super('service');
         let self = this;
 
-        this.dom          = DOM.require('#servicePicker');
         this.domForm      = DOM.require('form', this.dom) as HTMLFormElement;
         this.domChoices   = [];
         this.inputService = DOM.require('.picker', this.dom);
@@ -38,41 +35,11 @@ class ServicePicker extends Picker
         this.domForm.onsubmit = ev => self.onSubmit(ev);
     }
 
-    public onClick(ev: Event, ctx: PhraseContext)
+    public open(target: HTMLElement)
     {
-        ev.stopPropagation();
+        super.open(target);
 
-        if (this.editing)
-        {
-            this.editing.removeAttribute('editing');
-
-            if (ev.target === this.editing)
-            {
-                this.editing = undefined;
-                this.dom.classList.add('hidden');
-                return;
-            }
-        }
-
-        this.dom.classList.remove('hidden');
-        ctx.newElement.setAttribute('editing', 'true');
-
-        this.editing = ev.target! as HTMLElement;
-        let rect     = ctx.newElement.getBoundingClientRect();
-        let dialogY  = rect.bottom | 0;
-        let value    = RAG.state.service;
-
-        // Adjust if off screen
-        if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
-        {
-            dialogY = (rect.top | 0) - this.dom.offsetHeight;
-            ctx.newElement.classList.add('below');
-        }
-        else
-            ctx.newElement.classList.add('above');
-
-        //todo: select current value
-        this.dom.style.transform = `translateY(${dialogY}px)`;
+        let value = RAG.state.service;
 
         this.domChoices.some(service =>
         {
@@ -87,8 +54,7 @@ class ServicePicker extends Picker
     private onChange(ev: Event)
     {
         let target   = ev.target as HTMLSelectElement;
-        let elements = RAG.viewController.getEditor()
-            .querySelectorAll('span[data-type=service]');
+        let elements = RAG.viewController.editor.getElements('service');
 
         if (!target || target !instanceof HTMLSelectElement)
             return;

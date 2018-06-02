@@ -5,17 +5,14 @@
 /** Controller for the time picker dialog */
 class TimePicker extends Picker
 {
-    private dom:       HTMLElement;
     private domForm:   HTMLFormElement;
     private inputTime: HTMLInputElement;
-    private editing?:  HTMLElement;
 
     constructor()
     {
-        super();
+        super('time');
         let self = this;
 
-        this.dom       = DOM.require('#timePicker');
         this.domForm   = DOM.require('form', this.dom)  as HTMLFormElement;
         this.inputTime = DOM.require('input', this.dom) as HTMLInputElement;
 
@@ -24,46 +21,16 @@ class TimePicker extends Picker
         this.domForm.onsubmit = ev => self.onSubmit(ev);
     }
 
-    public onClick(ev: Event, ctx: PhraseContext)
+    public open(target: HTMLElement)
     {
-        ev.stopPropagation();
+        super.open(target);
 
-        if (this.editing)
-        {
-            this.editing.removeAttribute('editing');
-
-            if (ev.target === this.editing)
-            {
-                this.editing = undefined;
-                this.dom.classList.add('hidden');
-                return;
-            }
-        }
-
-        this.dom.classList.remove('hidden');
-        ctx.newElement.setAttribute('editing', 'true');
-
-        this.editing = ev.target! as HTMLElement;
-        let rect     = ctx.newElement.getBoundingClientRect();
-        let dialogX  = (rect.left | 0) - 8;
-        let dialogY  = rect.bottom | 0;
-        let width    = (rect.width | 0) + 16;
-        let value    = RAG.state.time;
-
-        this.dom.style.minWidth = `${width}px`;
-        this.inputTime.value    = value;
-
-        // Adjust if off screen
-        if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
-            dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
-
-        this.dom.style.transform = `translate(${dialogX}px, ${dialogY}px)`;
+        this.inputTime.value = RAG.state.time;
     }
 
     private onChange(ev: Event)
     {
-        let elements = RAG.viewController.getEditor()
-            .querySelectorAll('span[data-type=time]');
+        let elements = RAG.viewController.editor.getElements('time');
 
         RAG.state.time = this.inputTime.value;
 

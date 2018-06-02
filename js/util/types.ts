@@ -9,6 +9,9 @@ type Platform = [string, string];
 /** Represents the format of the National Rail station name dataset */
 type StationsDB = { [index: string]: string };
 
+/** Represents a dictionary of picker classes for the editor */
+type PickerDictionary = { [index: string]: Picker };
+
 /** Defines the config object passed into RAG.main on init */
 interface RAGConfig
 {

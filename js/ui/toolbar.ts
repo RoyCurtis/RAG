@@ -35,7 +35,7 @@ class Toolbar
         // automatically change back. However, speech's 'onend' event was found to be
         // unreliable, so I decided to keep play and stop separate.
 
-        let text  = DOM.getVisibleText( RAG.viewController.getEditor() );
+        let text  = RAG.viewController.editor.getText();
         let parts = text.trim().split(/\.\s/i);
 
         RAG.speechSynth.cancel();

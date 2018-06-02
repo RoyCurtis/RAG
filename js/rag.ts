@@ -39,7 +39,7 @@ class RAG
     public static generate() : void
     {
         RAG.state = new State();
-        RAG.phraser.generate();
+        RAG.viewController.editor.generate();
     }
 
     /** Global error handler; throws up a big red panic screen on uncaught error */
