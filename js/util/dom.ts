@@ -22,6 +22,24 @@ class DOM
     }
 
     /**
+     * Finds the value of the given attribute from the given element, throwing an error
+     * if the attribute is missing or empty.
+     *
+     * @param {HTMLElement} element Element to get the attribute of
+     * @param {string} attr Name of the attribute to get the value of
+     * @returns {string} The given attribute's value
+     */
+    public static requireAttrValue(element: HTMLElement, attr: string) : string
+    {
+        let value = element.getAttribute(attr);
+
+        if ( Strings.isNullOrEmpty(value) )
+            throw new Error(`Required attribute is missing or empty: '${attr}'`);
+
+        return value!;
+    }
+
+    /**
      * Gets the text content of the given element, excluding the text of hidden children.
      *
      * @see https://stackoverflow.com/a/19986328

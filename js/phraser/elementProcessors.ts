@@ -59,8 +59,8 @@ class ElementProcessors
     /** Includes a previously defined phrase, by its `id` */
     public static phrase(ctx: PhraseContext)
     {
-        let ref    = ctx.xmlElement.getAttribute('ref') || '';
         let phrase = ctx.phraseSet.querySelector('phrase#' + ref);
+        let ref    = DOM.requireAttrValue(ctx.xmlElement, 'ref');
 
         if (!phrase)
         {
@@ -77,11 +77,9 @@ class ElementProcessors
     /** Picks a phrase from a previously defined phraseset, by its `id` */
     public static phraseset(ctx: PhraseContext)
     {
-        let ref       = ctx.xmlElement.getAttribute('ref') || '';
+        let ref       = DOM.requireAttrValue(ctx.xmlElement, 'ref');
         let phraseset = ctx.phraseSet.querySelector('phraseset#' + ref);
 
-        if ( Strings.isNullOrEmpty(ref) )
-            throw new Error('phraseset element missing a ref attribute');
 
         if (!phraseset)
         {
@@ -98,12 +96,6 @@ class ElementProcessors
     /** Gets the current platform number */
     public static platform(ctx: PhraseContext)
     {
-        // ctx.newElement.addEventListener(
-        //     'click',
-        //     ev => RAG.viewController.platformPicker.onClick(ev, ctx),
-        //     true
-        // );
-
         ctx.newElement.title       = "Click to change the platform number";
         ctx.newElement.textContent = RAG.state.platform.join('');
     }
@@ -111,12 +103,6 @@ class ElementProcessors
     /** Picks a rail network name */
     public static service(ctx: PhraseContext)
     {
-        // ctx.newElement.addEventListener(
-        //     'click',
-        //     ev => RAG.viewController.servicePicker.onClick(ev, ctx),
-        //     true
-        // );
-
         ctx.newElement.title       = "Click to change this train's network";
         ctx.newElement.textContent = RAG.state.service;
     }
@@ -151,12 +137,6 @@ class ElementProcessors
     /** Picks a 24 hour time, with hours and minutes */
     public static time(ctx: PhraseContext)
     {
-        // ctx.newElement.addEventListener(
-        //     'click',
-        //     ev => RAG.viewController.timePicker.onClick(ev, ctx),
-        //     true
-        // );
-
         ctx.newElement.title       = "Click to change the time";
         ctx.newElement.textContent = RAG.state.time;
     }
