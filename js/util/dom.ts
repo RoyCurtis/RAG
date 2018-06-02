@@ -40,6 +40,19 @@ class DOM
     }
 
     /**
+     * Deep clones all the children of the given element, into the target element.
+     * Using innerHTML would be easier, however it handles self-closing tags poorly.
+     *
+     * @param {HTMLElement} source Element whose children to clone
+     * @param {HTMLElement} target Element to append the cloned children to
+     */
+    public static cloneInto(source: HTMLElement, target: HTMLElement) : void
+    {
+        for (let i = 0; i < source.childNodes.length; i ++)
+            target.appendChild( source.childNodes[i].cloneNode(true) );
+    }
+
+    /**
      * Gets the text content of the given element, excluding the text of hidden children.
      *
      * @see https://stackoverflow.com/a/19986328
