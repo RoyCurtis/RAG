@@ -5,9 +5,9 @@
 /** Controller for the platform picker dialog */
 class PlatformPicker extends Picker
 {
-    private domForm     : HTMLFormElement;
-    private inputDigit  : HTMLInputElement;
-    private inputLetter : HTMLSelectElement;
+    private readonly domForm     : HTMLFormElement;
+    private readonly inputDigit  : HTMLInputElement;
+    private readonly inputLetter : HTMLSelectElement;
 
     constructor()
     {
@@ -33,18 +33,13 @@ class PlatformPicker extends Picker
         this.inputLetter.value = value[1];
     }
 
-    private onChange(ev: Event)
+    private onChange(_: Event)
     {
-        let elements = RAG.viewController.editor.getElements('platform');
-
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
 
-        elements.forEach(element =>
-        {
-            element.textContent = RAG.state.platform.join('');
-        });
-
-        ev;
+        RAG.viewController.editor.setElementsText(
+            'platform', RAG.state.platform.join('')
+        );
     }
 
     private onSubmit(ev: Event)

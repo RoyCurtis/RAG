@@ -42,6 +42,17 @@ class Editor
         return DOM.getVisibleText(this.dom);
     }
 
+    /**
+     * Finds all phrase elements of the given type, and sets their text to given value.
+     *
+     * @param {string} type Original XML name of elements to replace contents of
+     * @param {string} value New text for the found elements to set
+     */
+    public setElementsText(type: string, value: string) : void
+    {
+        this.getElements(type).forEach(element => element.textContent = value);
+    }
+
     /** Closes any currently open editor dialogs */
     public closeDialog() : void
     {

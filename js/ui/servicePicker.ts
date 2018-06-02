@@ -5,9 +5,11 @@
 /** Controller for the time picker dialog */
 class ServicePicker extends Picker
 {
-    private domForm:      HTMLFormElement;
-    private domChoices:   HTMLOptionElement[];
-    private inputService: HTMLElement;
+    private readonly domForm:      HTMLFormElement;
+    private readonly domChoices:   HTMLOptionElement[];
+    private readonly inputService: HTMLElement;
+
+    private domSelected?: HTMLOptionElement;
 
     constructor()
     {
@@ -46,32 +48,32 @@ class ServicePicker extends Picker
             if (value !== service.value)
                 return false;
 
-            service.setAttribute('selected', 'true');
+            this.select(service);
             return true;
         });
     }
 
+    private select(option: HTMLOptionElement)
+    {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+
+        this.domSelected = option;
+        option.setAttribute('selected', 'true');
+    }
+
     private onChange(ev: Event)
     {
-        let target   = ev.target as HTMLSelectElement;
-        let elements = RAG.viewController.editor.getElements('service');
+        let target = ev.target as HTMLOptionElement;
 
-        if (!target || target !instanceof HTMLSelectElement)
+        // Ignore if option element wasn't clicked
+        if (!target || !target.value)
             return;
+        else
+            this.select(target);
 
         RAG.state.service = target.value;
-
-        // TODO: cheaper way to do this?
-        this.domChoices.forEach(service => {
-            service.removeAttribute('selected');
-        });
-
-        elements.forEach(element =>
-        {
-            element.textContent = RAG.state.service;
-        });
-
-        ev;
+        RAG.viewController.editor.setElementsText('service', RAG.state.service);
     }
 
     private onSubmit(ev: Event)

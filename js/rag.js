@@ -196,6 +196,9 @@ class Editor {
     getText() {
         return DOM.getVisibleText(this.dom);
     }
+    setElementsText(type, value) {
+        this.getElements(type).forEach(element => element.textContent = value);
+    }
     closeDialog() {
         if (this.currentPicker)
             this.currentPicker.close();
@@ -322,13 +325,9 @@ class PlatformPicker extends Picker {
         this.inputDigit.value = value[0];
         this.inputLetter.value = value[1];
     }
-    onChange(ev) {
-        let elements = RAG.viewController.editor.getElements('platform');
+    onChange(_) {
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
-        elements.forEach(element => {
-            element.textContent = RAG.state.platform.join('');
-        });
-        ev;
+        RAG.viewController.editor.setElementsText('platform', RAG.state.platform.join(''));
     }
     onSubmit(ev) {
         ev.preventDefault();
@@ -359,23 +358,24 @@ class ServicePicker extends Picker {
         this.domChoices.some(service => {
             if (value !== service.value)
                 return false;
-            service.setAttribute('selected', 'true');
+            this.select(service);
             return true;
         });
     }
+    select(option) {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+        this.domSelected = option;
+        option.setAttribute('selected', 'true');
+    }
     onChange(ev) {
         let target = ev.target;
-        let elements = RAG.viewController.editor.getElements('service');
-        if (!target || target instanceof HTMLSelectElement)
+        if (!target || !target.value)
             return;
+        else
+            this.select(target);
         RAG.state.service = target.value;
-        this.domChoices.forEach(service => {
-            service.removeAttribute('selected');
-        });
-        elements.forEach(element => {
-            element.textContent = RAG.state.service;
-        });
-        ev;
+        RAG.viewController.editor.setElementsText('service', RAG.state.service);
     }
     onSubmit(ev) {
         ev.preventDefault();
@@ -395,13 +395,9 @@ class TimePicker extends Picker {
         super.open(target);
         this.inputTime.value = RAG.state.time;
     }
-    onChange(ev) {
-        let elements = RAG.viewController.editor.getElements('time');
+    onChange(_) {
         RAG.state.time = this.inputTime.value;
-        elements.forEach(element => {
-            element.textContent = RAG.state.time.toString();
-        });
-        ev;
+        RAG.viewController.editor.setElementsText('time', RAG.state.time.toString());
     }
     onSubmit(ev) {
         ev.preventDefault();

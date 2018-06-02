@@ -6,11 +6,11 @@ abstract class Picker
     /** Reference to this picker's DOM element */
     public readonly dom : HTMLElement;
 
-    /** Reference to the phrase element being edited by this picker */
-    protected domEditing? : HTMLElement;
-
     /** Gets the name of the XML tag this picker handles */
     public readonly xmlTag : string;
+
+    /** Reference to the phrase element being edited by this picker */
+    protected domEditing? : HTMLElement;
 
     /**
      * Creates a picker to handle the given phrase element type.
@@ -23,7 +23,12 @@ abstract class Picker
         this.xmlTag = xmlTag;
     }
 
-    /** Open this picker for a given phrase element */
+    /**
+     * Open this picker for a given phrase element. The implementing picker should fill
+     * its form elements with data from the current state and targeted element here.
+     *
+     * @param {HTMLElement} target Phrase element that this picker is being opened for
+     */
     public open(target: HTMLElement) : void
     {
         this.dom.classList.remove('hidden');

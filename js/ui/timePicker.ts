@@ -5,8 +5,8 @@
 /** Controller for the time picker dialog */
 class TimePicker extends Picker
 {
-    private domForm:   HTMLFormElement;
-    private inputTime: HTMLInputElement;
+    private readonly domForm:   HTMLFormElement;
+    private readonly inputTime: HTMLInputElement;
 
     constructor()
     {
@@ -28,18 +28,11 @@ class TimePicker extends Picker
         this.inputTime.value = RAG.state.time;
     }
 
-    private onChange(ev: Event)
+    private onChange(_: Event)
     {
-        let elements = RAG.viewController.editor.getElements('time');
-
         RAG.state.time = this.inputTime.value;
 
-        elements.forEach(element =>
-        {
-            element.textContent = RAG.state.time.toString();
-        });
-
-        ev;
+        RAG.viewController.editor.setElementsText( 'time', RAG.state.time.toString() );
     }
 
     private onSubmit(ev: Event)
