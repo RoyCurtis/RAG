@@ -216,7 +216,7 @@ class Editor {
         if (target && target === this.domEditing)
             return this.closeDialog();
         this.closeDialog();
-        if (type === 'optional')
+        if (target.dataset['chance'])
             this.toggleOptional(target);
         else if (target.hasAttribute('inner'))
             this.toggleOptional(target.parentElement);

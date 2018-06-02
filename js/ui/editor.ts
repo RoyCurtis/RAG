@@ -3,8 +3,9 @@
 /** Controller for the phrase editor */
 class Editor
 {
+    private readonly dom : HTMLElement;
+
     private currentPicker? : Picker;
-    private dom            : HTMLElement;
     // TODO: should this just be in the picker class?
     private domEditing?    : HTMLElement;
 
@@ -76,10 +77,13 @@ class Editor
         // Cancel any open editors
         this.closeDialog();
 
-        if (type === 'optional')
+        // Handle collapsible elements (and their wrapper children)
+        if (target.dataset['chance'])
             this.toggleOptional(target);
         else if ( target.hasAttribute('inner') )
             this.toggleOptional(target.parentElement!);
+
+        // Find and open picker for the target element
         else if (target && type && picker)
             this.openPicker(target, picker);
     }
