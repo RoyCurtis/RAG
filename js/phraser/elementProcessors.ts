@@ -56,7 +56,7 @@ class ElementProcessors
         if ( !ctx.xmlElement.hasAttribute('chance') )
             ctx.xmlElement.setAttribute('chance', '50');
 
-        ctx.newElement.appendChild( this.makeCollapsible(ctx, ctx.xmlElement) );
+        this.makeCollapsible(ctx, ctx.xmlElement);
     }
 
     /** Includes a previously defined phrase, by its `id` */
@@ -75,7 +75,7 @@ class ElementProcessors
 
         // Handle phrases with a chance value as collapsible
         if ( ctx.xmlElement.hasAttribute('chance') )
-            ctx.newElement.appendChild( this.makeCollapsible(ctx, phrase) );
+            this.makeCollapsible(ctx, phrase);
         else
             DOM.cloneInto(phrase, ctx.newElement);
     }
@@ -98,7 +98,7 @@ class ElementProcessors
 
         // Handle phrasesets with a chance value as collapsible
         if ( ctx.xmlElement.hasAttribute('chance') )
-            ctx.newElement.appendChild( this.makeCollapsible(ctx, phrase) );
+            this.makeCollapsible(ctx, phrase);
         else
             DOM.cloneInto(phrase, ctx.newElement);
     }
@@ -161,23 +161,27 @@ class ElementProcessors
 
     /**
      * Clones the children of the given element into a new inner span tag, so that they
-     * can be made collapsible.
+     * can be made collapsible. Appends it to the new element being processed.
      */
-    private static makeCollapsible(ctx: PhraseContext, contents: HTMLElement)
-        : HTMLSpanElement
+    private static makeCollapsible(ctx: PhraseContext, source: HTMLElement) : void
     {
         let chance = ctx.xmlElement.getAttribute('chance')!;
         let inner  = document.createElement('span');
 
         inner.setAttribute('inner', 'true');
 
-        DOM.cloneInto(contents, inner);
+        DOM.cloneInto(source, inner);
         ctx.newElement.dataset['chance'] = chance;
 
         // Set initial collapse state from set chance
         if ( !Random.bool( parseInt(chance) ) )
+        {
             ctx.newElement.setAttribute('collapsed', '');
+            ctx.newElement.title = inner.title = "Click to open this optional part";
+        }
+        else
+            ctx.newElement.title = inner.title = "Click to close this optional part";
 
-        return inner;
+        ctx.newElement.appendChild(inner);
     }
 }

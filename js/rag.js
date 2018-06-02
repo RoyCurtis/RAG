@@ -32,7 +32,7 @@ class ElementProcessors {
     static optional(ctx) {
         if (!ctx.xmlElement.hasAttribute('chance'))
             ctx.xmlElement.setAttribute('chance', '50');
-        ctx.newElement.appendChild(this.makeCollapsible(ctx, ctx.xmlElement));
+        this.makeCollapsible(ctx, ctx.xmlElement);
     }
     static phrase(ctx) {
         let ref = DOM.requireAttrValue(ctx.xmlElement, 'ref');
@@ -43,7 +43,7 @@ class ElementProcessors {
             return;
         }
         if (ctx.xmlElement.hasAttribute('chance'))
-            ctx.newElement.appendChild(this.makeCollapsible(ctx, phrase));
+            this.makeCollapsible(ctx, phrase);
         else
             DOM.cloneInto(phrase, ctx.newElement);
     }
@@ -57,7 +57,7 @@ class ElementProcessors {
         }
         let phrase = Random.array(phraseset.children);
         if (ctx.xmlElement.hasAttribute('chance'))
-            ctx.newElement.appendChild(this.makeCollapsible(ctx, phrase));
+            this.makeCollapsible(ctx, phrase);
         else
             DOM.cloneInto(phrase, ctx.newElement);
     }
@@ -94,15 +94,19 @@ class ElementProcessors {
         let name = ctx.xmlElement.nodeName;
         ctx.newElement.textContent = `(UNKNOWN XML ELEMENT: ${name})`;
     }
-    static makeCollapsible(ctx, contents) {
+    static makeCollapsible(ctx, source) {
         let chance = ctx.xmlElement.getAttribute('chance');
         let inner = document.createElement('span');
         inner.setAttribute('inner', 'true');
-        DOM.cloneInto(contents, inner);
+        DOM.cloneInto(source, inner);
         ctx.newElement.dataset['chance'] = chance;
-        if (!Random.bool(parseInt(chance)))
+        if (!Random.bool(parseInt(chance))) {
             ctx.newElement.setAttribute('collapsed', '');
-        return inner;
+            ctx.newElement.title = inner.title = "Click to open this optional part";
+        }
+        else
+            ctx.newElement.title = inner.title = "Click to close this optional part";
+        ctx.newElement.appendChild(inner);
     }
 }
 class Phraser {
