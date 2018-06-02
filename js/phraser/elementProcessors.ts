@@ -52,15 +52,20 @@ class ElementProcessors
     /** Makes the content of this tag optionally hidden, by chance or user choice */
     public static optional(ctx: PhraseContext)
     {
-        this.makeCollapsible(ctx, '50');
-        ctx.newElement.appendChild( this.cloneIntoInner(ctx.xmlElement) );
+        // Populate the default chance value for XML tags missing them
+        if ( !ctx.xmlElement.hasAttribute('chance') )
+            ctx.xmlElement.setAttribute('chance', '50');
+
+        ctx.newElement.appendChild( this.makeCollapsible(ctx, ctx.xmlElement) );
     }
 
     /** Includes a previously defined phrase, by its `id` */
     public static phrase(ctx: PhraseContext)
     {
-        let phrase = ctx.phraseSet.querySelector('phrase#' + ref);
         let ref    = DOM.requireAttrValue(ctx.xmlElement, 'ref');
+        let phrase = ctx.phraseSet.querySelector('phrase#' + ref) as HTMLElement;
+
+        ctx.newElement.dataset['ref'] = ref;
 
         if (!phrase)
         {
@@ -68,10 +73,11 @@ class ElementProcessors
             return;
         }
 
-        ctx.newElement.dataset['ref'] = ref;
-
-        this.makeCollapsible(ctx);
-        ctx.newElement.appendChild( this.cloneIntoInner(phrase) );
+        // Handle phrases with a chance value as collapsible
+        if ( ctx.xmlElement.hasAttribute('chance') )
+            ctx.newElement.appendChild( this.makeCollapsible(ctx, phrase) );
+        else
+            DOM.cloneInto(phrase, ctx.newElement);
     }
 
     /** Picks a phrase from a previously defined phraseset, by its `id` */
@@ -80,6 +86,7 @@ class ElementProcessors
         let ref       = DOM.requireAttrValue(ctx.xmlElement, 'ref');
         let phraseset = ctx.phraseSet.querySelector('phraseset#' + ref);
 
+        ctx.newElement.dataset['ref'] = ref;
 
         if (!phraseset)
         {
@@ -87,10 +94,13 @@ class ElementProcessors
             return;
         }
 
-        let phrase = Random.array(phraseset.children) as Element;
+        let phrase = Random.array(phraseset.children) as HTMLElement;
 
-        this.makeCollapsible(ctx);
-        ctx.newElement.appendChild( this.cloneIntoInner(phrase) );
+        // Handle phrasesets with a chance value as collapsible
+        if ( ctx.xmlElement.hasAttribute('chance') )
+            ctx.newElement.appendChild( this.makeCollapsible(ctx, phrase) );
+        else
+            DOM.cloneInto(phrase, ctx.newElement);
     }
 
     /** Gets the current platform number */
@@ -150,43 +160,24 @@ class ElementProcessors
     }
 
     /**
-     * Clones the children of the given element into a new inner span tag. This is needed
-     * for collapsible elements, so that their contents can be hidden when collapsed.
+     * Clones the children of the given element into a new inner span tag, so that they
+     * can be made collapsible.
      */
-    private static cloneIntoInner(element: Element) : HTMLSpanElement
+    private static makeCollapsible(ctx: PhraseContext, contents: HTMLElement)
+        : HTMLSpanElement
     {
-        let inner = document.createElement('span');
+        let chance = ctx.xmlElement.getAttribute('chance')!;
+        let inner  = document.createElement('span');
 
-        // Using innerHTML would be easier, however it handles self-closing tags poorly.
-        for (let i = 0; i < element.childNodes.length; i ++)
-            inner.appendChild( element.childNodes[i].cloneNode(true) );
+        inner.setAttribute('inner', 'true');
 
-        return inner;
-    }
-
-    /** If the processed element has a chance attribute, makes it collapsible */
-    private static makeCollapsible(ctx: PhraseContext, defChance: string = '')
-    {
-        let chance = ctx.xmlElement.getAttribute('chance') || defChance;
-
-        if ( Strings.isNullOrEmpty(chance) )
-            return;
-
+        DOM.cloneInto(contents, inner);
         ctx.newElement.dataset['chance'] = chance;
 
         // Set initial collapse state from set chance
         if ( !Random.bool( parseInt(chance) ) )
             ctx.newElement.setAttribute('collapsed', '');
 
-        // TODO: Eventually move this elsewhere
-        // ctx.newElement.addEventListener('click', ev =>
-        // {
-        //     ev.stopPropagation();
-        //
-        //     if (ctx.newElement.hasAttribute('collapsed'))
-        //         ctx.newElement.removeAttribute('collapsed');
-        //     else
-        //         ctx.newElement.setAttribute('collapsed', '');
-        // });
+        return inner;
     }
 }

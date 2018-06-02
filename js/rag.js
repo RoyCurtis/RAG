@@ -30,32 +30,36 @@ class ElementProcessors {
         ctx.newElement.textContent = RAG.state.named;
     }
     static optional(ctx) {
-        this.makeCollapsible(ctx, '50');
-        ctx.newElement.appendChild(this.cloneIntoInner(ctx.xmlElement));
+        if (!ctx.xmlElement.hasAttribute('chance'))
+            ctx.xmlElement.setAttribute('chance', '50');
+        ctx.newElement.appendChild(this.makeCollapsible(ctx, ctx.xmlElement));
     }
     static phrase(ctx) {
-        let ref = ctx.xmlElement.getAttribute('ref') || '';
+        let ref = DOM.requireAttrValue(ctx.xmlElement, 'ref');
         let phrase = ctx.phraseSet.querySelector('phrase#' + ref);
+        ctx.newElement.dataset['ref'] = ref;
         if (!phrase) {
             ctx.newElement.textContent = `(UNKNOWN PHRASE: ${ref})`;
             return;
         }
-        ctx.newElement.dataset['ref'] = ref;
-        this.makeCollapsible(ctx);
-        ctx.newElement.appendChild(this.cloneIntoInner(phrase));
+        if (ctx.xmlElement.hasAttribute('chance'))
+            ctx.newElement.appendChild(this.makeCollapsible(ctx, phrase));
+        else
+            DOM.cloneInto(phrase, ctx.newElement);
     }
     static phraseset(ctx) {
-        let ref = ctx.xmlElement.getAttribute('ref') || '';
+        let ref = DOM.requireAttrValue(ctx.xmlElement, 'ref');
         let phraseset = ctx.phraseSet.querySelector('phraseset#' + ref);
-        if (Strings.isNullOrEmpty(ref))
-            throw new Error('phraseset element missing a ref attribute');
+        ctx.newElement.dataset['ref'] = ref;
         if (!phraseset) {
             ctx.newElement.textContent = `(UNKNOWN PHRASESET: ${ref})`;
             return;
         }
         let phrase = Random.array(phraseset.children);
-        this.makeCollapsible(ctx);
-        ctx.newElement.appendChild(this.cloneIntoInner(phrase));
+        if (ctx.xmlElement.hasAttribute('chance'))
+            ctx.newElement.appendChild(this.makeCollapsible(ctx, phrase));
+        else
+            DOM.cloneInto(phrase, ctx.newElement);
     }
     static platform(ctx) {
         ctx.newElement.title = "Click to change the platform number";
@@ -90,19 +94,15 @@ class ElementProcessors {
         let name = ctx.xmlElement.nodeName;
         ctx.newElement.textContent = `(UNKNOWN XML ELEMENT: ${name})`;
     }
-    static cloneIntoInner(element) {
+    static makeCollapsible(ctx, contents) {
+        let chance = ctx.xmlElement.getAttribute('chance');
         let inner = document.createElement('span');
-        for (let i = 0; i < element.childNodes.length; i++)
-            inner.appendChild(element.childNodes[i].cloneNode(true));
-        return inner;
-    }
-    static makeCollapsible(ctx, defChance = '') {
-        let chance = ctx.xmlElement.getAttribute('chance') || defChance;
-        if (Strings.isNullOrEmpty(chance))
-            return;
+        inner.setAttribute('inner', 'true');
+        DOM.cloneInto(contents, inner);
         ctx.newElement.dataset['chance'] = chance;
         if (!Random.bool(parseInt(chance)))
             ctx.newElement.setAttribute('collapsed', '');
+        return inner;
     }
 }
 class Phraser {
@@ -212,8 +212,18 @@ class Editor {
         if (target && target === this.domEditing)
             return this.closeDialog();
         this.closeDialog();
-        if (!target || !type || !picker)
-            return;
+        if (type === 'optional')
+            this.toggleOptional(target);
+        else if (target && type && picker)
+            this.openPicker(target, picker);
+    }
+    toggleOptional(target) {
+        if (target.hasAttribute('collapsed'))
+            target.removeAttribute('collapsed');
+        else
+            target.setAttribute('collapsed', '');
+    }
+    openPicker(target, picker) {
         target.setAttribute('editing', 'true');
         this.currentPicker = picker;
         this.domEditing = target;
@@ -438,6 +448,16 @@ class DOM {
         if (!result)
             throw new Error(`Required DOM element is missing: '${query}'`);
         return result;
+    }
+    static requireAttrValue(element, attr) {
+        let value = element.getAttribute(attr);
+        if (Strings.isNullOrEmpty(value))
+            throw new Error(`Required attribute is missing or empty: '${attr}'`);
+        return value;
+    }
+    static cloneInto(source, target) {
+        for (let i = 0; i < source.childNodes.length; i++)
+            target.appendChild(source.childNodes[i].cloneNode(true));
     }
     static getVisibleText(element) {
         if (element.nodeType === Node.TEXT_NODE)

@@ -142,6 +142,11 @@
   position: relative;
   z-index: 150;
 }
+#editor span[data-type=optional]:hover,
+#editor span[data-chance]:hover {
+  border-left: 2px dotted;
+  border-right: 2px dotted;
+}
 #editor span[data-type=optional][collapsed],
 #editor span[data-chance][collapsed] {
   border: none;
@@ -208,7 +213,7 @@ body {
   background: linear-gradient(to bottom, #444 50%, #222 100%);
   display: flex;
   justify-content: center;
-  min-height: 2.5em;
+  min-height: 48px;
   padding-bottom: 0.5em;
 }
 #toolbar > button {
