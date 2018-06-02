@@ -69,7 +69,7 @@ class Editor
         if ( this.currentPicker.dom.contains(target) )
             return;
 
-        // If clicking the element already being edited, treat it as a close
+        // If clicking the element already being edited, close and don't re-open
         if (target && target === this.domEditing)
             return this.closeDialog();
 
@@ -78,6 +78,8 @@ class Editor
 
         if (type === 'optional')
             this.toggleOptional(target);
+        else if ( target.hasAttribute('inner') )
+            this.toggleOptional(target.parentElement!);
         else if (target && type && picker)
             this.openPicker(target, picker);
     }
@@ -85,9 +87,15 @@ class Editor
     private toggleOptional(target: HTMLElement)
     {
         if (target.hasAttribute('collapsed'))
+        {
             target.removeAttribute('collapsed');
+            target.title = "Click to close this optional part";
+        }
         else
+        {
             target.setAttribute('collapsed', '');
+            target.title = "Click to open this optional part";
+        }
     }
 
     private openPicker(target: HTMLElement, picker: Picker)

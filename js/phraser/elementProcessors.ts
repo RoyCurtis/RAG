@@ -97,6 +97,7 @@ class ElementProcessors
         let phrase = Random.array(phraseset.children) as HTMLElement;
 
         // Handle phrasesets with a chance value as collapsible
+        // TODO: redry these
         if ( ctx.xmlElement.hasAttribute('chance') )
             this.makeCollapsible(ctx, phrase);
         else
@@ -177,10 +178,10 @@ class ElementProcessors
         if ( !Random.bool( parseInt(chance) ) )
         {
             ctx.newElement.setAttribute('collapsed', '');
-            ctx.newElement.title = inner.title = "Click to open this optional part";
+            ctx.newElement.title = "Click to open this optional part";
         }
         else
-            ctx.newElement.title = inner.title = "Click to close this optional part";
+            ctx.newElement.title = "Click to close this optional part";
 
         ctx.newElement.appendChild(inner);
     }

@@ -102,10 +102,10 @@ class ElementProcessors {
         ctx.newElement.dataset['chance'] = chance;
         if (!Random.bool(parseInt(chance))) {
             ctx.newElement.setAttribute('collapsed', '');
-            ctx.newElement.title = inner.title = "Click to open this optional part";
+            ctx.newElement.title = "Click to open this optional part";
         }
         else
-            ctx.newElement.title = inner.title = "Click to close this optional part";
+            ctx.newElement.title = "Click to close this optional part";
         ctx.newElement.appendChild(inner);
     }
 }
@@ -218,14 +218,20 @@ class Editor {
         this.closeDialog();
         if (type === 'optional')
             this.toggleOptional(target);
+        else if (target.hasAttribute('inner'))
+            this.toggleOptional(target.parentElement);
         else if (target && type && picker)
             this.openPicker(target, picker);
     }
     toggleOptional(target) {
-        if (target.hasAttribute('collapsed'))
+        if (target.hasAttribute('collapsed')) {
             target.removeAttribute('collapsed');
-        else
+            target.title = "Click to close this optional part";
+        }
+        else {
             target.setAttribute('collapsed', '');
+            target.title = "Click to open this optional part";
+        }
     }
     openPicker(target, picker) {
         target.setAttribute('editing', 'true');
