@@ -5,20 +5,13 @@
 /** Controller for the time picker dialog */
 class TimePicker extends Picker
 {
-    private readonly domForm:   HTMLFormElement;
     private readonly inputTime: HTMLInputElement;
 
     constructor()
     {
-        super('time');
-        let self = this;
+        super('time', ['change']);
 
-        this.domForm   = DOM.require('form', this.dom)  as HTMLFormElement;
         this.inputTime = DOM.require('input', this.dom) as HTMLInputElement;
-
-        // Self needed here, as 'this' breaks inside event delegates
-        this.domForm.onchange = ev => self.onChange(ev);
-        this.domForm.onsubmit = ev => self.onSubmit(ev);
     }
 
     public open(target: HTMLElement)
@@ -28,16 +21,10 @@ class TimePicker extends Picker
         this.inputTime.value = RAG.state.time;
     }
 
-    private onChange(_: Event)
+    protected onChange(_: Event)
     {
         RAG.state.time = this.inputTime.value;
 
         RAG.viewController.editor.setElementsText( 'time', RAG.state.time.toString() );
-    }
-
-    private onSubmit(ev: Event)
-    {
-        ev.preventDefault();
-        this.onChange(ev);
     }
 }

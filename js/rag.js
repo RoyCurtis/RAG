@@ -273,9 +273,18 @@ class Marquee {
     }
 }
 class Picker {
-    constructor(xmlTag) {
+    constructor(xmlTag, events) {
         this.dom = DOM.require(`#${xmlTag}Picker`);
+        this.domForm = DOM.require('form', this.dom);
         this.xmlTag = xmlTag;
+        let self = this;
+        events.forEach(event => {
+            this.domForm.addEventListener(event, this.onChange.bind(self));
+        });
+        this.domForm.onsubmit = ev => {
+            ev.preventDefault();
+            self.onChange(ev);
+        };
     }
     open(target) {
         this.dom.classList.remove('hidden');
@@ -311,13 +320,9 @@ class Picker {
 }
 class PlatformPicker extends Picker {
     constructor() {
-        super('platform');
-        let self = this;
-        this.domForm = DOM.require('form', this.dom);
+        super('platform', ['change']);
         this.inputDigit = DOM.require('input', this.dom);
         this.inputLetter = DOM.require('select', this.dom);
-        this.domForm.onchange = ev => self.onChange(ev);
-        this.domForm.onsubmit = ev => self.onSubmit(ev);
     }
     open(target) {
         super.open(target);
@@ -329,16 +334,10 @@ class PlatformPicker extends Picker {
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
         RAG.viewController.editor.setElementsText('platform', RAG.state.platform.join(''));
     }
-    onSubmit(ev) {
-        ev.preventDefault();
-        this.onChange(ev);
-    }
 }
 class ServicePicker extends Picker {
     constructor() {
-        super('service');
-        let self = this;
-        this.domForm = DOM.require('form', this.dom);
+        super('service', ['click']);
         this.domChoices = [];
         this.inputService = DOM.require('.picker', this.dom);
         RAG.database.services.forEach(value => {
@@ -349,8 +348,6 @@ class ServicePicker extends Picker {
             this.domChoices.push(service);
             this.inputService.appendChild(service);
         });
-        this.domForm.onclick = ev => self.onChange(ev);
-        this.domForm.onsubmit = ev => self.onSubmit(ev);
     }
     open(target) {
         super.open(target);
@@ -377,19 +374,11 @@ class ServicePicker extends Picker {
         RAG.state.service = target.value;
         RAG.viewController.editor.setElementsText('service', RAG.state.service);
     }
-    onSubmit(ev) {
-        ev.preventDefault();
-        this.onChange(ev);
-    }
 }
 class TimePicker extends Picker {
     constructor() {
-        super('time');
-        let self = this;
-        this.domForm = DOM.require('form', this.dom);
+        super('time', ['change']);
         this.inputTime = DOM.require('input', this.dom);
-        this.domForm.onchange = ev => self.onChange(ev);
-        this.domForm.onsubmit = ev => self.onSubmit(ev);
     }
     open(target) {
         super.open(target);
@@ -398,10 +387,6 @@ class TimePicker extends Picker {
     onChange(_) {
         RAG.state.time = this.inputTime.value;
         RAG.viewController.editor.setElementsText('time', RAG.state.time.toString());
-    }
-    onSubmit(ev) {
-        ev.preventDefault();
-        this.onChange(ev);
     }
 }
 class Toolbar {

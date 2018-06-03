@@ -6,6 +6,9 @@ abstract class Picker
     /** Reference to this picker's DOM element */
     public readonly dom : HTMLElement;
 
+    /** Reference to this picker's form DOM element */
+    public readonly domForm : HTMLElement;
+
     /** Gets the name of the XML tag this picker handles */
     public readonly xmlTag : string;
 
@@ -16,11 +19,27 @@ abstract class Picker
      * Creates a picker to handle the given phrase element type.
      *
      * @param {string} xmlTag Name of the XML tag this picker will handle.
+     * @param {string[]} events List of events to react to, when data is changed
      */
-    protected constructor(xmlTag: string)
+    protected constructor(xmlTag: string, events: string[])
     {
-        this.dom    = DOM.require(`#${xmlTag}Picker`);
-        this.xmlTag = xmlTag;
+        this.dom     = DOM.require(`#${xmlTag}Picker`);
+        this.domForm = DOM.require('form', this.dom) as HTMLFormElement;
+        this.xmlTag  = xmlTag;
+
+        // Self needed here, as 'this' breaks inside event delegates
+        let self = this;
+
+        events.forEach(event =>
+        {
+            this.domForm.addEventListener(event, this.onChange.bind(self))
+        });
+
+        this.domForm.onsubmit = ev =>
+        {
+            ev.preventDefault();
+            self.onChange(ev);
+        };
     }
 
     /**
@@ -75,4 +94,10 @@ abstract class Picker
     {
         this.dom.classList.add('hidden');
     }
+
+    /**
+     * Called when data changes. The implementing picker should update all linked elements
+     * (e.g. of same type) with the new data here.
+     */
+    protected abstract onChange(ev: Event) : void;
 }

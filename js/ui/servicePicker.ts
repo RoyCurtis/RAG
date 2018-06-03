@@ -5,7 +5,6 @@
 /** Controller for the time picker dialog */
 class ServicePicker extends Picker
 {
-    private readonly domForm:      HTMLFormElement;
     private readonly domChoices:   HTMLOptionElement[];
     private readonly inputService: HTMLElement;
 
@@ -13,10 +12,8 @@ class ServicePicker extends Picker
 
     constructor()
     {
-        super('service');
-        let self = this;
+        super('service', ['click']);
 
-        this.domForm      = DOM.require('form', this.dom) as HTMLFormElement;
         this.domChoices   = [];
         this.inputService = DOM.require('.picker', this.dom);
 
@@ -31,10 +28,6 @@ class ServicePicker extends Picker
             this.domChoices.push(service);
             this.inputService.appendChild(service);
         });
-
-        // Self needed here, as 'this' breaks inside event delegates
-        this.domForm.onclick  = ev => self.onChange(ev);
-        this.domForm.onsubmit = ev => self.onSubmit(ev);
     }
 
     public open(target: HTMLElement)
@@ -62,7 +55,7 @@ class ServicePicker extends Picker
         option.setAttribute('selected', 'true');
     }
 
-    private onChange(ev: Event)
+    protected onChange(ev: Event)
     {
         let target = ev.target as HTMLOptionElement;
 
@@ -74,11 +67,5 @@ class ServicePicker extends Picker
 
         RAG.state.service = target.value;
         RAG.viewController.editor.setElementsText('service', RAG.state.service);
-    }
-
-    private onSubmit(ev: Event)
-    {
-        ev.preventDefault();
-        this.onChange(ev);
     }
 }
