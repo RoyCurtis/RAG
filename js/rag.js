@@ -195,7 +195,12 @@ class Editor {
         return this.dom.querySelectorAll(`span[data-type=${type}]`);
     }
     getText() {
-        return DOM.getVisibleText(this.dom);
+        let text = DOM.getVisibleText(this.dom);
+        return text
+            .trim()
+            .replace(/[\n\r]/gi, '')
+            .replace(/\s{2,}/gi, ' ')
+            .replace(/\s([.,])/gi, '$1');
     }
     setElementsText(type, value) {
         this.getElements(type).forEach(element => element.textContent = value);

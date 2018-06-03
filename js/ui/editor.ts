@@ -39,7 +39,14 @@ class Editor
     /** Gets the current phrase in the editor as text, excluding the hidden parts */
     public getText() : string
     {
-        return DOM.getVisibleText(this.dom);
+        let text = DOM.getVisibleText(this.dom);
+
+        // Clean up excess whitespace as a result of converting from HTML/XML
+        return text
+            .trim()
+            .replace(/[\n\r]/gi, '')
+            .replace(/\s{2,}/gi, ' ')
+            .replace(/\s([.,])/gi, '$1');
     }
 
     /**
