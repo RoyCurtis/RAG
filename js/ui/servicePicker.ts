@@ -2,7 +2,7 @@
 
 /// <reference path="Picker.ts"/>
 
-/** Controller for the time picker dialog */
+/** Controller for the service picker dialog */
 class ServicePicker extends Picker
 {
     private readonly domChoices:   HTMLOptionElement[];

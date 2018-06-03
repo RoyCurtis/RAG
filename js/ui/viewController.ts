@@ -19,6 +19,7 @@ class ViewController
 
         [
             new PlatformPicker(),
+            new NamedPicker(),
             new ServicePicker(),
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);

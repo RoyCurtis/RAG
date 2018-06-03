@@ -46,6 +46,7 @@ class ElementProcessors
     /** Picks a named train */
     public static named(ctx: PhraseContext)
     {
+        ctx.newElement.title       = "Click to change this train's name";
         ctx.newElement.textContent = RAG.state.named;
     }
 

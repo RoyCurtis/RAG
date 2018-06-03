@@ -33,23 +33,29 @@
   font-size: x-large;
   padding: 0 4px;
 }
+#namedPicker,
 #servicePicker {
   display: flex;
   flex-flow: column;
 }
+#namedPicker form,
 #servicePicker form {
   overflow: auto;
 }
+#namedPicker form .picker,
 #servicePicker form .picker {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
+#namedPicker form .picker option,
 #servicePicker form .picker option {
   cursor: pointer;
   padding: 1em;
 }
+#namedPicker form .picker option:hover,
 #servicePicker form .picker option:hover,
+#namedPicker form .picker option[selected],
 #servicePicker form .picker option[selected] {
   background: #cc7e00;
 }

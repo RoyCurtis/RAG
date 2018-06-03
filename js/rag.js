@@ -27,6 +27,7 @@ class ElementProcessors {
         ctx.newElement.textContent = intStr;
     }
     static named(ctx) {
+        ctx.newElement.title = "Click to change this train's name";
         ctx.newElement.textContent = RAG.state.named;
     }
     static optional(ctx) {
@@ -318,6 +319,46 @@ class Picker {
         this.dom.classList.add('hidden');
     }
 }
+class NamedPicker extends Picker {
+    constructor() {
+        super('named', ['click']);
+        this.domChoices = [];
+        this.inputNamed = DOM.require('.picker', this.dom);
+        RAG.database.named.forEach(value => {
+            let named = document.createElement('option');
+            named.text = value;
+            named.value = value;
+            named.title = value;
+            this.domChoices.push(named);
+            this.inputNamed.appendChild(named);
+        });
+    }
+    open(target) {
+        super.open(target);
+        let value = RAG.state.named;
+        this.domChoices.some(named => {
+            if (value !== named.value)
+                return false;
+            this.select(named);
+            return true;
+        });
+    }
+    select(option) {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+        this.domSelected = option;
+        option.setAttribute('selected', 'true');
+    }
+    onChange(ev) {
+        let target = ev.target;
+        if (!target || !target.value)
+            return;
+        else
+            this.select(target);
+        RAG.state.named = target.value;
+        RAG.viewController.editor.setElementsText('named', RAG.state.named);
+    }
+}
 class PlatformPicker extends Picker {
     constructor() {
         super('platform', ['change']);
@@ -425,6 +466,7 @@ class ViewController {
         this.pickers = {};
         [
             new PlatformPicker(),
+            new NamedPicker(),
             new ServicePicker(),
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);
