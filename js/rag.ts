@@ -4,15 +4,15 @@
 class RAG
 {
     /** Gets the database manager, which holds station and train data */
-    public static database       : Database;
+    public static database    : Database;
     /** Gets the phrase manager, which generates HTML phrases from XML */
-    public static phraser        : Phraser;
-    /** Gets the view controller, which manages UI interaction */
-    public static viewController : ViewController;
+    public static phraser     : Phraser;
     /** Gets the speech synthesizer */
-    public static speechSynth    : SpeechSynthesis;
+    public static speechSynth : SpeechSynthesis;
     /** Gets the current train and station state */
-    public static state          : State;
+    public static state       : State;
+    /** Gets the view controller, which manages UI interaction */
+    public static views       : Views;
 
     /**
      * Entry point for RAG, to be called from Javascript.
@@ -24,14 +24,14 @@ class RAG
         window.onerror        = error => RAG.panic(error);
         window.onbeforeunload = _ => RAG.speechSynth.cancel();
 
-        RAG.database       = new Database(config);
-        RAG.viewController = new ViewController();
-        RAG.phraser        = new Phraser(config);
-        RAG.speechSynth    = window.speechSynthesis;
+        RAG.database    = new Database(config);
+        RAG.views       = new Views();
+        RAG.phraser     = new Phraser(config);
+        RAG.speechSynth = window.speechSynthesis;
 
         // Begin
 
-        RAG.viewController.marquee.set("Welcome to RAG.");
+        RAG.views.marquee.set("Welcome to RAG.");
         RAG.generate();
     }
 
@@ -39,7 +39,7 @@ class RAG
     public static generate() : void
     {
         RAG.state = new State();
-        RAG.viewController.editor.generate();
+        RAG.views.editor.generate();
     }
 
     /** Global error handler; throws up a big red panic screen on uncaught error */

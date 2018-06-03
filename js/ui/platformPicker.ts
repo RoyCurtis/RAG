@@ -30,8 +30,6 @@ class PlatformPicker extends Picker
     {
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
 
-        RAG.viewController.editor.setElementsText(
-            'platform', RAG.state.platform.join('')
-        );
+        RAG.views.editor.setElementsText( 'platform', RAG.state.platform.join('') );
     }
 }

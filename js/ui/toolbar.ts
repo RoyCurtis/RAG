@@ -35,7 +35,7 @@ class Toolbar
         // automatically change back. However, speech's 'onend' event was found to be
         // unreliable, so I decided to keep play and stop separate.
 
-        let text  = RAG.viewController.editor.getText();
+        let text  = RAG.views.editor.getText();
         let parts = text.trim().split(/\.\s/i);
 
         RAG.speechSynth.cancel();
@@ -43,12 +43,12 @@ class Toolbar
             RAG.speechSynth.speak( new SpeechSynthesisUtterance(segment) )
         );
 
-        RAG.viewController.marquee.set(text);
+        RAG.views.marquee.set(text);
     }
 
     private handleStop() : void
     {
         RAG.speechSynth.cancel();
-        RAG.viewController.marquee.stop();
+        RAG.views.marquee.stop();
     }
 }

@@ -80,8 +80,8 @@ class Editor
     private handleClick(ev: MouseEvent) : void
     {
         let target = ev.target as HTMLElement;
-        let type   = target ? target.dataset['type'] : undefined;
-        let picker = type   ? RAG.viewController.getPicker(type) : undefined;
+        let type   = target ? target.dataset['type']    : undefined;
+        let picker = type   ? RAG.views.getPicker(type) : undefined;
 
         // Ignore clicks to any element of already open pickers
         if (target && this.currentPicker)

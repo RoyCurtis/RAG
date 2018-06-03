@@ -25,6 +25,6 @@ class TimePicker extends Picker
     {
         RAG.state.time = this.inputTime.value;
 
-        RAG.viewController.editor.setElementsText( 'time', RAG.state.time.toString() );
+        RAG.views.editor.setElementsText( 'time', RAG.state.time.toString() );
     }
 }

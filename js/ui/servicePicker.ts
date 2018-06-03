@@ -66,6 +66,6 @@ class ServicePicker extends Picker
             this.select(target);
 
         RAG.state.service = target.value;
-        RAG.viewController.editor.setElementsText('service', RAG.state.service);
+        RAG.views.editor.setElementsText('service', RAG.state.service);
     }
 }

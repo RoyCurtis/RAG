@@ -66,6 +66,6 @@ class NamedPicker extends Picker
             this.select(target);
 
         RAG.state.named = target.value;
-        RAG.viewController.editor.setElementsText('named', RAG.state.named);
+        RAG.views.editor.setElementsText('named', RAG.state.named);
     }
 }

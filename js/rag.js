@@ -218,7 +218,7 @@ class Editor {
     handleClick(ev) {
         let target = ev.target;
         let type = target ? target.dataset['type'] : undefined;
-        let picker = type ? RAG.viewController.getPicker(type) : undefined;
+        let picker = type ? RAG.views.getPicker(type) : undefined;
         if (target && this.currentPicker)
             if (this.currentPicker.dom.contains(target))
                 return;
@@ -361,7 +361,7 @@ class NamedPicker extends Picker {
         else
             this.select(target);
         RAG.state.named = target.value;
-        RAG.viewController.editor.setElementsText('named', RAG.state.named);
+        RAG.views.editor.setElementsText('named', RAG.state.named);
     }
 }
 class PlatformPicker extends Picker {
@@ -378,7 +378,7 @@ class PlatformPicker extends Picker {
     }
     onChange(_) {
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
-        RAG.viewController.editor.setElementsText('platform', RAG.state.platform.join(''));
+        RAG.views.editor.setElementsText('platform', RAG.state.platform.join(''));
     }
 }
 class ServicePicker extends Picker {
@@ -418,7 +418,7 @@ class ServicePicker extends Picker {
         else
             this.select(target);
         RAG.state.service = target.value;
-        RAG.viewController.editor.setElementsText('service', RAG.state.service);
+        RAG.views.editor.setElementsText('service', RAG.state.service);
     }
 }
 class TimePicker extends Picker {
@@ -432,7 +432,7 @@ class TimePicker extends Picker {
     }
     onChange(_) {
         RAG.state.time = this.inputTime.value;
-        RAG.viewController.editor.setElementsText('time', RAG.state.time.toString());
+        RAG.views.editor.setElementsText('time', RAG.state.time.toString());
     }
 }
 class Toolbar {
@@ -452,18 +452,18 @@ class Toolbar {
         this.btnOption.onclick = () => alert('Unimplemented');
     }
     handlePlay() {
-        let text = RAG.viewController.editor.getText();
+        let text = RAG.views.editor.getText();
         let parts = text.trim().split(/\.\s/i);
         RAG.speechSynth.cancel();
         parts.forEach(segment => RAG.speechSynth.speak(new SpeechSynthesisUtterance(segment)));
-        RAG.viewController.marquee.set(text);
+        RAG.views.marquee.set(text);
     }
     handleStop() {
         RAG.speechSynth.cancel();
-        RAG.viewController.marquee.stop();
+        RAG.views.marquee.stop();
     }
 }
-class ViewController {
+class Views {
     constructor() {
         this.editor = new Editor();
         this.marquee = new Marquee();
@@ -577,15 +577,15 @@ class RAG {
         window.onerror = error => RAG.panic(error);
         window.onbeforeunload = _ => RAG.speechSynth.cancel();
         RAG.database = new Database(config);
-        RAG.viewController = new ViewController();
+        RAG.views = new Views();
         RAG.phraser = new Phraser(config);
         RAG.speechSynth = window.speechSynthesis;
-        RAG.viewController.marquee.set("Welcome to RAG.");
+        RAG.views.marquee.set("Welcome to RAG.");
         RAG.generate();
     }
     static generate() {
         RAG.state = new State();
-        RAG.viewController.editor.generate();
+        RAG.views.editor.generate();
     }
     static panic(error = "Unknown error") {
         let msg = '<div class="panic">';

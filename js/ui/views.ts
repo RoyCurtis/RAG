@@ -1,14 +1,14 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 /** Manages UI elements and their logic */
-class ViewController
+class Views
 {
     // Main components
     public readonly editor  : Editor;
     public readonly marquee : Marquee;
     public readonly toolbar : Toolbar;
 
-    private pickers : PickerDictionary;
+    private readonly pickers : PickerDictionary;
 
     constructor()
     {
