@@ -269,11 +269,10 @@
 
 
 <xs:complexType name="station">
-  <xs:attribute name="context" type="station_context">
+  <xs:attribute name="context" type="station_context" use="required">
     <xs:annotation>
       <xs:documentation>
-        Optionally specifies a different context to pick a station from, rather than pick
-        from the default list of "calling at" stations.
+        Specifies the context to pick a station for.
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
@@ -281,10 +280,10 @@
 
 
 <xs:complexType name="stationlist">
-  <xs:attribute name="id" type="xs:string">
+  <xs:attribute name="id" type="xs:string" use="required">
     <xs:annotation>
       <xs:documentation>
-        Optionally defines an `id` for a list to create, or to repeat if already exists.
+        Defines an `id` for the list to create, or to repeat if already exists.
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
