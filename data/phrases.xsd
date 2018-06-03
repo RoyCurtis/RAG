@@ -277,14 +277,6 @@
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
-
-  <xs:attribute name="list" type="xs:string">
-    <xs:annotation>
-      <xs:documentation>
-        If given the `id` for a station list, picks a random station from that list.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:attribute>
 </xs:complexType>
 
 
@@ -319,6 +311,14 @@
 
 <xs:simpleType name="station_context">
   <xs:restriction base="xs:string">
+    <xs:enumeration value="calling">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a station from the calling list, excluding the final stop.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
     <xs:enumeration value="destination">
       <xs:annotation>
         <xs:documentation>
@@ -353,10 +353,18 @@
       </xs:annotation>
     </xs:enumeration>
 
+    <xs:enumeration value="random">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a random station not on any calling list or other contexts.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
     <xs:enumeration value="source">
       <xs:annotation>
         <xs:documentation>
-          Picks a station not on any list, or at random, as a "from" stop.
+          Picks a station not on any calling list, as a "from" stop.
         </xs:documentation>
       </xs:annotation>
     </xs:enumeration>

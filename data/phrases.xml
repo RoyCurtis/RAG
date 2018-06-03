@@ -49,8 +49,8 @@
 
   <!-- Terminating train -->
   <phrase>
-    Platform <platform/> for the <phrase ref="service"/> from <station/>. This train will
-    terminate here.
+    Platform <platform/> for the <phrase ref="service"/> from <station context="source"/>.
+    This train will terminate here.
   </phrase>
 
   <!-- Delayed and cancelled trains -->
@@ -62,7 +62,7 @@
 
   <phrase>
     We are sorry that services are subject to delay because of <excuse/>
-    <optional> <phraseset ref="at_near"/> <station/></optional>.
+    <optional> <phraseset ref="at_near"/> <station context="random"/></optional>.
     <phraseset ref="general_apology_delay" chance="50"/>
   </phrase>
 
@@ -245,7 +245,7 @@
 
 <phrase id="excuse">
   <phraseset ref="excuse_pre"/>due to <excuse/>
-  <optional> <phraseset ref="at_near"/> <station/></optional>
+  <optional> <phraseset ref="at_near"/> <station context="random"/></optional>
 </phrase>
 
 <phraseset id="excuse_or_wait">
@@ -273,10 +273,10 @@
 <phraseset id="change_at">
   <phrase>
     Customers for <stationlist id="changes" max="4"/> should change at
-    <station list="calling"/>.
+    <station context="calling"/>.
   </phrase>
   <phrase>
-    Change at <station list="calling"/> for the services to
+    Change at <station context="calling"/> for the services to
     <stationlist id="changes" max="4"/>.
   </phrase>
 </phraseset>
@@ -288,7 +288,7 @@
 
 <phraseset id="request_stop">
   <phrase>
-    <station list="calling"/> is a request stop, and passengers for this station should
+    <station context="calling"/> is a request stop, and passengers for this station should
     ask the conductor on the train to arrange for the train to stop, to allow them to
     <phraseset ref="leave"/>.
   </phrase>
