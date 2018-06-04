@@ -424,9 +424,11 @@ class ServicePicker extends Picker {
 }
 class StationPicker extends Picker {
     constructor() {
-        super('station', ['click']);
+        super('station', ['click', 'input']);
+        this.filterTimeout = 0;
         this.domChoices = {};
-        this.inputService = DOM.require('.picker', this.dom);
+        this.inputFilter = DOM.require('input', this.dom);
+        this.inputStation = DOM.require('.picker', this.dom);
         Object.keys(RAG.database.stations).forEach(code => {
             let station = RAG.database.stations[code];
             let letter = station[0];
@@ -436,7 +438,7 @@ class StationPicker extends Picker {
                 header.innerText = letter.toUpperCase();
                 group = this.domChoices[letter] = document.createElement('dl');
                 group.appendChild(header);
-                this.inputService.appendChild(group);
+                this.inputStation.appendChild(group);
             }
             let entry = document.createElement('dd');
             entry.innerText = RAG.database.stations[code];
@@ -446,8 +448,9 @@ class StationPicker extends Picker {
     }
     open(target) {
         super.open(target);
+        this.inputFilter.focus();
         let code = RAG.state.stationCode;
-        let entry = this.inputService.querySelector(`dd[code=${code}`);
+        let entry = this.inputStation.querySelector(`dd[code=${code}`);
         if (entry)
             this.select(entry);
     }
@@ -459,12 +462,45 @@ class StationPicker extends Picker {
     }
     onChange(ev) {
         let target = ev.target;
-        if (!target || !target.dataset['code'])
+        if (!target)
             return;
-        else
+        else if (target === this.inputFilter) {
+            window.clearTimeout(this.filterTimeout);
+            this.filterTimeout = window.setTimeout(this.filter.bind(this), 500);
+        }
+        else if (ev.type.toLowerCase() === 'submit')
+            this.filter();
+        else if (target.dataset['code']) {
             this.select(target);
-        RAG.state.stationCode = target.dataset['code'];
-        RAG.views.editor.setElementsText('station', target.innerText);
+            RAG.state.stationCode = target.dataset['code'];
+            RAG.views.editor.setElementsText('station', target.innerText);
+        }
+    }
+    filter() {
+        window.clearTimeout(this.filterTimeout);
+        let filter = this.inputFilter.value.toLowerCase();
+        let letters = this.inputStation.children;
+        this.inputStation.classList.add('hidden');
+        for (let i = 0; i < letters.length; i++) {
+            let letter = letters[i];
+            let entries = letters[i].children;
+            let count = entries.length - 1;
+            let hidden = 0;
+            for (let j = 1; j < entries.length; j++) {
+                let entry = entries[j];
+                if (entry.innerText.toLowerCase().indexOf(filter) >= 0)
+                    entry.classList.remove('hidden');
+                else {
+                    entry.classList.add('hidden');
+                    hidden++;
+                }
+            }
+            if (hidden >= count)
+                letter.classList.add('hidden');
+            else
+                letter.classList.remove('hidden');
+        }
+        this.inputStation.classList.remove('hidden');
     }
 }
 class TimePicker extends Picker {

@@ -52,11 +52,23 @@
   flex-flow column
 
   form
-    overflow auto
+    display   flex
+    flex-flow column
 
-    .picker dl
-      display   flex
-      flex-wrap wrap
+    input
+      background #111
+      border     none
+      color      inherit
+      font-size  inherit
+      padding    0.5em 1em
+      width      100%
+
+    .picker
+      overflow auto
+
+      dl
+        display   flex
+        flex-wrap wrap
 
       dt
         background  black
