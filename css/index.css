@@ -59,6 +59,34 @@
 #servicePicker form .picker option[selected] {
   background: #cc7e00;
 }
+#stationPicker {
+  display: flex;
+  flex-flow: column;
+}
+#stationPicker form {
+  overflow: auto;
+}
+#stationPicker form .picker dl {
+  display: flex;
+  flex-wrap: wrap;
+}
+#stationPicker form .picker dl dt {
+  background: #000;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+  font-weight: bold;
+  padding: 0.5em 1em;
+  position: sticky;
+  top: 0;
+  width: 100%;
+}
+#stationPicker form .picker dl dd {
+  cursor: pointer;
+  padding: 1em;
+}
+#stationPicker form .picker dl dd:hover,
+#stationPicker form .picker dl dd[selected] {
+  background: #cc7e00;
+}
 #editor {
   background: #222;
   flex-grow: 1;

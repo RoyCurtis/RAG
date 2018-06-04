@@ -71,7 +71,8 @@ class ElementProcessors {
         ctx.newElement.textContent = RAG.state.service;
     }
     static station(ctx) {
-        ctx.newElement.textContent = RAG.database.pickStation();
+        let code = RAG.state.stationCode;
+        ctx.newElement.textContent = RAG.database.getStation(code);
     }
     static stationlist(ctx) {
         let stations = RAG.database.pickStations();
@@ -421,6 +422,51 @@ class ServicePicker extends Picker {
         RAG.views.editor.setElementsText('service', RAG.state.service);
     }
 }
+class StationPicker extends Picker {
+    constructor() {
+        super('station', ['click']);
+        this.domChoices = {};
+        this.inputService = DOM.require('.picker', this.dom);
+        Object.keys(RAG.database.stations).forEach(code => {
+            let station = RAG.database.stations[code];
+            let letter = station[0];
+            let group = this.domChoices[letter];
+            if (!group) {
+                let header = document.createElement('dt');
+                header.innerText = letter.toUpperCase();
+                group = this.domChoices[letter] = document.createElement('dl');
+                group.appendChild(header);
+                this.inputService.appendChild(group);
+            }
+            let entry = document.createElement('dd');
+            entry.innerText = RAG.database.stations[code];
+            entry.dataset['code'] = code;
+            group.appendChild(entry);
+        });
+    }
+    open(target) {
+        super.open(target);
+        let code = RAG.state.stationCode;
+        let entry = this.inputService.querySelector(`dd[code=${code}`);
+        if (entry)
+            this.select(entry);
+    }
+    select(option) {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+        this.domSelected = option;
+        option.setAttribute('selected', 'true');
+    }
+    onChange(ev) {
+        let target = ev.target;
+        if (!target || !target.dataset['code'])
+            return;
+        else
+            this.select(target);
+        RAG.state.stationCode = target.dataset['code'];
+        RAG.views.editor.setElementsText('station', target.innerText);
+    }
+}
 class TimePicker extends Picker {
     constructor() {
         super('time', ['change']);
@@ -473,6 +519,7 @@ class Views {
             new PlatformPicker(),
             new NamedPicker(),
             new ServicePicker(),
+            new StationPicker(),
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);
     }
@@ -554,8 +601,12 @@ class Database {
     pickService() {
         return Random.array(this.services);
     }
-    pickStation() {
-        let code = Random.objectKey(this.stations);
+    pickStationCode() {
+        return Random.objectKey(this.stations);
+    }
+    getStation(code) {
+        if (!this.stations[code])
+            return `UNKNOWN STATION: ${code}`;
         return this.stations[code];
     }
     pickStations(min = 1, max = 16) {
@@ -630,6 +681,15 @@ class State {
     }
     set service(value) {
         this._service = value;
+    }
+    get stationCode() {
+        if (this._stationCode)
+            return this._stationCode;
+        this._stationCode = RAG.database.pickStationCode();
+        return this._stationCode;
+    }
+    set stationCode(value) {
+        this._stationCode = value;
     }
     get time() {
         if (!this._time) {

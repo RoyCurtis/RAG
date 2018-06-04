@@ -122,7 +122,9 @@ class ElementProcessors
     /** Picks a station name */
     public static station(ctx: PhraseContext)
     {
-        ctx.newElement.textContent = RAG.database.pickStation();
+        let code = RAG.state.stationCode;
+
+        ctx.newElement.textContent = RAG.database.getStation(code);
     }
 
     /** Picks a selection of stations */

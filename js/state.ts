@@ -3,10 +3,11 @@
 /** Disposable class that holds state for the current schedule, train, etc. */
 class State
 {
-    private _platform? : Platform;
-    private _named?    : string;
-    private _service?  : string;
-    private _time?     : string;
+    private _platform?    : Platform;
+    private _named?       : string;
+    private _service?     : string;
+    private _stationCode? : string;
+    private _time?        : string;
 
     get platform() : Platform
     {
@@ -60,6 +61,20 @@ class State
     set service(value: string)
     {
         this._service = value;
+    }
+
+    get stationCode(): string
+    {
+        if (this._stationCode)
+            return this._stationCode;
+
+        this._stationCode = RAG.database.pickStationCode();
+        return this._stationCode;
+    }
+
+    set stationCode(value: string)
+    {
+        this._stationCode = value;
     }
 
     get time(): string

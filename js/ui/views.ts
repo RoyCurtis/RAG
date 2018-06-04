@@ -21,6 +21,7 @@ class Views
             new PlatformPicker(),
             new NamedPicker(),
             new ServicePicker(),
+            new StationPicker(),
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);
     }

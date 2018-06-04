@@ -23,27 +23,34 @@ class Database
     }
 
     /** Picks a random excuse for a delay or cancellation */
-    public pickExcuse(): string
+    public pickExcuse() : string
     {
         return Random.array(this.excuses);
     }
 
     /** Picks a random named train */
-    public pickNamed(): string
+    public pickNamed() : string
     {
         return Random.array(this.named);
     }
 
     /** Picks a random rail network name */
-    public pickService(): string
+    public pickService() : string
     {
         return Random.array(this.services);
     }
 
-    /** Picks a random station name */
-    public pickStation(): string
+    /** Picks a random station code */
+    public pickStationCode() : string
     {
-        let code = Random.objectKey(this.stations);
+        return Random.objectKey(this.stations);
+    }
+
+    /** Gets the station name from the given three letter code */
+    public getStation(code: string) : string
+    {
+        if (!this.stations[code])
+            return `UNKNOWN STATION: ${code}`;
 
         return this.stations[code];
     }
@@ -55,7 +62,7 @@ class Database
      * @param {number} max Maximum amount of stations to pick
      * @returns {string[]} A list of unique station names
      */
-    public pickStations(min = 1, max = 16): string[]
+    public pickStations(min = 1, max = 16) : string[]
     {
         if (max - min > Object.keys(this.stations).length)
             throw new Error("Picking too many stations than there are available");
