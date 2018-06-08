@@ -260,19 +260,25 @@ class Marquee {
         this.dom.appendChild(this.domSpan);
     }
     set(msg) {
+        const STEP_PER_MS = 7 / (1000 / 60);
         window.cancelAnimationFrame(this.timer);
         this.domSpan.textContent = msg;
         this.offset = this.dom.clientWidth;
+        let last = 0;
         let limit = -this.domSpan.clientWidth - 100;
-        let anim = () => {
-            this.offset -= 6;
+        let anim = (time) => {
+            this.offset -= (last == 0)
+                ? 6
+                : (time - last) * STEP_PER_MS;
             this.domSpan.style.transform = `translateX(${this.offset}px)`;
             if (this.offset < limit)
                 this.domSpan.style.transform = '';
-            else
+            else {
+                last = time;
                 this.timer = window.requestAnimationFrame(anim);
+            }
         };
-        anim();
+        window.requestAnimationFrame(anim);
     }
     stop() {
         window.cancelAnimationFrame(this.timer);

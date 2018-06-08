@@ -69,7 +69,7 @@ class StationPicker extends Picker
     protected onChange(ev: Event)
     {
         let target = ev.target as HTMLDataElement;
-        
+
         // Skip for target-less events
         if (!target)
             return;
