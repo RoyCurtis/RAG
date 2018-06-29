@@ -12,6 +12,9 @@ type StationsDB = { [index: string]: string };
 /** Represents a dictionary of picker classes for the editor */
 type PickerDictionary = { [index: string]: Picker };
 
+/** Represents a dictionary of phraseset ids and their picked phrase indexes */
+type PhrasesetDictionary = { [index: string] : number };
+
 /** Defines the config object passed into RAG.main on init */
 interface RAGConfig
 {

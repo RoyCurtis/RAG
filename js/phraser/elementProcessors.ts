@@ -95,7 +95,7 @@ class ElementProcessors
             return;
         }
 
-        let idx    = Random.int(0, phraseset.children.length);
+        let idx    = RAG.state.getPhrasesetIdx(ref);
         let phrase = phraseset.children[idx] as HTMLElement;
 
         ctx.newElement.dataset['idx'] = idx.toString();

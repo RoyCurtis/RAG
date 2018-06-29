@@ -3,11 +3,33 @@
 /** Disposable class that holds state for the current schedule, train, etc. */
 class State
 {
+    private _phrasesets   : PhrasesetDictionary = {};
     private _platform?    : Platform;
     private _named?       : string;
     private _service?     : string;
     private _stationCode? : string;
     private _time?        : string;
+
+    // TODO: Make "phraseSet" consistent to "phraseset"
+    public getPhrasesetIdx(ref: string) : number
+    {
+        if (this._phrasesets[ref])
+            return this._phrasesets[ref];
+
+        let phraseset = RAG.database.getPhraseset(ref);
+
+        // TODO: is this safe across phraseset changes?
+        if (!phraseset)
+            throw new Error("Shouldn't get phraseset idx for one that doesn't exist");
+
+        this._phrasesets[ref] = Random.int(0, phraseset.children.length);
+        return this._phrasesets[ref];
+    }
+
+    public setPhrasesetIdx(ref: string, idx: number) : void
+    {
+        this._phrasesets[ref] = idx;
+    }
 
     get platform() : Platform
     {
@@ -35,7 +57,7 @@ class State
         this._platform = value;
     }
 
-    get named(): string
+    get named() : string
     {
         if (this._named)
             return this._named;
@@ -49,7 +71,7 @@ class State
         this._named = value;
     }
 
-    get service(): string
+    get service() : string
     {
         if (this._service)
             return this._service;
@@ -63,7 +85,7 @@ class State
         this._service = value;
     }
 
-    get stationCode(): string
+    get stationCode() : string
     {
         if (this._stationCode)
             return this._stationCode;
@@ -77,7 +99,7 @@ class State
         this._stationCode = value;
     }
 
-    get time(): string
+    get time() : string
     {
         if (!this._time)
         {

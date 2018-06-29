@@ -39,7 +39,7 @@ class Marquee
             this.offset -= (last == 0)
                 ? 6
                 : (time - last) * STEP_PER_MS;
-            
+
             this.domSpan.style.transform = `translateX(${this.offset}px)`;
 
             if (this.offset < limit)

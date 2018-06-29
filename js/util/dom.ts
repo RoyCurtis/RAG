@@ -48,7 +48,7 @@ class DOM
      */
     public static cloneInto(source: HTMLElement, target: HTMLElement) : void
     {
-        for (let i = 0; i < source.childNodes.length; i ++)
+        for (let i = 0; i < source.childNodes.length; i++)
             target.appendChild( source.childNodes[i].cloneNode(true) );
     }
 
