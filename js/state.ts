@@ -13,7 +13,7 @@ class State
     // TODO: Make "phraseSet" consistent to "phraseset"
     public getPhrasesetIdx(ref: string) : number
     {
-        if (this._phrasesets[ref])
+        if (this._phrasesets[ref] !== undefined)
             return this._phrasesets[ref];
 
         let phraseset = RAG.database.getPhraseset(ref);
@@ -103,6 +103,8 @@ class State
     {
         if (!this._time)
         {
+            // TODO: make this instead pick a random time between 1 and 15 minutes ahead
+            // of the current time
             let hour   = Random.int(0, 23).toString().padStart(2, '0');
             let minute = Random.int(0, 59).toString().padStart(2, '0');
 
