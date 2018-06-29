@@ -4,7 +4,7 @@
 class Strings
 {
     /** Checks if the given string is null, or empty (whitespace only or zero-length) */
-    public static isNullOrEmpty(str: string | null) : boolean
+    public static isNullOrEmpty(str: string | null | undefined) : boolean
     {
         return !str || !str.trim();
     }
