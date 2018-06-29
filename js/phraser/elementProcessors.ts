@@ -95,7 +95,10 @@ class ElementProcessors
             return;
         }
 
-        let phrase = Random.array(phraseset.children) as HTMLElement;
+        let idx    = Random.int(0, phraseset.children.length);
+        let phrase = phraseset.children[idx] as HTMLElement;
+
+        ctx.newElement.dataset['idx'] = idx.toString();
 
         // Handle phrasesets with a chance value as collapsible
         // TODO: redry these
