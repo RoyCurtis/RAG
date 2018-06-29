@@ -7,6 +7,4 @@ interface PhraseContext
     xmlElement: HTMLElement;
     /** Gets the HTML span element that is replacing the XML element */
     newElement: HTMLSpanElement;
-    /** Gets the XML document representing all the loaded phrase sets */
-    phraseSet:  Document;
 }

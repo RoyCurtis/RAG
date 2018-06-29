@@ -3,17 +3,25 @@
 /** Manages data for excuses, trains, services and stations. */
 class Database
 {
+    // TODO: make these private
     public readonly excuses  : string[]   = [];
     public readonly named    : string[]   = [];
     public readonly services : string[]   = [];
     public readonly stations : StationsDB = {};
+    private readonly phraseSets : Document;
 
     constructor(config: RAGConfig)
     {
-        this.excuses  = config.excusesData;
-        this.named    = config.namedData;
-        this.services = config.servicesData;
-        this.stations = config.stationsData;
+        let iframe = DOM.require(config.phraseSetEmbed) as HTMLIFrameElement;
+
+        if (!iframe.contentDocument)
+            throw new Error("Configured phraseset element is not an iframe embed");
+
+        this.phraseSets = iframe.contentDocument;
+        this.excuses    = config.excusesData;
+        this.named      = config.namedData;
+        this.services   = config.servicesData;
+        this.stations   = config.stationsData;
 
         console.log("[Database] Entries loaded:");
         console.log("\tExcuses:",      this.excuses.length);
@@ -32,6 +40,19 @@ class Database
     public pickNamed() : string
     {
         return Random.array(this.named);
+    }
+
+    /** Gets a phrase with the given ID, or null if it doesn't exist */
+    public getPhrase(id: string) : HTMLElement | null
+    {
+        // TODO: test if cloning works, cause it'll be safer
+        return this.phraseSets.querySelector('phrase#' + id);
+    }
+
+    /** Gets a phraseset with the given ID, or null if it doesn't exist */
+    public getPhraseSet(id: string) : HTMLElement | null
+    {
+        return this.phraseSets.querySelector('phraseset#' + id);
     }
 
     /** Picks a random rail network name */

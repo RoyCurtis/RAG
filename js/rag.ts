@@ -3,7 +3,7 @@
 /** Main class of the entire Rail Announcements Generator application */
 class RAG
 {
-    /** Gets the database manager, which holds station and train data */
+    /** Gets the database manager, which holds phrase, station and train data */
     public static database    : Database;
     /** Gets the phrase manager, which generates HTML phrases from XML */
     public static phraser     : Phraser;
@@ -26,7 +26,7 @@ class RAG
 
         RAG.database    = new Database(config);
         RAG.views       = new Views();
-        RAG.phraser     = new Phraser(config);
+        RAG.phraser     = new Phraser();
         RAG.speechSynth = window.speechSynthesis;
 
         // Begin

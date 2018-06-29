@@ -10,18 +10,6 @@ class Phraser
     public static readonly DIGITS: string[] = ['zero', 'one', 'two', 'three', 'four',
         'five', 'six', 'seven', 'eight', 'nine', 'ten'];
 
-    private readonly phraseSets: Document;
-
-    constructor(config: RAGConfig)
-    {
-        let iframe = DOM.require(config.phraseSetEmbed) as HTMLIFrameElement;
-
-        if (!iframe.contentDocument)
-            throw new Error("Configured phraseset element is not an iframe embed");
-
-        this.phraseSets = iframe.contentDocument;
-    }
-
     /** Recursively processes elements, filling in data and applying transforms */
     public process(container: HTMLElement, level: number = 0)
     {
@@ -46,8 +34,7 @@ class Phraser
             let newElement  = document.createElement('span');
             let context     = {
                 xmlElement: element,
-                newElement: newElement,
-                phraseSet:  this.phraseSets
+                newElement: newElement
             };
 
             newElement.dataset['type'] = elementName;

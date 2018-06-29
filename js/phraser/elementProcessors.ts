@@ -64,7 +64,7 @@ class ElementProcessors
     public static phrase(ctx: PhraseContext)
     {
         let ref    = DOM.requireAttrValue(ctx.xmlElement, 'ref');
-        let phrase = ctx.phraseSet.querySelector('phrase#' + ref) as HTMLElement;
+        let phrase = RAG.database.getPhrase(ref);
 
         ctx.newElement.dataset['ref'] = ref;
 
@@ -85,7 +85,7 @@ class ElementProcessors
     public static phraseset(ctx: PhraseContext)
     {
         let ref       = DOM.requireAttrValue(ctx.xmlElement, 'ref');
-        let phraseset = ctx.phraseSet.querySelector('phraseset#' + ref);
+        let phraseset = RAG.database.getPhraseSet(ref);
 
         ctx.newElement.dataset['ref'] = ref;
 
