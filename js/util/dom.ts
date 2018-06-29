@@ -40,6 +40,24 @@ class DOM
     }
 
     /**
+     * Finds the value of the given key of the given element's dataset, throwing an error
+     * if the value is missing or empty.
+     *
+     * @param {HTMLElement} element Element to get the data of
+     * @param {string} key Key to get the value of
+     * @returns {string} The given dataset's value
+     */
+    public static requireData(element: HTMLElement, key: string) : string
+    {
+        let value = element.dataset[key];
+
+        if ( Strings.isNullOrEmpty(value) )
+            throw new Error(`Required dataset key is missing or empty: '${key}'`);
+
+        return value!;
+    }
+
+    /**
      * Deep clones all the children of the given element, into the target element.
      * Using innerHTML would be easier, however it handles self-closing tags poorly.
      *
