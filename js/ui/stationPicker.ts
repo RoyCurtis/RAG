@@ -51,7 +51,7 @@ class StationPicker extends Picker
         this.inputFilter.focus();
 
         let code  = RAG.state.stationCode;
-        let entry = this.inputStation.querySelector(`dd[code=${code}`);
+        let entry = this.inputStation.querySelector(`dd[data-code=${code}]`);
 
         if (entry)
             this.select(entry as HTMLDataElement);
