@@ -75,4 +75,21 @@ class DOM
 
         return text;
     }
+
+    /**
+     * Gets the text content of the given element, excluding the text of hidden children,
+     * and excess whitespace as a result of converting from HTML/XML.
+     *
+     * @see https://stackoverflow.com/a/19986328
+     * @param {Element} element Element to recursively get text content of
+     * @returns {string} Cleaned text of given element, without text of hidden children
+     */
+    public static getCleanedVisibleText(element: Element) : string
+    {
+        return DOM.getVisibleText(element)
+            .trim()
+            .replace(/[\n\r]/gi, '')
+            .replace(/\s{2,}/gi, ' ')
+            .replace(/\s([.,])/gi, '$1');
+    }
 }
