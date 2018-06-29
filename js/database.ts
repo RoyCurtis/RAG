@@ -3,12 +3,11 @@
 /** Manages data for excuses, trains, services and stations. */
 class Database
 {
-    // TODO: make these private
-    public readonly excuses  : string[]   = [];
-    public readonly named    : string[]   = [];
-    public readonly services : string[]   = [];
-    public readonly stations : StationsDB = {};
-    private readonly phraseSets : Document;
+    public readonly excuses    : string[];
+    public readonly named      : string[];
+    public readonly services   : string[];
+    public readonly stations   : StationsDB;
+    public readonly phraseSets : Document;
 
     constructor(config: RAGConfig)
     {
