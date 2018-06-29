@@ -85,7 +85,7 @@ class ElementProcessors
     public static phraseset(ctx: PhraseContext)
     {
         let ref       = DOM.requireAttrValue(ctx.xmlElement, 'ref');
-        let phraseset = RAG.database.getPhraseSet(ref);
+        let phraseset = RAG.database.getPhraseset(ref);
 
         ctx.newElement.dataset['ref'] = ref;
 

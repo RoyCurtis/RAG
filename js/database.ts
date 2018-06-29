@@ -49,7 +49,7 @@ class Database
     }
 
     /** Gets a phraseset with the given ID, or null if it doesn't exist */
-    public getPhraseSet(id: string) : HTMLElement | null
+    public getPhraseset(id: string) : HTMLElement | null
     {
         return this.phraseSets.querySelector('phraseset#' + id);
     }

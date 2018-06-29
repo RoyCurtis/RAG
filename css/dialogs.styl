@@ -47,6 +47,26 @@
         &[selected]
           background #CC7E00
 
+#phrasesetPicker
+  display   flex
+  flex-flow column
+
+  form
+    overflow auto
+
+    li
+      cursor        pointer
+      display       block
+      font-size     large
+      overflow      hidden
+      padding       1em
+      text-overflow ellipsis
+      white-space   nowrap
+
+      &:hover,
+      &[selected]
+        background #CC7E00
+
 #stationPicker
   display   flex
   flex-flow column

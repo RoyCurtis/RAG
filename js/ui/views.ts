@@ -18,8 +18,9 @@ class Views
         this.pickers = {};
 
         [
-            new PlatformPicker(),
             new NamedPicker(),
+            new PlatformPicker(),
+            new PhrasesetPicker(),
             new ServicePicker(),
             new StationPicker(),
             new TimePicker()

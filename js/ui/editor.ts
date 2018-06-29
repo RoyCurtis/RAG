@@ -17,12 +17,33 @@ class Editor
         this.dom.textContent  = "Please wait...";
     }
 
-    /** Picks a random root phrase, loads it into the editor and processes it into HTML */
+    /** Replaces the editor with a root phraseset reference, and expands it into HTML */
     public generate() : void
     {
         this.dom.innerHTML = '<phraseset ref="root" />';
 
         RAG.phraser.process(this.dom);
+    }
+
+    /** Reprocesses all phraseset elements of the given ref, if their index has changed */
+    public refreshPhraseset(ref: string) : void
+    {
+        // TODO: potential inline candidate
+        // Note, this could potentially bug out if a phraseset's descendant references
+        // the same phraseset (recursion). But this is okay because phrasesets should
+        // never include themselves, even eventually.
+
+        this.dom.querySelectorAll(`span[data-type=phraseset][data-ref=${ref}`)
+            .forEach(_ =>
+            {
+                let element    = _ as HTMLElement;
+                let newElement = document.createElement('phraseset');
+
+                newElement.setAttribute('ref', ref);
+
+                element.parentElement!.replaceChild(newElement, element);
+                RAG.phraser.process(newElement.parentElement!);
+            });
     }
 
     /**
@@ -33,6 +54,7 @@ class Editor
      */
     public getElements(type: string) : NodeList
     {
+        // TODO: inline candidate
         return this.dom.querySelectorAll(`span[data-type=${type}]`);
     }
 

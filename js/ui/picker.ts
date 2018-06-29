@@ -19,7 +19,7 @@ abstract class Picker
      * Creates a picker to handle the given phrase element type.
      *
      * @param {string} xmlTag Name of the XML tag this picker will handle.
-     * @param {string[]} events List of events to react to, when data is changed
+     * @param {string[]} events List of events to trigger onChange, when data is changed
      */
     protected constructor(xmlTag: string, events: string[])
     {
@@ -63,6 +63,7 @@ abstract class Picker
 
         let rect      = this.domEditing.getBoundingClientRect();
         let fullWidth = this.dom.classList.contains('fullWidth');
+        let midHeight = this.dom.classList.contains('midHeight');
         let dialogX   = (rect.left | 0) - 8;
         let dialogY   = rect.bottom | 0;
         let width     = (rect.width | 0) + 16;
@@ -76,7 +77,14 @@ abstract class Picker
                 dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
         }
 
-        if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
+        // Handle pickers that aren't relative to selected element
+        // TODO: If it turns out that only phrasesetPicker uses this, make it an override
+        if (midHeight)
+        {
+            dialogY = (this.dom.offsetHeight / 2) | 0;
+        }
+
+        else if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
         {
             dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
