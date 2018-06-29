@@ -112,10 +112,8 @@ class Editor
         this.closeDialog();
 
         // Handle collapsible elements (and their wrapper children)
-        if (target.dataset['chance'])
+        if ( target.classList.contains('toggle') )
             this.toggleOptional(target);
-        else if ( target.hasAttribute('inner') )
-            this.toggleOptional(target.parentElement!);
 
         // Find and open picker for the target element
         else if (target && type && picker)
@@ -124,15 +122,19 @@ class Editor
 
     private toggleOptional(target: HTMLElement)
     {
-        if (target.hasAttribute('collapsed'))
+        let parent = target.parentElement!;
+
+        if (parent.hasAttribute('collapsed'))
         {
-            target.removeAttribute('collapsed');
-            target.title = "Click to close this optional part";
+            parent.removeAttribute('collapsed');
+            target.title     = "Click to close this optional part";
+            target.innerText = '-';
         }
         else
         {
-            target.setAttribute('collapsed', '');
-            target.title = "Click to open this optional part";
+            parent.setAttribute('collapsed', '');
+            target.title     = "Click to open this optional part";
+            target.innerText = '+';
         }
     }
 

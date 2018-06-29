@@ -40,24 +40,30 @@
 
   // Optional elements
   span[data-type=optional], span[data-chance]
+    cursor       default
+    padding-left 0
+
+    > .toggle
+      background    linear-gradient(to right, rgba(255, 255, 255, 0.1) 0%, rgba(51, 51, 51, 0) 100%)
+      color         #AAA
+      cursor        pointer
+      border-radius 8px
+      display       inline-block
+      text-align    center
+      width         1em
+
+      &:hover
+        color #F5F5F5
+
     &:hover
       border-left  2px dotted
       border-right 2px dotted
 
     &[collapsed]
-      border  none
       padding 0
 
-      *
+      > .toggle
+        background none
+
+      > .inner
         display none
-
-      &:active::before
-        activePressable()
-
-      &::before
-        pressable()
-        content '⋮'
-        display inline-block
-        font-size x-large
-        padding 2px
-        transform translateY(-9px)

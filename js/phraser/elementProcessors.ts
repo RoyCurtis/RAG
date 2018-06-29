@@ -178,8 +178,10 @@ class ElementProcessors
     {
         let chance = ctx.xmlElement.getAttribute('chance')!;
         let inner  = document.createElement('span');
+        let toggle = document.createElement('span');
 
-        inner.setAttribute('inner', 'true');
+        inner.classList.add('inner');
+        toggle.classList.add('toggle');
 
         DOM.cloneInto(source, inner);
         ctx.newElement.dataset['chance'] = chance;
@@ -188,11 +190,16 @@ class ElementProcessors
         if ( !Random.bool( parseInt(chance) ) )
         {
             ctx.newElement.setAttribute('collapsed', '');
-            ctx.newElement.title = "Click to open this optional part";
+            toggle.title     = "Click to open this optional part";
+            toggle.innerText = '+';
         }
         else
-            ctx.newElement.title = "Click to close this optional part";
+        {
+            toggle.title     = "Click to close this optional part";
+            toggle.innerText = '-';
+        }
 
+        ctx.newElement.appendChild(toggle);
         ctx.newElement.appendChild(inner);
     }
 }

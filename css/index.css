@@ -59,6 +59,26 @@
 #servicePicker form .picker option[selected] {
   background: #cc7e00;
 }
+#phrasesetPicker {
+  display: flex;
+  flex-flow: column;
+}
+#phrasesetPicker form {
+  overflow: auto;
+}
+#phrasesetPicker form li {
+  cursor: pointer;
+  display: block;
+  font-size: large;
+  overflow: hidden;
+  padding: 1em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#phrasesetPicker form li:hover,
+#phrasesetPicker form li[selected] {
+  background: #cc7e00;
+}
 #stationPicker {
   display: flex;
   flex-flow: column;
@@ -188,6 +208,25 @@
   position: relative;
   z-index: 150;
 }
+#editor span[data-type=optional],
+#editor span[data-chance] {
+  cursor: default;
+  padding-left: 0;
+}
+#editor span[data-type=optional] > .toggle,
+#editor span[data-chance] > .toggle {
+  background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(51,51,51,0) 100%);
+  color: #aaa;
+  cursor: pointer;
+  border-radius: 8px;
+  display: inline-block;
+  text-align: center;
+  width: 1em;
+}
+#editor span[data-type=optional] > .toggle:hover,
+#editor span[data-chance] > .toggle:hover {
+  color: #f5f5f5;
+}
 #editor span[data-type=optional]:hover,
 #editor span[data-chance]:hover {
   border-left: 2px dotted;
@@ -195,30 +234,15 @@
 }
 #editor span[data-type=optional][collapsed],
 #editor span[data-chance][collapsed] {
-  border: none;
   padding: 0;
 }
-#editor span[data-type=optional][collapsed] *,
-#editor span[data-chance][collapsed] * {
+#editor span[data-type=optional][collapsed] > .toggle,
+#editor span[data-chance][collapsed] > .toggle {
+  background: none;
+}
+#editor span[data-type=optional][collapsed] > .inner,
+#editor span[data-chance][collapsed] > .inner {
   display: none;
-}
-#editor span[data-type=optional][collapsed]:active::before,
-#editor span[data-chance][collapsed]:active::before {
-  color: #aaa;
-  box-shadow: 0 0 4px #000 inset;
-  fill: #aaa;
-}
-#editor span[data-type=optional][collapsed]::before,
-#editor span[data-chance][collapsed]::before {
-  background: #222;
-  border: none;
-  box-shadow: 0 0 8px #222;
-  cursor: pointer;
-  content: '⋮';
-  display: inline-block;
-  font-size: x-large;
-  padding: 2px;
-  transform: translateY(-9px);
 }
 #marquee {
   border: 0.5em solid;

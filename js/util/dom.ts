@@ -81,6 +81,9 @@ class DOM
     {
         if (element.nodeType === Node.TEXT_NODE)
             return element.textContent || '';
+        // This next conditional is RAG-specific; be warned!
+        else if ( element.classList.contains('toggle') )
+            return '';
 
         let style = getComputedStyle(element);
 

@@ -37,7 +37,7 @@ class ElementProcessors {
     }
     static phrase(ctx) {
         let ref = DOM.requireAttrValue(ctx.xmlElement, 'ref');
-        let phrase = ctx.phraseSet.querySelector('phrase#' + ref);
+        let phrase = RAG.database.getPhrase(ref);
         ctx.newElement.dataset['ref'] = ref;
         if (!phrase) {
             ctx.newElement.textContent = `(UNKNOWN PHRASE: ${ref})`;
@@ -50,13 +50,17 @@ class ElementProcessors {
     }
     static phraseset(ctx) {
         let ref = DOM.requireAttrValue(ctx.xmlElement, 'ref');
-        let phraseset = ctx.phraseSet.querySelector('phraseset#' + ref);
+        let phraseset = RAG.database.getPhraseset(ref);
         ctx.newElement.dataset['ref'] = ref;
         if (!phraseset) {
             ctx.newElement.textContent = `(UNKNOWN PHRASESET: ${ref})`;
             return;
         }
-        let phrase = Random.array(phraseset.children);
+        let idx = RAG.state.getPhrasesetIdx(ref);
+        let phrase = phraseset.children[idx];
+        ctx.newElement.dataset['idx'] = idx.toString();
+        ctx.newElement.title =
+            `Click to change this phrase used in this section ('${ref}')`;
         if (ctx.xmlElement.hasAttribute('chance'))
             this.makeCollapsible(ctx, phrase);
         else
@@ -72,6 +76,7 @@ class ElementProcessors {
     }
     static station(ctx) {
         let code = RAG.state.stationCode;
+        ctx.newElement.title = "Click to change this station";
         ctx.newElement.textContent = RAG.database.getStation(code);
     }
     static stationlist(ctx) {
@@ -99,25 +104,25 @@ class ElementProcessors {
     static makeCollapsible(ctx, source) {
         let chance = ctx.xmlElement.getAttribute('chance');
         let inner = document.createElement('span');
-        inner.setAttribute('inner', 'true');
+        let toggle = document.createElement('span');
+        inner.classList.add('inner');
+        toggle.classList.add('toggle');
         DOM.cloneInto(source, inner);
         ctx.newElement.dataset['chance'] = chance;
         if (!Random.bool(parseInt(chance))) {
             ctx.newElement.setAttribute('collapsed', '');
-            ctx.newElement.title = "Click to open this optional part";
+            toggle.title = "Click to open this optional part";
+            toggle.innerText = '+';
         }
-        else
-            ctx.newElement.title = "Click to close this optional part";
+        else {
+            toggle.title = "Click to close this optional part";
+            toggle.innerText = '-';
+        }
+        ctx.newElement.appendChild(toggle);
         ctx.newElement.appendChild(inner);
     }
 }
 class Phraser {
-    constructor(config) {
-        let iframe = DOM.require(config.phraseSetEmbed);
-        if (!iframe.contentDocument)
-            throw new Error("Configured phraseset element is not an iframe embed");
-        this.phraseSets = iframe.contentDocument;
-    }
     process(container, level = 0) {
         let pending = container.querySelectorAll(':not(span)');
         if (pending.length === 0)
@@ -127,8 +132,7 @@ class Phraser {
             let newElement = document.createElement('span');
             let context = {
                 xmlElement: element,
-                newElement: newElement,
-                phraseSet: this.phraseSets
+                newElement: newElement
             };
             newElement.dataset['type'] = elementName;
             switch (elementName) {
@@ -192,16 +196,21 @@ class Editor {
         this.dom.innerHTML = '<phraseset ref="root" />';
         RAG.phraser.process(this.dom);
     }
+    refreshPhraseset(ref) {
+        this.dom.querySelectorAll(`span[data-type=phraseset][data-ref=${ref}`)
+            .forEach(_ => {
+            let element = _;
+            let newElement = document.createElement('phraseset');
+            newElement.setAttribute('ref', ref);
+            element.parentElement.replaceChild(newElement, element);
+            RAG.phraser.process(newElement.parentElement);
+        });
+    }
     getElements(type) {
         return this.dom.querySelectorAll(`span[data-type=${type}]`);
     }
     getText() {
-        let text = DOM.getVisibleText(this.dom);
-        return text
-            .trim()
-            .replace(/[\n\r]/gi, '')
-            .replace(/\s{2,}/gi, ' ')
-            .replace(/\s([.,])/gi, '$1');
+        return DOM.getCleanedVisibleText(this.dom);
     }
     setElementsText(type, value) {
         this.getElements(type).forEach(element => element.textContent = value);
@@ -226,21 +235,22 @@ class Editor {
         if (target && target === this.domEditing)
             return this.closeDialog();
         this.closeDialog();
-        if (target.dataset['chance'])
+        if (target.classList.contains('toggle'))
             this.toggleOptional(target);
-        else if (target.hasAttribute('inner'))
-            this.toggleOptional(target.parentElement);
         else if (target && type && picker)
             this.openPicker(target, picker);
     }
     toggleOptional(target) {
-        if (target.hasAttribute('collapsed')) {
-            target.removeAttribute('collapsed');
+        let parent = target.parentElement;
+        if (parent.hasAttribute('collapsed')) {
+            parent.removeAttribute('collapsed');
             target.title = "Click to close this optional part";
+            target.innerText = '-';
         }
         else {
-            target.setAttribute('collapsed', '');
+            parent.setAttribute('collapsed', '');
             target.title = "Click to open this optional part";
+            target.innerText = '+';
         }
     }
     openPicker(target, picker) {
@@ -309,6 +319,7 @@ class Picker {
             return;
         let rect = this.domEditing.getBoundingClientRect();
         let fullWidth = this.dom.classList.contains('fullWidth');
+        let midHeight = this.dom.classList.contains('midHeight');
         let dialogX = (rect.left | 0) - 8;
         let dialogY = rect.bottom | 0;
         let width = (rect.width | 0) + 16;
@@ -317,7 +328,10 @@ class Picker {
             if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
                 dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
         }
-        if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
+        if (midHeight) {
+            dialogY = (this.dom.offsetHeight / 2) | 0;
+        }
+        else if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
             dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
         }
@@ -369,6 +383,50 @@ class NamedPicker extends Picker {
             this.select(target);
         RAG.state.named = target.value;
         RAG.views.editor.setElementsText('named', RAG.state.named);
+    }
+}
+class PhrasesetPicker extends Picker {
+    constructor() {
+        super('phraseset', ['click']);
+        this.domHeader = DOM.require('header', this.dom);
+        this.inputPhrase = DOM.require('.picker', this.dom);
+    }
+    open(target) {
+        super.open(target);
+        let ref = DOM.requireData(target, 'ref');
+        let idx = parseInt(DOM.requireData(target, 'idx'));
+        let phraseSet = RAG.database.getPhraseset(ref);
+        if (!phraseSet)
+            return;
+        this.currentRef = ref;
+        this.domHeader.innerText = `Pick a phrase for the '${ref}' section`;
+        this.inputPhrase.innerHTML = '';
+        for (let i = 0; i < phraseSet.children.length; i++) {
+            let phrase = document.createElement('li');
+            DOM.cloneInto(phraseSet.children[i], phrase);
+            RAG.phraser.process(phrase);
+            phrase.innerText = DOM.getCleanedVisibleText(phrase);
+            phrase.dataset.idx = i.toString();
+            this.inputPhrase.appendChild(phrase);
+            if (i === idx)
+                this.select(phrase);
+        }
+    }
+    select(option) {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+        this.domSelected = option;
+        option.setAttribute('selected', 'true');
+    }
+    onChange(ev) {
+        let target = ev.target;
+        if (!target || !target.dataset['idx'] || !this.currentRef)
+            return;
+        let idx = parseInt(target.dataset['idx']);
+        this.select(target);
+        RAG.state.setPhrasesetIdx(this.currentRef, idx);
+        RAG.views.editor.closeDialog();
+        RAG.views.editor.refreshPhraseset(this.currentRef);
     }
 }
 class PlatformPicker extends Picker {
@@ -456,7 +514,7 @@ class StationPicker extends Picker {
         super.open(target);
         this.inputFilter.focus();
         let code = RAG.state.stationCode;
-        let entry = this.inputStation.querySelector(`dd[code=${code}`);
+        let entry = this.inputStation.querySelector(`dd[data-code=${code}]`);
         if (entry)
             this.select(entry);
     }
@@ -558,8 +616,9 @@ class Views {
         this.toolbar = new Toolbar();
         this.pickers = {};
         [
-            new PlatformPicker(),
             new NamedPicker(),
+            new PlatformPicker(),
+            new PhrasesetPicker(),
             new ServicePicker(),
             new StationPicker(),
             new TimePicker()
@@ -582,6 +641,12 @@ class DOM {
             throw new Error(`Required attribute is missing or empty: '${attr}'`);
         return value;
     }
+    static requireData(element, key) {
+        let value = element.dataset[key];
+        if (Strings.isNullOrEmpty(value))
+            throw new Error(`Required dataset key is missing or empty: '${key}'`);
+        return value;
+    }
     static cloneInto(source, target) {
         for (let i = 0; i < source.childNodes.length; i++)
             target.appendChild(source.childNodes[i].cloneNode(true));
@@ -589,6 +654,8 @@ class DOM {
     static getVisibleText(element) {
         if (element.nodeType === Node.TEXT_NODE)
             return element.textContent || '';
+        else if (element.classList.contains('toggle'))
+            return '';
         let style = getComputedStyle(element);
         if (style && style.display === 'none')
             return '';
@@ -596,6 +663,13 @@ class DOM {
         for (let i = 0; i < element.childNodes.length; i++)
             text += DOM.getVisibleText(element.childNodes[i]);
         return text;
+    }
+    static getCleanedVisibleText(element) {
+        return DOM.getVisibleText(element)
+            .trim()
+            .replace(/[\n\r]/gi, '')
+            .replace(/\s{2,}/gi, ' ')
+            .replace(/\s([.,])/gi, '$1');
     }
 }
 class Random {
@@ -620,10 +694,10 @@ class Strings {
 }
 class Database {
     constructor(config) {
-        this.excuses = [];
-        this.named = [];
-        this.services = [];
-        this.stations = {};
+        let iframe = DOM.require(config.phraseSetEmbed);
+        if (!iframe.contentDocument)
+            throw new Error("Configured phraseset element is not an iframe embed");
+        this.phraseSets = iframe.contentDocument;
         this.excuses = config.excusesData;
         this.named = config.namedData;
         this.services = config.servicesData;
@@ -639,6 +713,12 @@ class Database {
     }
     pickNamed() {
         return Random.array(this.named);
+    }
+    getPhrase(id) {
+        return this.phraseSets.querySelector('phrase#' + id);
+    }
+    getPhraseset(id) {
+        return this.phraseSets.querySelector('phraseset#' + id);
     }
     pickService() {
         return Random.array(this.services);
@@ -671,7 +751,7 @@ class RAG {
         window.onbeforeunload = _ => RAG.speechSynth.cancel();
         RAG.database = new Database(config);
         RAG.views = new Views();
-        RAG.phraser = new Phraser(config);
+        RAG.phraser = new Phraser();
         RAG.speechSynth = window.speechSynthesis;
         RAG.views.marquee.set("Welcome to RAG.");
         RAG.generate();
@@ -690,6 +770,21 @@ class RAG {
     }
 }
 class State {
+    constructor() {
+        this._phrasesets = {};
+    }
+    getPhrasesetIdx(ref) {
+        if (this._phrasesets[ref] !== undefined)
+            return this._phrasesets[ref];
+        let phraseset = RAG.database.getPhraseset(ref);
+        if (!phraseset)
+            throw new Error("Shouldn't get phraseset idx for one that doesn't exist");
+        this._phrasesets[ref] = Random.int(0, phraseset.children.length);
+        return this._phrasesets[ref];
+    }
+    setPhrasesetIdx(ref, idx) {
+        this._phrasesets[ref] = idx;
+    }
     get platform() {
         if (this._platform)
             return this._platform;
