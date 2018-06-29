@@ -100,6 +100,9 @@ class ElementProcessors
 
         ctx.newElement.dataset['idx'] = idx.toString();
 
+        ctx.newElement.title =
+            `Click to change this phrase used in this section ('${ref}')`;
+
         // Handle phrasesets with a chance value as collapsible
         // TODO: redry these
         if ( ctx.xmlElement.hasAttribute('chance') )
@@ -127,6 +130,7 @@ class ElementProcessors
     {
         let code = RAG.state.stationCode;
 
+        ctx.newElement.title       = "Click to change this station";
         ctx.newElement.textContent = RAG.database.getStation(code);
     }
 
