@@ -38,8 +38,12 @@ class Editor
             {
                 let element    = _ as HTMLElement;
                 let newElement = document.createElement('phraseset');
+                let chance     = element.dataset['chance'];
 
                 newElement.setAttribute('ref', ref);
+
+                if (chance)
+                    newElement.setAttribute('chance', chance);
 
                 element.parentElement!.replaceChild(newElement, element);
                 RAG.phraser.process(newElement.parentElement!);

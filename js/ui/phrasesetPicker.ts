@@ -68,7 +68,7 @@ class PhrasesetPicker extends Picker
     protected onChange(ev: Event)
     {
         let target = ev.target as HTMLLIElement;
-
+        
         // Ignore if list element wasn't clicked
         if (!target || !target.dataset['idx'] || !this.currentRef)
             return;
