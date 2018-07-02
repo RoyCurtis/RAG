@@ -38,9 +38,12 @@
         position      relative
         z-index       150
 
+  // Unclickables
+  span[data-type=optional], span[data-type=phrase]
+    cursor default
+
   // Optional elements
   span[data-type=optional], span[data-chance]
-    cursor       default
     padding-left 0
 
     > .toggle

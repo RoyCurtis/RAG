@@ -99,24 +99,36 @@ class Editor
         let type   = target ? target.dataset['type']    : undefined;
         let picker = type   ? RAG.views.getPicker(type) : undefined;
 
+        if (!target)
+            return this.closeDialog();
+
+        // Redirect clicks of inner elements
+        if ( target.classList.contains('inner') && target.parentElement )
+        {
+            target = target.parentElement;
+            type   = target.dataset['type'];
+            picker = type ? RAG.views.getPicker(type) : undefined;
+        }
+
         // Ignore clicks to any element of already open pickers
-        if (target && this.currentPicker)
+        if ( this.currentPicker )
         if ( this.currentPicker.dom.contains(target) )
             return;
 
-        // If clicking the element already being edited, close and don't re-open
-        if (target && target === this.domEditing)
-            return this.closeDialog();
-
         // Cancel any open editors
+        let prevTarget = this.domEditing;
         this.closeDialog();
+
+        // If clicking the element already being edited, don't reopen
+        if (target === prevTarget)
+            return;
 
         // Handle collapsible elements (and their wrapper children)
         if ( target.classList.contains('toggle') )
             this.toggleOptional(target);
 
         // Find and open picker for the target element
-        else if (target && type && picker)
+        else if (type && picker)
             this.openPicker(target, picker);
     }
 
