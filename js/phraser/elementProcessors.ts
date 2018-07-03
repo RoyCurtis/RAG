@@ -53,6 +53,10 @@ class ElementProcessors
     /** Makes the content of this tag optionally hidden, by chance or user choice */
     public static optional(ctx: PhraseContext)
     {
+        let id = DOM.requireAttrValue(ctx.xmlElement, 'id');
+
+        ctx.newElement.dataset['id'] = id;
+
         // Populate the default chance value for XML tags missing them
         if ( !ctx.xmlElement.hasAttribute('chance') )
             ctx.xmlElement.setAttribute('chance', '50');

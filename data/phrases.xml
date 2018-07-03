@@ -62,7 +62,9 @@
 
   <phrase>
     We are sorry that services are subject to delay because of <excuse/>
-    <optional> <phraseset ref="at_near"/> <station context="random"/></optional>.
+    <optional id="delay_at_near">
+      <phraseset ref="at_near"/> <station context="random"/>
+    </optional>.
     <phraseset ref="general_apology_delay" chance="50"/>
   </phrase>
 
@@ -180,21 +182,21 @@
 
 <phrase id="destination">
   <station context="destination"/>
-  <optional chance="10">via <station context="via"/></optional>
-  <optional chance="5">
+  <optional id="dest1_via" chance="10">via <station context="via"/></optional>
+  <optional id="dest2" chance="5">
     and <station context="destination2"/>
-    <optional chance="10">via <station context="via2"/></optional>
+    <optional id="dest2_via" chance="10">via <station context="via2"/></optional>
   </optional>
 </phrase>
 
 <phrase id="service_to">
-  the <optional chance="5">delayed</optional> <phrase ref="service"/> to
+  the <optional id="delayed" chance="5">delayed</optional> <phrase ref="service"/> to
   <phrase ref="destination"/>
 </phrase>
 
 <phrase id="service">
-  <optional chance="5"><named />, the</optional> <time/>
-  <optional chance="90"><service/></optional> service
+  <optional id="named" chance="5"><named />, the</optional> <time/>
+  <optional id="service" chance="90"><service/></optional> service
 </phrase>
 
 <phrase id="service_from">
@@ -227,7 +229,7 @@
 <phraseset id="delayed_or_cancelled">
   <phrase>
     is delayed
-    <optional>
+    <optional id="delayed_approx">
       by approximately <integer min="5" max="120" plural="minutes"/>
     </optional><phraseset ref="excuse_or_wait" chance="50"/>.
     <phraseset ref="service_apology_delay" chance="50"/>
@@ -245,7 +247,9 @@
 
 <phrase id="excuse">
   <phraseset ref="excuse_pre"/>due to <excuse/>
-  <optional> <phraseset ref="at_near"/> <station context="random"/></optional>
+  <optional id="delay_at_near">
+    <phraseset ref="at_near"/> <station context="random"/>
+  </optional>
 </phrase>
 
 <phraseset id="excuse_or_wait">

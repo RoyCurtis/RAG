@@ -231,6 +231,14 @@
   <!-- Allow unlimited amount of acceptable inner elements, or just text -->
   <xs:group ref="phrase_elements" minOccurs="0" maxOccurs="unbounded"/>
   <xs:attribute name="chance" type="chance" default="50"/>
+
+  <xs:attribute name="id" type="xs:string" use="required">
+    <xs:annotation>
+      <xs:documentation>
+        Defines an `id` to track or share the collapse state of this optional.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
 </xs:complexType>
 
 
