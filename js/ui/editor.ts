@@ -129,14 +129,14 @@ class Editor
 
         // Handle collapsible elements (and their wrapper children)
         if ( target.classList.contains('toggle') )
-            this.toggleOptional(target);
+            this.toggleCollapsiable(target);
 
         // Find and open picker for the target element
         else if (type && picker)
             this.openPicker(target, picker);
     }
 
-    private toggleOptional(target: HTMLElement)
+    private toggleCollapsiable(target: HTMLElement)
     {
         let parent = target.parentElement!;
 

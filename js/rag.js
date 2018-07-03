@@ -30,14 +30,10 @@ class ElementProcessors {
         ctx.newElement.title = "Click to change this train's name";
         ctx.newElement.textContent = RAG.state.named;
     }
-    static optional(ctx) {
-        if (!ctx.xmlElement.hasAttribute('chance'))
-            ctx.xmlElement.setAttribute('chance', '50');
-        this.makeCollapsible(ctx, ctx.xmlElement);
-    }
     static phrase(ctx) {
         let ref = DOM.requireAttrValue(ctx.xmlElement, 'ref');
         let phrase = RAG.database.getPhrase(ref);
+        ctx.newElement.title = '';
         ctx.newElement.dataset['ref'] = ref;
         if (!phrase) {
             ctx.newElement.textContent = `(UNKNOWN PHRASE: ${ref})`;
@@ -148,9 +144,6 @@ class Phraser {
                 case 'named':
                     ElementProcessors.named(context);
                     break;
-                case 'optional':
-                    ElementProcessors.optional(context);
-                    break;
                 case 'phrase':
                     ElementProcessors.phrase(context);
                     break;
@@ -201,7 +194,10 @@ class Editor {
             .forEach(_ => {
             let element = _;
             let newElement = document.createElement('phraseset');
+            let chance = element.dataset['chance'];
             newElement.setAttribute('ref', ref);
+            if (chance)
+                newElement.setAttribute('chance', chance);
             element.parentElement.replaceChild(newElement, element);
             RAG.phraser.process(newElement.parentElement);
         });
@@ -229,18 +225,26 @@ class Editor {
         let target = ev.target;
         let type = target ? target.dataset['type'] : undefined;
         let picker = type ? RAG.views.getPicker(type) : undefined;
-        if (target && this.currentPicker)
+        if (!target)
+            return this.closeDialog();
+        if (target.classList.contains('inner') && target.parentElement) {
+            target = target.parentElement;
+            type = target.dataset['type'];
+            picker = type ? RAG.views.getPicker(type) : undefined;
+        }
+        if (this.currentPicker)
             if (this.currentPicker.dom.contains(target))
                 return;
-        if (target && target === this.domEditing)
-            return this.closeDialog();
+        let prevTarget = this.domEditing;
         this.closeDialog();
+        if (target === prevTarget)
+            return;
         if (target.classList.contains('toggle'))
-            this.toggleOptional(target);
-        else if (target && type && picker)
+            this.toggleCollapsiable(target);
+        else if (type && picker)
             this.openPicker(target, picker);
     }
-    toggleOptional(target) {
+    toggleCollapsiable(target) {
         let parent = target.parentElement;
         if (parent.hasAttribute('collapsed')) {
             parent.removeAttribute('collapsed');

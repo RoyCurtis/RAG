@@ -130,14 +130,6 @@
       </xs:annotation>
     </xs:element>
 
-    <xs:element name="optional" type="optional">
-      <xs:annotation>
-        <xs:documentation>
-          Makes the content of this tag optionally hidden, by chance or user choice.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:element>
-
     <xs:element name="phrase" type="phrase_ref">
       <xs:annotation>
         <xs:documentation>
@@ -221,21 +213,6 @@
     <xs:annotation>
       <xs:documentation>
         If true, the integer is printed as a word, than in digits.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:attribute>
-</xs:complexType>
-
-
-<xs:complexType name="optional" mixed="true">
-  <!-- Allow unlimited amount of acceptable inner elements, or just text -->
-  <xs:group ref="phrase_elements" minOccurs="0" maxOccurs="unbounded"/>
-  <xs:attribute name="chance" type="chance" default="50"/>
-
-  <xs:attribute name="id" type="xs:string" use="required">
-    <xs:annotation>
-      <xs:documentation>
-        Defines an `id` to track or share the collapse state of this optional.
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>

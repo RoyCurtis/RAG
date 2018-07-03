@@ -47,7 +47,6 @@ class Phraser
                 case 'excuse':      ElementProcessors.excuse(context);      break;
                 case 'integer':     ElementProcessors.integer(context);     break;
                 case 'named':       ElementProcessors.named(context);       break;
-                case 'optional':    ElementProcessors.optional(context);    break;
                 case 'phrase':      ElementProcessors.phrase(context);      break;
                 case 'phraseset':   ElementProcessors.phraseset(context);   break;
                 case 'platform':    ElementProcessors.platform(context);    break;

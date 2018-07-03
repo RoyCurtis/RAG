@@ -50,26 +50,13 @@ class ElementProcessors
         ctx.newElement.textContent = RAG.state.named;
     }
 
-    /** Makes the content of this tag optionally hidden, by chance or user choice */
-    public static optional(ctx: PhraseContext)
-    {
-        let id = DOM.requireAttrValue(ctx.xmlElement, 'id');
-
-        ctx.newElement.dataset['id'] = id;
-
-        // Populate the default chance value for XML tags missing them
-        if ( !ctx.xmlElement.hasAttribute('chance') )
-            ctx.xmlElement.setAttribute('chance', '50');
-
-        this.makeCollapsible(ctx, ctx.xmlElement);
-    }
-
     /** Includes a previously defined phrase, by its `id` */
     public static phrase(ctx: PhraseContext)
     {
         let ref    = DOM.requireAttrValue(ctx.xmlElement, 'ref');
         let phrase = RAG.database.getPhrase(ref);
 
+        ctx.newElement.title          = '';
         ctx.newElement.dataset['ref'] = ref;
 
         if (!phrase)
@@ -191,6 +178,7 @@ class ElementProcessors
         ctx.newElement.dataset['chance'] = chance;
 
         // Set initial collapse state from set chance
+        // TODO: this could be DRYed to collapse and uncollapse
         if ( !Random.bool( parseInt(chance) ) )
         {
             ctx.newElement.setAttribute('collapsed', '');

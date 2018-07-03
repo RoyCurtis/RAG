@@ -62,9 +62,7 @@
 
   <phrase>
     We are sorry that services are subject to delay because of <excuse/>
-    <optional id="delay_at_near">
-      <phraseset ref="at_near"/> <station context="random"/>
-    </optional>.
+    <phrase ref="delay_at_near" chance="50"/>.
     <phraseset ref="general_apology_delay" chance="50"/>
   </phrase>
 
@@ -181,22 +179,42 @@
 </phrase>
 
 <phrase id="destination">
-  <station context="destination"/>
-  <optional id="dest1_via" chance="10">via <station context="via"/></optional>
-  <optional id="dest2" chance="5">
-    and <station context="destination2"/>
-    <optional id="dest2_via" chance="10">via <station context="via2"/></optional>
-  </optional>
+  <station context="destination"/><phrase ref="dest1_via" chance="10"/>
+  <phrase ref="dest2" chance="5"/>
+</phrase>
+
+<phrase id="dest1_via">
+  via <station context="via"/>
+</phrase>
+
+<phrase id="dest2">
+  and <station context="destination2"/><phrase ref="dest2_via" chance="10"/>
+</phrase>
+
+<phrase id="dest2_via">
+  via <station context="via2"/>
 </phrase>
 
 <phrase id="service_to">
-  the <optional id="delayed" chance="5">delayed</optional> <phrase ref="service"/> to
+  the <phrase ref="delayed" chance="5"/> <phrase ref="service"/> to
   <phrase ref="destination"/>
 </phrase>
 
+<phrase id="delayed">
+  delayed
+</phrase>
+
 <phrase id="service">
-  <optional id="named" chance="5"><named />, the</optional> <time/>
-  <optional id="service" chance="90"><service/></optional> service
+  <phrase ref="service_named" chance="5"/> <time/>
+  <phrase ref="service_label" chance="90"/> service
+</phrase>
+
+<phrase id="service_named">
+  <named />, the
+</phrase>
+
+<phrase id="service_label">
+  <service/>
 </phrase>
 
 <phrase id="service_from">
@@ -229,9 +247,8 @@
 <phraseset id="delayed_or_cancelled">
   <phrase>
     is delayed
-    <optional id="delayed_approx">
-      by approximately <integer min="5" max="120" plural="minutes"/>
-    </optional><phraseset ref="excuse_or_wait" chance="50"/>.
+    <phrase ref="delayed_approx" chance="50"/>
+    <phraseset ref="excuse_or_wait" chance="50"/>.
     <phraseset ref="service_apology_delay" chance="50"/>
   </phrase>
   <phrase>
@@ -240,16 +257,21 @@
   </phrase>
 </phraseset>
 
+<phrase id="delayed_approx">
+  by approximately <integer min="5" max="120" plural="minutes"/>
+</phrase>
+
+<phrase id="delay_at_near">
+  <phraseset ref="at_near"/> <station context="random"/>
+</phrase>
+
 <phraseset id="excuse_pre">
   <phrase>, </phrase>
   <phrase>. This is </phrase>
 </phraseset>
 
 <phrase id="excuse">
-  <phraseset ref="excuse_pre"/>due to <excuse/>
-  <optional id="delay_at_near">
-    <phraseset ref="at_near"/> <station context="random"/>
-  </optional>
+  <phraseset ref="excuse_pre"/>due to <excuse/> <phrase ref="delay_at_near" chance="50"/>
 </phrase>
 
 <phraseset id="excuse_or_wait">
