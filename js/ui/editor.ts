@@ -33,7 +33,7 @@ class Editor
         // the same phraseset (recursion). But this is okay because phrasesets should
         // never include themselves, even eventually.
 
-        this.dom.querySelectorAll(`span[data-type=phraseset][data-ref=${ref}`)
+        this.dom.querySelectorAll(`span[data-type=phraseset][data-ref=${ref}]`)
             .forEach(_ =>
             {
                 let element    = _ as HTMLElement;
@@ -156,13 +156,26 @@ class Editor
 
     private toggleCollapsiable(target: HTMLElement) : void
     {
-        // TODO: propogate toggle to all same refs
         let parent     = target.parentElement!;
         let ref        = DOM.requireData(parent, 'ref');
+        let type       = DOM.requireData(parent, 'type');
         let collapased = parent.hasAttribute('collapsed');
 
-        this.setCollapsible(parent, target, !collapased);
-        RAG.state.setCollapsed(ref, !collapased);
+        // Propogate new collapse state to all collapsibles of the same ref
+        this.dom.querySelectorAll(`span[data-type=${type}][data-ref=${ref}]`)
+            .forEach(_ =>
+            {
+                let phraseset = _ as HTMLElement;
+                let toggle    = phraseset.children[0] as HTMLElement;
+
+                if ( !toggle || !toggle.classList.contains('toggle') )
+                    throw new Error("Expected toggle element for collapsible missing");
+
+                this.setCollapsible(phraseset, toggle, !collapased);
+                // Don't move this to setCollapsible, as state save/load is handled
+                // outside in both usages of setCollapsible.
+                RAG.state.setCollapsed(ref, !collapased);
+            });
     }
 
     private openPicker(target: HTMLElement, picker: Picker) : void

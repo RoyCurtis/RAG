@@ -183,7 +183,7 @@ class Editor {
         RAG.phraser.process(this.dom);
     }
     refreshPhraseset(ref) {
-        this.dom.querySelectorAll(`span[data-type=phraseset][data-ref=${ref}`)
+        this.dom.querySelectorAll(`span[data-type=phraseset][data-ref=${ref}]`)
             .forEach(_ => {
             let element = _;
             let newElement = document.createElement('phraseset');
@@ -250,9 +250,17 @@ class Editor {
     toggleCollapsiable(target) {
         let parent = target.parentElement;
         let ref = DOM.requireData(parent, 'ref');
+        let type = DOM.requireData(parent, 'type');
         let collapased = parent.hasAttribute('collapsed');
-        this.setCollapsible(parent, target, !collapased);
-        RAG.state.setCollapsed(ref, !collapased);
+        this.dom.querySelectorAll(`span[data-type=${type}][data-ref=${ref}]`)
+            .forEach(_ => {
+            let phraseset = _;
+            let toggle = phraseset.children[0];
+            if (!toggle || !toggle.classList.contains('toggle'))
+                throw new Error("Expected toggle element for collapsible missing");
+            this.setCollapsible(phraseset, toggle, !collapased);
+            RAG.state.setCollapsed(ref, !collapased);
+        });
     }
     openPicker(target, picker) {
         target.setAttribute('editing', 'true');
