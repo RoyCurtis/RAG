@@ -28,8 +28,8 @@ var DATA_SERVICES = [
   "TfL Rail",
   "Thameslink",
   "TransPennine Express",
-  "Virgin Trains",
   "Virgin Trains East Coast",
+  "Virgin Trains",
   "West Midlands Railway",
   "West Midlands Trains"
 ];

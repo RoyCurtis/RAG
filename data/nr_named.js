@@ -18,17 +18,17 @@ var DATA_NAMED = [
   "Northern Lights",
   "Olympic Javelin",
   "Pembroke Coast Express",
+  "Premier Service",
   "Red Dragon",
   "Robin Hood",
   "Royal Duchy",
   "Saint David",
-  "St Mungo",
   "Sheffield Continental",
   "South Yorkshireman",
+  "St Mungo",
   "Torbay Express",
   "Virgin Invader",
   "Welsh Dragon",
   "West Riding Limited",
-  "Weymouth Wizard",
-  "Premier Service"
+  "Weymouth Wizard"
 ];
