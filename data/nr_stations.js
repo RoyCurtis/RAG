@@ -1453,7 +1453,7 @@ var DATA_STATIONS = {
   "PAD" : "London Paddington",
   "LRB" : "London Road (Brighton)",
   "LRD" : "London Road (Guildford)",
-  "SPX" : "London St Pancras (Intl)",
+  "SPX" : "London St Pancras International",
   "STP" : "London St Pancras International",
   "VIC" : "London Victoria",
   "WAT" : "London Waterloo",
