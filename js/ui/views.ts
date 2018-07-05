@@ -19,7 +19,7 @@ class Views
 
         [
             new CoachPicker(),
-            // new ExcusePicker(),
+            new ExcusePicker(),
             // new IntegerPicker(),
             new NamedPicker(),
             new PhrasesetPicker(),

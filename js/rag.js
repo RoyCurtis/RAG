@@ -340,6 +340,46 @@ class Editor {
         picker.open(target);
     }
 }
+class ExcusePicker extends Picker {
+    constructor() {
+        super('excuse', ['click']);
+        this.domChoices = [];
+        this.inputService = DOM.require('.picker', this.dom);
+        RAG.database.excuses.forEach(value => {
+            let excuse = document.createElement('option');
+            excuse.text = value;
+            excuse.value = value;
+            excuse.title = value;
+            this.domChoices.push(excuse);
+            this.inputService.appendChild(excuse);
+        });
+    }
+    open(target) {
+        super.open(target);
+        let value = RAG.state.excuse;
+        this.domChoices.some(excuse => {
+            if (value !== excuse.value)
+                return false;
+            this.select(excuse);
+            return true;
+        });
+    }
+    select(option) {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+        this.domSelected = option;
+        option.setAttribute('selected', 'true');
+    }
+    onChange(ev) {
+        let target = ev.target;
+        if (!target || !target.value)
+            return;
+        else
+            this.select(target);
+        RAG.state.excuse = target.value;
+        RAG.views.editor.setElementsText('excuse', RAG.state.excuse);
+    }
+}
 class Marquee {
     constructor() {
         this.timer = 0;
@@ -646,6 +686,7 @@ class Views {
         this.pickers = {};
         [
             new CoachPicker(),
+            new ExcusePicker(),
             new NamedPicker(),
             new PhrasesetPicker(),
             new PlatformPicker(),
@@ -833,6 +874,15 @@ class State {
     }
     set coach(value) {
         this._coach = value;
+    }
+    get excuse() {
+        if (this._excuse)
+            return this._excuse;
+        this._excuse = RAG.database.pickExcuse();
+        return this._excuse;
+    }
+    set excuse(value) {
+        this._excuse = value;
     }
     get platform() {
         if (this._platform)

@@ -7,6 +7,7 @@ class State
     private _phrasesets   : PhrasesetDictionary   = {};
 
     private _coach?       : string;
+    private _excuse?      : string;
     private _platform?    : Platform;
     private _named?       : string;
     private _service?     : string;
@@ -60,6 +61,20 @@ class State
     set coach(value: string)
     {
         this._coach = value;
+    }
+
+    get excuse() : string
+    {
+        if (this._excuse)
+            return this._excuse;
+
+        this._excuse = RAG.database.pickExcuse();
+        return this._excuse;
+    }
+
+    set excuse(value: string)
+    {
+        this._excuse = value;
     }
 
     get platform() : Platform

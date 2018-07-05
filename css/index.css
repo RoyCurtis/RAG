@@ -39,28 +39,34 @@
   font-size: x-large;
   padding: 0 4px;
 }
+#excusePicker,
 #namedPicker,
 #servicePicker {
   display: flex;
   flex-flow: column;
 }
+#excusePicker form,
 #namedPicker form,
 #servicePicker form {
   overflow: auto;
 }
+#excusePicker form .picker,
 #namedPicker form .picker,
 #servicePicker form .picker {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
+#excusePicker form .picker option,
 #namedPicker form .picker option,
 #servicePicker form .picker option {
   cursor: pointer;
   padding: 1em;
 }
+#excusePicker form .picker option:hover,
 #namedPicker form .picker option:hover,
 #servicePicker form .picker option:hover,
+#excusePicker form .picker option[selected],
 #namedPicker form .picker option[selected],
 #servicePicker form .picker option[selected] {
   background: #cc7e00;
