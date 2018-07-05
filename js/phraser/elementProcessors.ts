@@ -67,7 +67,7 @@ class ElementProcessors
 
         // Handle phrases with a chance value as collapsible
         if ( ctx.xmlElement.hasAttribute('chance') )
-            this.makeCollapsible(ctx, phrase);
+            this.makeCollapsible(ctx, phrase, ref);
         else
             DOM.cloneInto(phrase, ctx.newElement);
     }
@@ -97,7 +97,7 @@ class ElementProcessors
         // Handle phrasesets with a chance value as collapsible
         // TODO: redry these
         if ( ctx.xmlElement.hasAttribute('chance') )
-            this.makeCollapsible(ctx, phrase);
+            this.makeCollapsible(ctx, phrase, ref);
         else
             DOM.cloneInto(phrase, ctx.newElement);
     }
@@ -165,11 +165,13 @@ class ElementProcessors
      * Clones the children of the given element into a new inner span tag, so that they
      * can be made collapsible. Appends it to the new element being processed.
      */
-    private static makeCollapsible(ctx: PhraseContext, source: HTMLElement) : void
+    private static makeCollapsible(ctx: PhraseContext, source: HTMLElement, ref: string)
+        : void
     {
-        let chance = ctx.xmlElement.getAttribute('chance')!;
-        let inner  = document.createElement('span');
-        let toggle = document.createElement('span');
+        let chance    = ctx.xmlElement.getAttribute('chance')!;
+        let inner     = document.createElement('span');
+        let toggle    = document.createElement('span');
+        let collapsed = RAG.state.getCollapsed( ref, parseInt(chance) );
 
         inner.classList.add('inner');
         toggle.classList.add('toggle');
@@ -177,20 +179,7 @@ class ElementProcessors
         DOM.cloneInto(source, inner);
         ctx.newElement.dataset['chance'] = chance;
 
-        // Set initial collapse state from set chance
-        // TODO: this could be DRYed to collapse and uncollapse
-        if ( !Random.bool( parseInt(chance) ) )
-        {
-            ctx.newElement.setAttribute('collapsed', '');
-            toggle.title     = "Click to open this optional part";
-            toggle.innerText = '+';
-        }
-        else
-        {
-            toggle.title     = "Click to close this optional part";
-            toggle.innerText = '-';
-        }
-
+        RAG.views.editor.setCollapsible(ctx.newElement, toggle, collapsed);
         ctx.newElement.appendChild(toggle);
         ctx.newElement.appendChild(inner);
     }

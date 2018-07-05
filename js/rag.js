@@ -40,7 +40,7 @@ class ElementProcessors {
             return;
         }
         if (ctx.xmlElement.hasAttribute('chance'))
-            this.makeCollapsible(ctx, phrase);
+            this.makeCollapsible(ctx, phrase, ref);
         else
             DOM.cloneInto(phrase, ctx.newElement);
     }
@@ -58,7 +58,7 @@ class ElementProcessors {
         ctx.newElement.title =
             `Click to change this phrase used in this section ('${ref}')`;
         if (ctx.xmlElement.hasAttribute('chance'))
-            this.makeCollapsible(ctx, phrase);
+            this.makeCollapsible(ctx, phrase, ref);
         else
             DOM.cloneInto(phrase, ctx.newElement);
     }
@@ -97,23 +97,16 @@ class ElementProcessors {
         let name = ctx.xmlElement.nodeName;
         ctx.newElement.textContent = `(UNKNOWN XML ELEMENT: ${name})`;
     }
-    static makeCollapsible(ctx, source) {
+    static makeCollapsible(ctx, source, ref) {
         let chance = ctx.xmlElement.getAttribute('chance');
         let inner = document.createElement('span');
         let toggle = document.createElement('span');
+        let collapsed = RAG.state.getCollapsed(ref, parseInt(chance));
         inner.classList.add('inner');
         toggle.classList.add('toggle');
         DOM.cloneInto(source, inner);
         ctx.newElement.dataset['chance'] = chance;
-        if (!Random.bool(parseInt(chance))) {
-            ctx.newElement.setAttribute('collapsed', '');
-            toggle.title = "Click to open this optional part";
-            toggle.innerText = '+';
-        }
-        else {
-            toggle.title = "Click to close this optional part";
-            toggle.innerText = '-';
-        }
+        RAG.views.editor.setCollapsible(ctx.newElement, toggle, collapsed);
         ctx.newElement.appendChild(toggle);
         ctx.newElement.appendChild(inner);
     }
@@ -211,6 +204,16 @@ class Editor {
     setElementsText(type, value) {
         this.getElements(type).forEach(element => element.textContent = value);
     }
+    setCollapsible(span, toggle, state) {
+        if (state)
+            span.setAttribute('collapsed', '');
+        else
+            span.removeAttribute('collapsed');
+        toggle.innerText = state ? '+' : '-';
+        toggle.title = state
+            ? "Click to open this optional part"
+            : "Click to close this optional part";
+    }
     closeDialog() {
         if (this.currentPicker)
             this.currentPicker.close();
@@ -246,16 +249,10 @@ class Editor {
     }
     toggleCollapsiable(target) {
         let parent = target.parentElement;
-        if (parent.hasAttribute('collapsed')) {
-            parent.removeAttribute('collapsed');
-            target.title = "Click to close this optional part";
-            target.innerText = '-';
-        }
-        else {
-            parent.setAttribute('collapsed', '');
-            target.title = "Click to open this optional part";
-            target.innerText = '+';
-        }
+        let ref = DOM.requireData(parent, 'ref');
+        let collapased = parent.hasAttribute('collapsed');
+        this.setCollapsible(parent, target, !collapased);
+        RAG.state.setCollapsed(ref, !collapased);
     }
     openPicker(target, picker) {
         target.setAttribute('editing', 'true');
@@ -775,7 +772,17 @@ class RAG {
 }
 class State {
     constructor() {
+        this._collapsibles = {};
         this._phrasesets = {};
+    }
+    getCollapsed(ref, chance) {
+        if (this._collapsibles[ref] !== undefined)
+            return this._collapsibles[ref];
+        this._collapsibles[ref] = !Random.bool(chance);
+        return this._collapsibles[ref];
+    }
+    setCollapsed(ref, state) {
+        this._collapsibles[ref] = state;
     }
     getPhrasesetIdx(ref) {
         if (this._phrasesets[ref] !== undefined)

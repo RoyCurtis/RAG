@@ -3,12 +3,28 @@
 /** Disposable class that holds state for the current schedule, train, etc. */
 class State
 {
-    private _phrasesets   : PhrasesetDictionary = {};
+    private _collapsibles : CollapsibleDictionary = {};
+    private _phrasesets   : PhrasesetDictionary   = {};
+
     private _platform?    : Platform;
     private _named?       : string;
     private _service?     : string;
     private _stationCode? : string;
     private _time?        : string;
+
+    public getCollapsed(ref: string, chance: number) : boolean
+    {
+        if (this._collapsibles[ref] !== undefined)
+            return this._collapsibles[ref];
+
+        this._collapsibles[ref] = !Random.bool(chance);
+        return this._collapsibles[ref];
+    }
+
+    public setCollapsed(ref: string, state: boolean) : void
+    {
+        this._collapsibles[ref] = state;
+    }
 
     // TODO: Make "phraseSet" consistent to "phraseset"
     public getPhrasesetIdx(ref: string) : number

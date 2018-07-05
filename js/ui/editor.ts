@@ -80,6 +80,24 @@ class Editor
         this.getElements(type).forEach(element => element.textContent = value);
     }
 
+    /**
+     * Sets the collapse state of a collapsible element.
+     *
+     * @param {HTMLElement} span The encapsulating collapsible element
+     * @param {HTMLElement} toggle The toggle child of the collapsible element
+     * @param {boolean} state True to collapse, false to open
+     */
+    public setCollapsible(span: HTMLElement, toggle: HTMLElement, state: boolean) : void
+    {
+        if (state) span.setAttribute('collapsed', '');
+        else       span.removeAttribute('collapsed');
+
+        toggle.innerText = state ? '+' : '-';
+        toggle.title     = state
+            ? "Click to open this optional part"
+            : "Click to close this optional part";
+    }
+
     /** Closes any currently open editor dialogs */
     public closeDialog() : void
     {
@@ -127,7 +145,7 @@ class Editor
         if (target === prevTarget)
             return;
 
-        // Handle collapsible elements (and their wrapper children)
+        // Handle collapsible elements
         if ( target.classList.contains('toggle') )
             this.toggleCollapsiable(target);
 
@@ -136,25 +154,17 @@ class Editor
             this.openPicker(target, picker);
     }
 
-    private toggleCollapsiable(target: HTMLElement)
+    private toggleCollapsiable(target: HTMLElement) : void
     {
-        let parent = target.parentElement!;
+        let parent     = target.parentElement!;
+        let ref        = DOM.requireData(parent, 'ref');
+        let collapased = parent.hasAttribute('collapsed');
 
-        if (parent.hasAttribute('collapsed'))
-        {
-            parent.removeAttribute('collapsed');
-            target.title     = "Click to close this optional part";
-            target.innerText = '-';
-        }
-        else
-        {
-            parent.setAttribute('collapsed', '');
-            target.title     = "Click to open this optional part";
-            target.innerText = '+';
-        }
+        this.setCollapsible(parent, target, !collapased);
+        RAG.state.setCollapsed(ref, !collapased);
     }
 
-    private openPicker(target: HTMLElement, picker: Picker)
+    private openPicker(target: HTMLElement, picker: Picker) : void
     {
         target.setAttribute('editing', 'true');
 

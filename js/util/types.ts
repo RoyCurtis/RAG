@@ -15,6 +15,9 @@ type PickerDictionary = { [index: string]: Picker };
 /** Represents a dictionary of phraseset ids and their picked phrase indexes */
 type PhrasesetDictionary = { [index: string] : number };
 
+/** Represents a dictionary of collapsiables ids and their collapse state */
+type CollapsibleDictionary = { [index: string] : boolean };
+
 /** Defines the config object passed into RAG.main on init */
 interface RAGConfig
 {
