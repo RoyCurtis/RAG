@@ -424,7 +424,6 @@ class PhrasesetPicker extends Picker {
         if (!target || !target.dataset['idx'] || !this.currentRef)
             return;
         let idx = parseInt(target.dataset['idx']);
-        this.select(target);
         RAG.state.setPhrasesetIdx(this.currentRef, idx);
         RAG.views.editor.closeDialog();
         RAG.views.editor.refreshPhraseset(this.currentRef);

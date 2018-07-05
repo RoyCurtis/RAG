@@ -156,6 +156,7 @@ class Editor
 
     private toggleCollapsiable(target: HTMLElement) : void
     {
+        // TODO: propogate toggle to all same refs
         let parent     = target.parentElement!;
         let ref        = DOM.requireData(parent, 'ref');
         let collapased = parent.hasAttribute('collapsed');

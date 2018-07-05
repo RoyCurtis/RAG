@@ -59,8 +59,11 @@
         color #F5F5F5
 
     &:hover
-      border-left  2px dotted
-      border-right 2px dotted
+      border-left-style  dotted
+      border-right-style dotted
+
+      > .toggle
+        border-radius 0
 
     &[collapsed]
       padding 0
@@ -70,3 +73,10 @@
 
       > .inner
         display none
+
+  // Phrasesets
+  span[data-type=phraseset]
+    border-left-width 8px
+
+    &:hover
+      border-left-style solid
