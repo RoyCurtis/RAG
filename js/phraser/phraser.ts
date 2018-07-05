@@ -7,8 +7,10 @@
 class Phraser
 {
     // TODO: Move to language file
-    public static readonly DIGITS: string[] = ['zero', 'one', 'two', 'three', 'four',
+    public static readonly DIGITS : string[] = ['zero', 'one', 'two', 'three', 'four',
         'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+
+    public static readonly LETTERS : string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     /** Recursively processes elements, filling in data and applying transforms */
     public process(container: HTMLElement, level: number = 0)

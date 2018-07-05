@@ -6,6 +6,7 @@ class State
     private _collapsibles : CollapsibleDictionary = {};
     private _phrasesets   : PhrasesetDictionary   = {};
 
+    private _coach?       : string;
     private _platform?    : Platform;
     private _named?       : string;
     private _service?     : string;
@@ -45,6 +46,20 @@ class State
     public setPhrasesetIdx(ref: string, idx: number) : void
     {
         this._phrasesets[ref] = idx;
+    }
+
+    get coach() : string
+    {
+        if (this._coach)
+            return this._coach;
+
+        this._coach = Random.array(Phraser.LETTERS);
+        return this._coach!;
+    }
+
+    set coach(value: string)
+    {
+        this._coach = value;
     }
 
     get platform() : Platform

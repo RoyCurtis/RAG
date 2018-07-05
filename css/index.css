@@ -23,12 +23,15 @@
 .dialog.midHeight {
   box-shadow: 0 0 16px rgba(0,0,0,0.5);
 }
+#coachPicker form,
 #platformPicker form,
 #timePicker form {
   display: flex;
 }
+#coachPicker form input,
 #platformPicker form input,
 #timePicker form input,
+#coachPicker form select,
 #platformPicker form select,
 #timePicker form select {
   border: none;
@@ -130,9 +133,9 @@
   overflow-x: hidden;
   overflow-y: auto;
 }
+#editor span[data-type=coach],
 #editor span[data-type=excuse],
 #editor span[data-type=integer],
-#editor span[data-type=coach],
 #editor span[data-type=named],
 #editor span[data-type=phrase],
 #editor span[data-type=phraseset],
@@ -149,9 +152,9 @@
   padding: 0 4px;
   margin: 0 4px;
 }
+#editor span[data-type=coach]:hover,
 #editor span[data-type=excuse]:hover,
 #editor span[data-type=integer]:hover,
-#editor span[data-type=coach]:hover,
 #editor span[data-type=named]:hover,
 #editor span[data-type=phrase]:hover,
 #editor span[data-type=phraseset]:hover,
@@ -163,9 +166,9 @@
   background: rgba(128,128,128,0.1);
   border-color: #fff;
 }
+#editor span[data-type=coach][editing],
 #editor span[data-type=excuse][editing],
 #editor span[data-type=integer][editing],
-#editor span[data-type=coach][editing],
 #editor span[data-type=named][editing],
 #editor span[data-type=phrase][editing],
 #editor span[data-type=phraseset][editing],
@@ -178,9 +181,9 @@
   color: #fff;
   box-shadow: 8px 8px 8px rgba(0,0,0,0.5);
 }
+#editor span[data-type=coach][editing].above,
 #editor span[data-type=excuse][editing].above,
 #editor span[data-type=integer][editing].above,
-#editor span[data-type=coach][editing].above,
 #editor span[data-type=named][editing].above,
 #editor span[data-type=phrase][editing].above,
 #editor span[data-type=phraseset][editing].above,
@@ -191,9 +194,9 @@
 #editor span[data-type=time][editing].above {
   border-radius: 8px 8px 0 0;
 }
+#editor span[data-type=coach][editing].below,
 #editor span[data-type=excuse][editing].below,
 #editor span[data-type=integer][editing].below,
-#editor span[data-type=coach][editing].below,
 #editor span[data-type=named][editing].below,
 #editor span[data-type=phrase][editing].below,
 #editor span[data-type=phraseset][editing].below,

@@ -18,11 +18,15 @@ class Views
         this.pickers = {};
 
         [
+            new CoachPicker(),
+            // new ExcusePicker(),
+            // new IntegerPicker(),
             new NamedPicker(),
-            new PlatformPicker(),
             new PhrasesetPicker(),
+            new PlatformPicker(),
             new ServicePicker(),
             new StationPicker(),
+            // new StationList(),
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);
     }

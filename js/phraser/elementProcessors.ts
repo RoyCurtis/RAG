@@ -6,7 +6,7 @@ class ElementProcessors
     /** Picks a coach letter from A to Z, limited by amount of coaches */
     public static coach(ctx: PhraseContext)
     {
-        ctx.newElement.textContent = Random.array("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        ctx.newElement.textContent = RAG.state.coach;
     }
 
     /** Picks an excuse for a delay or cancellation */

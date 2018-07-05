@@ -381,6 +381,7 @@
     Standard unreserved seating can be found in coaches <coach/> and <coach/>, with
     First class unreserved seating in coach <coach/>.
   </phrase>
+  <!-- TODO: Why is this a phraseset? Am I missing an alternative form here? -->
 </phraseset>
 
 <phrase id="bike_booking">

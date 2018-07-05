@@ -1,7 +1,7 @@
 "use strict";
 class ElementProcessors {
     static coach(ctx) {
-        ctx.newElement.textContent = Random.array("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        ctx.newElement.textContent = RAG.state.coach;
     }
     static excuse(ctx) {
         ctx.newElement.textContent = RAG.database.pickExcuse();
@@ -172,6 +172,77 @@ class Phraser {
 }
 Phraser.DIGITS = ['zero', 'one', 'two', 'three', 'four',
     'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+Phraser.LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+class Picker {
+    constructor(xmlTag, events) {
+        this.dom = DOM.require(`#${xmlTag}Picker`);
+        this.domForm = DOM.require('form', this.dom);
+        this.xmlTag = xmlTag;
+        let self = this;
+        events.forEach(event => {
+            this.domForm.addEventListener(event, this.onChange.bind(self));
+        });
+        this.domForm.onsubmit = ev => {
+            ev.preventDefault();
+            self.onChange(ev);
+        };
+    }
+    open(target) {
+        this.dom.classList.remove('hidden');
+        this.domEditing = target;
+        this.layout();
+    }
+    layout() {
+        if (!this.domEditing)
+            return;
+        let rect = this.domEditing.getBoundingClientRect();
+        let fullWidth = this.dom.classList.contains('fullWidth');
+        let midHeight = this.dom.classList.contains('midHeight');
+        let dialogX = (rect.left | 0) - 8;
+        let dialogY = rect.bottom | 0;
+        let width = (rect.width | 0) + 16;
+        if (!fullWidth) {
+            this.dom.style.minWidth = `${width}px`;
+            if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
+                dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
+        }
+        if (midHeight) {
+            dialogY = (this.dom.offsetHeight / 2) | 0;
+        }
+        else if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
+            dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
+            this.domEditing.classList.add('below');
+        }
+        else
+            this.domEditing.classList.add('above');
+        this.dom.style.transform = fullWidth
+            ? `translateY(${dialogY}px)`
+            : `translate(${dialogX}px, ${dialogY}px)`;
+    }
+    close() {
+        this.dom.classList.add('hidden');
+    }
+}
+class CoachPicker extends Picker {
+    constructor() {
+        super('coach', ['change']);
+        this.inputLetter = DOM.require('select', this.dom);
+        for (let i = 0; i < 26; i++) {
+            let option = document.createElement('option');
+            let letter = Phraser.LETTERS[i];
+            option.text = option.value = letter;
+            this.inputLetter.appendChild(option);
+        }
+    }
+    open(target) {
+        super.open(target);
+        this.inputLetter.value = RAG.state.coach;
+    }
+    onChange(_) {
+        RAG.state.coach = this.inputLetter.value;
+        RAG.views.editor.setElementsText('coach', RAG.state.coach);
+    }
+}
 class Editor {
     constructor() {
         this.dom = DOM.require('#editor');
@@ -302,56 +373,6 @@ class Marquee {
     stop() {
         window.cancelAnimationFrame(this.timer);
         this.domSpan.style.transform = '';
-    }
-}
-class Picker {
-    constructor(xmlTag, events) {
-        this.dom = DOM.require(`#${xmlTag}Picker`);
-        this.domForm = DOM.require('form', this.dom);
-        this.xmlTag = xmlTag;
-        let self = this;
-        events.forEach(event => {
-            this.domForm.addEventListener(event, this.onChange.bind(self));
-        });
-        this.domForm.onsubmit = ev => {
-            ev.preventDefault();
-            self.onChange(ev);
-        };
-    }
-    open(target) {
-        this.dom.classList.remove('hidden');
-        this.domEditing = target;
-        this.layout();
-    }
-    layout() {
-        if (!this.domEditing)
-            return;
-        let rect = this.domEditing.getBoundingClientRect();
-        let fullWidth = this.dom.classList.contains('fullWidth');
-        let midHeight = this.dom.classList.contains('midHeight');
-        let dialogX = (rect.left | 0) - 8;
-        let dialogY = rect.bottom | 0;
-        let width = (rect.width | 0) + 16;
-        if (!fullWidth) {
-            this.dom.style.minWidth = `${width}px`;
-            if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
-                dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
-        }
-        if (midHeight) {
-            dialogY = (this.dom.offsetHeight / 2) | 0;
-        }
-        else if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
-            dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
-            this.domEditing.classList.add('below');
-        }
-        else
-            this.domEditing.classList.add('above');
-        this.dom.style.transform = fullWidth
-            ? `translateY(${dialogY}px)`
-            : `translate(${dialogX}px, ${dialogY}px)`;
-    }
-    close() {
-        this.dom.classList.add('hidden');
     }
 }
 class NamedPicker extends Picker {
@@ -624,9 +645,10 @@ class Views {
         this.toolbar = new Toolbar();
         this.pickers = {};
         [
+            new CoachPicker(),
             new NamedPicker(),
-            new PlatformPicker(),
             new PhrasesetPicker(),
+            new PlatformPicker(),
             new ServicePicker(),
             new StationPicker(),
             new TimePicker()
@@ -802,6 +824,15 @@ class State {
     }
     setPhrasesetIdx(ref, idx) {
         this._phrasesets[ref] = idx;
+    }
+    get coach() {
+        if (this._coach)
+            return this._coach;
+        this._coach = Random.array(Phraser.LETTERS);
+        return this._coach;
+    }
+    set coach(value) {
+        this._coach = value;
     }
     get platform() {
         if (this._platform)
