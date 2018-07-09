@@ -89,7 +89,65 @@
   <phrase>
     <phrase ref="attention_please" chance="10"/> <phraseset ref="notices"/>
   </phrase>
+
+  <!-- For debugging -->
+  <phrase>
+    Coach: <coach/>,
+    Excuse: <excuse/>,
+    Integers: <phrase ref="debug_integers"/>,
+    Named: <named/>,
+    Phrase: <phrase ref="debug_phrase"/>,
+    Phrase (chance): <phrase ref="debug_phrase" chance="15"/>,
+    Phraseset: <phraseset ref="debug_phraseset"/>,
+    Phraseset (chance): <phraseset ref="debug_phraseset" chance="50"/>,
+    Platform: <platform/>,
+    Service: <service/>,
+    Stations: <phrase ref="debug_stations"/>,
+    Station list: <phrase ref="debug_stationlists"/>,
+    Time: <time/>
+  </phrase>
 </phraseset>
+
+<!-- Debug phrases -->
+
+<phrase id="debug_integers">
+  (
+    Plain: <integer min="-10" max="100" id="debug1"/>,
+    Suffix: <integer min="0" max="999" singular="number" plural="numbers" id="debug2"/>,
+    Words: <integer min="0" max="10" words="true" id="debug3"/>
+  )
+</phrase>
+
+<phrase id="debug_phrase">
+  This is an example phrase
+</phrase>
+
+<phraseset id="debug_phraseset">
+  <phrase>Phrase one.</phrase>
+  <phrase>Frase dos.</phrase>
+  <phrase>العبارة الثلاثة.</phrase>
+  <phrase>短语四。</phrase>
+  <phrase>ሐረግ አምስ.</phrase>
+</phraseset>
+
+<phrase id="debug_stations">
+  (
+    Calling: <station context="calling"/>, <station context="calling"/>,
+    Destination: <station context="destination"/>, <station context="destination"/>,
+    Destination 2: <station context="destination2"/>, <station context="destination2"/>,
+    Random: <station context="random"/>, <station context="random"/>,
+    Source: <station context="source"/>, <station context="source"/>,
+    Via: <station context="via"/>, <station context="via"/>,
+    Via 2: <station context="via2"/>, <station context="via2"/>
+  )
+</phrase>
+
+<phrase id="debug_stationlists">
+  (
+    <stationlist id="test" min="2" max="4"/>, <stationlist id="test" min="2" max="4"/>,
+    <stationlist id="test2" min="0" max="5"/>, <stationlist id="test2" min="0" max="5"/>,
+  )
+</phrase>
 
 <!-- Main set of notices -->
 
