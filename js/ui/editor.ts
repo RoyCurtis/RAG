@@ -168,8 +168,9 @@ class Editor
                 let phraseset = _ as HTMLElement;
                 let toggle    = phraseset.children[0] as HTMLElement;
 
+                // Skip same-ref elements that aren't collapsible
                 if ( !toggle || !toggle.classList.contains('toggle') )
-                    throw new Error("Expected toggle element for collapsible missing");
+                    return;
 
                 this.setCollapsible(phraseset, toggle, !collapased);
                 // Don't move this to setCollapsible, as state save/load is handled
