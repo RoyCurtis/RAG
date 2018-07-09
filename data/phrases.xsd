@@ -193,6 +193,14 @@
   <xs:attribute name="min" type="xs:int" use="required"/>
   <xs:attribute name="max" type="xs:int" use="required"/>
 
+  <xs:attribute name="id" type="xs:string" use="required">
+    <xs:annotation>
+      <xs:documentation>
+        Unique ID to give this integer, for state tracking.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
   <xs:attribute name="singular" type="xs:string">
     <xs:annotation>
       <xs:documentation>
@@ -265,6 +273,8 @@
 
 
 <xs:complexType name="stationlist">
+  <!-- TODO: change this to "context" -->
+  <!-- TODO: should there be a "config" element to define list types and limits? -->
   <xs:attribute name="id" type="xs:string" use="required">
     <xs:annotation>
       <xs:documentation>

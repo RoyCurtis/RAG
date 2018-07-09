@@ -224,9 +224,10 @@
 <phraseset id="calling_at">
   <phrase>Calling at <stationlist id="calling"/>.</phrase>
   <phrase>
-    For <stationlist id="calling_half1"/>, travel in the front <integer min="2" max="5"/>
-    coaches of the train. And for <stationlist id="calling_half2"/>, travel in the rear
-    <integer min="2" max="5"/> coaches of the train.
+    For <stationlist id="calling_half1"/>, travel in the front
+    <integer id='front_coaches' min="2" max="5" words="true"/> coaches of the train. And
+    for <stationlist id="calling_half2"/>, travel in the rear
+    <integer id='rear_coaches' min="2" max="5" words="true"/> coaches of the train.
   </phrase>
 </phraseset>
 
@@ -258,7 +259,7 @@
 </phraseset>
 
 <phrase id="delayed_approx">
-  by approximately <integer min="5" max="120" plural="minutes"/>
+  by approximately <integer id="approx" min="5" max="120" plural="minutes"/>
 </phrase>
 
 <phrase id="delay_at_near">
@@ -336,7 +337,7 @@
 
 <phrase id="coach_count">
   <phraseset ref="coach_count_pre"/>
-  <integer min="1" max="10" singular="coach" plural="coaches" words="true"/>.
+  <integer id="coaches" min="1" max="10" singular="coach" plural="coaches" words="true"/>.
 </phrase>
 
 <phraseset id="coach_count_pre">
