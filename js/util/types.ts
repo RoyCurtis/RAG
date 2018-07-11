@@ -6,21 +6,8 @@ type Lengthable = Array<any> | NodeList | HTMLCollection | string;
 /** Represents a platform as a digit and optional letter tuple */
 type Platform = [string, string];
 
-/** Represents the format of the National Rail station name dataset */
-type StationsDB = { [index: string]: string };
-
-// TODO: Replace these with generic keyvalue dicts
-
-/** Represents a dictionary of picker classes for the editor */
-type PickerDictionary = { [index: string]: Picker };
-
-/** Represents a dictionary of phraseset ids and their picked phrase indexes */
-type PhrasesetDictionary = { [index: string] : number };
-
-/** Represents a dictionary of collapsiables ids and their collapse state */
-type CollapsibleDictionary = { [index: string] : boolean };
-
-type IntegerDictionary = { [index: string] : number };
+/** Represents a generic key-value dictionary, with string keys */
+type Dictionary<T> = { [index: string]: T };
 
 /** Defines the config object passed into RAG.main on init */
 interface RAGConfig
@@ -34,7 +21,7 @@ interface RAGConfig
     /** Raw array of names for services/networks to use */
     servicesData   : string[];
     /** Raw dictionary of station codes and names to use */
-    stationsData   : StationsDB;
+    stationsData   : Dictionary<string>;
 }
 
 /** Fill in for ES2017 string padding methods */

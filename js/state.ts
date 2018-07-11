@@ -3,9 +3,9 @@
 /** Disposable class that holds state for the current schedule, train, etc. */
 class State
 {
-    private _collapsibles : CollapsibleDictionary = {};
-    private _integers     : IntegerDictionary     = {};
-    private _phrasesets   : PhrasesetDictionary   = {};
+    private _collapsibles : Dictionary<boolean> = {};
+    private _integers     : Dictionary<number>  = {};
+    private _phrasesets   : Dictionary<number>  = {};
 
     private _coach?       : string;
     private _excuse?      : string;

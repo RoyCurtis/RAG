@@ -8,7 +8,7 @@ class Views
     public readonly marquee : Marquee;
     public readonly toolbar : Toolbar;
 
-    private readonly pickers : PickerDictionary;
+    private readonly pickers : Dictionary<Picker>;
 
     constructor()
     {

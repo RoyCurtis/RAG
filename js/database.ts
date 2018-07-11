@@ -6,7 +6,7 @@ class Database
     public readonly excuses    : string[];
     public readonly named      : string[];
     public readonly services   : string[];
-    public readonly stations   : StationsDB;
+    public readonly stations   : Dictionary<string>;
     public readonly phraseSets : Document;
 
     constructor(config: RAGConfig)
