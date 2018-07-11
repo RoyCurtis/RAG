@@ -9,6 +9,8 @@ type Platform = [string, string];
 /** Represents the format of the National Rail station name dataset */
 type StationsDB = { [index: string]: string };
 
+// TODO: Replace these with generic keyvalue dicts
+
 /** Represents a dictionary of picker classes for the editor */
 type PickerDictionary = { [index: string]: Picker };
 
@@ -17,6 +19,8 @@ type PhrasesetDictionary = { [index: string] : number };
 
 /** Represents a dictionary of collapsiables ids and their collapse state */
 type CollapsibleDictionary = { [index: string] : boolean };
+
+type IntegerDictionary = { [index: string] : number };
 
 /** Defines the config object passed into RAG.main on init */
 interface RAGConfig

@@ -24,17 +24,26 @@
   box-shadow: 0 0 16px rgba(0,0,0,0.5);
 }
 #coachPicker form,
+#integerPicker form,
 #platformPicker form,
 #timePicker form {
   display: flex;
 }
 #coachPicker form input,
+#integerPicker form input,
 #platformPicker form input,
 #timePicker form input,
 #coachPicker form select,
+#integerPicker form select,
 #platformPicker form select,
-#timePicker form select {
+#timePicker form select,
+#coachPicker form label,
+#integerPicker form label,
+#platformPicker form label,
+#timePicker form label {
+  background: #fff;
   border: none;
+  color: #000;
   flex-grow: 1;
   font-size: x-large;
   padding: 0 4px;

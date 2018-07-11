@@ -1,6 +1,7 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 /** Controller for the phrase editor */
+// TODO: This class is getting very big...
 class Editor
 {
     private readonly dom : HTMLElement;
@@ -56,10 +57,21 @@ class Editor
      * @param {string} type Original XML name of elements to get
      * @returns {NodeList}
      */
-    public getElements(type: string) : NodeList
+    public getElementsByType(type: string) : NodeList
     {
-        // TODO: inline candidate
+        // TODO: inline candidate?
         return this.dom.querySelectorAll(`span[data-type=${type}]`);
+    }
+
+    /**
+     * Gets a static NodeList of all phrase elements of the given query.
+     *
+     * @param {string} query Query string to add onto the `span` selector
+     * @returns {NodeList}
+     */
+    public getElementsByQuery(query: string) : NodeList
+    {
+        return this.dom.querySelectorAll(`span${query}`);
     }
 
     /** Gets the current phrase in the editor as text, excluding the hidden parts */
@@ -77,7 +89,7 @@ class Editor
      */
     public setElementsText(type: string, value: string) : void
     {
-        this.getElements(type).forEach(element => element.textContent = value);
+        this.getElementsByType(type).forEach(element => element.textContent = value);
     }
 
     /**

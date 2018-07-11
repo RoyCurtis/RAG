@@ -18,29 +18,35 @@ class ElementProcessors
     /** Picks a whole number, with optional limits, noun and in word form */
     public static integer(ctx: PhraseContext)
     {
-        let attrMin      = ctx.xmlElement.getAttribute('min');
-        let attrMax      = ctx.xmlElement.getAttribute('max');
-        let attrSingular = ctx.xmlElement.getAttribute('singular');
-        let attrPlural   = ctx.xmlElement.getAttribute('plural');
-        let attrWords    = ctx.xmlElement.getAttribute('words');
+        let id       = DOM.requireAttrValue(ctx.xmlElement, 'id');
+        let min      = DOM.requireAttrValue(ctx.xmlElement, 'min');
+        let max      = DOM.requireAttrValue(ctx.xmlElement, 'max');
+        let singular = ctx.xmlElement.getAttribute('singular');
+        let plural   = ctx.xmlElement.getAttribute('plural');
+        let words    = ctx.xmlElement.getAttribute('words');
 
-        if (!attrMin || !attrMax)
-            throw new Error("Integer tag is missing required attributes");
+        let intMin = parseInt(min);
+        let intMax = parseInt(max);
 
-        let intMin = parseInt(attrMin);
-        let intMax = parseInt(attrMax);
-
-        let int    = Random.int(intMin, intMax);
-        let intStr = attrWords && attrWords.toLowerCase() === 'true'
+        let int    = RAG.state.getInteger(id, intMin, intMax);
+        let intStr = (words && words.toLowerCase() === 'true')
             ? Phraser.DIGITS[int]
             : int.toString();
 
-        if      (int === 1 && attrSingular)
-            intStr += ` ${attrSingular}`;
-        else if (int !== 1 && attrPlural)
-            intStr += ` ${attrPlural}`;
+        if      (int === 1 && singular)
+            intStr += ` ${singular}`;
+        else if (int !== 1 && plural)
+            intStr += ` ${plural}`;
 
-        ctx.newElement.textContent = intStr;
+        ctx.newElement.title          = `Click to change this number ('${id}')`;
+        ctx.newElement.textContent    = intStr;
+        ctx.newElement.dataset['id']  = id;
+        ctx.newElement.dataset['min'] = min;
+        ctx.newElement.dataset['max'] = max;
+
+        if (singular) ctx.newElement.dataset['singular'] = singular;
+        if (plural)   ctx.newElement.dataset['plural']   = plural;
+        if (words)    ctx.newElement.dataset['words']    = words;
     }
 
     /** Picks a named train */

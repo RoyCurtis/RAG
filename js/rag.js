@@ -7,24 +7,33 @@ class ElementProcessors {
         ctx.newElement.textContent = RAG.database.pickExcuse();
     }
     static integer(ctx) {
-        let attrMin = ctx.xmlElement.getAttribute('min');
-        let attrMax = ctx.xmlElement.getAttribute('max');
-        let attrSingular = ctx.xmlElement.getAttribute('singular');
-        let attrPlural = ctx.xmlElement.getAttribute('plural');
-        let attrWords = ctx.xmlElement.getAttribute('words');
-        if (!attrMin || !attrMax)
-            throw new Error("Integer tag is missing required attributes");
-        let intMin = parseInt(attrMin);
-        let intMax = parseInt(attrMax);
-        let int = Random.int(intMin, intMax);
-        let intStr = attrWords && attrWords.toLowerCase() === 'true'
+        let id = DOM.requireAttrValue(ctx.xmlElement, 'id');
+        let min = DOM.requireAttrValue(ctx.xmlElement, 'min');
+        let max = DOM.requireAttrValue(ctx.xmlElement, 'max');
+        let singular = ctx.xmlElement.getAttribute('singular');
+        let plural = ctx.xmlElement.getAttribute('plural');
+        let words = ctx.xmlElement.getAttribute('words');
+        let intMin = parseInt(min);
+        let intMax = parseInt(max);
+        let int = RAG.state.getInteger(id, intMin, intMax);
+        let intStr = (words && words.toLowerCase() === 'true')
             ? Phraser.DIGITS[int]
             : int.toString();
-        if (int === 1 && attrSingular)
-            intStr += ` ${attrSingular}`;
-        else if (int !== 1 && attrPlural)
-            intStr += ` ${attrPlural}`;
+        if (int === 1 && singular)
+            intStr += ` ${singular}`;
+        else if (int !== 1 && plural)
+            intStr += ` ${plural}`;
+        ctx.newElement.title = `Click to change this number ('${id}')`;
         ctx.newElement.textContent = intStr;
+        ctx.newElement.dataset['id'] = id;
+        ctx.newElement.dataset['min'] = min;
+        ctx.newElement.dataset['max'] = max;
+        if (singular)
+            ctx.newElement.dataset['singular'] = singular;
+        if (plural)
+            ctx.newElement.dataset['plural'] = plural;
+        if (words)
+            ctx.newElement.dataset['words'] = words;
     }
     static named(ctx) {
         ctx.newElement.title = "Click to change this train's name";
@@ -266,14 +275,17 @@ class Editor {
             RAG.phraser.process(newElement.parentElement);
         });
     }
-    getElements(type) {
+    getElementsByType(type) {
         return this.dom.querySelectorAll(`span[data-type=${type}]`);
+    }
+    getElementsByQuery(query) {
+        return this.dom.querySelectorAll(`span${query}`);
     }
     getText() {
         return DOM.getCleanedVisibleText(this.dom);
     }
     setElementsText(type, value) {
-        this.getElements(type).forEach(element => element.textContent = value);
+        this.getElementsByType(type).forEach(element => element.textContent = value);
     }
     setCollapsible(span, toggle, state) {
         if (state)
@@ -328,7 +340,7 @@ class Editor {
             let phraseset = _;
             let toggle = phraseset.children[0];
             if (!toggle || !toggle.classList.contains('toggle'))
-                throw new Error("Expected toggle element for collapsible missing");
+                return;
             this.setCollapsible(phraseset, toggle, !collapased);
             RAG.state.setCollapsed(ref, !collapased);
         });
@@ -378,6 +390,54 @@ class ExcusePicker extends Picker {
             this.select(target);
         RAG.state.excuse = target.value;
         RAG.views.editor.setElementsText('excuse', RAG.state.excuse);
+    }
+}
+class IntegerPicker extends Picker {
+    constructor() {
+        super('integer', ['change']);
+        this.inputDigit = DOM.require('input', this.dom);
+        this.domLabel = DOM.require('label', this.dom);
+    }
+    open(target) {
+        super.open(target);
+        let min = DOM.requireData(target, 'min');
+        let max = DOM.requireData(target, 'max');
+        this.min = parseInt(min);
+        this.max = parseInt(max);
+        this.id = DOM.requireData(target, 'id');
+        this.singular = target.dataset['singular'];
+        this.plural = target.dataset['plural'];
+        this.words = Parse.boolean(target.dataset['words'] || 'false');
+        let value = RAG.state.getInteger(this.id, this.min, this.max);
+        if (this.singular && value === 1)
+            this.domLabel.innerText = this.singular;
+        else if (this.plural && value !== 1)
+            this.domLabel.innerText = this.plural;
+        else
+            this.domLabel.innerText = '';
+        this.inputDigit.min = min;
+        this.inputDigit.max = max;
+        this.inputDigit.value = value.toString();
+    }
+    onChange(_) {
+        if (!this.id)
+            throw new Error("onChange fired for integer picker without state");
+        let int = parseInt(this.inputDigit.value);
+        let intStr = (this.words)
+            ? Phraser.DIGITS[int]
+            : int.toString();
+        if (int === 1 && this.singular) {
+            intStr += ` ${this.singular}`;
+            this.domLabel.innerText = this.singular;
+        }
+        else if (int !== 1 && this.plural) {
+            intStr += ` ${this.plural}`;
+            this.domLabel.innerText = this.plural;
+        }
+        RAG.state.setInteger(this.id, int);
+        RAG.views.editor
+            .getElementsByQuery(`[data-type=integer][data-id=${this.id}]`)
+            .forEach(element => element.textContent = intStr);
     }
 }
 class Marquee {
@@ -687,6 +747,7 @@ class Views {
         [
             new CoachPicker(),
             new ExcusePicker(),
+            new IntegerPicker(),
             new NamedPicker(),
             new PhrasesetPicker(),
             new PlatformPicker(),
@@ -741,6 +802,16 @@ class DOM {
             .replace(/[\n\r]/gi, '')
             .replace(/\s{2,}/gi, ' ')
             .replace(/\s([.,])/gi, '$1');
+    }
+}
+class Parse {
+    static boolean(str) {
+        str = str.toLowerCase();
+        if (str === 'true' || str === '1')
+            return true;
+        if (str === 'false' || str === '0')
+            return false;
+        throw new Error("Given string does not represent a boolean");
     }
 }
 class Random {
@@ -843,6 +914,7 @@ class RAG {
 class State {
     constructor() {
         this._collapsibles = {};
+        this._integers = {};
         this._phrasesets = {};
     }
     getCollapsed(ref, chance) {
@@ -853,6 +925,15 @@ class State {
     }
     setCollapsed(ref, state) {
         this._collapsibles[ref] = state;
+    }
+    getInteger(id, min, max) {
+        if (this._integers[id] !== undefined)
+            return this._integers[id];
+        this._integers[id] = Random.int(min, max);
+        return this._integers[id];
+    }
+    setInteger(id, value) {
+        this._integers[id] = value;
     }
     getPhrasesetIdx(ref) {
         if (this._phrasesets[ref] !== undefined)

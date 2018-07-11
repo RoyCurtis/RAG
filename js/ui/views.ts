@@ -20,13 +20,13 @@ class Views
         [
             new CoachPicker(),
             new ExcusePicker(),
-            // new IntegerPicker(),
+            new IntegerPicker(),
             new NamedPicker(),
             new PhrasesetPicker(),
             new PlatformPicker(),
             new ServicePicker(),
             new StationPicker(),
-            // new StationList(),
+            // new StationListPicker(),
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);
     }

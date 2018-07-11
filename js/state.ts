@@ -4,6 +4,7 @@
 class State
 {
     private _collapsibles : CollapsibleDictionary = {};
+    private _integers     : IntegerDictionary     = {};
     private _phrasesets   : PhrasesetDictionary   = {};
 
     private _coach?       : string;
@@ -26,6 +27,20 @@ class State
     public setCollapsed(ref: string, state: boolean) : void
     {
         this._collapsibles[ref] = state;
+    }
+
+    public getInteger(id: string, min: number, max: number) : number
+    {
+        if (this._integers[id] !== undefined)
+            return this._integers[id];
+
+        this._integers[id] = Random.int(min, max);
+        return this._integers[id];
+    }
+
+    public setInteger(id: string, value: number) : void
+    {
+        this._integers[id] = value;
     }
 
     // TODO: Make "phraseSet" consistent to "phraseset"
