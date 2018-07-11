@@ -1,6 +1,6 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/// <reference path="Picker.ts"/>
+/// <reference path="picker.ts"/>
 
 /** Controller for the platform picker dialog */
 class PlatformPicker extends Picker

@@ -21,6 +21,7 @@
   "compileOnSave": true,
 
   "include": [
+    "js/*/*/*.ts",
     "js/*/*.ts",
     "js/*.ts"
   ],

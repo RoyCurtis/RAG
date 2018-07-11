@@ -1,6 +1,6 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/// <reference path="Picker.ts"/>
+/// <reference path="picker.ts"/>
 
 /** Controller for the coach picker dialog */
 class CoachPicker extends Picker

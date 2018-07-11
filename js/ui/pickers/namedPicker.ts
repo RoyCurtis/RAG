@@ -1,6 +1,6 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/// <reference path="Picker.ts"/>
+/// <reference path="picker.ts"/>
 
 /** Controller for the named train picker dialog */
 class NamedPicker extends Picker

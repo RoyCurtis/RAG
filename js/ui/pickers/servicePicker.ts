@@ -1,10 +1,9 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-// TODO: remove these
-/// <reference path="Picker.ts"/>
+/// <reference path="picker.ts"/>
 
-/** Controller for the excuse picker dialog */
-class ExcusePicker extends Picker
+/** Controller for the service picker dialog */
+class ServicePicker extends Picker
 {
     private readonly domChoices:   HTMLOptionElement[];
     private readonly inputService: HTMLElement;
@@ -13,21 +12,21 @@ class ExcusePicker extends Picker
 
     constructor()
     {
-        super('excuse', ['click']);
+        super('service', ['click']);
 
         this.domChoices   = [];
         this.inputService = DOM.require('.picker', this.dom);
 
-        RAG.database.excuses.forEach(value =>
+        RAG.database.services.forEach(value =>
         {
-            let excuse = document.createElement('option');
+            let service = document.createElement('option');
 
-            excuse.text  = value;
-            excuse.value = value;
-            excuse.title = value;
+            service.text  = value;
+            service.value = value;
+            service.title = value;
 
-            this.domChoices.push(excuse);
-            this.inputService.appendChild(excuse);
+            this.domChoices.push(service);
+            this.inputService.appendChild(service);
         });
     }
 
@@ -35,14 +34,14 @@ class ExcusePicker extends Picker
     {
         super.open(target);
 
-        let value = RAG.state.excuse;
+        let value = RAG.state.service;
 
-        this.domChoices.some(excuse =>
+        this.domChoices.some(service =>
         {
-            if (value !== excuse.value)
+            if (value !== service.value)
                 return false;
 
-            this.select(excuse);
+            this.select(service);
             return true;
         });
     }
@@ -66,7 +65,7 @@ class ExcusePicker extends Picker
         else
             this.select(target);
 
-        RAG.state.excuse = target.value;
-        RAG.views.editor.setElementsText('excuse', RAG.state.excuse);
+        RAG.state.service = target.value;
+        RAG.views.editor.setElementsText('service', RAG.state.service);
     }
 }
