@@ -8,14 +8,18 @@ class Views
     public readonly marquee : Marquee;
     public readonly toolbar : Toolbar;
 
+    // Controls
+    public readonly stationList : StationList;
+
     private readonly pickers : Dictionary<Picker>;
 
     constructor()
     {
-        this.editor  = new Editor();
-        this.marquee = new Marquee();
-        this.toolbar = new Toolbar();
-        this.pickers = {};
+        this.editor      = new Editor();
+        this.marquee     = new Marquee();
+        this.toolbar     = new Toolbar();
+        this.stationList = new StationList();
+        this.pickers     = {};
 
         [
             new CoachPicker(),

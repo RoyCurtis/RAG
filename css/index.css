@@ -140,8 +140,13 @@
 #stationlistPicker form .stations dd.dragging {
   opacity: 0.5;
 }
-#stationPicker form input,
-#stationlistPicker form input {
+#stationPicker form #stationList,
+#stationlistPicker form #stationList {
+  display: flex;
+  flex-flow: column;
+}
+#stationPicker form #stationList input,
+#stationlistPicker form #stationList input {
   background: #111;
   border: none;
   color: inherit;
@@ -149,17 +154,17 @@
   padding: 0.5em 1em;
   width: 100%;
 }
-#stationPicker form .picker,
-#stationlistPicker form .picker {
+#stationPicker form #stationList .picker,
+#stationlistPicker form #stationList .picker {
   overflow: auto;
 }
-#stationPicker form .picker dl,
-#stationlistPicker form .picker dl {
+#stationPicker form #stationList .picker dl,
+#stationlistPicker form #stationList .picker dl {
   display: flex;
   flex-wrap: wrap;
 }
-#stationPicker form .picker dt,
-#stationlistPicker form .picker dt {
+#stationPicker form #stationList .picker dt,
+#stationlistPicker form #stationList .picker dt {
   background: #000;
   box-shadow: 0 5px 10px rgba(0,0,0,0.5);
   font-weight: bold;
@@ -168,15 +173,15 @@
   top: 0;
   width: 100%;
 }
-#stationPicker form .picker dd,
-#stationlistPicker form .picker dd {
+#stationPicker form #stationList .picker dd,
+#stationlistPicker form #stationList .picker dd {
   cursor: pointer;
   padding: 1em;
 }
-#stationPicker form .picker dd:hover,
-#stationlistPicker form .picker dd:hover,
-#stationPicker form .picker dd[selected],
-#stationlistPicker form .picker dd[selected] {
+#stationPicker form #stationList .picker dd:hover,
+#stationlistPicker form #stationList .picker dd:hover,
+#stationPicker form #stationList .picker dd[selected],
+#stationlistPicker form #stationList .picker dd[selected] {
   background: #cc7e00;
 }
 #editor {

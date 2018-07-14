@@ -5,72 +5,28 @@
 /** Controller for the station list picker dialog */
 class StationListPicker extends Picker
 {
-    private readonly domChoices:   Dictionary<HTMLDListElement>;
-    private readonly domEmptyList: HTMLElement;
-    private readonly inputList:    HTMLDListElement;
-    private readonly inputFilter:  HTMLInputElement;
-    private readonly inputStation: HTMLElement;
+    /** Reference to placeholder shown if the list is empty */
+    private readonly domEmptyList : HTMLElement;
+    /** Reference to this list's currently selected stations in the UI */
+    private readonly inputList    : HTMLDListElement;
 
-    private currentId     : string = '';
-    private filterTimeout : number = 0;
-    private domDragFrom?  : HTMLElement;
+    private currentId    : string = '';
+    private domDragFrom? : HTMLElement;
 
     constructor()
     {
         super('stationlist', ['click', 'input']);
 
         this.inputList    = DOM.require('.stations', this.dom) as HTMLDListElement;
-        this.inputFilter  = DOM.require('input', this.dom)     as HTMLInputElement;
-        this.inputStation = DOM.require('.picker', this.dom);
         this.domEmptyList = DOM.require('dt', this.inputList);
-        this.domChoices   = {};
-
-        // TODO: definitely needs to be DRYd with StationPicker
-        Object.keys(RAG.database.stations).forEach(code =>
-        {
-            let station = RAG.database.stations[code];
-            let letter  = station[0];
-            let group   = this.domChoices[letter];
-
-            if (!group)
-            {
-                let header       = document.createElement('dt');
-                header.innerText = letter.toUpperCase();
-
-                group = this.domChoices[letter] = document.createElement('dl');
-
-                group.appendChild(header);
-                this.inputStation.appendChild(group);
-            }
-
-            let entry             = document.createElement('dd');
-            entry.innerText       = RAG.database.stations[code];
-            entry.dataset['code'] = code;
-
-            group.appendChild(entry);
-        });
-
-        this.inputFilter.ondrop = this.inputStation.ondrop = ev =>
-        {
-            if (!ev.target || !this.domDragFrom)
-                throw new Error("Drop event, but target and source are missing");
-
-            this.domDragFrom.remove();
-            this.update();
-
-            if (this.inputList.children.length === 1)
-                this.domEmptyList.classList.remove('hidden');
-        };
-
-        this.inputFilter.ondragover = this.inputStation.ondragover =
-            ev => ev.preventDefault();
     }
-
 
     public open(target: HTMLElement)
     {
         super.open(target);
-        this.inputFilter.focus();
+
+        RAG.views.stationList.attach(this);
+        RAG.views.stationList.registerDropHandler( this.onDrop.bind(this) );
 
         this.currentId = DOM.requireData(target, 'id');
         let min        = parseInt( DOM.requireData(target, 'min') );
@@ -86,30 +42,13 @@ class StationListPicker extends Picker
 
     protected onChange(ev: Event)
     {
-        let target = ev.target as HTMLDataElement;
+        let self = this;
 
-        // Skip for target-less events
-        if (!target)
-            return;
-
-        // Handle typing into filter box
-        else if (target === this.inputFilter)
+        RAG.views.stationList.onChange(ev, target =>
         {
-            window.clearTimeout(this.filterTimeout);
-
-            this.filterTimeout = window.setTimeout(this.filter.bind(this), 500);
-        }
-
-        // Handle pressing ENTER inside filter box
-        else if (ev.type.toLowerCase() === 'submit')
-            this.filter();
-
-        // Handle station name being clicked
-        else if (target.dataset['code'])
-        {
-            this.addEntry(target.innerText);
-            this.update();
-        }
+            self.addEntry(target.innerText);
+            self.update();
+        });
     }
 
     private addEntry(value: string) : void
@@ -222,48 +161,15 @@ class StationListPicker extends Picker
             .forEach(element => element.textContent = textList);
     }
 
-    private filter() : void
+    private onDrop(ev: DragEvent) : void
     {
-        // TODO: optimize this as much as possible
+        if (!ev.target || !this.domDragFrom)
+            throw new Error("Drop event, but target and source are missing");
 
-        window.clearTimeout(this.filterTimeout);
-        let filter  = this.inputFilter.value.toLowerCase();
-        let letters = this.inputStation.children;
+        this.domDragFrom.remove();
+        this.update();
 
-        // Prevent browser redraw/reflow during filtering
-        this.inputStation.classList.add('hidden');
-
-        // Iterate through each letter section
-        for (let i = 0; i < letters.length; i++)
-        {
-            let letter  = letters[i];
-            let entries = letters[i].children;
-            let count   = entries.length - 1; // -1 for header element
-            let hidden  = 0;
-
-            // Iterate through each station name in this letter section. Header skipped.
-            for (let j = 1; j < entries.length; j++)
-            {
-                let entry = entries[j] as HTMLElement;
-
-                // Show if contains search term
-                if (entry.innerText.toLowerCase().indexOf(filter) >= 0)
-                    entry.classList.remove('hidden');
-                // Hide if not
-                else
-                {
-                    entry.classList.add('hidden');
-                    hidden++;
-                }
-            }
-
-            // If all station names in this letter section were hidden, hide the section
-            if (hidden >= count)
-                letter.classList.add('hidden');
-            else
-                letter.classList.remove('hidden');
-        }
-
-        this.inputStation.classList.remove('hidden');
+        if (this.inputList.children.length === 1)
+            this.domEmptyList.classList.remove('hidden');
     }
 }

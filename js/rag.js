@@ -1,4 +1,109 @@
 "use strict";
+class StationList {
+    constructor() {
+        this.filterTimeout = 0;
+        this.dom = DOM.require('#stationList');
+        this.inputFilter = DOM.require('input', this.dom);
+        this.inputStation = DOM.require('.picker', this.dom);
+        this.domChoices = {};
+        this.dom.remove();
+        this.dom.classList.remove('hidden');
+        Object.keys(RAG.database.stations).forEach(code => {
+            let station = RAG.database.stations[code];
+            let letter = station[0];
+            let group = this.domChoices[letter];
+            if (!letter)
+                throw new Error('Station database appears to contain an empty name');
+            if (!group) {
+                let header = document.createElement('dt');
+                header.innerText = letter.toUpperCase();
+                group = this.domChoices[letter] = document.createElement('dl');
+                group.appendChild(header);
+                this.inputStation.appendChild(group);
+            }
+            let entry = document.createElement('dd');
+            entry.innerText = RAG.database.stations[code];
+            entry.dataset['code'] = code;
+            group.appendChild(entry);
+        });
+    }
+    attach(picker) {
+        let parent = picker.domForm;
+        if (!this.dom.parentElement || this.dom.parentElement !== parent)
+            parent.appendChild(this.dom);
+        this.reset();
+        this.inputFilter.focus();
+    }
+    selectCode(code) {
+        let entry = this.inputStation.querySelector(`dd[data-code=${code}]`);
+        if (entry)
+            this.selectEntry(entry);
+    }
+    selectEntry(entry) {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+        this.domSelected = entry;
+        entry.setAttribute('selected', 'true');
+    }
+    registerDropHandler(handler) {
+        this.inputFilter.ondrop = handler;
+        this.inputStation.ondrop = handler;
+        this.inputFilter.ondragover = StationList.preventDefault;
+        this.inputStation.ondragover = StationList.preventDefault;
+    }
+    onChange(ev, onClick) {
+        let target = ev.target;
+        if (!target)
+            return;
+        else if (target === this.inputFilter) {
+            window.clearTimeout(this.filterTimeout);
+            this.filterTimeout = window.setTimeout(this.filter.bind(this), 500);
+        }
+        else if (ev.type.toLowerCase() === 'submit')
+            this.filter();
+        else if (target.dataset['code'])
+            onClick(target);
+    }
+    filter() {
+        window.clearTimeout(this.filterTimeout);
+        let filter = this.inputFilter.value.toLowerCase();
+        let letters = this.inputStation.children;
+        this.inputStation.classList.add('hidden');
+        for (let i = 0; i < letters.length; i++) {
+            let letter = letters[i];
+            let entries = letters[i].children;
+            let count = entries.length - 1;
+            let hidden = 0;
+            for (let j = 1; j < entries.length; j++) {
+                let entry = entries[j];
+                if (entry.innerText.toLowerCase().indexOf(filter) >= 0)
+                    entry.classList.remove('hidden');
+                else {
+                    entry.classList.add('hidden');
+                    hidden++;
+                }
+            }
+            if (hidden >= count)
+                letter.classList.add('hidden');
+            else
+                letter.classList.remove('hidden');
+        }
+        this.inputStation.classList.remove('hidden');
+    }
+    reset() {
+        this.inputFilter.ondrop = null;
+        this.inputStation.ondrop = null;
+        this.inputFilter.ondragover = null;
+        this.inputStation.ondragover = null;
+        if (this.domSelected) {
+            this.domSelected.removeAttribute('selected');
+            this.domSelected = undefined;
+        }
+    }
+    static preventDefault(ev) {
+        ev.preventDefault();
+    }
+}
 class Picker {
     constructor(xmlTag, events) {
         this.dom = DOM.require(`#${xmlTag}Picker`);
@@ -301,42 +406,13 @@ class StationListPicker extends Picker {
     constructor() {
         super('stationlist', ['click', 'input']);
         this.currentId = '';
-        this.filterTimeout = 0;
         this.inputList = DOM.require('.stations', this.dom);
-        this.inputFilter = DOM.require('input', this.dom);
-        this.inputStation = DOM.require('.picker', this.dom);
         this.domEmptyList = DOM.require('dt', this.inputList);
-        this.domChoices = {};
-        Object.keys(RAG.database.stations).forEach(code => {
-            let station = RAG.database.stations[code];
-            let letter = station[0];
-            let group = this.domChoices[letter];
-            if (!group) {
-                let header = document.createElement('dt');
-                header.innerText = letter.toUpperCase();
-                group = this.domChoices[letter] = document.createElement('dl');
-                group.appendChild(header);
-                this.inputStation.appendChild(group);
-            }
-            let entry = document.createElement('dd');
-            entry.innerText = RAG.database.stations[code];
-            entry.dataset['code'] = code;
-            group.appendChild(entry);
-        });
-        this.inputFilter.ondrop = this.inputStation.ondrop = ev => {
-            if (!ev.target || !this.domDragFrom)
-                throw new Error("Drop event, but target and source are missing");
-            this.domDragFrom.remove();
-            this.update();
-            if (this.inputList.children.length === 1)
-                this.domEmptyList.classList.remove('hidden');
-        };
-        this.inputFilter.ondragover = this.inputStation.ondragover =
-            ev => ev.preventDefault();
     }
     open(target) {
         super.open(target);
-        this.inputFilter.focus();
+        RAG.views.stationList.attach(this);
+        RAG.views.stationList.registerDropHandler(this.onDrop.bind(this));
         this.currentId = DOM.requireData(target, 'id');
         let min = parseInt(DOM.requireData(target, 'min'));
         let max = parseInt(DOM.requireData(target, 'max'));
@@ -346,19 +422,11 @@ class StationListPicker extends Picker {
         entries.forEach(this.addEntry.bind(this));
     }
     onChange(ev) {
-        let target = ev.target;
-        if (!target)
-            return;
-        else if (target === this.inputFilter) {
-            window.clearTimeout(this.filterTimeout);
-            this.filterTimeout = window.setTimeout(this.filter.bind(this), 500);
-        }
-        else if (ev.type.toLowerCase() === 'submit')
-            this.filter();
-        else if (target.dataset['code']) {
-            this.addEntry(target.innerText);
-            this.update();
-        }
+        let self = this;
+        RAG.views.stationList.onChange(ev, target => {
+            self.addEntry(target.innerText);
+            self.update();
+        });
     }
     addEntry(value) {
         let entry = document.createElement('dd');
@@ -431,112 +499,30 @@ class StationListPicker extends Picker {
             .getElementsByQuery(`[data-type=stationlist][data-id=${this.currentId}]`)
             .forEach(element => element.textContent = textList);
     }
-    filter() {
-        window.clearTimeout(this.filterTimeout);
-        let filter = this.inputFilter.value.toLowerCase();
-        let letters = this.inputStation.children;
-        this.inputStation.classList.add('hidden');
-        for (let i = 0; i < letters.length; i++) {
-            let letter = letters[i];
-            let entries = letters[i].children;
-            let count = entries.length - 1;
-            let hidden = 0;
-            for (let j = 1; j < entries.length; j++) {
-                let entry = entries[j];
-                if (entry.innerText.toLowerCase().indexOf(filter) >= 0)
-                    entry.classList.remove('hidden');
-                else {
-                    entry.classList.add('hidden');
-                    hidden++;
-                }
-            }
-            if (hidden >= count)
-                letter.classList.add('hidden');
-            else
-                letter.classList.remove('hidden');
-        }
-        this.inputStation.classList.remove('hidden');
+    onDrop(ev) {
+        if (!ev.target || !this.domDragFrom)
+            throw new Error("Drop event, but target and source are missing");
+        this.domDragFrom.remove();
+        this.update();
+        if (this.inputList.children.length === 1)
+            this.domEmptyList.classList.remove('hidden');
     }
 }
 class StationPicker extends Picker {
     constructor() {
         super('station', ['click', 'input']);
-        this.filterTimeout = 0;
-        this.domChoices = {};
-        this.inputFilter = DOM.require('input', this.dom);
-        this.inputStation = DOM.require('.picker', this.dom);
-        Object.keys(RAG.database.stations).forEach(code => {
-            let station = RAG.database.stations[code];
-            let letter = station[0];
-            let group = this.domChoices[letter];
-            if (!group) {
-                let header = document.createElement('dt');
-                header.innerText = letter.toUpperCase();
-                group = this.domChoices[letter] = document.createElement('dl');
-                group.appendChild(header);
-                this.inputStation.appendChild(group);
-            }
-            let entry = document.createElement('dd');
-            entry.innerText = RAG.database.stations[code];
-            entry.dataset['code'] = code;
-            group.appendChild(entry);
-        });
     }
     open(target) {
         super.open(target);
-        this.inputFilter.focus();
-        let code = RAG.state.stationCode;
-        let entry = this.inputStation.querySelector(`dd[data-code=${code}]`);
-        if (entry)
-            this.select(entry);
-    }
-    select(option) {
-        if (this.domSelected)
-            this.domSelected.removeAttribute('selected');
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
+        RAG.views.stationList.attach(this);
+        RAG.views.stationList.selectCode(RAG.state.stationCode);
     }
     onChange(ev) {
-        let target = ev.target;
-        if (!target)
-            return;
-        else if (target === this.inputFilter) {
-            window.clearTimeout(this.filterTimeout);
-            this.filterTimeout = window.setTimeout(this.filter.bind(this), 500);
-        }
-        else if (ev.type.toLowerCase() === 'submit')
-            this.filter();
-        else if (target.dataset['code']) {
-            this.select(target);
+        RAG.views.stationList.onChange(ev, target => {
+            RAG.views.stationList.selectEntry(target);
             RAG.state.stationCode = target.dataset['code'];
             RAG.views.editor.setElementsText('station', target.innerText);
-        }
-    }
-    filter() {
-        window.clearTimeout(this.filterTimeout);
-        let filter = this.inputFilter.value.toLowerCase();
-        let letters = this.inputStation.children;
-        this.inputStation.classList.add('hidden');
-        for (let i = 0; i < letters.length; i++) {
-            let letter = letters[i];
-            let entries = letters[i].children;
-            let count = entries.length - 1;
-            let hidden = 0;
-            for (let j = 1; j < entries.length; j++) {
-                let entry = entries[j];
-                if (entry.innerText.toLowerCase().indexOf(filter) >= 0)
-                    entry.classList.remove('hidden');
-                else {
-                    entry.classList.add('hidden');
-                    hidden++;
-                }
-            }
-            if (hidden >= count)
-                letter.classList.add('hidden');
-            else
-                letter.classList.remove('hidden');
-        }
-        this.inputStation.classList.remove('hidden');
+        });
     }
 }
 class TimePicker extends Picker {
@@ -915,6 +901,7 @@ class Views {
         this.editor = new Editor();
         this.marquee = new Marquee();
         this.toolbar = new Toolbar();
+        this.stationList = new StationList();
         this.pickers = {};
         [
             new CoachPicker(),

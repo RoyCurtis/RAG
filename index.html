@@ -128,11 +128,7 @@
     <header>Pick a station</header>
 
     <form>
-      <input type="text" placeholder="Filter stations..."/>
 
-      <div class="picker" title="Station name">
-
-      </div>
     </form>
   </div>
 
@@ -143,12 +139,6 @@
       <dl class="stations" title="List of stations in this list">
         <dt>Please add at least one station to this list</dt>
       </dl>
-
-      <input type="text" placeholder="Filter stations..."/>
-
-      <div class="picker" title="Station name">
-
-      </div>
     </form>
   </div>
 
@@ -158,6 +148,16 @@
     <form>
       <input type="time" title="Time" pattern="[0-9]{2}:[0-9]{2}" required>
     </form>
+  </div>
+
+  <!-- UI definitions for common controls -->
+
+  <div id="stationList" class="hidden">
+    <input type="text" placeholder="Filter stations..."/>
+
+    <div class="picker" title="List of stations to pick from">
+
+    </div>
   </div>
 
 </body>

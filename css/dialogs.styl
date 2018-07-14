@@ -104,35 +104,38 @@
         &.dragging
           opacity 0.5
 
-    input
-      background #111
-      border     none
-      color      inherit
-      font-size  inherit
-      padding    0.5em 1em
-      width      100%
+    #stationList
+      display   flex
+      flex-flow column
 
-    .picker
-      overflow auto
+      input
+        background #111
+        border     none
+        color      inherit
+        font-size  inherit
+        padding    0.5em 1em
+        width      100%
 
-      dl
-        display   flex
-        flex-wrap wrap
+      .picker
+        overflow auto
 
-      dt
-        background  black
-        box-shadow  0 5px 10px rgba(0, 0, 0, 0.5)
-        font-weight bold
-        padding     0.5em 1em
-        position    sticky
-        top         0
-        width       100%
+        dl
+          display   flex
+          flex-wrap wrap
 
-      dd
-        cursor  pointer
-        padding 1em
+        dt
+          background  black
+          box-shadow  0 5px 10px rgba(0, 0, 0, 0.5)
+          font-weight bold
+          padding     0.5em 1em
+          position    sticky
+          top         0
+          width       100%
 
-        &:hover,
-        &[selected]
-          background #CC7E00
+        dd
+          cursor  pointer
+          padding 1em
 
+          &:hover,
+          &[selected]
+            background #CC7E00
