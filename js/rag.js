@@ -191,7 +191,7 @@ class ExcusePicker extends Picker {
         RAG.database.excuses.forEach(value => {
             let excuse = document.createElement('dd');
             excuse.innerText = value;
-            excuse.title = `Click to select this excuse ('${value}')`;
+            excuse.title = 'Click to select this excuse';
             excuse.tabIndex = -1;
             this.inputExcuse.appendChild(excuse);
         });
@@ -220,7 +220,6 @@ class ExcusePicker extends Picker {
     onInput(ev) {
         let key = ev.key;
         let focused = document.activeElement;
-        let next;
         if (!focused)
             return;
         if (focused === this.inputFilter) {
@@ -230,29 +229,23 @@ class ExcusePicker extends Picker {
         if (focused !== this.inputFilter)
             if (key.length === 1 || key === 'Backspace')
                 return this.inputFilter.focus();
-        if (focused === this.inputExcuse) {
-            if (key === 'ArrowLeft')
-                next = focused.lastElementChild;
-            else if (key === 'ArrowRight')
-                next = focused.firstElementChild;
-            else
-                return;
-        }
-        else if (focused.parentElement === this.inputExcuse) {
+        if (focused.parentElement === this.inputExcuse)
             if (key === 'Enter')
                 return this.select(focused);
-            else if (key === 'ArrowLeft')
-                next = focused.previousElementSibling
-                    || focused.parentElement.lastElementChild;
-            else if (key === 'ArrowRight')
-                next = focused.nextElementSibling
-                    || focused.parentElement.firstElementChild;
+        if (key === 'ArrowLeft' || key === 'ArrowRight') {
+            let dir = (key === 'ArrowLeft') ? -1 : 1;
+            let nav = null;
+            if (focused.parentElement === this.inputExcuse)
+                nav = DOM.getNextVisibleSibling(focused, dir);
+            else if (focused === this.domSelected)
+                nav = DOM.getNextVisibleSibling(this.domSelected, dir);
+            else if (dir === -1)
+                nav = DOM.getNextVisibleSibling(this.inputExcuse.firstElementChild, dir);
             else
-                return;
+                nav = DOM.getNextVisibleSibling(this.inputExcuse.lastElementChild, dir);
+            if (nav)
+                nav.focus();
         }
-        else
-            return;
-        next.focus();
     }
     filter() {
         window.clearTimeout(this.filterTimeout);
@@ -1058,6 +1051,26 @@ class DOM {
             .replace(/[\n\r]/gi, '')
             .replace(/\s{2,}/gi, ' ')
             .replace(/\s([.,])/gi, '$1');
+    }
+    static getNextVisibleSibling(from, dir) {
+        let current = from;
+        let parent = from.parentElement;
+        if (!parent)
+            return null;
+        while (true) {
+            if (dir < 0)
+                current = current.previousElementSibling
+                    || parent.lastElementChild;
+            else if (dir > 0)
+                current = current.nextElementSibling
+                    || parent.firstElementChild;
+            else
+                throw new Error("Direction needs to be -1 or 1");
+            if (current === from)
+                return null;
+            if (!current.classList.contains('hidden'))
+                return current;
+        }
     }
     static swap(obj1, obj2) {
         if (!obj1.parentNode || !obj2.parentNode)

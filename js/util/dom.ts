@@ -114,6 +114,37 @@ class DOM
             .replace(/\s([.,])/gi, '$1');
     }
 
+    public static getNextVisibleSibling(from: HTMLElement, dir: number)
+        : HTMLElement | null
+    {
+        let current = from;
+        let parent  = from.parentElement;
+
+        if (!parent)
+            return null;
+
+        while (true)
+        {
+            // Proceed to next element, or wrap around if hit the end of parent
+            if      (dir < 0)
+                current = current.previousElementSibling as HTMLElement
+                    || parent.lastElementChild as HTMLElement;
+            else if (dir > 0)
+                current = current.nextElementSibling as HTMLElement
+                    || parent.firstElementChild as HTMLElement;
+            else
+                throw new Error("Direction needs to be -1 or 1");
+
+            // If we've come back to the starting element, nothing was found
+            if (current === from)
+                return null;
+
+            // If this element isn't hidden, return it!
+            if ( !current.classList.contains('hidden') )
+                return current;
+        }
+    }
+
     /**
      * Swaps one element with another.
      *

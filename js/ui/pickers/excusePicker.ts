@@ -24,11 +24,10 @@ class ExcusePicker extends Picker
 
         RAG.database.excuses.forEach(value =>
         {
-            // TODO: Change this to dl and dd; option elements don't work on iOS
             let excuse = document.createElement('dd');
 
             excuse.innerText = value;
-            excuse.title     = `Click to select this excuse ('${value}')`;
+            excuse.title     = 'Click to select this excuse';
             excuse.tabIndex  = -1;
 
             this.inputExcuse.appendChild(excuse);
@@ -76,8 +75,7 @@ class ExcusePicker extends Picker
     {
         // TODO: fix this not really working with hidden elements (e.g. during search)
         let key     = ev.key;
-        let focused = document.activeElement;
-        let next : HTMLElement;
+        let focused = document.activeElement as HTMLElement;
 
         if (!focused) return;
 
@@ -94,37 +92,37 @@ class ExcusePicker extends Picker
         if (key.length === 1 || key === 'Backspace')
             return this.inputFilter.focus();
 
-        // Handle navigation when container is focused
-        if (focused === this.inputExcuse)
+        // Handle pressing ENTER after keyboard navigating to an excuse
+        if (focused.parentElement === this.inputExcuse)
+        if (key === 'Enter')
+            return this.select(focused as HTMLElement);
+
+        // Handle navigation when container or item is focused
+        if (key === 'ArrowLeft' || key === 'ArrowRight')
         {
-            if      (key === 'ArrowLeft')
-                next = focused.lastElementChild! as HTMLElement;
-            else if (key === 'ArrowRight')
-                next = focused.firstElementChild! as HTMLElement;
-            else return;
+            let dir = (key === 'ArrowLeft') ? -1 : 1;
+            let nav : HTMLElement | null = null;
+
+            // Navigate relative to currently focused element
+            if      (focused.parentElement === this.inputExcuse)
+                nav = DOM.getNextVisibleSibling(focused, dir);
+
+            // Navigate relative to currently selected element
+            else if (focused === this.domSelected)
+                nav = DOM.getNextVisibleSibling(this.domSelected, dir);
+
+            // Navigate relevant to beginning or end of container
+            else if (dir === -1)
+                nav = DOM.getNextVisibleSibling(
+                    this.inputExcuse.firstElementChild! as HTMLElement, dir
+                );
+            else
+                nav = DOM.getNextVisibleSibling(
+                    this.inputExcuse.lastElementChild! as HTMLElement, dir
+                );
+
+            if (nav) nav.focus();
         }
-
-        // Handle navigation when item is focused
-        else if (focused.parentElement === this.inputExcuse)
-        {
-            if (key === 'Enter')
-                return this.select(focused as HTMLElement);
-
-            // Wrap around when navigating past beginning or end of list
-            else if (key === 'ArrowLeft')
-                next = focused.previousElementSibling           as HTMLElement
-                    || focused.parentElement!.lastElementChild! as HTMLElement;
-
-            else if (key === 'ArrowRight')
-                next = focused.nextElementSibling                as HTMLElement
-                    || focused.parentElement!.firstElementChild! as HTMLElement;
-
-            else return;
-        }
-
-        else return;
-
-        next.focus();
     }
 
     private filter() : void

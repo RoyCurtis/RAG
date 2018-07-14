@@ -72,6 +72,7 @@
 #excusePicker form .picker,
 #namedPicker form .picker,
 #servicePicker form .picker {
+  flex-grow: 1;
   overflow: auto;
 }
 #excusePicker form .picker dd,
