@@ -29,6 +29,7 @@ class CoachPicker extends Picker
         super.open(target);
 
         this.inputLetter.value = RAG.state.coach;
+        this.inputLetter.focus();
     }
 
     protected onChange(_: Event)

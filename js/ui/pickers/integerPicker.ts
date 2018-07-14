@@ -50,6 +50,7 @@ class IntegerPicker extends Picker
         this.inputDigit.min   = min;
         this.inputDigit.max   = max;
         this.inputDigit.value = value.toString();
+        this.inputDigit.focus();
     }
 
     protected onChange(_: Event) : void

@@ -24,6 +24,7 @@ class PlatformPicker extends Picker
 
         this.inputDigit.value  = value[0];
         this.inputLetter.value = value[1];
+        this.inputDigit.focus();
     }
 
     protected onChange(_: Event)

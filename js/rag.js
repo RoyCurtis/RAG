@@ -172,6 +172,7 @@ class CoachPicker extends Picker {
     open(target) {
         super.open(target);
         this.inputLetter.value = RAG.state.coach;
+        this.inputLetter.focus();
     }
     onChange(_) {
         RAG.state.coach = this.inputLetter.value;
@@ -244,6 +245,7 @@ class IntegerPicker extends Picker {
         this.inputDigit.min = min;
         this.inputDigit.max = max;
         this.inputDigit.value = value.toString();
+        this.inputDigit.focus();
     }
     onChange(_) {
         if (!this.id)
@@ -360,6 +362,7 @@ class PlatformPicker extends Picker {
         let value = RAG.state.platform;
         this.inputDigit.value = value[0];
         this.inputLetter.value = value[1];
+        this.inputDigit.focus();
     }
     onChange(_) {
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
@@ -543,6 +546,7 @@ class TimePicker extends Picker {
     open(target) {
         super.open(target);
         this.inputTime.value = RAG.state.time;
+        this.inputTime.focus();
     }
     onChange(_) {
         RAG.state.time = this.inputTime.value;

@@ -19,6 +19,7 @@ class TimePicker extends Picker
         super.open(target);
 
         this.inputTime.value = RAG.state.time;
+        this.inputTime.focus();
     }
 
     protected onChange(_: Event)
