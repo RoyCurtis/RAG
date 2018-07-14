@@ -67,27 +67,26 @@
 #servicePicker form {
   display: flex;
   flex-flow: column;
+  flex-grow: 1;
 }
 #excusePicker form .picker,
 #namedPicker form .picker,
 #servicePicker form .picker {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
   overflow: auto;
 }
-#excusePicker form .picker option,
-#namedPicker form .picker option,
-#servicePicker form .picker option {
+#excusePicker form .picker dd,
+#namedPicker form .picker dd,
+#servicePicker form .picker dd {
   cursor: pointer;
+  display: inline-block;
   padding: 1em;
 }
-#excusePicker form .picker option:hover,
-#namedPicker form .picker option:hover,
-#servicePicker form .picker option:hover,
-#excusePicker form .picker option[selected],
-#namedPicker form .picker option[selected],
-#servicePicker form .picker option[selected] {
+#excusePicker form .picker dd:hover,
+#namedPicker form .picker dd:hover,
+#servicePicker form .picker dd:hover,
+#excusePicker form .picker dd[selected],
+#namedPicker form .picker dd[selected],
+#servicePicker form .picker dd[selected] {
   background: #cc7e00;
 }
 #phrasesetPicker {

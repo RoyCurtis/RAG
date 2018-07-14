@@ -11,7 +11,7 @@ class ExcusePicker extends Picker
     private readonly inputExcuse : HTMLElement;
 
     /** Currently selected excuse, if any */
-    private domSelected?  : HTMLOptionElement;
+    private domSelected?  : HTMLElement;
     /** Current filter box timeout reference */
     private filterTimeout : number = 0;
 
@@ -25,12 +25,11 @@ class ExcusePicker extends Picker
         RAG.database.excuses.forEach(value =>
         {
             // TODO: Change this to dl and dd; option elements don't work on iOS
-            let excuse = document.createElement('option');
+            let excuse = document.createElement('dd');
 
-            excuse.text     = value;
-            excuse.value    = value;
-            excuse.title    = value;
-            excuse.tabIndex = -1;
+            excuse.innerText = value;
+            excuse.title     = `Click to select this excuse ('${value}')`;
+            excuse.tabIndex  = -1;
 
             this.inputExcuse.appendChild(excuse);
         });
@@ -45,9 +44,9 @@ class ExcusePicker extends Picker
         // Pre-select the currently used excuse
         for (let key in this.inputExcuse.children)
         {
-            let excuse = this.inputExcuse.children[key] as HTMLOptionElement;
+            let excuse = this.inputExcuse.children[key] as HTMLElement;
 
-            if (value !== excuse.value)
+            if (value !== excuse.innerText)
                 continue;
 
             this.visualSelect(excuse);
@@ -69,18 +68,18 @@ class ExcusePicker extends Picker
             this.filter();
 
         // Handle excuse being clicked
-        else if (target instanceof HTMLOptionElement)
+        else if (target.parentElement === this.inputExcuse)
             this.select(target);
     }
 
     protected onInput(ev: KeyboardEvent) : void
     {
+        // TODO: fix this not really working with hidden elements (e.g. during search)
         let key     = ev.key;
         let focused = document.activeElement;
         let next : HTMLElement;
 
-        if (!focused)
-            return;
+        if (!focused) return;
 
         // Handle typing into filter box
         if (focused === this.inputFilter)
@@ -90,12 +89,11 @@ class ExcusePicker extends Picker
             this.filterTimeout = window.setTimeout(this.filter.bind(this), 500);
         }
 
-        // If typing, redirect to input filter box
+        // Redirect typing to input filter box
         if (focused !== this.inputFilter)
         if (key.length === 1 || key === 'Backspace')
             return this.inputFilter.focus();
 
-        // TODO: fix this not really working with hidden elements (e.g. during search)
         // Handle navigation when container is focused
         if (focused === this.inputExcuse)
         {
@@ -110,7 +108,7 @@ class ExcusePicker extends Picker
         else if (focused.parentElement === this.inputExcuse)
         {
             if (key === 'Enter')
-                return this.select(focused as HTMLOptionElement);
+                return this.select(focused as HTMLElement);
 
             // Wrap around when navigating past beginning or end of list
             else if (key === 'ArrowLeft')
@@ -157,21 +155,21 @@ class ExcusePicker extends Picker
     }
 
     /** Visually changes the current selection, and updates the state and editor */
-    private select(option: HTMLOptionElement) : void
+    private select(entry: HTMLElement) : void
     {
-        this.visualSelect(option);
+        this.visualSelect(entry);
 
-        RAG.state.excuse = option.value;
+        RAG.state.excuse = entry.innerText;
         RAG.views.editor.setElementsText('excuse', RAG.state.excuse);
     }
 
     /** Visually changes the currently selected element */
-    private visualSelect(option: HTMLOptionElement) : void
+    private visualSelect(entry: HTMLElement) : void
     {
         if (this.domSelected)
             this.domSelected.removeAttribute('selected');
 
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
+        this.domSelected          = entry;
+        entry.setAttribute('selected', 'true');
     }
 }

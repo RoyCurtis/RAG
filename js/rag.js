@@ -189,10 +189,9 @@ class ExcusePicker extends Picker {
         this.inputFilter = DOM.require('input', this.dom);
         this.inputExcuse = DOM.require('.picker', this.dom);
         RAG.database.excuses.forEach(value => {
-            let excuse = document.createElement('option');
-            excuse.text = value;
-            excuse.value = value;
-            excuse.title = value;
+            let excuse = document.createElement('dd');
+            excuse.innerText = value;
+            excuse.title = `Click to select this excuse ('${value}')`;
             excuse.tabIndex = -1;
             this.inputExcuse.appendChild(excuse);
         });
@@ -202,7 +201,7 @@ class ExcusePicker extends Picker {
         let value = RAG.state.excuse;
         for (let key in this.inputExcuse.children) {
             let excuse = this.inputExcuse.children[key];
-            if (value !== excuse.value)
+            if (value !== excuse.innerText)
                 continue;
             this.visualSelect(excuse);
             excuse.focus();
@@ -215,7 +214,7 @@ class ExcusePicker extends Picker {
             return;
         else if (ev.type.toLowerCase() === 'submit')
             this.filter();
-        else if (target instanceof HTMLOptionElement)
+        else if (target.parentElement === this.inputExcuse)
             this.select(target);
     }
     onInput(ev) {
@@ -269,16 +268,19 @@ class ExcusePicker extends Picker {
         }
         this.inputExcuse.classList.remove('hidden');
     }
-    select(option) {
-        this.visualSelect(option);
-        RAG.state.excuse = option.value;
+    select(entry) {
+        this.visualSelect(entry);
+        RAG.state.excuse = entry.innerText;
         RAG.views.editor.setElementsText('excuse', RAG.state.excuse);
     }
-    visualSelect(option) {
-        if (this.domSelected)
+    visualSelect(entry) {
+        if (this.domSelected) {
+            this.domSelected.tabIndex = -1;
             this.domSelected.removeAttribute('selected');
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
+        }
+        this.domSelected = entry;
+        this.domSelected.tabIndex = 50;
+        entry.setAttribute('selected', 'true');
     }
 }
 class IntegerPicker extends Picker {
