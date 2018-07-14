@@ -5,27 +5,28 @@
 /** Controller for the excuse picker dialog */
 class ExcusePicker extends Picker
 {
-    private readonly domChoices:   HTMLOptionElement[];
-    private readonly inputService: HTMLElement;
+    /** Reference to container element for all the pickable excuses */
+    private readonly inputService : HTMLElement;
 
-    private domSelected?: HTMLOptionElement;
+    /** Currently selected excuse, if any */
+    private domSelected? : HTMLOptionElement;
 
     constructor()
     {
         super('excuse', ['click']);
 
-        this.domChoices   = [];
         this.inputService = DOM.require('.picker', this.dom);
 
         RAG.database.excuses.forEach(value =>
         {
+            // TODO: Change this to dl and dd; option elements don't work on iOS
             let excuse = document.createElement('option');
 
-            excuse.text  = value;
-            excuse.value = value;
-            excuse.title = value;
+            excuse.text     = value;
+            excuse.value    = value;
+            excuse.title    = value;
+            excuse.tabIndex = -1;
 
-            this.domChoices.push(excuse);
             this.inputService.appendChild(excuse);
         });
     }
@@ -36,14 +37,18 @@ class ExcusePicker extends Picker
 
         let value = RAG.state.excuse;
 
-        this.domChoices.some(excuse =>
+        // Pre-select the currently used excuse
+        for (let key in this.inputService.children)
         {
-            if (value !== excuse.value)
-                return false;
+            let excuse = this.inputService.children[key] as HTMLOptionElement;
 
-            this.select(excuse);
-            return true;
-        });
+            if (value !== excuse.value)
+                continue;
+
+            this.visualSelect(excuse);
+            excuse.focus();
+            break;
+        }
     }
 
     protected onChange(ev: Event)
@@ -51,21 +56,63 @@ class ExcusePicker extends Picker
         let target = ev.target as HTMLOptionElement;
 
         // Ignore if option element wasn't clicked
-        if (!target || !target.value)
-            return;
-        else
+        if (target && target.value)
             this.select(target);
+    }
 
-        RAG.state.excuse = target.value;
+    protected onInput(ev: KeyboardEvent) : void
+    {
+        let key     = ev.key;
+        let focused = document.activeElement;
+        let next : HTMLElement;
+
+        if (!focused)
+            return;
+
+        // Handle navigation when container is focused
+        if (focused === this.inputService)
+        {
+            if      (key === 'ArrowLeft')
+                next = focused.lastElementChild! as HTMLElement;
+            else if (key === 'ArrowRight')
+                next = focused.firstElementChild! as HTMLElement;
+            else return;
+        }
+
+        // Handle navigation when item is focused
+        else if (focused.parentElement === this.inputService)
+        {
+            if (key === 'Enter')
+                return this.select(focused as HTMLOptionElement);
+
+            // Wrap around when navigating past beginning or end of list
+            else if (key === 'ArrowLeft')
+                next = focused.previousElementSibling           as HTMLElement
+                    || focused.parentElement!.lastElementChild! as HTMLElement;
+
+            else if (key === 'ArrowRight')
+                next = focused.nextElementSibling                as HTMLElement
+                    || focused.parentElement!.firstElementChild! as HTMLElement;
+
+            else return;
+        }
+        
+        else return;
+
+        next.focus();
+    }
+
+    /** Visually changes the current selection, and updates the state and editor */
+    private select(option: HTMLOptionElement) : void
+    {
+        this.visualSelect(option);
+
+        RAG.state.excuse = option.value;
         RAG.views.editor.setElementsText('excuse', RAG.state.excuse);
     }
 
-    protected onInput(_: KeyboardEvent) : void
-    {
-        // no-op
-    }
-
-    private select(option: HTMLOptionElement) : void
+    /** Visually changes the currently selected element */
+    private visualSelect(option: HTMLOptionElement) : void
     {
         if (this.domSelected)
             this.domSelected.removeAttribute('selected');

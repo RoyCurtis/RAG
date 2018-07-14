@@ -111,12 +111,13 @@ class Picker {
         this.xmlTag = xmlTag;
         let self = this;
         events.forEach(event => {
-            this.domForm.addEventListener(event, this.onChange.bind(self));
+            self.domForm.addEventListener(event, self.onChange.bind(self));
         });
         this.domForm.onsubmit = ev => {
             ev.preventDefault();
             self.onChange(ev);
         };
+        this.domForm.onkeydown = self.onInput.bind(self);
     }
     open(target) {
         this.dom.classList.remove('hidden');
@@ -178,45 +179,79 @@ class CoachPicker extends Picker {
         RAG.state.coach = this.inputLetter.value;
         RAG.views.editor.setElementsText('coach', RAG.state.coach);
     }
+    onInput(_) {
+    }
 }
 class ExcusePicker extends Picker {
     constructor() {
         super('excuse', ['click']);
-        this.domChoices = [];
         this.inputService = DOM.require('.picker', this.dom);
         RAG.database.excuses.forEach(value => {
             let excuse = document.createElement('option');
             excuse.text = value;
             excuse.value = value;
             excuse.title = value;
-            this.domChoices.push(excuse);
+            excuse.tabIndex = -1;
             this.inputService.appendChild(excuse);
         });
     }
     open(target) {
         super.open(target);
         let value = RAG.state.excuse;
-        this.domChoices.some(excuse => {
+        for (let key in this.inputService.children) {
+            let excuse = this.inputService.children[key];
             if (value !== excuse.value)
-                return false;
-            this.select(excuse);
-            return true;
-        });
+                continue;
+            this.visualSelect(excuse);
+            excuse.focus();
+            break;
+        }
+    }
+    onChange(ev) {
+        let target = ev.target;
+        if (target && target.value)
+            this.select(target);
+    }
+    onInput(ev) {
+        let key = ev.key;
+        let focused = document.activeElement;
+        let next;
+        if (!focused)
+            return;
+        if (focused === this.inputService) {
+            if (key === 'ArrowLeft')
+                next = focused.lastElementChild;
+            else if (key === 'ArrowRight')
+                next = focused.firstElementChild;
+            else
+                return;
+        }
+        else if (focused.parentElement === this.inputService) {
+            if (key === 'Enter')
+                return this.select(focused);
+            else if (key === 'ArrowLeft')
+                next = focused.previousElementSibling
+                    || focused.parentElement.lastElementChild;
+            else if (key === 'ArrowRight')
+                next = focused.nextElementSibling
+                    || focused.parentElement.firstElementChild;
+            else
+                return;
+        }
+        else
+            return;
+        next.focus();
     }
     select(option) {
+        this.visualSelect(option);
+        RAG.state.excuse = option.value;
+        RAG.views.editor.setElementsText('excuse', RAG.state.excuse);
+    }
+    visualSelect(option) {
         if (this.domSelected)
             this.domSelected.removeAttribute('selected');
         this.domSelected = option;
         option.setAttribute('selected', 'true');
-    }
-    onChange(ev) {
-        let target = ev.target;
-        if (!target || !target.value)
-            return;
-        else
-            this.select(target);
-        RAG.state.excuse = target.value;
-        RAG.views.editor.setElementsText('excuse', RAG.state.excuse);
     }
 }
 class IntegerPicker extends Picker {
@@ -267,6 +302,8 @@ class IntegerPicker extends Picker {
             .getElementsByQuery(`[data-type=integer][data-id=${this.id}]`)
             .forEach(element => element.textContent = intStr);
     }
+    onInput(_) {
+    }
 }
 class NamedPicker extends Picker {
     constructor() {
@@ -292,12 +329,6 @@ class NamedPicker extends Picker {
             return true;
         });
     }
-    select(option) {
-        if (this.domSelected)
-            this.domSelected.removeAttribute('selected');
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
-    }
     onChange(ev) {
         let target = ev.target;
         if (!target || !target.value)
@@ -306,6 +337,14 @@ class NamedPicker extends Picker {
             this.select(target);
         RAG.state.named = target.value;
         RAG.views.editor.setElementsText('named', RAG.state.named);
+    }
+    onInput(_) {
+    }
+    select(option) {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+        this.domSelected = option;
+        option.setAttribute('selected', 'true');
     }
 }
 class PhrasesetPicker extends Picker {
@@ -335,12 +374,6 @@ class PhrasesetPicker extends Picker {
                 this.select(phrase);
         }
     }
-    select(option) {
-        if (this.domSelected)
-            this.domSelected.removeAttribute('selected');
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
-    }
     onChange(ev) {
         let target = ev.target;
         if (!target || !target.dataset['idx'] || !this.currentRef)
@@ -349,6 +382,14 @@ class PhrasesetPicker extends Picker {
         RAG.state.setPhrasesetIdx(this.currentRef, idx);
         RAG.views.editor.closeDialog();
         RAG.views.editor.refreshPhraseset(this.currentRef);
+    }
+    onInput(_) {
+    }
+    select(option) {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+        this.domSelected = option;
+        option.setAttribute('selected', 'true');
     }
 }
 class PlatformPicker extends Picker {
@@ -367,6 +408,8 @@ class PlatformPicker extends Picker {
     onChange(_) {
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
         RAG.views.editor.setElementsText('platform', RAG.state.platform.join(''));
+    }
+    onInput(_) {
     }
 }
 class ServicePicker extends Picker {
@@ -393,12 +436,6 @@ class ServicePicker extends Picker {
             return true;
         });
     }
-    select(option) {
-        if (this.domSelected)
-            this.domSelected.removeAttribute('selected');
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
-    }
     onChange(ev) {
         let target = ev.target;
         if (!target || !target.value)
@@ -407,6 +444,14 @@ class ServicePicker extends Picker {
             this.select(target);
         RAG.state.service = target.value;
         RAG.views.editor.setElementsText('service', RAG.state.service);
+    }
+    onInput(_) {
+    }
+    select(option) {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+        this.domSelected = option;
+        option.setAttribute('selected', 'true');
     }
 }
 class StationListPicker extends Picker {
@@ -514,6 +559,8 @@ class StationListPicker extends Picker {
         if (this.inputList.children.length === 1)
             this.domEmptyList.classList.remove('hidden');
     }
+    onInput(_) {
+    }
 }
 class StationPicker extends Picker {
     constructor() {
@@ -537,6 +584,8 @@ class StationPicker extends Picker {
                 .forEach(element => element.textContent = target.innerText);
         });
     }
+    onInput(_) {
+    }
 }
 class TimePicker extends Picker {
     constructor() {
@@ -552,13 +601,15 @@ class TimePicker extends Picker {
         RAG.state.time = this.inputTime.value;
         RAG.views.editor.setElementsText('time', RAG.state.time.toString());
     }
+    onInput(_) {
+    }
 }
 class ElementProcessors {
     static coach(ctx) {
         ctx.newElement.textContent = RAG.state.coach;
     }
     static excuse(ctx) {
-        ctx.newElement.textContent = RAG.database.pickExcuse();
+        ctx.newElement.textContent = RAG.state.excuse;
     }
     static integer(ctx) {
         let id = DOM.requireAttrValue(ctx.xmlElement, 'id');
