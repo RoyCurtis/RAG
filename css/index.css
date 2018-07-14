@@ -320,6 +320,7 @@
   position: absolute;
 }
 * {
+  -webkit-overflow-scrolling: touch;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
