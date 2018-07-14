@@ -179,10 +179,11 @@ class State
     {
         if (!this._time)
         {
-            // TODO: make this instead pick a random time between 1 and 15 minutes ahead
-            // of the current time
-            let hour   = Random.int(0, 23).toString().padStart(2, '0');
-            let minute = Random.int(0, 59).toString().padStart(2, '0');
+            // https://stackoverflow.com/a/1214753
+            let offset = Random.int(0, 59);
+            let time   = new Date( new Date().getTime() + offset * 60000);
+            let hour   = time.getHours().toString().padStart(2, '0');
+            let minute = time.getMinutes().toString().padStart(2, '0');
 
             this._time = `${hour}:${minute}`;
         }

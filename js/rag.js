@@ -1189,8 +1189,10 @@ class State {
     }
     get time() {
         if (!this._time) {
-            let hour = Random.int(0, 23).toString().padStart(2, '0');
-            let minute = Random.int(0, 59).toString().padStart(2, '0');
+            let offset = Random.int(0, 59);
+            let time = new Date(new Date().getTime() + offset * 60000);
+            let hour = time.getHours().toString().padStart(2, '0');
+            let minute = time.getMinutes().toString().padStart(2, '0');
             this._time = `${hour}:${minute}`;
         }
         return this._time;
