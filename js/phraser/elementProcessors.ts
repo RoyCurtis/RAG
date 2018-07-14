@@ -125,10 +125,13 @@ class ElementProcessors
     /** Picks a station name */
     public static station(ctx: PhraseContext)
     {
-        let code = RAG.state.stationCode;
+        let context = DOM.requireAttrValue(ctx.xmlElement, 'context');
+        let code    = RAG.state.getStation(context);
 
-        ctx.newElement.title       = "Click to change this station";
+        ctx.newElement.title       = `Click to change this station ('${context}')`;
         ctx.newElement.textContent = RAG.database.getStation(code);
+
+        ctx.newElement.dataset['context'] = context;
     }
 
     /** Picks a selection of stations */

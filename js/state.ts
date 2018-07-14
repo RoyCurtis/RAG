@@ -6,6 +6,7 @@ class State
     private _collapsibles : Dictionary<boolean>  = {};
     private _integers     : Dictionary<number>   = {};
     private _phrasesets   : Dictionary<number>   = {};
+    private _stations     : Dictionary<string>   = {};
     private _stationLists : Dictionary<string[]> = {};
 
     private _coach?       : string;
@@ -13,7 +14,6 @@ class State
     private _platform?    : Platform;
     private _named?       : string;
     private _service?     : string;
-    private _stationCode? : string;
     private _time?        : string;
 
     public getCollapsed(ref: string, chance: number) : boolean
@@ -63,6 +63,20 @@ class State
     public setPhrasesetIdx(ref: string, idx: number) : void
     {
         this._phrasesets[ref] = idx;
+    }
+
+    public getStation(context: string) : string
+    {
+        if (this._stations[context] !== undefined)
+            return this._stations[context];
+
+        this._stations[context] = RAG.database.pickStationCode();
+        return this._stations[context];
+    }
+
+    public setStation(context: string, code: string) : void
+    {
+        this._stations[context] = code;
     }
 
     public getStationList(id: string, min: number, max: number) : string[]
@@ -159,20 +173,6 @@ class State
     set service(value: string)
     {
         this._service = value;
-    }
-
-    get stationCode() : string
-    {
-        if (this._stationCode)
-            return this._stationCode;
-
-        this._stationCode = RAG.database.pickStationCode();
-        return this._stationCode;
-    }
-
-    set stationCode(value: string)
-    {
-        this._stationCode = value;
     }
 
     get time() : string
