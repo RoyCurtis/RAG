@@ -20,6 +20,14 @@
   &.midHeight
     box-shadow 0 0 16px rgba(0, 0, 0, 0.5)
 
+.filterBox
+  background #000
+  border     none
+  color      inherit
+  font-size  inherit
+  padding    0.5em 1em
+  width      100%
+
 #coachPicker, #integerPicker, #platformPicker, #timePicker
   form
     display flex
@@ -37,12 +45,14 @@
   flex-flow column
 
   form
-    overflow auto
+    display   flex
+    flex-flow column
 
     .picker
       display         flex
       flex-wrap       wrap
       justify-content space-between
+      overflow        auto
 
       option
         cursor  pointer
@@ -107,14 +117,6 @@
     #stationList
       display   flex
       flex-flow column
-
-      input
-        background #111
-        border     none
-        color      inherit
-        font-size  inherit
-        padding    0.5em 1em
-        width      100%
 
       .picker
         overflow auto

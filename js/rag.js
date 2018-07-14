@@ -185,21 +185,23 @@ class CoachPicker extends Picker {
 class ExcusePicker extends Picker {
     constructor() {
         super('excuse', ['click']);
-        this.inputService = DOM.require('.picker', this.dom);
+        this.filterTimeout = 0;
+        this.inputFilter = DOM.require('input', this.dom);
+        this.inputExcuse = DOM.require('.picker', this.dom);
         RAG.database.excuses.forEach(value => {
             let excuse = document.createElement('option');
             excuse.text = value;
             excuse.value = value;
             excuse.title = value;
             excuse.tabIndex = -1;
-            this.inputService.appendChild(excuse);
+            this.inputExcuse.appendChild(excuse);
         });
     }
     open(target) {
         super.open(target);
         let value = RAG.state.excuse;
-        for (let key in this.inputService.children) {
-            let excuse = this.inputService.children[key];
+        for (let key in this.inputExcuse.children) {
+            let excuse = this.inputExcuse.children[key];
             if (value !== excuse.value)
                 continue;
             this.visualSelect(excuse);
@@ -209,7 +211,11 @@ class ExcusePicker extends Picker {
     }
     onChange(ev) {
         let target = ev.target;
-        if (target && target.value)
+        if (!target)
+            return;
+        else if (ev.type.toLowerCase() === 'submit')
+            this.filter();
+        else if (target instanceof HTMLOptionElement)
             this.select(target);
     }
     onInput(ev) {
@@ -218,7 +224,14 @@ class ExcusePicker extends Picker {
         let next;
         if (!focused)
             return;
-        if (focused === this.inputService) {
+        if (focused === this.inputFilter) {
+            window.clearTimeout(this.filterTimeout);
+            this.filterTimeout = window.setTimeout(this.filter.bind(this), 500);
+        }
+        if (focused !== this.inputFilter)
+            if (key.length === 1 || key === 'Backspace')
+                return this.inputFilter.focus();
+        if (focused === this.inputExcuse) {
             if (key === 'ArrowLeft')
                 next = focused.lastElementChild;
             else if (key === 'ArrowRight')
@@ -226,7 +239,7 @@ class ExcusePicker extends Picker {
             else
                 return;
         }
-        else if (focused.parentElement === this.inputService) {
+        else if (focused.parentElement === this.inputExcuse) {
             if (key === 'Enter')
                 return this.select(focused);
             else if (key === 'ArrowLeft')
@@ -241,6 +254,20 @@ class ExcusePicker extends Picker {
         else
             return;
         next.focus();
+    }
+    filter() {
+        window.clearTimeout(this.filterTimeout);
+        let filter = this.inputFilter.value.toLowerCase();
+        let excuses = this.inputExcuse.children;
+        this.inputExcuse.classList.add('hidden');
+        for (let i = 0; i < excuses.length; i++) {
+            let excuse = excuses[i];
+            if (excuse.innerText.toLowerCase().indexOf(filter) >= 0)
+                excuse.classList.remove('hidden');
+            else
+                excuse.classList.add('hidden');
+        }
+        this.inputExcuse.classList.remove('hidden');
     }
     select(option) {
         this.visualSelect(option);
