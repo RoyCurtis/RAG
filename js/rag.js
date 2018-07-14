@@ -132,17 +132,21 @@ class Picker {
         let dialogX = (rect.left | 0) - 8;
         let dialogY = rect.bottom | 0;
         let width = (rect.width | 0) + 16;
+        this.dom.style.height = null;
         if (!fullWidth) {
             this.dom.style.minWidth = `${width}px`;
             if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
                 dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
         }
-        if (midHeight) {
+        if (midHeight)
             dialogY = (this.dom.offsetHeight / 2) | 0;
-        }
         else if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
             dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
+            if (dialogY < 0) {
+                this.dom.style.height = (this.dom.offsetHeight + dialogY) + 'px';
+                dialogY = 0;
+            }
         }
         else
             this.domEditing.classList.add('above');
@@ -511,17 +515,23 @@ class StationListPicker extends Picker {
 class StationPicker extends Picker {
     constructor() {
         super('station', ['click', 'input']);
+        this.currentContext = '';
     }
     open(target) {
         super.open(target);
+        this.currentContext = DOM.requireData(target, 'context');
         RAG.views.stationList.attach(this);
-        RAG.views.stationList.selectCode(RAG.state.stationCode);
+        RAG.views.stationList.selectCode(RAG.state.getStation(this.currentContext));
     }
     onChange(ev) {
+        let self = this;
+        let query = `[data-type=station][data-context=${this.currentContext}]`;
         RAG.views.stationList.onChange(ev, target => {
             RAG.views.stationList.selectEntry(target);
-            RAG.state.stationCode = target.dataset['code'];
-            RAG.views.editor.setElementsText('station', target.innerText);
+            RAG.state.setStation(self.currentContext, target.dataset['code']);
+            RAG.views.editor
+                .getElementsByQuery(query)
+                .forEach(element => element.textContent = target.innerText);
         });
     }
 }
@@ -620,9 +630,11 @@ class ElementProcessors {
         ctx.newElement.textContent = RAG.state.service;
     }
     static station(ctx) {
-        let code = RAG.state.stationCode;
-        ctx.newElement.title = "Click to change this station";
+        let context = DOM.requireAttrValue(ctx.xmlElement, 'context');
+        let code = RAG.state.getStation(context);
+        ctx.newElement.title = `Click to change this station ('${context}')`;
         ctx.newElement.textContent = RAG.database.getStation(code);
+        ctx.newElement.dataset['context'] = context;
     }
     static stationlist(ctx) {
         let id = DOM.requireAttrValue(ctx.xmlElement, 'id');
@@ -1085,6 +1097,7 @@ class State {
         this._collapsibles = {};
         this._integers = {};
         this._phrasesets = {};
+        this._stations = {};
         this._stationLists = {};
     }
     getCollapsed(ref, chance) {
@@ -1116,6 +1129,15 @@ class State {
     }
     setPhrasesetIdx(ref, idx) {
         this._phrasesets[ref] = idx;
+    }
+    getStation(context) {
+        if (this._stations[context] !== undefined)
+            return this._stations[context];
+        this._stations[context] = RAG.database.pickStationCode();
+        return this._stations[context];
+    }
+    setStation(context, code) {
+        this._stations[context] = code;
     }
     getStationList(id, min, max) {
         if (this._stationLists[id] !== undefined)
@@ -1177,15 +1199,6 @@ class State {
     }
     set service(value) {
         this._service = value;
-    }
-    get stationCode() {
-        if (this._stationCode)
-            return this._stationCode;
-        this._stationCode = RAG.database.pickStationCode();
-        return this._stationCode;
-    }
-    set stationCode(value) {
-        this._stationCode = value;
     }
     get time() {
         if (!this._time) {

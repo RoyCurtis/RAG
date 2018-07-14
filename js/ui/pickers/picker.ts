@@ -68,7 +68,10 @@ abstract class Picker
         let dialogY   = rect.bottom | 0;
         let width     = (rect.width | 0) + 16;
 
-        // Adjust if off screen
+        // Reset any height overrides
+        this.dom.style.height = null;
+
+        // Adjust if horizontally off screen
         if (!fullWidth)
         {
             this.dom.style.minWidth = `${width}px`;
@@ -79,14 +82,21 @@ abstract class Picker
 
         // Handle pickers that aren't relative to selected element
         if (midHeight)
-        {
             dialogY = (this.dom.offsetHeight / 2) | 0;
-        }
 
+        // Adjust if vertically off screen
         else if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
         {
             dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
+
+            // Resize if dialog is still off-screen
+            if (dialogY < 0)
+            {
+                this.dom.style.height = (this.dom.offsetHeight + dialogY) + 'px';
+
+                dialogY = 0;
+            }
         }
         else
             this.domEditing.classList.add('above');
