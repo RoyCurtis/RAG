@@ -144,8 +144,8 @@
 
 <phrase id="debug_stationlists">
   (
-    <stationlist id="test" min="2" max="4"/>, <stationlist id="test" min="2" max="4"/>,
-    <stationlist id="test2" min="0" max="5"/>, <stationlist id="test2" min="0" max="5"/>,
+    <stationlist id="test" min="2" max="4"/>. <stationlist id="test" min="2" max="4"/>.
+    <stationlist id="test2" min="0" max="5"/>. <stationlist id="test2" min="0" max="5"/>.
   )
 </phrase>
 
