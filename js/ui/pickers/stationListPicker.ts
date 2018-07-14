@@ -21,7 +21,7 @@ class StationListPicker extends Picker
         this.domEmptyList = DOM.require('dt', this.inputList);
     }
 
-    public open(target: HTMLElement)
+    public open(target: HTMLElement) : void
     {
         super.open(target);
 
@@ -40,7 +40,7 @@ class StationListPicker extends Picker
         entries.forEach( this.addEntry.bind(this) );
     }
 
-    protected onChange(ev: Event)
+    protected onChange(ev: Event) : void
     {
         let self = this;
 
@@ -171,5 +171,10 @@ class StationListPicker extends Picker
 
         if (this.inputList.children.length === 1)
             this.domEmptyList.classList.remove('hidden');
+    }
+
+    protected onInput(_: KeyboardEvent) : void
+    {
+        // no-op
     }
 }

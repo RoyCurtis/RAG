@@ -30,7 +30,7 @@ class NamedPicker extends Picker
         });
     }
 
-    public open(target: HTMLElement)
+    public open(target: HTMLElement) : void
     {
         super.open(target);
 
@@ -46,16 +46,7 @@ class NamedPicker extends Picker
         });
     }
 
-    private select(option: HTMLOptionElement)
-    {
-        if (this.domSelected)
-            this.domSelected.removeAttribute('selected');
-
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
-    }
-
-    protected onChange(ev: Event)
+    protected onChange(ev: Event) : void
     {
         let target = ev.target as HTMLOptionElement;
 
@@ -67,5 +58,19 @@ class NamedPicker extends Picker
 
         RAG.state.named = target.value;
         RAG.views.editor.setElementsText('named', RAG.state.named);
+    }
+
+    protected onInput(_: KeyboardEvent) : void
+    {
+        // no-op
+    }
+
+    private select(option: HTMLOptionElement) : void
+    {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+
+        this.domSelected = option;
+        option.setAttribute('selected', 'true');
     }
 }

@@ -19,7 +19,7 @@ class PhrasesetPicker extends Picker
         this.inputPhrase = DOM.require('.picker', this.dom);
     }
 
-    public open(target: HTMLElement)
+    public open(target: HTMLElement) : void
     {
         super.open(target);
 
@@ -55,17 +55,7 @@ class PhrasesetPicker extends Picker
         }
     }
 
-    // TODO: this could be DRYed
-    private select(option: HTMLLIElement)
-    {
-        if (this.domSelected)
-            this.domSelected.removeAttribute('selected');
-
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
-    }
-
-    protected onChange(ev: Event)
+    protected onChange(ev: Event) : void
     {
         let target = ev.target as HTMLLIElement;
 
@@ -78,5 +68,20 @@ class PhrasesetPicker extends Picker
         RAG.state.setPhrasesetIdx(this.currentRef, idx);
         RAG.views.editor.closeDialog();
         RAG.views.editor.refreshPhraseset(this.currentRef);
+    }
+
+    protected onInput(_: KeyboardEvent) : void
+    {
+        // no-op
+    }
+
+    // TODO: this could be DRYed
+    private select(option: HTMLLIElement) : void
+    {
+        if (this.domSelected)
+            this.domSelected.removeAttribute('selected');
+
+        this.domSelected = option;
+        option.setAttribute('selected', 'true');
     }
 }

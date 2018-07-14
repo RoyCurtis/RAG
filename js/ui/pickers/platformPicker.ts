@@ -16,7 +16,7 @@ class PlatformPicker extends Picker
         this.inputLetter = DOM.require('select', this.dom) as HTMLSelectElement;
     }
 
-    public open(target: HTMLElement)
+    public open(target: HTMLElement) : void
     {
         super.open(target);
 
@@ -27,10 +27,15 @@ class PlatformPicker extends Picker
         this.inputDigit.focus();
     }
 
-    protected onChange(_: Event)
+    protected onChange(_: Event) : void
     {
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
 
         RAG.views.editor.setElementsText( 'platform', RAG.state.platform.join('') );
+    }
+
+    protected onInput(_: KeyboardEvent) : void
+    {
+        // no-op
     }
 }

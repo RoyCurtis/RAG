@@ -14,7 +14,7 @@ class TimePicker extends Picker
         this.inputTime = DOM.require('input', this.dom) as HTMLInputElement;
     }
 
-    public open(target: HTMLElement)
+    public open(target: HTMLElement) : void
     {
         super.open(target);
 
@@ -22,10 +22,15 @@ class TimePicker extends Picker
         this.inputTime.focus();
     }
 
-    protected onChange(_: Event)
+    protected onChange(_: Event) : void
     {
         RAG.state.time = this.inputTime.value;
 
         RAG.views.editor.setElementsText( 'time', RAG.state.time.toString() );
+    }
+
+    protected onInput(_: KeyboardEvent) : void
+    {
+        // no-op
     }
 }

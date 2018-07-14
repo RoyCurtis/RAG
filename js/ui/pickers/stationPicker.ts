@@ -12,7 +12,7 @@ class StationPicker extends Picker
         super('station', ['click', 'input']);
     }
 
-    public open(target: HTMLElement)
+    public open(target: HTMLElement) : void
     {
         super.open(target);
 
@@ -22,7 +22,7 @@ class StationPicker extends Picker
         RAG.views.stationList.selectCode( RAG.state.getStation(this.currentContext) );
     }
 
-    protected onChange(ev: Event)
+    protected onChange(ev: Event) : void
     {
         let self  = this;
         let query = `[data-type=station][data-context=${this.currentContext}]`;
@@ -36,5 +36,10 @@ class StationPicker extends Picker
                 .getElementsByQuery(query)
                 .forEach(element => element.textContent = target.innerText);
         });
+    }
+
+    protected onInput(_: KeyboardEvent) : void
+    {
+        // no-op
     }
 }

@@ -24,7 +24,7 @@ class CoachPicker extends Picker
         }
     }
 
-    public open(target: HTMLElement)
+    public open(target: HTMLElement) : void
     {
         super.open(target);
 
@@ -32,10 +32,15 @@ class CoachPicker extends Picker
         this.inputLetter.focus();
     }
 
-    protected onChange(_: Event)
+    protected onChange(_: Event) : void
     {
         RAG.state.coach = this.inputLetter.value;
 
         RAG.views.editor.setElementsText('coach', RAG.state.coach);
+    }
+
+    protected onInput(_: KeyboardEvent) : void
+    {
+        // no-op
     }
 }

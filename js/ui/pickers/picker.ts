@@ -32,14 +32,17 @@ abstract class Picker
 
         events.forEach(event =>
         {
-            this.domForm.addEventListener(event, this.onChange.bind(self))
+            self.domForm.addEventListener(event, self.onChange.bind(self))
         });
 
         this.domForm.onsubmit = ev =>
         {
+            // TODO: this should be changed to a submit-and-close handler
             ev.preventDefault();
             self.onChange(ev);
         };
+
+        this.domForm.onkeydown = self.onInput.bind(self);
     }
 
     /**
@@ -117,4 +120,7 @@ abstract class Picker
      * (e.g. of same type) with the new data here.
      */
     protected abstract onChange(ev: Event) : void;
+
+    /** Called when a key is pressed whilst the picker's form is focused. */
+    protected abstract onInput(ev: KeyboardEvent) : void;
 }

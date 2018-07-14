@@ -79,4 +79,9 @@ class IntegerPicker extends Picker
             .getElementsByQuery(`[data-type=integer][data-id=${this.id}]`)
             .forEach(element => element.textContent = intStr);
     }
+
+    protected onInput(_: KeyboardEvent) : void
+    {
+        // no-op
+    }
 }
