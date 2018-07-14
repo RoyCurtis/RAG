@@ -78,7 +78,6 @@ abstract class Picker
         }
 
         // Handle pickers that aren't relative to selected element
-        // TODO: If it turns out that only phrasesetPicker uses this, make it an override
         if (midHeight)
         {
             dialogY = (this.dom.offsetHeight / 2) | 0;

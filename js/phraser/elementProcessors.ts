@@ -134,9 +134,16 @@ class ElementProcessors
     /** Picks a selection of stations */
     public static stationlist(ctx: PhraseContext)
     {
-        let stations    = RAG.database.pickStations();
+        let id          = DOM.requireAttrValue(ctx.xmlElement, 'id');
+        let min         = ctx.xmlElement.getAttribute('min') || '1';
+        let max         = ctx.xmlElement.getAttribute('max') || '16';
+        let intMin      = parseInt(min);
+        let intMax      = parseInt(max);
+        let stations    = RAG.state.getStationList(id, intMin, intMax).slice(0);
         let stationList = '';
 
+        // TODO: Should processors instead become "update" methods for elements?
+        // TODO: DRY with the picker
         if (stations.length === 1)
             stationList = (ctx.xmlElement.id === 'calling')
                 ? `${stations[0]} only`
@@ -149,7 +156,12 @@ class ElementProcessors
             stationList += ` and ${lastStation}`;
         }
 
-        ctx.newElement.textContent = stationList;
+        ctx.newElement.title         = `Click to change this station list ('${id}')`;
+        ctx.newElement.textContent   = stationList;
+        ctx.newElement.dataset['id'] = id;
+
+        if (min) ctx.newElement.dataset['min'] = min;
+        if (max) ctx.newElement.dataset['max'] = max;
     }
 
     /** Picks a 24 hour time, with hours and minutes */

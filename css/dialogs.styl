@@ -72,13 +72,37 @@
       &[selected]
         background #CC7E00
 
-#stationPicker
+#stationPicker, #stationlistPicker
   display   flex
   flex-flow column
 
   form
     display   flex
     flex-flow column
+
+    .stations
+      background black
+      color      grey
+      list-style none
+
+      dt
+        padding 1em
+
+      dd
+        background    #222
+        border-radius 8px
+        color         white
+        cursor        move
+        display       inline-block
+        margin        0.5em
+        padding       0.5em
+
+        &:hover,
+        &.dragover
+          background #CC7E00
+
+        &.dragging
+          opacity 0.5
 
     input
       background #111

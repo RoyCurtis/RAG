@@ -100,15 +100,48 @@
 #phrasesetPicker form li[selected] {
   background: #cc7e00;
 }
-#stationPicker {
+#stationPicker,
+#stationlistPicker {
   display: flex;
   flex-flow: column;
 }
-#stationPicker form {
+#stationPicker form,
+#stationlistPicker form {
   display: flex;
   flex-flow: column;
 }
-#stationPicker form input {
+#stationPicker form .stations,
+#stationlistPicker form .stations {
+  background: #000;
+  color: #808080;
+  list-style: none;
+}
+#stationPicker form .stations dt,
+#stationlistPicker form .stations dt {
+  padding: 1em;
+}
+#stationPicker form .stations dd,
+#stationlistPicker form .stations dd {
+  background: #222;
+  border-radius: 8px;
+  color: #fff;
+  cursor: move;
+  display: inline-block;
+  margin: 0.5em;
+  padding: 0.5em;
+}
+#stationPicker form .stations dd:hover,
+#stationlistPicker form .stations dd:hover,
+#stationPicker form .stations dd.dragover,
+#stationlistPicker form .stations dd.dragover {
+  background: #cc7e00;
+}
+#stationPicker form .stations dd.dragging,
+#stationlistPicker form .stations dd.dragging {
+  opacity: 0.5;
+}
+#stationPicker form input,
+#stationlistPicker form input {
   background: #111;
   border: none;
   color: inherit;
@@ -116,14 +149,17 @@
   padding: 0.5em 1em;
   width: 100%;
 }
-#stationPicker form .picker {
+#stationPicker form .picker,
+#stationlistPicker form .picker {
   overflow: auto;
 }
-#stationPicker form .picker dl {
+#stationPicker form .picker dl,
+#stationlistPicker form .picker dl {
   display: flex;
   flex-wrap: wrap;
 }
-#stationPicker form .picker dt {
+#stationPicker form .picker dt,
+#stationlistPicker form .picker dt {
   background: #000;
   box-shadow: 0 5px 10px rgba(0,0,0,0.5);
   font-weight: bold;
@@ -132,12 +168,15 @@
   top: 0;
   width: 100%;
 }
-#stationPicker form .picker dd {
+#stationPicker form .picker dd,
+#stationlistPicker form .picker dd {
   cursor: pointer;
   padding: 1em;
 }
 #stationPicker form .picker dd:hover,
-#stationPicker form .picker dd[selected] {
+#stationlistPicker form .picker dd:hover,
+#stationPicker form .picker dd[selected],
+#stationlistPicker form .picker dd[selected] {
   background: #cc7e00;
 }
 #editor {

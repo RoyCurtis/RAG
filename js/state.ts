@@ -3,9 +3,10 @@
 /** Disposable class that holds state for the current schedule, train, etc. */
 class State
 {
-    private _collapsibles : Dictionary<boolean> = {};
-    private _integers     : Dictionary<number>  = {};
-    private _phrasesets   : Dictionary<number>  = {};
+    private _collapsibles : Dictionary<boolean>  = {};
+    private _integers     : Dictionary<number>   = {};
+    private _phrasesets   : Dictionary<number>   = {};
+    private _stationLists : Dictionary<string[]> = {};
 
     private _coach?       : string;
     private _excuse?      : string;
@@ -62,6 +63,20 @@ class State
     public setPhrasesetIdx(ref: string, idx: number) : void
     {
         this._phrasesets[ref] = idx;
+    }
+
+    public getStationList(id: string, min: number, max: number) : string[]
+    {
+        if (this._stationLists[id] !== undefined)
+            return this._stationLists[id];
+
+        this._stationLists[id] = RAG.database.pickStations(min, max);
+        return this._stationLists[id];
+    }
+
+    public setStationList(id: string, value: string[]) : void
+    {
+        this._stationLists[id] = value;
     }
 
     get coach() : string
