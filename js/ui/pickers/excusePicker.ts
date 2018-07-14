@@ -167,9 +167,13 @@ class ExcusePicker extends Picker
     private visualSelect(entry: HTMLElement) : void
     {
         if (this.domSelected)
+        {
+            this.domSelected.tabIndex = -1;
             this.domSelected.removeAttribute('selected');
+        }
 
         this.domSelected          = entry;
+        this.domSelected.tabIndex = 50;
         entry.setAttribute('selected', 'true');
     }
 }
