@@ -12,7 +12,7 @@ class ElementProcessors
     /** Picks an excuse for a delay or cancellation */
     public static excuse(ctx: PhraseContext)
     {
-        ctx.newElement.textContent = RAG.database.pickExcuse();
+        ctx.newElement.textContent = RAG.state.excuse;
     }
 
     /** Picks a whole number, with optional limits, noun and in word form */
