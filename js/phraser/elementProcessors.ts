@@ -18,9 +18,9 @@ class ElementProcessors
     /** Picks a whole number, with optional limits, noun and in word form */
     public static integer(ctx: PhraseContext)
     {
-        let id       = DOM.requireAttrValue(ctx.xmlElement, 'id');
-        let min      = DOM.requireAttrValue(ctx.xmlElement, 'min');
-        let max      = DOM.requireAttrValue(ctx.xmlElement, 'max');
+        let id       = DOM.requireAttr(ctx.xmlElement, 'id');
+        let min      = DOM.requireAttr(ctx.xmlElement, 'min');
+        let max      = DOM.requireAttr(ctx.xmlElement, 'max');
         let singular = ctx.xmlElement.getAttribute('singular');
         let plural   = ctx.xmlElement.getAttribute('plural');
         let words    = ctx.xmlElement.getAttribute('words');
@@ -59,7 +59,7 @@ class ElementProcessors
     /** Includes a previously defined phrase, by its `id` */
     public static phrase(ctx: PhraseContext)
     {
-        let ref    = DOM.requireAttrValue(ctx.xmlElement, 'ref');
+        let ref    = DOM.requireAttr(ctx.xmlElement, 'ref');
         let phrase = RAG.database.getPhrase(ref);
 
         ctx.newElement.title          = '';
@@ -81,7 +81,7 @@ class ElementProcessors
     /** Picks a phrase from a previously defined phraseset, by its `id` */
     public static phraseset(ctx: PhraseContext)
     {
-        let ref       = DOM.requireAttrValue(ctx.xmlElement, 'ref');
+        let ref       = DOM.requireAttr(ctx.xmlElement, 'ref');
         let phraseset = RAG.database.getPhraseset(ref);
 
         ctx.newElement.dataset['ref'] = ref;
@@ -125,7 +125,7 @@ class ElementProcessors
     /** Picks a station name */
     public static station(ctx: PhraseContext)
     {
-        let context = DOM.requireAttrValue(ctx.xmlElement, 'context');
+        let context = DOM.requireAttr(ctx.xmlElement, 'context');
         let code    = RAG.state.getStation(context);
 
         ctx.newElement.title       = `Click to change this station ('${context}')`;
@@ -137,7 +137,7 @@ class ElementProcessors
     /** Picks a selection of stations */
     public static stationlist(ctx: PhraseContext)
     {
-        let context     = DOM.requireAttrValue(ctx.xmlElement, 'context');
+        let context     = DOM.requireAttr(ctx.xmlElement, 'context');
         let stations    = RAG.state.getStationList(context).slice(0);
         let stationList = '';
 
