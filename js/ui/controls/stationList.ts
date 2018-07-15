@@ -3,7 +3,11 @@
 /** Delegate type for station name click handlers */
 type StationClickDelegate = (target: HTMLDataElement) => void;
 
-/** Manages UI elements and their logic */
+/**
+ * Singleton instance of the station picker. Since there are expected to be 2500+
+ * stations, this element would take up a lot of memory and generate a lot of DOM. So, it
+ * has to be "swapped" between pickers and views that want to use it.
+ */
 class StationList
 {
     /** Reference to the UI template (or container) of this control */

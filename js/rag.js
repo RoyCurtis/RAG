@@ -330,43 +330,47 @@ class IntegerPicker extends Picker {
 class NamedPicker extends Picker {
     constructor() {
         super('named', ['click']);
-        this.domChoices = [];
         this.inputNamed = DOM.require('.picker', this.dom);
         RAG.database.named.forEach(value => {
-            let named = document.createElement('option');
-            named.text = value;
-            named.value = value;
-            named.title = value;
-            this.domChoices.push(named);
+            let named = document.createElement('dd');
+            named.innerText = value;
+            named.title = 'Click to select this name';
+            named.tabIndex = -1;
             this.inputNamed.appendChild(named);
         });
     }
     open(target) {
         super.open(target);
         let value = RAG.state.named;
-        this.domChoices.some(named => {
-            if (value !== named.value)
-                return false;
-            this.select(named);
-            return true;
-        });
+        for (let key in this.inputNamed.children) {
+            let name = this.inputNamed.children[key];
+            if (value !== name.innerText)
+                continue;
+            this.visualSelect(name);
+            name.focus();
+            break;
+        }
     }
     onChange(ev) {
         let target = ev.target;
-        if (!target || !target.value)
-            return;
-        else
+        if (target && target.parentElement === this.inputNamed)
             this.select(target);
-        RAG.state.named = target.value;
-        RAG.views.editor.setElementsText('named', RAG.state.named);
     }
     onInput(_) {
     }
-    select(option) {
-        if (this.domSelected)
+    select(entry) {
+        this.visualSelect(entry);
+        RAG.state.named = entry.innerText;
+        RAG.views.editor.setElementsText('named', RAG.state.named);
+    }
+    visualSelect(entry) {
+        if (this.domSelected) {
+            this.domSelected.tabIndex = -1;
             this.domSelected.removeAttribute('selected');
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
+        }
+        this.domSelected = entry;
+        this.domSelected.tabIndex = 50;
+        entry.setAttribute('selected', 'true');
     }
 }
 class PhrasesetPicker extends Picker {
@@ -437,43 +441,47 @@ class PlatformPicker extends Picker {
 class ServicePicker extends Picker {
     constructor() {
         super('service', ['click']);
-        this.domChoices = [];
         this.inputService = DOM.require('.picker', this.dom);
         RAG.database.services.forEach(value => {
-            let service = document.createElement('option');
-            service.text = value;
-            service.value = value;
-            service.title = value;
-            this.domChoices.push(service);
+            let service = document.createElement('dd');
+            service.innerText = value;
+            service.title = 'Click to select this service';
+            service.tabIndex = -1;
             this.inputService.appendChild(service);
         });
     }
     open(target) {
         super.open(target);
         let value = RAG.state.service;
-        this.domChoices.some(service => {
-            if (value !== service.value)
-                return false;
-            this.select(service);
-            return true;
-        });
+        for (let key in this.inputService.children) {
+            let service = this.inputService.children[key];
+            if (value !== service.innerText)
+                continue;
+            this.visualSelect(service);
+            service.focus();
+            break;
+        }
     }
     onChange(ev) {
         let target = ev.target;
-        if (!target || !target.value)
-            return;
-        else
+        if (target && target.parentElement === this.inputService)
             this.select(target);
-        RAG.state.service = target.value;
-        RAG.views.editor.setElementsText('service', RAG.state.service);
     }
     onInput(_) {
     }
-    select(option) {
-        if (this.domSelected)
+    select(entry) {
+        this.visualSelect(entry);
+        RAG.state.service = entry.innerText;
+        RAG.views.editor.setElementsText('service', RAG.state.service);
+    }
+    visualSelect(entry) {
+        if (this.domSelected) {
+            this.domSelected.tabIndex = -1;
             this.domSelected.removeAttribute('selected');
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
+        }
+        this.domSelected = entry;
+        this.domSelected.tabIndex = 50;
+        entry.setAttribute('selected', 'true');
     }
 }
 class StationListPicker extends Picker {

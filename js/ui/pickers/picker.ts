@@ -42,6 +42,7 @@ abstract class Picker
             self.onChange(ev);
         };
 
+        // TODO: ESC to close
         this.domForm.onkeydown = self.onInput.bind(self);
     }
 

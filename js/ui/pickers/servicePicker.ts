@@ -5,27 +5,26 @@
 /** Controller for the service picker dialog */
 class ServicePicker extends Picker
 {
-    private readonly domChoices:   HTMLOptionElement[];
-    private readonly inputService: HTMLElement;
+    /** Reference to container element for all the pickable services */
+    private readonly inputService : HTMLElement;
 
-    private domSelected?: HTMLOptionElement;
+    /** Currently selected service, if any */
+    private domSelected? : HTMLElement;
 
     constructor()
     {
         super('service', ['click']);
 
-        this.domChoices   = [];
         this.inputService = DOM.require('.picker', this.dom);
 
         RAG.database.services.forEach(value =>
         {
-            let service = document.createElement('option');
+            let service = document.createElement('dd');
 
-            service.text  = value;
-            service.value = value;
-            service.title = value;
+            service.innerText = value;
+            service.title     = 'Click to select this service';
+            service.tabIndex  = -1;
 
-            this.domChoices.push(service);
             this.inputService.appendChild(service);
         });
     }
@@ -36,28 +35,27 @@ class ServicePicker extends Picker
 
         let value = RAG.state.service;
 
-        this.domChoices.some(service =>
+        // Pre-select the currently used service
+        for (let key in this.inputService.children)
         {
-            if (value !== service.value)
-                return false;
+            let service = this.inputService.children[key] as HTMLElement;
 
-            this.select(service);
-            return true;
-        });
+            if (value !== service.innerText)
+                continue;
+
+            this.visualSelect(service);
+            service.focus();
+            break;
+        }
     }
 
     protected onChange(ev: Event) : void
     {
-        let target = ev.target as HTMLOptionElement;
+        let target = ev.target as HTMLElement;
 
-        // Ignore if option element wasn't clicked
-        if (!target || !target.value)
-            return;
-        else
+        // Handle service being clicked
+        if (target && target.parentElement === this.inputService)
             this.select(target);
-
-        RAG.state.service = target.value;
-        RAG.views.editor.setElementsText('service', RAG.state.service);
     }
 
     protected onInput(_: KeyboardEvent) : void
@@ -65,12 +63,26 @@ class ServicePicker extends Picker
         // no-op
     }
 
-    private select(option: HTMLOptionElement) : void
+    /** Visually changes the current selection, and updates the state and editor */
+    private select(entry: HTMLElement) : void
+    {
+        this.visualSelect(entry);
+
+        RAG.state.service = entry.innerText;
+        RAG.views.editor.setElementsText('service', RAG.state.service);
+    }
+
+    /** Visually changes the currently selected element */
+    private visualSelect(entry: HTMLElement) : void
     {
         if (this.domSelected)
+        {
+            this.domSelected.tabIndex = -1;
             this.domSelected.removeAttribute('selected');
+        }
 
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
+        this.domSelected          = entry;
+        this.domSelected.tabIndex = 50;
+        entry.setAttribute('selected', 'true');
     }
 }

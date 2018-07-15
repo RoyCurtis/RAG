@@ -5,27 +5,26 @@
 /** Controller for the named train picker dialog */
 class NamedPicker extends Picker
 {
-    private readonly domChoices: HTMLOptionElement[];
-    private readonly inputNamed: HTMLElement;
+    /** Reference to container element for all the pickable names */
+    private readonly inputNamed : HTMLElement;
 
-    private domSelected?: HTMLOptionElement;
+    /** Currently selected name, if any */
+    private domSelected? : HTMLElement;
 
     constructor()
     {
         super('named', ['click']);
 
-        this.domChoices = [];
         this.inputNamed = DOM.require('.picker', this.dom);
 
         RAG.database.named.forEach(value =>
         {
-            let named = document.createElement('option');
+            let named = document.createElement('dd');
 
-            named.text  = value;
-            named.value = value;
-            named.title = value;
+            named.innerText = value;
+            named.title     = 'Click to select this name';
+            named.tabIndex  = -1;
 
-            this.domChoices.push(named);
             this.inputNamed.appendChild(named);
         });
     }
@@ -36,28 +35,27 @@ class NamedPicker extends Picker
 
         let value = RAG.state.named;
 
-        this.domChoices.some(named =>
+        // Pre-select the currently used name
+        for (let key in this.inputNamed.children)
         {
-            if (value !== named.value)
-                return false;
+            let name = this.inputNamed.children[key] as HTMLElement;
 
-            this.select(named);
-            return true;
-        });
+            if (value !== name.innerText)
+                continue;
+
+            this.visualSelect(name);
+            name.focus();
+            break;
+        }
     }
 
     protected onChange(ev: Event) : void
     {
-        let target = ev.target as HTMLOptionElement;
+        let target = ev.target as HTMLElement;
 
-        // Ignore if option element wasn't clicked
-        if (!target || !target.value)
-            return;
-        else
+        // Handle name being clicked
+        if (target && target.parentElement === this.inputNamed)
             this.select(target);
-
-        RAG.state.named = target.value;
-        RAG.views.editor.setElementsText('named', RAG.state.named);
     }
 
     protected onInput(_: KeyboardEvent) : void
@@ -65,12 +63,26 @@ class NamedPicker extends Picker
         // no-op
     }
 
-    private select(option: HTMLOptionElement) : void
+    /** Visually changes the current selection, and updates the state and editor */
+    private select(entry: HTMLElement) : void
+    {
+        this.visualSelect(entry);
+
+        RAG.state.named = entry.innerText;
+        RAG.views.editor.setElementsText('named', RAG.state.named);
+    }
+
+    /** Visually changes the currently selected element */
+    private visualSelect(entry: HTMLElement) : void
     {
         if (this.domSelected)
+        {
+            this.domSelected.tabIndex = -1;
             this.domSelected.removeAttribute('selected');
+        }
 
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
+        this.domSelected          = entry;
+        this.domSelected.tabIndex = 50;
+        entry.setAttribute('selected', 'true');
     }
 }
