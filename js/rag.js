@@ -23,12 +23,23 @@ class FilterableList {
         FilterableList.PICKERBOX = DOM.require('.flItemPicker', template);
         template.remove();
     }
-    add(value) {
+    add(value, select = false) {
         let item = document.createElement('dd');
         item.innerText = value;
+        this.addRaw(item, select);
+    }
+    addRaw(item, select = false) {
         item.title = this.itemTitle;
         item.tabIndex = -1;
         this.inputList.appendChild(item);
+        if (select) {
+            this.visualSelect(item);
+            item.focus();
+        }
+    }
+    clear() {
+        this.inputList.innerHTML = '';
+        this.inputFilter.value = '';
     }
     preselect(value) {
         for (let key in this.inputList.children) {
@@ -48,6 +59,9 @@ class FilterableList {
             this.filter();
         else if (target.parentElement === this.inputList)
             this.select(target);
+    }
+    onClose() {
+        window.clearTimeout(this.filterTimeout);
     }
     onInput(ev) {
         let key = ev.key;
@@ -303,6 +317,10 @@ class ExcusePicker extends Picker {
         super.open(target);
         this.domList.preselect(RAG.state.excuse);
     }
+    close() {
+        super.close();
+        this.domList.onClose();
+    }
     onChange(ev) {
         this.domList.onChange(ev);
     }
@@ -376,6 +394,10 @@ class NamedPicker extends Picker {
         super.open(target);
         this.domList.preselect(RAG.state.named);
     }
+    close() {
+        super.close();
+        this.domList.onClose();
+    }
     onChange(ev) {
         this.domList.onChange(ev);
     }
@@ -391,7 +413,8 @@ class PhrasesetPicker extends Picker {
     constructor() {
         super('phraseset', ['click']);
         this.domHeader = DOM.require('header', this.dom);
-        this.inputPhrase = DOM.require('.picker', this.dom);
+        this.domList = new FilterableList(this.domForm);
+        this.domList.onSelect = e => this.onSelect(e);
     }
     open(target) {
         super.open(target);
@@ -402,34 +425,33 @@ class PhrasesetPicker extends Picker {
             return;
         this.currentRef = ref;
         this.domHeader.innerText = `Pick a phrase for the '${ref}' section`;
-        this.inputPhrase.innerHTML = '';
+        this.domList.clear();
         for (let i = 0; i < phraseSet.children.length; i++) {
-            let phrase = document.createElement('li');
+            let phrase = document.createElement('dd');
             DOM.cloneInto(phraseSet.children[i], phrase);
             RAG.phraser.process(phrase);
             phrase.innerText = DOM.getCleanedVisibleText(phrase);
             phrase.dataset.idx = i.toString();
-            this.inputPhrase.appendChild(phrase);
-            if (i === idx)
-                this.select(phrase);
+            this.domList.addRaw(phrase, i === idx);
         }
     }
+    close() {
+        super.close();
+        this.domList.onClose();
+    }
     onChange(ev) {
-        let target = ev.target;
-        if (!target || !target.dataset['idx'] || !this.currentRef)
-            return;
-        let idx = parseInt(target.dataset['idx']);
+        this.domList.onChange(ev);
+    }
+    onInput(ev) {
+        this.domList.onInput(ev);
+    }
+    onSelect(entry) {
+        if (!this.currentRef)
+            throw new Error("Got select event when currentRef is unset");
+        let idx = parseInt(entry.dataset['idx']);
         RAG.state.setPhrasesetIdx(this.currentRef, idx);
         RAG.views.editor.closeDialog();
         RAG.views.editor.refreshPhraseset(this.currentRef);
-    }
-    onInput(_) {
-    }
-    select(option) {
-        if (this.domSelected)
-            this.domSelected.removeAttribute('selected');
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
     }
 }
 class PlatformPicker extends Picker {
@@ -462,6 +484,10 @@ class ServicePicker extends Picker {
     open(target) {
         super.open(target);
         this.domList.preselect(RAG.state.service);
+    }
+    close() {
+        super.close();
+        this.domList.onClose();
     }
     onChange(ev) {
         this.domList.onChange(ev);

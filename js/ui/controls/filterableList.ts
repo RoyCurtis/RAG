@@ -18,12 +18,22 @@ class FilterableList
         template.remove();
     }
 
-    public onSelect? : SelectDelegate;
+    /** Optional event handler to fire when an item is selected by the user */
+    public  onSelect?     : SelectDelegate;
 
+    /** DOM reference to this list's filter input box */
     private inputFilter   : HTMLInputElement;
+
+    /** DOM reference to this list's container of item elements */
     private inputList     : HTMLElement;
+
+    /** DOM reference to the currently selected item, if any */
     private domSelected?  : HTMLElement;
+
+    /** Reference to the auto-filter timeout, if any */
     private filterTimeout : number = 0;
+
+    /** Title attribute to apply to every item added */
     private itemTitle     : string = 'Click to select this item';
 
     /** Creates a filterable list, by replacing the placeholder in a given parent */
@@ -48,16 +58,46 @@ class FilterableList
         parent.appendChild(this.inputList);
     }
 
-    /** Adds an item to this list */
-    public add(value: string) : void
+    /**
+     * Adds the given value to the list as a selectable item.
+     *
+     * @param {string} value Text of the selectable item
+     * @param {boolean} select Whether to select this item once added
+     */
+    public add(value: string, select: boolean = false) : void
     {
         let item = document.createElement('dd');
 
         item.innerText = value;
-        item.title     = this.itemTitle;
-        item.tabIndex  = -1;
+
+        this.addRaw(item, select);
+    }
+
+    /**
+     * Adds the given element to the list as a selectable item.
+     *
+     * @param {string} item Element to add to the list
+     * @param {boolean} select Whether to select this item once added
+     */
+    public addRaw(item: HTMLElement, select: boolean = false) : void
+    {
+        item.title    = this.itemTitle;
+        item.tabIndex = -1;
 
         this.inputList.appendChild(item);
+
+        if (select)
+        {
+            this.visualSelect(item);
+            item.focus();
+        }
+    }
+
+    /** Clears all items from this list and the current filter */
+    public clear() : void
+    {
+        this.inputList.innerHTML = '';
+        this.inputFilter.value   = '';
     }
 
     /** Select and focus the entry that matches the given value */
@@ -76,6 +116,7 @@ class FilterableList
         }
     }
 
+    /** Handles pickers' change events, for filtering or choosing items */
     public onChange(ev: Event) : void
     {
         let target = ev.target as HTMLElement;
@@ -99,6 +140,7 @@ class FilterableList
         window.clearTimeout(this.filterTimeout);
     }
 
+    /** Handles pickers' input events, for filtering and navigation */
     public onInput(ev: KeyboardEvent) : void
     {
         let key     = ev.key;
@@ -109,7 +151,6 @@ class FilterableList
         // Handle typing into filter box
         if (focused === this.inputFilter)
         {
-            // TODO: Clear on close
             window.clearTimeout(this.filterTimeout);
 
             this.filterTimeout = window.setTimeout(_ => this.filter(), 500);

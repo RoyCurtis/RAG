@@ -55,7 +55,7 @@
       font-size  x-large
       padding    0 4px
 
-#excusePicker, #namedPicker, #servicePicker
+#excusePicker, #namedPicker, #phrasesetPicker, #servicePicker
   display   flex
   flex-flow column
 
@@ -65,24 +65,13 @@
     flex-grow 1
 
 #phrasesetPicker
-  display   flex
-  flex-flow column
 
-  form
-    overflow auto
-
-    li
-      cursor        pointer
-      display       block
-      font-size     large
-      overflow      hidden
-      padding       1em
-      text-overflow ellipsis
-      white-space   nowrap
-
-      &:hover,
-      &[selected]
-        background #CC7E00
+  .flItemPicker dd
+    display       block
+    font-size     large
+    overflow      hidden
+    text-overflow ellipsis
+    white-space   nowrap
 
 #stationPicker, #stationlistPicker
   display   flex

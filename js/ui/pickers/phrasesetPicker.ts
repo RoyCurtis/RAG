@@ -5,18 +5,19 @@
 /** Controller for the phraseset picker dialog */
 class PhrasesetPicker extends Picker
 {
-    private readonly domHeader   : HTMLElement;
-    private readonly inputPhrase : HTMLElement;
+    // TODO: Make this a picker method (setTitle())
+    private readonly domHeader : HTMLElement;
+    private readonly domList   : FilterableList;
 
-    private domSelected? : HTMLLIElement;
-    private currentRef?  : string;
+    private currentRef? : string;
 
     constructor()
     {
         super('phraseset', ['click']);
 
-        this.domHeader   = DOM.require('header', this.dom);
-        this.inputPhrase = DOM.require('.picker', this.dom);
+        this.domHeader        = DOM.require('header', this.dom);
+        this.domList          = new FilterableList(this.domForm);
+        this.domList.onSelect = e => this.onSelect(e);
     }
 
     public open(target: HTMLElement) : void
@@ -26,21 +27,22 @@ class PhrasesetPicker extends Picker
         let ref = DOM.requireData(target, 'ref');
         let idx = parseInt( DOM.requireData(target, 'idx') );
 
-        let phraseSet = RAG.database.getPhraseset(ref!);
+        let phraseSet = RAG.database.getPhraseset(ref);
 
+        // TODO: handle missing phraseset
         if (!phraseSet)
-            // TODO: handle missing phraseset
             return;
 
-        this.currentRef            = ref;
-        this.domHeader.innerText   = `Pick a phrase for the '${ref}' section`;
-        this.inputPhrase.innerHTML = '';
+        this.currentRef          = ref;
+        this.domHeader.innerText = `Pick a phrase for the '${ref}' section`;
+
+        this.domList.clear();
 
         // For each phrase, we need to run it through the phraser using the current state
         // to generate "previews" of how the phrase will look.
         for (let i = 0; i < phraseSet.children.length; i++)
         {
-            let phrase = document.createElement('li');
+            let phrase = document.createElement('dd');
 
             DOM.cloneInto(phraseSet.children[i] as HTMLElement, phrase);
             RAG.phraser.process(phrase);
@@ -48,40 +50,35 @@ class PhrasesetPicker extends Picker
             phrase.innerText   = DOM.getCleanedVisibleText(phrase);
             phrase.dataset.idx = i.toString();
 
-            this.inputPhrase.appendChild(phrase);
-
-            if (i === idx)
-                this.select(phrase);
+            this.domList.addRaw(phrase, i === idx);
         }
+    }
+
+    public close() : void
+    {
+        super.close();
+        this.domList.onClose();
     }
 
     protected onChange(ev: Event) : void
     {
-        let target = ev.target as HTMLLIElement;
+        this.domList.onChange(ev);
+    }
 
-        // Ignore if list element wasn't clicked
-        if (!target || !target.dataset['idx'] || !this.currentRef)
-            return;
+    protected onInput(ev: KeyboardEvent) : void
+    {
+        this.domList.onInput(ev);
+    }
 
-        let idx = parseInt(target.dataset['idx']!);
+    private onSelect(entry: HTMLElement) : void
+    {
+        if (!this.currentRef)
+            throw new Error("Got select event when currentRef is unset");
+
+        let idx = parseInt(entry.dataset['idx']!);
 
         RAG.state.setPhrasesetIdx(this.currentRef, idx);
         RAG.views.editor.closeDialog();
         RAG.views.editor.refreshPhraseset(this.currentRef);
-    }
-
-    protected onInput(_: KeyboardEvent) : void
-    {
-        // no-op
-    }
-
-    // TODO: this could be DRYed
-    private select(option: HTMLLIElement) : void
-    {
-        if (this.domSelected)
-            this.domSelected.removeAttribute('selected');
-
-        this.domSelected = option;
-        option.setAttribute('selected', 'true');
     }
 }

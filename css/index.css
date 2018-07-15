@@ -71,36 +71,25 @@
 }
 #excusePicker,
 #namedPicker,
+#phrasesetPicker,
 #servicePicker {
   display: flex;
   flex-flow: column;
 }
 #excusePicker form,
 #namedPicker form,
+#phrasesetPicker form,
 #servicePicker form {
   display: flex;
   flex-flow: column;
   flex-grow: 1;
 }
-#phrasesetPicker {
-  display: flex;
-  flex-flow: column;
-}
-#phrasesetPicker form {
-  overflow: auto;
-}
-#phrasesetPicker form li {
-  cursor: pointer;
+#phrasesetPicker .flItemPicker dd {
   display: block;
   font-size: large;
   overflow: hidden;
-  padding: 1em;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-#phrasesetPicker form li:hover,
-#phrasesetPicker form li[selected] {
-  background: #cc7e00;
 }
 #stationPicker,
 #stationlistPicker {
