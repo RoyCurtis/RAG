@@ -4,6 +4,22 @@
 class DOM
 {
     /**
+     * Finds the value of the given attribute from the given element, or returns the given
+     * default value if unset.
+     *
+     * @param {HTMLElement} element Element to get the attribute of
+     * @param {string} attr Name of the attribute to get the value of
+     * @param {string} def Default value if attribute isn't set
+     * @returns {string} The given attribute's value, or default value if unset
+     */
+    public static getAttr(element: HTMLElement, attr: string, def: string) : string
+    {
+        return element.hasAttribute(attr)
+            ? element.getAttribute(attr)!
+            : def;
+    }
+
+    /**
      * Finds an element from the given document, throwing an error if no match is found.
      *
      * @param {string} query CSS selector query to use
