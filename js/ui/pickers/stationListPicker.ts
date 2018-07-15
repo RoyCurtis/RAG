@@ -10,7 +10,7 @@ class StationListPicker extends Picker
     /** Reference to this list's currently selected stations in the UI */
     private readonly inputList    : HTMLDListElement;
 
-    private currentId    : string = '';
+    private currentCtx   : string = '';
     private domDragFrom? : HTMLElement;
 
     constructor()
@@ -28,10 +28,8 @@ class StationListPicker extends Picker
         RAG.views.stationList.attach(this);
         RAG.views.stationList.registerDropHandler( this.onDrop.bind(this) );
 
-        this.currentId = DOM.requireData(target, 'id');
-        let min        = parseInt( DOM.requireData(target, 'min') );
-        let max        = parseInt( DOM.requireData(target, 'max') );
-        let entries    = RAG.state.getStationList(this.currentId, min, max).slice(0);
+        this.currentCtx = DOM.requireData(target, 'context');
+        let entries     = RAG.state.getStationList(this.currentCtx).slice(0);
 
         // Remove all old elements except for the empty list text
         while (this.inputList.children[1])
@@ -143,7 +141,7 @@ class StationListPicker extends Picker
         }
 
         if (list.length === 1)
-            textList = (this.currentId === 'calling')
+            textList = (this.currentCtx === 'calling')
                 ? `${list[0]} only`
                 : list[0];
         else
@@ -155,9 +153,11 @@ class StationListPicker extends Picker
             textList += ` and ${lastStation}`;
         }
 
-        RAG.state.setStationList(this.currentId, list);
+        let query = `[data-type=stationlist][data-context=${this.currentCtx}]`;
+
+        RAG.state.setStationList(this.currentCtx, list);
         RAG.views.editor
-            .getElementsByQuery(`[data-type=stationlist][data-id=${this.currentId}]`)
+            .getElementsByQuery(query)
             .forEach(element => element.textContent = textList);
     }
 

@@ -79,18 +79,31 @@ class State
         this._stations[context] = code;
     }
 
-    public getStationList(id: string, min: number, max: number) : string[]
+    public getStationList(context: string) : string[]
     {
-        if (this._stationLists[id] !== undefined)
-            return this._stationLists[id];
+        if (this._stationLists[context] !== undefined)
+            return this._stationLists[context];
 
-        this._stationLists[id] = RAG.database.pickStations(min, max);
-        return this._stationLists[id];
+        let min = 1, max = 16;
+
+        switch(context)
+        {
+            case "calling_half1":
+            case "calling_half2":
+                min = 2; max = 5; break;
+            case "changes":
+                min = 1; max = 4; break;
+            case "not_stopping":
+                min = 1; max = 8; break;
+        }
+
+        this._stationLists[context] = RAG.database.pickStations(min, max);
+        return this._stationLists[context];
     }
 
-    public setStationList(id: string, value: string[]) : void
+    public setStationList(context: string, value: string[]) : void
     {
-        this._stationLists[id] = value;
+        this._stationLists[context] = value;
     }
 
     get coach() : string

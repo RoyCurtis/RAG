@@ -479,7 +479,7 @@ class ServicePicker extends Picker {
 class StationListPicker extends Picker {
     constructor() {
         super('stationlist', ['click', 'input']);
-        this.currentId = '';
+        this.currentCtx = '';
         this.inputList = DOM.require('.stations', this.dom);
         this.domEmptyList = DOM.require('dt', this.inputList);
     }
@@ -487,10 +487,8 @@ class StationListPicker extends Picker {
         super.open(target);
         RAG.views.stationList.attach(this);
         RAG.views.stationList.registerDropHandler(this.onDrop.bind(this));
-        this.currentId = DOM.requireData(target, 'id');
-        let min = parseInt(DOM.requireData(target, 'min'));
-        let max = parseInt(DOM.requireData(target, 'max'));
-        let entries = RAG.state.getStationList(this.currentId, min, max).slice(0);
+        this.currentCtx = DOM.requireData(target, 'context');
+        let entries = RAG.state.getStationList(this.currentCtx).slice(0);
         while (this.inputList.children[1])
             this.inputList.children[1].remove();
         entries.forEach(this.addEntry.bind(this));
@@ -559,7 +557,7 @@ class StationListPicker extends Picker {
             list.push(entry.innerText);
         }
         if (list.length === 1)
-            textList = (this.currentId === 'calling')
+            textList = (this.currentCtx === 'calling')
                 ? `${list[0]} only`
                 : list[0];
         else {
@@ -568,9 +566,10 @@ class StationListPicker extends Picker {
             textList = tempList.join(', ');
             textList += ` and ${lastStation}`;
         }
-        RAG.state.setStationList(this.currentId, list);
+        let query = `[data-type=stationlist][data-context=${this.currentCtx}]`;
+        RAG.state.setStationList(this.currentCtx, list);
         RAG.views.editor
-            .getElementsByQuery(`[data-type=stationlist][data-id=${this.currentId}]`)
+            .getElementsByQuery(query)
             .forEach(element => element.textContent = textList);
     }
     onDrop(ev) {
@@ -714,15 +713,11 @@ class ElementProcessors {
         ctx.newElement.dataset['context'] = context;
     }
     static stationlist(ctx) {
-        let id = DOM.requireAttrValue(ctx.xmlElement, 'id');
-        let min = ctx.xmlElement.getAttribute('min') || '1';
-        let max = ctx.xmlElement.getAttribute('max') || '16';
-        let intMin = parseInt(min);
-        let intMax = parseInt(max);
-        let stations = RAG.state.getStationList(id, intMin, intMax).slice(0);
+        let context = DOM.requireAttrValue(ctx.xmlElement, 'context');
+        let stations = RAG.state.getStationList(context).slice(0);
         let stationList = '';
         if (stations.length === 1)
-            stationList = (ctx.xmlElement.id === 'calling')
+            stationList = (context === 'calling')
                 ? `${stations[0]} only`
                 : stations[0];
         else {
@@ -730,13 +725,9 @@ class ElementProcessors {
             stationList = stations.join(', ');
             stationList += ` and ${lastStation}`;
         }
-        ctx.newElement.title = `Click to change this station list ('${id}')`;
+        ctx.newElement.title = `Click to change this station list ('${context}')`;
         ctx.newElement.textContent = stationList;
-        ctx.newElement.dataset['id'] = id;
-        if (min)
-            ctx.newElement.dataset['min'] = min;
-        if (max)
-            ctx.newElement.dataset['max'] = max;
+        ctx.newElement.dataset['context'] = context;
     }
     static time(ctx) {
         ctx.newElement.title = "Click to change the time";
@@ -1236,14 +1227,30 @@ class State {
     setStation(context, code) {
         this._stations[context] = code;
     }
-    getStationList(id, min, max) {
-        if (this._stationLists[id] !== undefined)
-            return this._stationLists[id];
-        this._stationLists[id] = RAG.database.pickStations(min, max);
-        return this._stationLists[id];
+    getStationList(context) {
+        if (this._stationLists[context] !== undefined)
+            return this._stationLists[context];
+        let min = 1, max = 16;
+        switch (context) {
+            case "calling_half1":
+            case "calling_half2":
+                min = 2;
+                max = 5;
+                break;
+            case "changes":
+                min = 1;
+                max = 4;
+                break;
+            case "not_stopping":
+                min = 1;
+                max = 8;
+                break;
+        }
+        this._stationLists[context] = RAG.database.pickStations(min, max);
+        return this._stationLists[context];
     }
-    setStationList(id, value) {
-        this._stationLists[id] = value;
+    setStationList(context, value) {
+        this._stationLists[context] = value;
     }
     get coach() {
         if (this._coach)

@@ -73,7 +73,6 @@ class ExcusePicker extends Picker
 
     protected onInput(ev: KeyboardEvent) : void
     {
-        // TODO: fix this not really working with hidden elements (e.g. during search)
         let key     = ev.key;
         let focused = document.activeElement as HTMLElement;
 

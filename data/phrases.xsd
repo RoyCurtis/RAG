@@ -273,18 +273,13 @@
 
 
 <xs:complexType name="stationlist">
-  <!-- TODO: change this to "context" -->
-  <!-- TODO: should there be a "config" element to define list types and limits? -->
-  <xs:attribute name="id" type="xs:string" use="required">
+  <xs:attribute name="context" type="stationlist_context" use="required">
     <xs:annotation>
       <xs:documentation>
-        Defines an `id` for the list to create, or to repeat if already exists.
+        Specifies the context to pick a station list for.
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
-
-  <xs:attribute name="min" type="xs:int" default="1"/>
-  <xs:attribute name="max" type="xs:int" default="16"/>
 </xs:complexType>
 
 <!-- Value types -->
@@ -359,6 +354,62 @@
       <xs:annotation>
         <xs:documentation>
           Picks a station not on any calling list, as a "from" stop.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+  </xs:restriction>
+</xs:simpleType>
+
+
+<xs:simpleType name="stationlist_context">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="calling">
+      <xs:annotation>
+        <xs:documentation>
+          Shows the calling at list, with min. 1 max. 16 stations.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="calling_half1">
+      <xs:annotation>
+        <xs:documentation>
+          Shows the first half of the calling at list, or a different list if the calling
+          list is too small, with min. 2 max. 5 stations.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="calling_half2">
+      <xs:annotation>
+        <xs:documentation>
+          Shows the second half of the calling at list, or a different list if the calling
+          list is too small, with min. 2 max. 5 stations.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="changes">
+      <xs:annotation>
+        <xs:documentation>
+          Shows the list of other services that may be found via a specific calling stop.
+          Min. 1 max. 4 stations.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="not_stopping">
+      <xs:annotation>
+        <xs:documentation>
+          Shows the list of stops not being called at. Min. 1 max. 8 stations.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="request">
+      <xs:annotation>
+        <xs:documentation>
+          Shows the list of calling stops that are request stops. Min. 1 max. 16.
         </xs:documentation>
       </xs:annotation>
     </xs:enumeration>

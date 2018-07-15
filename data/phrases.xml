@@ -144,8 +144,10 @@
 
 <phrase id="debug_stationlists">
   (
-    <stationlist id="test" min="2" max="4"/>. <stationlist id="test" min="2" max="4"/>.
-    <stationlist id="test2" min="0" max="5"/>. <stationlist id="test2" min="0" max="5"/>.
+    Calling: <stationlist context="calling"/>.
+    Calling half 1: <stationlist context="calling_half1"/>.
+    Calling half 2: <stationlist context="calling_half2"/>.
+    Changes: <stationlist context="changes"/>.
   )
 </phrase>
 
@@ -280,11 +282,11 @@
 </phrase>
 
 <phraseset id="calling_at">
-  <phrase>Calling at <stationlist id="calling"/>.</phrase>
+  <phrase>Calling at <stationlist context="calling"/>.</phrase>
   <phrase>
-    For <stationlist id="calling_half1"/>, travel in the front
+    For <stationlist context="calling_half1"/>, travel in the front
     <integer id='front_coaches' min="2" max="5" words="true"/> coaches of the train. And
-    for <stationlist id="calling_half2"/>, travel in the rear
+    for <stationlist context="calling_half2"/>, travel in the rear
     <integer id='rear_coaches' min="2" max="5" words="true"/> coaches of the train.
   </phrase>
 </phraseset>
@@ -357,17 +359,17 @@
 
 <phraseset id="change_at">
   <phrase>
-    Customers for <stationlist id="changes" max="4"/> should change at
+    Customers for <stationlist context="changes"/> should change at
     <station context="calling"/>.
   </phrase>
   <phrase>
     Change at <station context="calling"/> for the services to
-    <stationlist id="changes" max="4"/>.
+    <stationlist context="changes"/>.
   </phrase>
 </phraseset>
 
 <phrase id="not_stopping">
-  This train will not be calling at <stationlist id="not_stopping" max="8"/> today
+  This train will not be calling at <stationlist context="not_stopping"/> today
   <phrase ref="excuse"/>.
 </phrase>
 
@@ -378,7 +380,7 @@
     <phraseset ref="leave"/>.
   </phrase>
   <phrase>
-    <stationlist id="request"/> are request stops, and passengers for these stations
+    <stationlist context="request"/> are request stops, and passengers for these stations
     should ask the conductor on the train to arrange for the train to stop, to allow them
     to <phraseset ref="leave"/>.
   </phrase>
