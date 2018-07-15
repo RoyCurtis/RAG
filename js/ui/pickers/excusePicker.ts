@@ -25,6 +25,12 @@ class ExcusePicker extends Picker
         this.domList.preselect(RAG.state.excuse);
     }
 
+    public close() : void
+    {
+        super.close();
+        this.domList.onClose();
+    }
+
     protected onChange(ev: Event) : void
     {
         this.domList.onChange(ev);

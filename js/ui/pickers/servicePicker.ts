@@ -25,6 +25,12 @@ class ServicePicker extends Picker
         this.domList.preselect(RAG.state.service);
     }
 
+    public close() : void
+    {
+        super.close();
+        this.domList.onClose();
+    }
+
     protected onChange(ev: Event) : void
     {
         this.domList.onChange(ev);

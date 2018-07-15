@@ -93,6 +93,12 @@ class FilterableList
             this.select(target);
     }
 
+    /** Handles pickers' close methods, doing any timer cleanup */
+    public onClose() : void
+    {
+        window.clearTimeout(this.filterTimeout);
+    }
+
     public onInput(ev: KeyboardEvent) : void
     {
         let key     = ev.key;

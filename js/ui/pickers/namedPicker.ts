@@ -25,6 +25,12 @@ class NamedPicker extends Picker
         this.domList.preselect(RAG.state.named);
     }
 
+    public close() : void
+    {
+        super.close();
+        this.domList.onClose();
+    }
+
     protected onChange(ev: Event) : void
     {
         this.domList.onChange(ev);
