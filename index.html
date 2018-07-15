@@ -62,11 +62,11 @@
     <header>Pick an excuse</header>
 
     <form>
-      <input class="filterBox" type="text" placeholder="Filter excuses..." tabindex="50"/>
-
-      <dl class="picker" title="Delay or cancellation excuse" tabindex="50">
-
-      </dl>
+      <filterableList
+        placeholder="Filter excuses..."
+        title="List of delay or cancellation excuses"
+        itemTitle="Click to select this excuse"
+      ></filterableList>
     </form>
   </div>
 
@@ -83,9 +83,11 @@
     <header>Pick a named train</header>
 
     <form>
-      <div class="picker" title="Train name">
-
-      </div>
+      <filterableList
+        placeholder="Filter train name..."
+        title="List of train names"
+        itemTitle="Click to select this name"
+      ></filterableList>
     </form>
   </div>
 
@@ -118,9 +120,11 @@
     <header>Pick a service</header>
 
     <form>
-      <div class="picker" title="Service name">
-
-      </div>
+      <filterableList
+        placeholder="Filter services..."
+        title="List of service names"
+        itemTitle="Click to select this service"
+      ></filterableList>
     </form>
   </div>
 
@@ -158,6 +162,12 @@
     <div class="picker" title="List of stations to pick from">
 
     </div>
+  </div>
+
+  <div id="filterableList" class="hidden">
+    <input class="flSearchBox" type="text" tabindex="50" title=""/>
+
+    <dl class="flItemPicker" tabindex="50"></dl>
   </div>
 
 </body>

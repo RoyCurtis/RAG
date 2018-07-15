@@ -5,84 +5,39 @@
 /** Controller for the service picker dialog */
 class ServicePicker extends Picker
 {
-    /** Reference to container element for all the pickable services */
-    private readonly inputService : HTMLElement;
-
-    /** Currently selected service, if any */
-    private domSelected? : HTMLElement;
+    private readonly domList : FilterableList;
 
     constructor()
     {
         super('service', ['click']);
 
-        this.inputService = DOM.require('.picker', this.dom);
+        this.domList          = new FilterableList(this.domForm);
+        this.domList.onSelect = e => this.onSelect(e);
 
-        RAG.database.services.forEach(value =>
-        {
-            let service = document.createElement('dd');
-
-            service.innerText = value;
-            service.title     = 'Click to select this service';
-            service.tabIndex  = -1;
-
-            this.inputService.appendChild(service);
-        });
+        RAG.database.services.forEach( v => this.domList.add(v) );
     }
 
     public open(target: HTMLElement) : void
     {
         super.open(target);
 
-        let value = RAG.state.service;
-
         // Pre-select the currently used service
-        for (let key in this.inputService.children)
-        {
-            let service = this.inputService.children[key] as HTMLElement;
-
-            if (value !== service.innerText)
-                continue;
-
-            this.visualSelect(service);
-            service.focus();
-            break;
-        }
+        this.domList.preselect(RAG.state.service);
     }
 
     protected onChange(ev: Event) : void
     {
-        let target = ev.target as HTMLElement;
-
-        // Handle service being clicked
-        if (target && target.parentElement === this.inputService)
-            this.select(target);
+        this.domList.onChange(ev);
     }
 
-    protected onInput(_: KeyboardEvent) : void
+    protected onInput(ev: KeyboardEvent) : void
     {
-        // no-op
+        this.domList.onInput(ev);
     }
 
-    /** Visually changes the current selection, and updates the state and editor */
-    private select(entry: HTMLElement) : void
+    private onSelect(entry: HTMLElement) : void
     {
-        this.visualSelect(entry);
-
         RAG.state.service = entry.innerText;
         RAG.views.editor.setElementsText('service', RAG.state.service);
-    }
-
-    /** Visually changes the currently selected element */
-    private visualSelect(entry: HTMLElement) : void
-    {
-        if (this.domSelected)
-        {
-            this.domSelected.tabIndex = -1;
-            this.domSelected.removeAttribute('selected');
-        }
-
-        this.domSelected          = entry;
-        this.domSelected.tabIndex = 50;
-        entry.setAttribute('selected', 'true');
     }
 }

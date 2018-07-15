@@ -20,13 +20,28 @@
   &.midHeight
     box-shadow 0 0 16px rgba(0, 0, 0, 0.5)
 
-.filterBox
-  background #000
-  border     none
-  color      inherit
-  font-size  inherit
-  padding    0.5em 1em
-  width      100%
+  // Filterable list
+
+  .flSearchBox
+    background #000
+    border     none
+    color      inherit
+    font-size  inherit
+    padding    0.5em 1em
+    width      100%
+
+  .flItemPicker
+    flex-grow 1
+    overflow  auto
+
+    dd
+      cursor  pointer
+      display inline-block
+      padding 1em
+
+      &:hover,
+      &[selected]
+        background #CC7E00
 
 #coachPicker, #integerPicker, #platformPicker, #timePicker
   form
@@ -48,19 +63,6 @@
     display   flex
     flex-flow column
     flex-grow 1
-
-    .picker
-      flex-grow 1
-      overflow  auto
-
-      dd
-        cursor  pointer
-        display inline-block
-        padding 1em
-
-        &:hover,
-        &[selected]
-          background #CC7E00
 
 #phrasesetPicker
   display   flex

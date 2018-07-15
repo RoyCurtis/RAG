@@ -4,7 +4,7 @@
   display: none !important;
 }
 .dialog {
-  background: #111;
+  background: #222;
   border: 8px solid #cc7e00;
   border-radius: 4px;
   box-shadow: 8px 8px 8px rgba(0,0,0,0.5);
@@ -23,13 +23,26 @@
 .dialog.midHeight {
   box-shadow: 0 0 16px rgba(0,0,0,0.5);
 }
-.filterBox {
+.dialog .flSearchBox {
   background: #000;
   border: none;
   color: inherit;
   font-size: inherit;
   padding: 0.5em 1em;
   width: 100%;
+}
+.dialog .flItemPicker {
+  flex-grow: 1;
+  overflow: auto;
+}
+.dialog .flItemPicker dd {
+  cursor: pointer;
+  display: inline-block;
+  padding: 1em;
+}
+.dialog .flItemPicker dd:hover,
+.dialog .flItemPicker dd[selected] {
+  background: #cc7e00;
 }
 #coachPicker form,
 #integerPicker form,
@@ -68,27 +81,6 @@
   display: flex;
   flex-flow: column;
   flex-grow: 1;
-}
-#excusePicker form .picker,
-#namedPicker form .picker,
-#servicePicker form .picker {
-  flex-grow: 1;
-  overflow: auto;
-}
-#excusePicker form .picker dd,
-#namedPicker form .picker dd,
-#servicePicker form .picker dd {
-  cursor: pointer;
-  display: inline-block;
-  padding: 1em;
-}
-#excusePicker form .picker dd:hover,
-#namedPicker form .picker dd:hover,
-#servicePicker form .picker dd:hover,
-#excusePicker form .picker dd[selected],
-#namedPicker form .picker dd[selected],
-#servicePicker form .picker dd[selected] {
-  background: #cc7e00;
 }
 #phrasesetPicker {
   display: flex;

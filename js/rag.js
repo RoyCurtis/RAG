@@ -1,4 +1,114 @@
 "use strict";
+class FilterableList {
+    constructor(parent) {
+        this.filterTimeout = 0;
+        this.itemTitle = 'Click to select this item';
+        if (!FilterableList.SEARCHBOX)
+            FilterableList.init();
+        let target = DOM.require('filterableList', parent);
+        let placeholder = DOM.getAttr(target, 'placeholder', 'Filter choices...');
+        let title = DOM.getAttr(target, 'title', 'List of choices');
+        this.itemTitle = DOM.getAttr(target, 'itemTitle', this.itemTitle);
+        this.inputFilter = FilterableList.SEARCHBOX.cloneNode(false);
+        this.inputList = FilterableList.PICKERBOX.cloneNode(false);
+        this.inputList.title = title;
+        this.inputFilter.placeholder = placeholder;
+        target.remove();
+        parent.appendChild(this.inputFilter);
+        parent.appendChild(this.inputList);
+    }
+    static init() {
+        let template = DOM.require('#filterableList');
+        FilterableList.SEARCHBOX = DOM.require('.flSearchBox', template);
+        FilterableList.PICKERBOX = DOM.require('.flItemPicker', template);
+        template.remove();
+    }
+    add(value) {
+        let item = document.createElement('dd');
+        item.innerText = value;
+        item.title = this.itemTitle;
+        item.tabIndex = -1;
+        this.inputList.appendChild(item);
+    }
+    preselect(value) {
+        for (let key in this.inputList.children) {
+            let item = this.inputList.children[key];
+            if (value === item.innerText) {
+                this.visualSelect(item);
+                item.focus();
+                break;
+            }
+        }
+    }
+    onChange(ev) {
+        let target = ev.target;
+        if (!target)
+            return;
+        else if (ev.type.toLowerCase() === 'submit')
+            this.filter();
+        else if (target.parentElement === this.inputList)
+            this.select(target);
+    }
+    onInput(ev) {
+        let key = ev.key;
+        let focused = document.activeElement;
+        if (!focused)
+            return;
+        if (focused === this.inputFilter) {
+            window.clearTimeout(this.filterTimeout);
+            this.filterTimeout = window.setTimeout(_ => this.filter(), 500);
+            return;
+        }
+        if (focused !== this.inputFilter)
+            if (key.length === 1 || key === 'Backspace')
+                return this.inputFilter.focus();
+        if (focused.parentElement === this.inputList)
+            if (key === 'Enter')
+                return this.select(focused);
+        if (key === 'ArrowLeft' || key === 'ArrowRight') {
+            let dir = (key === 'ArrowLeft') ? -1 : 1;
+            let nav = null;
+            if (focused.parentElement === this.inputList)
+                nav = DOM.getNextVisibleSibling(focused, dir);
+            else if (focused === this.domSelected)
+                nav = DOM.getNextVisibleSibling(this.domSelected, dir);
+            else if (dir === -1)
+                nav = DOM.getNextVisibleSibling(this.inputList.firstElementChild, dir);
+            else
+                nav = DOM.getNextVisibleSibling(this.inputList.lastElementChild, dir);
+            if (nav)
+                nav.focus();
+        }
+    }
+    filter() {
+        window.clearTimeout(this.filterTimeout);
+        let filter = this.inputFilter.value.toLowerCase();
+        let items = this.inputList.children;
+        this.inputList.classList.add('hidden');
+        for (let i = 0; i < items.length; i++) {
+            let item = items[i];
+            if (item.innerText.toLowerCase().indexOf(filter) >= 0)
+                item.classList.remove('hidden');
+            else
+                item.classList.add('hidden');
+        }
+        this.inputList.classList.remove('hidden');
+    }
+    select(entry) {
+        this.visualSelect(entry);
+        if (this.onSelect)
+            this.onSelect(entry);
+    }
+    visualSelect(entry) {
+        if (this.domSelected) {
+            this.domSelected.tabIndex = -1;
+            this.domSelected.removeAttribute('selected');
+        }
+        this.domSelected = entry;
+        this.domSelected.tabIndex = 50;
+        entry.setAttribute('selected', 'true');
+    }
+}
 class StationList {
     constructor() {
         this.filterTimeout = 0;
@@ -185,95 +295,23 @@ class CoachPicker extends Picker {
 class ExcusePicker extends Picker {
     constructor() {
         super('excuse', ['click']);
-        this.filterTimeout = 0;
-        this.inputFilter = DOM.require('input', this.dom);
-        this.inputExcuse = DOM.require('.picker', this.dom);
-        RAG.database.excuses.forEach(value => {
-            let excuse = document.createElement('dd');
-            excuse.innerText = value;
-            excuse.title = 'Click to select this excuse';
-            excuse.tabIndex = -1;
-            this.inputExcuse.appendChild(excuse);
-        });
+        this.domList = new FilterableList(this.domForm);
+        this.domList.onSelect = e => this.onSelect(e);
+        RAG.database.excuses.forEach(v => this.domList.add(v));
     }
     open(target) {
         super.open(target);
-        let value = RAG.state.excuse;
-        for (let key in this.inputExcuse.children) {
-            let excuse = this.inputExcuse.children[key];
-            if (value !== excuse.innerText)
-                continue;
-            this.visualSelect(excuse);
-            excuse.focus();
-            break;
-        }
+        this.domList.preselect(RAG.state.excuse);
     }
     onChange(ev) {
-        let target = ev.target;
-        if (!target)
-            return;
-        else if (ev.type.toLowerCase() === 'submit')
-            this.filter();
-        else if (target.parentElement === this.inputExcuse)
-            this.select(target);
+        this.domList.onChange(ev);
     }
     onInput(ev) {
-        let key = ev.key;
-        let focused = document.activeElement;
-        if (!focused)
-            return;
-        if (focused === this.inputFilter) {
-            window.clearTimeout(this.filterTimeout);
-            this.filterTimeout = window.setTimeout(this.filter.bind(this), 500);
-        }
-        if (focused !== this.inputFilter)
-            if (key.length === 1 || key === 'Backspace')
-                return this.inputFilter.focus();
-        if (focused.parentElement === this.inputExcuse)
-            if (key === 'Enter')
-                return this.select(focused);
-        if (key === 'ArrowLeft' || key === 'ArrowRight') {
-            let dir = (key === 'ArrowLeft') ? -1 : 1;
-            let nav = null;
-            if (focused.parentElement === this.inputExcuse)
-                nav = DOM.getNextVisibleSibling(focused, dir);
-            else if (focused === this.domSelected)
-                nav = DOM.getNextVisibleSibling(this.domSelected, dir);
-            else if (dir === -1)
-                nav = DOM.getNextVisibleSibling(this.inputExcuse.firstElementChild, dir);
-            else
-                nav = DOM.getNextVisibleSibling(this.inputExcuse.lastElementChild, dir);
-            if (nav)
-                nav.focus();
-        }
+        this.domList.onInput(ev);
     }
-    filter() {
-        window.clearTimeout(this.filterTimeout);
-        let filter = this.inputFilter.value.toLowerCase();
-        let excuses = this.inputExcuse.children;
-        this.inputExcuse.classList.add('hidden');
-        for (let i = 0; i < excuses.length; i++) {
-            let excuse = excuses[i];
-            if (excuse.innerText.toLowerCase().indexOf(filter) >= 0)
-                excuse.classList.remove('hidden');
-            else
-                excuse.classList.add('hidden');
-        }
-        this.inputExcuse.classList.remove('hidden');
-    }
-    select(entry) {
-        this.visualSelect(entry);
+    onSelect(entry) {
         RAG.state.excuse = entry.innerText;
         RAG.views.editor.setElementsText('excuse', RAG.state.excuse);
-    }
-    visualSelect(entry) {
-        if (this.domSelected) {
-            this.domSelected.tabIndex = -1;
-            this.domSelected.removeAttribute('selected');
-        }
-        this.domSelected = entry;
-        this.domSelected.tabIndex = 50;
-        entry.setAttribute('selected', 'true');
     }
 }
 class IntegerPicker extends Picker {
@@ -330,47 +368,23 @@ class IntegerPicker extends Picker {
 class NamedPicker extends Picker {
     constructor() {
         super('named', ['click']);
-        this.inputNamed = DOM.require('.picker', this.dom);
-        RAG.database.named.forEach(value => {
-            let named = document.createElement('dd');
-            named.innerText = value;
-            named.title = 'Click to select this name';
-            named.tabIndex = -1;
-            this.inputNamed.appendChild(named);
-        });
+        this.domList = new FilterableList(this.domForm);
+        this.domList.onSelect = e => this.onSelect(e);
+        RAG.database.named.forEach(v => this.domList.add(v));
     }
     open(target) {
         super.open(target);
-        let value = RAG.state.named;
-        for (let key in this.inputNamed.children) {
-            let name = this.inputNamed.children[key];
-            if (value !== name.innerText)
-                continue;
-            this.visualSelect(name);
-            name.focus();
-            break;
-        }
+        this.domList.preselect(RAG.state.named);
     }
     onChange(ev) {
-        let target = ev.target;
-        if (target && target.parentElement === this.inputNamed)
-            this.select(target);
+        this.domList.onChange(ev);
     }
-    onInput(_) {
+    onInput(ev) {
+        this.domList.onInput(ev);
     }
-    select(entry) {
-        this.visualSelect(entry);
+    onSelect(entry) {
         RAG.state.named = entry.innerText;
         RAG.views.editor.setElementsText('named', RAG.state.named);
-    }
-    visualSelect(entry) {
-        if (this.domSelected) {
-            this.domSelected.tabIndex = -1;
-            this.domSelected.removeAttribute('selected');
-        }
-        this.domSelected = entry;
-        this.domSelected.tabIndex = 50;
-        entry.setAttribute('selected', 'true');
     }
 }
 class PhrasesetPicker extends Picker {
@@ -441,47 +455,23 @@ class PlatformPicker extends Picker {
 class ServicePicker extends Picker {
     constructor() {
         super('service', ['click']);
-        this.inputService = DOM.require('.picker', this.dom);
-        RAG.database.services.forEach(value => {
-            let service = document.createElement('dd');
-            service.innerText = value;
-            service.title = 'Click to select this service';
-            service.tabIndex = -1;
-            this.inputService.appendChild(service);
-        });
+        this.domList = new FilterableList(this.domForm);
+        this.domList.onSelect = e => this.onSelect(e);
+        RAG.database.services.forEach(v => this.domList.add(v));
     }
     open(target) {
         super.open(target);
-        let value = RAG.state.service;
-        for (let key in this.inputService.children) {
-            let service = this.inputService.children[key];
-            if (value !== service.innerText)
-                continue;
-            this.visualSelect(service);
-            service.focus();
-            break;
-        }
+        this.domList.preselect(RAG.state.service);
     }
     onChange(ev) {
-        let target = ev.target;
-        if (target && target.parentElement === this.inputService)
-            this.select(target);
+        this.domList.onChange(ev);
     }
-    onInput(_) {
+    onInput(ev) {
+        this.domList.onInput(ev);
     }
-    select(entry) {
-        this.visualSelect(entry);
+    onSelect(entry) {
         RAG.state.service = entry.innerText;
         RAG.views.editor.setElementsText('service', RAG.state.service);
-    }
-    visualSelect(entry) {
-        if (this.domSelected) {
-            this.domSelected.tabIndex = -1;
-            this.domSelected.removeAttribute('selected');
-        }
-        this.domSelected = entry;
-        this.domSelected.tabIndex = 50;
-        entry.setAttribute('selected', 'true');
     }
 }
 class StationListPicker extends Picker {
@@ -641,9 +631,9 @@ class ElementProcessors {
         ctx.newElement.textContent = RAG.state.excuse;
     }
     static integer(ctx) {
-        let id = DOM.requireAttrValue(ctx.xmlElement, 'id');
-        let min = DOM.requireAttrValue(ctx.xmlElement, 'min');
-        let max = DOM.requireAttrValue(ctx.xmlElement, 'max');
+        let id = DOM.requireAttr(ctx.xmlElement, 'id');
+        let min = DOM.requireAttr(ctx.xmlElement, 'min');
+        let max = DOM.requireAttr(ctx.xmlElement, 'max');
         let singular = ctx.xmlElement.getAttribute('singular');
         let plural = ctx.xmlElement.getAttribute('plural');
         let words = ctx.xmlElement.getAttribute('words');
@@ -674,7 +664,7 @@ class ElementProcessors {
         ctx.newElement.textContent = RAG.state.named;
     }
     static phrase(ctx) {
-        let ref = DOM.requireAttrValue(ctx.xmlElement, 'ref');
+        let ref = DOM.requireAttr(ctx.xmlElement, 'ref');
         let phrase = RAG.database.getPhrase(ref);
         ctx.newElement.title = '';
         ctx.newElement.dataset['ref'] = ref;
@@ -688,7 +678,7 @@ class ElementProcessors {
             DOM.cloneInto(phrase, ctx.newElement);
     }
     static phraseset(ctx) {
-        let ref = DOM.requireAttrValue(ctx.xmlElement, 'ref');
+        let ref = DOM.requireAttr(ctx.xmlElement, 'ref');
         let phraseset = RAG.database.getPhraseset(ref);
         ctx.newElement.dataset['ref'] = ref;
         if (!phraseset) {
@@ -714,14 +704,14 @@ class ElementProcessors {
         ctx.newElement.textContent = RAG.state.service;
     }
     static station(ctx) {
-        let context = DOM.requireAttrValue(ctx.xmlElement, 'context');
+        let context = DOM.requireAttr(ctx.xmlElement, 'context');
         let code = RAG.state.getStation(context);
         ctx.newElement.title = `Click to change this station ('${context}')`;
         ctx.newElement.textContent = RAG.database.getStation(code);
         ctx.newElement.dataset['context'] = context;
     }
     static stationlist(ctx) {
-        let context = DOM.requireAttrValue(ctx.xmlElement, 'context');
+        let context = DOM.requireAttr(ctx.xmlElement, 'context');
         let stations = RAG.state.getStationList(context).slice(0);
         let stationList = '';
         if (stations.length === 1)
@@ -1009,17 +999,21 @@ class Views {
     }
 }
 class DOM {
+    static getAttr(element, attr, def) {
+        return element.hasAttribute(attr)
+            ? element.getAttribute(attr)
+            : def;
+    }
     static require(query, parent = window.document) {
         let result = parent.querySelector(query);
         if (!result)
             throw new Error(`Required DOM element is missing: '${query}'`);
         return result;
     }
-    static requireAttrValue(element, attr) {
-        let value = element.getAttribute(attr);
-        if (Strings.isNullOrEmpty(value))
-            throw new Error(`Required attribute is missing or empty: '${attr}'`);
-        return value;
+    static requireAttr(element, attr) {
+        if (!element.hasAttribute(attr))
+            throw new Error(`Required attribute is missing: '${attr}'`);
+        return element.getAttribute(attr);
     }
     static requireData(element, key) {
         let value = element.dataset[key];

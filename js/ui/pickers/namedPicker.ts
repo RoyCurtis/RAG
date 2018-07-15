@@ -5,84 +5,39 @@
 /** Controller for the named train picker dialog */
 class NamedPicker extends Picker
 {
-    /** Reference to container element for all the pickable names */
-    private readonly inputNamed : HTMLElement;
-
-    /** Currently selected name, if any */
-    private domSelected? : HTMLElement;
+    private readonly domList : FilterableList;
 
     constructor()
     {
         super('named', ['click']);
 
-        this.inputNamed = DOM.require('.picker', this.dom);
+        this.domList          = new FilterableList(this.domForm);
+        this.domList.onSelect = e => this.onSelect(e);
 
-        RAG.database.named.forEach(value =>
-        {
-            let named = document.createElement('dd');
-
-            named.innerText = value;
-            named.title     = 'Click to select this name';
-            named.tabIndex  = -1;
-
-            this.inputNamed.appendChild(named);
-        });
+        RAG.database.named.forEach( v => this.domList.add(v) );
     }
 
     public open(target: HTMLElement) : void
     {
         super.open(target);
 
-        let value = RAG.state.named;
-
         // Pre-select the currently used name
-        for (let key in this.inputNamed.children)
-        {
-            let name = this.inputNamed.children[key] as HTMLElement;
-
-            if (value !== name.innerText)
-                continue;
-
-            this.visualSelect(name);
-            name.focus();
-            break;
-        }
+        this.domList.preselect(RAG.state.named);
     }
 
     protected onChange(ev: Event) : void
     {
-        let target = ev.target as HTMLElement;
-
-        // Handle name being clicked
-        if (target && target.parentElement === this.inputNamed)
-            this.select(target);
+        this.domList.onChange(ev);
     }
 
-    protected onInput(_: KeyboardEvent) : void
+    protected onInput(ev: KeyboardEvent) : void
     {
-        // no-op
+        this.domList.onInput(ev);
     }
 
-    /** Visually changes the current selection, and updates the state and editor */
-    private select(entry: HTMLElement) : void
+    private onSelect(entry: HTMLElement) : void
     {
-        this.visualSelect(entry);
-
         RAG.state.named = entry.innerText;
         RAG.views.editor.setElementsText('named', RAG.state.named);
-    }
-
-    /** Visually changes the currently selected element */
-    private visualSelect(entry: HTMLElement) : void
-    {
-        if (this.domSelected)
-        {
-            this.domSelected.tabIndex = -1;
-            this.domSelected.removeAttribute('selected');
-        }
-
-        this.domSelected          = entry;
-        this.domSelected.tabIndex = 50;
-        entry.setAttribute('selected', 'true');
     }
 }
