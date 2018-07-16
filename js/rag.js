@@ -421,7 +421,7 @@ class PhrasesetPicker extends Picker {
         let idx = parseInt(DOM.requireData(target, 'idx'));
         let phraseSet = RAG.database.getPhraseset(ref);
         if (!phraseSet)
-            return;
+            throw new Error(`Phraseset '${ref}' doesn't exist`);
         this.currentRef = ref;
         this.domHeader.innerText = `Pick a phrase for the '${ref}' section`;
         this.domList.clear();
