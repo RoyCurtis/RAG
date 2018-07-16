@@ -17,7 +17,6 @@ class IntegerPicker extends Picker
 
     constructor()
     {
-        // TODO: make it so all pickers auto-focus control on open
         super('integer', ['change']);
 
         this.inputDigit = DOM.require('input', this.dom) as HTMLInputElement;
@@ -47,9 +46,10 @@ class IntegerPicker extends Picker
         else
             this.domLabel.innerText = '';
 
-        this.inputDigit.min   = min;
-        this.inputDigit.max   = max;
-        this.inputDigit.value = value.toString();
+        this.domHeader.innerText = `Pick a number for the '${this.id}' part`;
+        this.inputDigit.min      = min;
+        this.inputDigit.max      = max;
+        this.inputDigit.value    = value.toString();
         this.inputDigit.focus();
     }
 

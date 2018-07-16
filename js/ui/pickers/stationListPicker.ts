@@ -31,6 +31,9 @@ class StationListPicker extends StationPicker
             this.currentCtx = DOM.requireData(target, 'context');
             let entries     = RAG.state.getStationList(this.currentCtx).slice(0);
 
+            this.domHeader.innerText =
+                `Build a station list for the '${this.currentCtx}' context`;
+
             // Remove all old elements except for the empty list text
             while (this.inputList.children[1])
                 this.inputList.children[1].remove();

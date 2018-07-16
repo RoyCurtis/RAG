@@ -25,6 +25,9 @@ class StationPicker extends Picker
             StationPicker.domList.attach(this, this.onSelectStation);
             StationPicker.domList.preselectCode( RAG.state.getStation(this.currentCtx) );
             StationPicker.domList.selectOnClick = true;
+
+            this.domHeader.innerText =
+                `Pick a station for the '${this.currentCtx}' context`;
         };
     }
 

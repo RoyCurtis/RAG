@@ -230,6 +230,7 @@ class Picker {
     constructor(xmlTag, events) {
         this.dom = DOM.require(`#${xmlTag}Picker`);
         this.domForm = DOM.require('form', this.dom);
+        this.domHeader = DOM.require('header', this.dom);
         this.xmlTag = xmlTag;
         let self = this;
         events.forEach(event => {
@@ -353,6 +354,7 @@ class IntegerPicker extends Picker {
             this.domLabel.innerText = this.plural;
         else
             this.domLabel.innerText = '';
+        this.domHeader.innerText = `Pick a number for the '${this.id}' part`;
         this.inputDigit.min = min;
         this.inputDigit.max = max;
         this.inputDigit.value = value.toString();
@@ -410,7 +412,6 @@ class NamedPicker extends Picker {
 class PhrasesetPicker extends Picker {
     constructor() {
         super('phraseset', ['click']);
-        this.domHeader = DOM.require('header', this.dom);
         this.domList = new FilterableList(this.domForm);
         this.domList.onSelect = e => this.onSelect(e);
     }
@@ -509,6 +510,8 @@ class StationPicker extends Picker {
             StationPicker.domList.attach(this, this.onSelectStation);
             StationPicker.domList.preselectCode(RAG.state.getStation(this.currentCtx));
             StationPicker.domList.selectOnClick = true;
+            this.domHeader.innerText =
+                `Pick a station for the '${this.currentCtx}' context`;
         };
     }
     open(target) {
@@ -540,6 +543,8 @@ class StationListPicker extends StationPicker {
             StationPicker.domList.selectOnClick = false;
             this.currentCtx = DOM.requireData(target, 'context');
             let entries = RAG.state.getStationList(this.currentCtx).slice(0);
+            this.domHeader.innerText =
+                `Build a station list for the '${this.currentCtx}' context`;
             while (this.inputList.children[1])
                 this.inputList.children[1].remove();
             entries.forEach(v => this.addEntry(v));

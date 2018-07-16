@@ -5,9 +5,7 @@
 /** Controller for the phraseset picker dialog */
 class PhrasesetPicker extends Picker
 {
-    // TODO: Make this a picker method (setTitle())
-    private readonly domHeader : HTMLElement;
-    private readonly domList   : FilterableList;
+    private readonly domList : FilterableList;
 
     private currentRef? : string;
 
@@ -15,7 +13,6 @@ class PhrasesetPicker extends Picker
     {
         super('phraseset', ['click']);
 
-        this.domHeader        = DOM.require('header', this.dom);
         this.domList          = new FilterableList(this.domForm);
         this.domList.onSelect = e => this.onSelect(e);
     }

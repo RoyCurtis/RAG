@@ -4,16 +4,19 @@
 abstract class Picker
 {
     /** Reference to this picker's DOM element */
-    public readonly dom : HTMLElement;
+    public readonly dom     : HTMLElement;
 
     /** Reference to this picker's form DOM element */
     public readonly domForm : HTMLElement;
 
     /** Gets the name of the XML tag this picker handles */
-    public readonly xmlTag : string;
+    public readonly xmlTag  : string;
 
     /** Reference to the phrase element being edited by this picker */
     protected domEditing? : HTMLElement;
+
+    /** Reference to this picker's header element */
+    protected domHeader   : HTMLElement;
 
     /**
      * Creates a picker to handle the given phrase element type.
@@ -23,9 +26,10 @@ abstract class Picker
      */
     protected constructor(xmlTag: string, events: string[])
     {
-        this.dom     = DOM.require(`#${xmlTag}Picker`);
-        this.domForm = DOM.require('form', this.dom) as HTMLFormElement;
-        this.xmlTag  = xmlTag;
+        this.dom       = DOM.require(`#${xmlTag}Picker`);
+        this.domForm   = DOM.require('form', this.dom) as HTMLFormElement;
+        this.domHeader = DOM.require('header', this.dom);
+        this.xmlTag    = xmlTag;
 
         // Self needed here, as 'this' breaks inside event delegates
         let self = this;
