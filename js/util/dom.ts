@@ -128,7 +128,7 @@ class DOM
             .replace(/\s([.,])/gi, '$1');
     }
 
-    public static getNextVisibleSibling(from: HTMLElement, dir: number)
+    public static getNextFocusableSibling(from: HTMLElement, dir: number)
         : HTMLElement | null
     {
         let current = from;
@@ -153,8 +153,8 @@ class DOM
             if (current === from)
                 return null;
 
-            // If this element isn't hidden, return it!
-            if ( !current.classList.contains('hidden') )
+            // If this element isn't hidden and is focusable, return it!
+            if ( !current.classList.contains('hidden') && current.tabIndex )
                 return current;
         }
     }

@@ -35,6 +35,19 @@
   flex-grow: 1;
   overflow: auto;
 }
+.dialog .flItemPicker dl {
+  display: flex;
+  flex-wrap: wrap;
+}
+.dialog .flItemPicker dt {
+  background: #000;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+  font-weight: bold;
+  padding: 0.5em 1em;
+  position: sticky;
+  top: 0;
+  width: 100%;
+}
 .dialog .flItemPicker dd {
   cursor: pointer;
   display: inline-block;
@@ -130,41 +143,6 @@
 #stationPicker form .stations dd.dragging,
 #stationlistPicker form .stations dd.dragging {
   opacity: 0.5;
-}
-#stationPicker form #stationList,
-#stationlistPicker form #stationList {
-  display: flex;
-  flex-flow: column;
-}
-#stationPicker form #stationList .picker,
-#stationlistPicker form #stationList .picker {
-  overflow: auto;
-}
-#stationPicker form #stationList .picker dl,
-#stationlistPicker form #stationList .picker dl {
-  display: flex;
-  flex-wrap: wrap;
-}
-#stationPicker form #stationList .picker dt,
-#stationlistPicker form #stationList .picker dt {
-  background: #000;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.5);
-  font-weight: bold;
-  padding: 0.5em 1em;
-  position: sticky;
-  top: 0;
-  width: 100%;
-}
-#stationPicker form #stationList .picker dd,
-#stationlistPicker form #stationList .picker dd {
-  cursor: pointer;
-  padding: 1em;
-}
-#stationPicker form #stationList .picker dd:hover,
-#stationlistPicker form #stationList .picker dd:hover,
-#stationPicker form #stationList .picker dd[selected],
-#stationlistPicker form #stationList .picker dd[selected] {
-  background: #cc7e00;
 }
 #editor {
   background: #222;

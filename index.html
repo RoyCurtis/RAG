@@ -134,7 +134,12 @@
     <header>Pick a station</header>
 
     <form>
-
+      <filterableList
+        placeholder="Filter stations..."
+        title="List of station names"
+        itemTitle="Click to select or add this service"
+        groupByABC
+      ></filterableList>
     </form>
   </div>
 
@@ -157,14 +162,6 @@
   </div>
 
   <!-- UI definitions for common controls -->
-
-  <div id="stationList" class="hidden">
-    <input class="filterBox" type="text" placeholder="Filter stations..."/>
-
-    <div class="picker" title="List of stations to pick from">
-
-    </div>
-  </div>
 
   <div id="filterableList" class="hidden">
     <input class="flSearchBox" type="text" tabindex="50" title=""/>

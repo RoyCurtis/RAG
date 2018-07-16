@@ -5,41 +5,52 @@
 /** Controller for the station picker dialog */
 class StationPicker extends Picker
 {
-    private currentContext : string = '';
+    protected static domList : StationList;
 
-    constructor()
+    protected currentCtx : string = '';
+
+    protected onOpen : (target: HTMLElement) => void;
+
+    constructor(tag: string = 'station')
     {
-        super('station', ['click', 'input']);
+        super(tag, ['click']);
+
+        if (!StationPicker.domList)
+            StationPicker.domList = new StationList(this.domForm);
+
+        this.onOpen = (target) =>
+        {
+            this.currentCtx = DOM.requireData(target, 'context');
+
+            StationPicker.domList.attach(this, this.onSelectStation);
+            StationPicker.domList.preselectCode( RAG.state.getStation(this.currentCtx) );
+            StationPicker.domList.selectOnClick = true;
+        };
     }
 
     public open(target: HTMLElement) : void
     {
         super.open(target);
-
-        this.currentContext = DOM.requireData(target, 'context');
-
-        RAG.views.stationList.attach(this);
-        RAG.views.stationList.selectCode( RAG.state.getStation(this.currentContext) );
+        this.onOpen(target);
     }
 
     protected onChange(ev: Event) : void
     {
-        let self  = this;
-        let query = `[data-type=station][data-context=${this.currentContext}]`;
-
-        RAG.views.stationList.onChange(ev, target =>
-        {
-            RAG.views.stationList.selectEntry(target);
-
-            RAG.state.setStation(self.currentContext, target.dataset['code']!);
-            RAG.views.editor
-                .getElementsByQuery(query)
-                .forEach(element => element.textContent = target.innerText);
-        });
+        StationPicker.domList.onChange(ev);
     }
 
-    protected onInput(_: KeyboardEvent) : void
+    protected onInput(ev: KeyboardEvent) : void
     {
-        // no-op
+        StationPicker.domList.onInput(ev);
+    }
+
+    private onSelectStation(entry: HTMLElement) : void
+    {
+        let query = `[data-type=station][data-context=${this.currentCtx}]`;
+
+        RAG.state.setStation(this.currentCtx, entry.dataset['code']!);
+        RAG.views.editor
+            .getElementsByQuery(query)
+            .forEach(element => element.textContent = entry.innerText);
     }
 }

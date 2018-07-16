@@ -19,22 +19,28 @@ class FilterableList
     }
 
     /** Optional event handler to fire when an item is selected by the user */
-    public  onSelect?     : SelectDelegate;
+    public    onSelect?     : SelectDelegate;
+
+    /** Whether to visually select the clicked element */
+    public    selectOnClick : boolean = true;
 
     /** DOM reference to this list's filter input box */
-    private inputFilter   : HTMLInputElement;
+    protected inputFilter   : HTMLInputElement;
 
     /** DOM reference to this list's container of item elements */
-    private inputList     : HTMLElement;
+    protected inputList     : HTMLElement;
 
     /** DOM reference to the currently selected item, if any */
-    private domSelected?  : HTMLElement;
+    protected domSelected?  : HTMLElement;
 
     /** Reference to the auto-filter timeout, if any */
-    private filterTimeout : number = 0;
+    protected filterTimeout : number = 0;
 
     /** Title attribute to apply to every item added */
-    private itemTitle     : string = 'Click to select this item';
+    protected itemTitle     : string = 'Click to select this item';
+
+    /** Whether to group added elements by alphabetical sections */
+    protected groupByABC    : boolean = false;
 
     /** Creates a filterable list, by replacing the placeholder in a given parent */
     constructor(parent: HTMLElement)
@@ -46,6 +52,7 @@ class FilterableList
         let placeholder = DOM.getAttr(target, 'placeholder', 'Filter choices...');
         let title       = DOM.getAttr(target, 'title', 'List of choices');
         this.itemTitle  = DOM.getAttr(target, 'itemTitle', this.itemTitle);
+        this.groupByABC = target.hasAttribute('groupByABC');
 
         this.inputFilter = FilterableList.SEARCHBOX.cloneNode(false) as HTMLInputElement;
         this.inputList   = FilterableList.PICKERBOX.cloneNode(false) as HTMLElement;
@@ -125,12 +132,16 @@ class FilterableList
         if (!target)
             return;
 
+        // Make sure target is ancestor of this control
+        else if ( !this.owns(target) )
+            return;
+
         // Handle pressing ENTER inside filter box
         else if (ev.type.toLowerCase() === 'submit')
             this.filter();
 
         // Handle item being clicked
-        else if (target.parentElement === this.inputList)
+        else if (target.tagName.toLowerCase() === 'dd')
             this.select(target);
     }
 
@@ -145,6 +156,7 @@ class FilterableList
     {
         let key     = ev.key;
         let focused = document.activeElement as HTMLElement;
+        let parent  = focused.parentElement!;
 
         if (!focused) return;
 
@@ -163,7 +175,7 @@ class FilterableList
             return this.inputFilter.focus();
 
         // Handle pressing ENTER after keyboard navigating to an excuse
-        if (focused.parentElement === this.inputList)
+        if ( parent === this.inputList || parent.hasAttribute('group') )
         if (key === 'Enter')
             return this.select(focused as HTMLElement);
 
@@ -171,24 +183,28 @@ class FilterableList
         if (key === 'ArrowLeft' || key === 'ArrowRight')
         {
             let dir = (key === 'ArrowLeft') ? -1 : 1;
-            let nav : HTMLElement | null = null;
+            let nav = null;
 
-            // Navigate relative to currently focused element
-            if      (focused.parentElement === this.inputList)
-                nav = DOM.getNextVisibleSibling(focused, dir);
+            // Navigate relative to currently focused element, if using groups
+            if      ( this.groupByABC && parent.hasAttribute('group') )
+                nav = DOM.getNextFocusableSibling(focused, dir);
+
+            // Navigate relative to currently focused element, if list is flat
+            else if (!this.groupByABC && focused.parentElement === this.inputList)
+                nav = DOM.getNextFocusableSibling(focused, dir);
 
             // Navigate relative to currently selected element
             else if (focused === this.domSelected)
-                nav = DOM.getNextVisibleSibling(this.domSelected, dir);
+                nav = DOM.getNextFocusableSibling(this.domSelected, dir);
 
             // Navigate relevant to beginning or end of container
             else if (dir === -1)
-                nav = DOM.getNextVisibleSibling(
-                    this.inputList.firstElementChild! as HTMLElement, dir
+                nav = DOM.getNextFocusableSibling(
+                    focused.firstElementChild! as HTMLElement, dir
                 );
             else
-                nav = DOM.getNextVisibleSibling(
-                    this.inputList.lastElementChild! as HTMLElement, dir
+                nav = DOM.getNextFocusableSibling(
+                    focused.lastElementChild! as HTMLElement, dir
                 );
 
             if (nav) nav.focus();
@@ -196,53 +212,103 @@ class FilterableList
     }
 
     /** Hide or show items of the list if they partially match the user query */
-    private filter() : void
+    protected filter() : void
     {
-        // TODO: optimize and DRY this as much as possible
-
+        // TODO: optimize this as much as possible
         window.clearTimeout(this.filterTimeout);
+
         let filter = this.inputFilter.value.toLowerCase();
         let items  = this.inputList.children;
+        let engine = this.groupByABC
+            ? FilterableList.filterGroup
+            : FilterableList.filterItem;
 
         // Prevent browser redraw/reflow during filtering
         this.inputList.classList.add('hidden');
 
         // Iterate through all the items
         for (let i = 0; i < items.length; i++)
-        {
-            let item = items[i] as HTMLElement;
-
-            // Show if contains search term
-            if (item.innerText.toLowerCase().indexOf(filter) >= 0)
-                item.classList.remove('hidden');
-            // Hide if not
-            else
-                item.classList.add('hidden');
-        }
+            engine(items[i] as HTMLElement, filter);
 
         this.inputList.classList.remove('hidden');
     }
 
-    /** Visually changes the current selection, and updates the state and editor */
-    private select(entry: HTMLElement) : void
+    /** Applies filter to an item, showing it if matched, hiding if not */
+    protected static filterItem(item: HTMLElement, filter: string) : number
     {
-        this.visualSelect(entry);
+        // Show if contains search term
+        if (item.innerText.toLowerCase().indexOf(filter) >= 0)
+        {
+            item.classList.remove('hidden');
+            return 0;
+        }
+
+        // Hide if not
+        else
+        {
+            item.classList.add('hidden');
+            return 1;
+        }
+    }
+
+    /** Applies filter to children of a group, hiding the group if all children hide */
+    protected static filterGroup(group: HTMLElement, filter: string) : void
+    {
+        let entries = group.children;
+        let count   = entries.length - 1; // -1 for header element
+        let hidden  = 0;
+
+        // Iterate through each station name in this letter section. Header skipped.
+        for (let i = 1; i < entries.length; i++)
+            hidden += FilterableList.filterItem(entries[i] as HTMLElement, filter);
+
+        // If all station names in this letter section were hidden, hide the section
+        if (hidden >= count)
+            group.classList.add('hidden');
+        else
+            group.classList.remove('hidden');
+    }
+
+    protected owns(target: HTMLElement) : boolean
+    {
+        let parent = target.parentElement;
+
+        if (!parent) return false;
+
+        return target               === this.inputList
+            || target               === this.inputFilter
+            || parent               === this.inputList
+            || parent.parentElement === this.inputList;
+    }
+
+    /** Visually changes the current selection, and updates the state and editor */
+    protected select(entry: HTMLElement) : void
+    {
+        if (this.selectOnClick)
+            this.visualSelect(entry);
 
         if (this.onSelect)
             this.onSelect(entry);
     }
 
     /** Visually changes the currently selected element */
-    private visualSelect(entry: HTMLElement) : void
+    protected visualSelect(entry: HTMLElement) : void
     {
-        if (this.domSelected)
-        {
-            this.domSelected.tabIndex = -1;
-            this.domSelected.removeAttribute('selected');
-        }
+        this.visualUnselect();
 
         this.domSelected          = entry;
         this.domSelected.tabIndex = 50;
         entry.setAttribute('selected', 'true');
+    }
+
+    /** Visually unselects the currently selected element, if any */
+    protected visualUnselect() : void
+    {
+        if (!this.domSelected)
+            return;
+
+        this.domSelected.removeAttribute('selected');
+        this.domSelected.tabIndex = -1;
+        this.domSelected          = undefined;
     }
 }

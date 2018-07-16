@@ -34,6 +34,19 @@
     flex-grow 1
     overflow  auto
 
+    dl
+      display   flex
+      flex-wrap wrap
+
+    dt
+      background  black
+      box-shadow  0 5px 10px rgba(0, 0, 0, 0.5)
+      font-weight bold
+      padding     0.5em 1em
+      position    sticky
+      top         0
+      width       100%
+
     dd
       cursor  pointer
       display inline-block
@@ -104,31 +117,3 @@
 
         &.dragging
           opacity 0.5
-
-    #stationList
-      display   flex
-      flex-flow column
-
-      .picker
-        overflow auto
-
-        dl
-          display   flex
-          flex-wrap wrap
-
-        dt
-          background  black
-          box-shadow  0 5px 10px rgba(0, 0, 0, 0.5)
-          font-weight bold
-          padding     0.5em 1em
-          position    sticky
-          top         0
-          width       100%
-
-        dd
-          cursor  pointer
-          padding 1em
-
-          &:hover,
-          &[selected]
-            background #CC7E00

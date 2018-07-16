@@ -9,12 +9,12 @@ class State
     private _stations     : Dictionary<string>   = {};
     private _stationLists : Dictionary<string[]> = {};
 
-    private _coach?       : string;
-    private _excuse?      : string;
-    private _platform?    : Platform;
-    private _named?       : string;
-    private _service?     : string;
-    private _time?        : string;
+    private _coach?    : string;
+    private _excuse?   : string;
+    private _platform? : Platform;
+    private _named?    : string;
+    private _service?  : string;
+    private _time?     : string;
 
     public getCollapsed(ref: string, chance: number) : boolean
     {
@@ -106,6 +106,7 @@ class State
         this._stationLists[context] = value;
     }
 
+    // TODO: these are all missing visibility
     get coach() : string
     {
         if (this._coach)

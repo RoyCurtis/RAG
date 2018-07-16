@@ -1,14 +1,17 @@
 "use strict";
 class FilterableList {
     constructor(parent) {
+        this.selectOnClick = true;
         this.filterTimeout = 0;
         this.itemTitle = 'Click to select this item';
+        this.groupByABC = false;
         if (!FilterableList.SEARCHBOX)
             FilterableList.init();
         let target = DOM.require('filterableList', parent);
         let placeholder = DOM.getAttr(target, 'placeholder', 'Filter choices...');
         let title = DOM.getAttr(target, 'title', 'List of choices');
         this.itemTitle = DOM.getAttr(target, 'itemTitle', this.itemTitle);
+        this.groupByABC = target.hasAttribute('groupByABC');
         this.inputFilter = FilterableList.SEARCHBOX.cloneNode(false);
         this.inputList = FilterableList.PICKERBOX.cloneNode(false);
         this.inputList.title = title;
@@ -55,9 +58,11 @@ class FilterableList {
         let target = ev.target;
         if (!target)
             return;
+        else if (!this.owns(target))
+            return;
         else if (ev.type.toLowerCase() === 'submit')
             this.filter();
-        else if (target.parentElement === this.inputList)
+        else if (target.tagName.toLowerCase() === 'dd')
             this.select(target);
     }
     onClose() {
@@ -66,6 +71,7 @@ class FilterableList {
     onInput(ev) {
         let key = ev.key;
         let focused = document.activeElement;
+        let parent = focused.parentElement;
         if (!focused)
             return;
         if (focused === this.inputFilter) {
@@ -76,20 +82,22 @@ class FilterableList {
         if (focused !== this.inputFilter)
             if (key.length === 1 || key === 'Backspace')
                 return this.inputFilter.focus();
-        if (focused.parentElement === this.inputList)
+        if (parent === this.inputList || parent.hasAttribute('group'))
             if (key === 'Enter')
                 return this.select(focused);
         if (key === 'ArrowLeft' || key === 'ArrowRight') {
             let dir = (key === 'ArrowLeft') ? -1 : 1;
             let nav = null;
-            if (focused.parentElement === this.inputList)
-                nav = DOM.getNextVisibleSibling(focused, dir);
+            if (this.groupByABC && parent.hasAttribute('group'))
+                nav = DOM.getNextFocusableSibling(focused, dir);
+            else if (!this.groupByABC && focused.parentElement === this.inputList)
+                nav = DOM.getNextFocusableSibling(focused, dir);
             else if (focused === this.domSelected)
-                nav = DOM.getNextVisibleSibling(this.domSelected, dir);
+                nav = DOM.getNextFocusableSibling(this.domSelected, dir);
             else if (dir === -1)
-                nav = DOM.getNextVisibleSibling(this.inputList.firstElementChild, dir);
+                nav = DOM.getNextFocusableSibling(focused.firstElementChild, dir);
             else
-                nav = DOM.getNextVisibleSibling(this.inputList.lastElementChild, dir);
+                nav = DOM.getNextFocusableSibling(focused.lastElementChild, dir);
             if (nav)
                 nav.focus();
         }
@@ -98,131 +106,121 @@ class FilterableList {
         window.clearTimeout(this.filterTimeout);
         let filter = this.inputFilter.value.toLowerCase();
         let items = this.inputList.children;
+        let engine = this.groupByABC
+            ? FilterableList.filterGroup
+            : FilterableList.filterItem;
         this.inputList.classList.add('hidden');
-        for (let i = 0; i < items.length; i++) {
-            let item = items[i];
-            if (item.innerText.toLowerCase().indexOf(filter) >= 0)
-                item.classList.remove('hidden');
-            else
-                item.classList.add('hidden');
-        }
+        for (let i = 0; i < items.length; i++)
+            engine(items[i], filter);
         this.inputList.classList.remove('hidden');
     }
+    static filterItem(item, filter) {
+        if (item.innerText.toLowerCase().indexOf(filter) >= 0) {
+            item.classList.remove('hidden');
+            return 0;
+        }
+        else {
+            item.classList.add('hidden');
+            return 1;
+        }
+    }
+    static filterGroup(group, filter) {
+        let entries = group.children;
+        let count = entries.length - 1;
+        let hidden = 0;
+        for (let i = 1; i < entries.length; i++)
+            hidden += FilterableList.filterItem(entries[i], filter);
+        if (hidden >= count)
+            group.classList.add('hidden');
+        else
+            group.classList.remove('hidden');
+    }
+    owns(target) {
+        let parent = target.parentElement;
+        if (!parent)
+            return false;
+        return target === this.inputList
+            || target === this.inputFilter
+            || parent === this.inputList
+            || parent.parentElement === this.inputList;
+    }
     select(entry) {
-        this.visualSelect(entry);
+        if (this.selectOnClick)
+            this.visualSelect(entry);
         if (this.onSelect)
             this.onSelect(entry);
     }
     visualSelect(entry) {
-        if (this.domSelected) {
-            this.domSelected.tabIndex = -1;
-            this.domSelected.removeAttribute('selected');
-        }
+        this.visualUnselect();
         this.domSelected = entry;
         this.domSelected.tabIndex = 50;
         entry.setAttribute('selected', 'true');
     }
+    visualUnselect() {
+        if (!this.domSelected)
+            return;
+        this.domSelected.removeAttribute('selected');
+        this.domSelected.tabIndex = -1;
+        this.domSelected = undefined;
+    }
 }
-class StationList {
-    constructor() {
-        this.filterTimeout = 0;
-        this.dom = DOM.require('#stationList');
-        this.inputFilter = DOM.require('input', this.dom);
-        this.inputStation = DOM.require('.picker', this.dom);
-        this.domChoices = {};
-        this.dom.remove();
-        this.dom.classList.remove('hidden');
+class StationList extends FilterableList {
+    constructor(parent) {
+        super(parent);
+        this.domStations = {};
+        this.inputList.tabIndex = 0;
         Object.keys(RAG.database.stations).forEach(code => {
             let station = RAG.database.stations[code];
             let letter = station[0];
-            let group = this.domChoices[letter];
+            let group = this.domStations[letter];
             if (!letter)
                 throw new Error('Station database appears to contain an empty name');
             if (!group) {
                 let header = document.createElement('dt');
                 header.innerText = letter.toUpperCase();
-                group = this.domChoices[letter] = document.createElement('dl');
+                header.tabIndex = 0;
+                group = this.domStations[letter] = document.createElement('dl');
+                group.tabIndex = 50;
+                group.setAttribute('group', '');
                 group.appendChild(header);
-                this.inputStation.appendChild(group);
+                this.inputList.appendChild(group);
             }
             let entry = document.createElement('dd');
-            entry.innerText = RAG.database.stations[code];
             entry.dataset['code'] = code;
+            entry.innerText = RAG.database.stations[code];
+            entry.title = this.itemTitle;
+            entry.tabIndex = -1;
             group.appendChild(entry);
         });
     }
-    attach(picker) {
+    attach(picker, onSelect) {
         let parent = picker.domForm;
-        if (!this.dom.parentElement || this.dom.parentElement !== parent)
-            parent.appendChild(this.dom);
+        let current = this.inputList.parentElement;
+        if (!current || current !== parent) {
+            parent.appendChild(this.inputFilter);
+            parent.appendChild(this.inputList);
+        }
         this.reset();
+        this.onSelect = onSelect.bind(picker);
         this.inputFilter.focus();
     }
-    selectCode(code) {
-        let entry = this.inputStation.querySelector(`dd[data-code=${code}]`);
+    preselectCode(code) {
+        let entry = this.inputList.querySelector(`dd[data-code=${code}]`);
         if (entry)
-            this.selectEntry(entry);
-    }
-    selectEntry(entry) {
-        if (this.domSelected)
-            this.domSelected.removeAttribute('selected');
-        this.domSelected = entry;
-        entry.setAttribute('selected', 'true');
+            this.visualSelect(entry);
     }
     registerDropHandler(handler) {
         this.inputFilter.ondrop = handler;
-        this.inputStation.ondrop = handler;
+        this.inputList.ondrop = handler;
         this.inputFilter.ondragover = StationList.preventDefault;
-        this.inputStation.ondragover = StationList.preventDefault;
-    }
-    onChange(ev, onClick) {
-        let target = ev.target;
-        if (!target)
-            return;
-        else if (target === this.inputFilter) {
-            window.clearTimeout(this.filterTimeout);
-            this.filterTimeout = window.setTimeout(this.filter.bind(this), 500);
-        }
-        else if (ev.type.toLowerCase() === 'submit')
-            this.filter();
-        else if (target.dataset['code'])
-            onClick(target);
-    }
-    filter() {
-        window.clearTimeout(this.filterTimeout);
-        let filter = this.inputFilter.value.toLowerCase();
-        let letters = this.inputStation.children;
-        this.inputStation.classList.add('hidden');
-        for (let i = 0; i < letters.length; i++) {
-            let letter = letters[i];
-            let entries = letters[i].children;
-            let count = entries.length - 1;
-            let hidden = 0;
-            for (let j = 1; j < entries.length; j++) {
-                let entry = entries[j];
-                if (entry.innerText.toLowerCase().indexOf(filter) >= 0)
-                    entry.classList.remove('hidden');
-                else {
-                    entry.classList.add('hidden');
-                    hidden++;
-                }
-            }
-            if (hidden >= count)
-                letter.classList.add('hidden');
-            else
-                letter.classList.remove('hidden');
-        }
-        this.inputStation.classList.remove('hidden');
+        this.inputList.ondragover = StationList.preventDefault;
     }
     reset() {
         this.inputFilter.ondrop = null;
-        this.inputStation.ondrop = null;
+        this.inputList.ondrop = null;
         this.inputFilter.ondragover = null;
-        this.inputStation.ondragover = null;
-        if (this.domSelected) {
-            this.domSelected.removeAttribute('selected');
-            this.domSelected = undefined;
-        }
+        this.inputList.ondragover = null;
+        this.visualUnselect();
     }
     static preventDefault(ev) {
         ev.preventDefault();
@@ -500,29 +498,56 @@ class ServicePicker extends Picker {
         RAG.views.editor.setElementsText('service', RAG.state.service);
     }
 }
-class StationListPicker extends Picker {
-    constructor() {
-        super('stationlist', ['click', 'input']);
+class StationPicker extends Picker {
+    constructor(tag = 'station') {
+        super(tag, ['click']);
         this.currentCtx = '';
-        this.inputList = DOM.require('.stations', this.dom);
-        this.domEmptyList = DOM.require('dt', this.inputList);
+        if (!StationPicker.domList)
+            StationPicker.domList = new StationList(this.domForm);
+        this.onOpen = (target) => {
+            this.currentCtx = DOM.requireData(target, 'context');
+            StationPicker.domList.attach(this, this.onSelectStation);
+            StationPicker.domList.preselectCode(RAG.state.getStation(this.currentCtx));
+            StationPicker.domList.selectOnClick = true;
+        };
     }
     open(target) {
         super.open(target);
-        RAG.views.stationList.attach(this);
-        RAG.views.stationList.registerDropHandler(this.onDrop.bind(this));
-        this.currentCtx = DOM.requireData(target, 'context');
-        let entries = RAG.state.getStationList(this.currentCtx).slice(0);
-        while (this.inputList.children[1])
-            this.inputList.children[1].remove();
-        entries.forEach(this.addEntry.bind(this));
+        this.onOpen(target);
     }
     onChange(ev) {
-        let self = this;
-        RAG.views.stationList.onChange(ev, target => {
-            self.addEntry(target.innerText);
-            self.update();
-        });
+        StationPicker.domList.onChange(ev);
+    }
+    onInput(ev) {
+        StationPicker.domList.onInput(ev);
+    }
+    onSelectStation(entry) {
+        let query = `[data-type=station][data-context=${this.currentCtx}]`;
+        RAG.state.setStation(this.currentCtx, entry.dataset['code']);
+        RAG.views.editor
+            .getElementsByQuery(query)
+            .forEach(element => element.textContent = entry.innerText);
+    }
+}
+class StationListPicker extends StationPicker {
+    constructor() {
+        super("stationlist");
+        this.inputList = DOM.require('.stations', this.dom);
+        this.domEmptyList = DOM.require('dt', this.inputList);
+        this.onOpen = (target) => {
+            StationPicker.domList.attach(this, this.onAddStation);
+            StationPicker.domList.registerDropHandler(this.onDrop.bind(this));
+            StationPicker.domList.selectOnClick = false;
+            this.currentCtx = DOM.requireData(target, 'context');
+            let entries = RAG.state.getStationList(this.currentCtx).slice(0);
+            while (this.inputList.children[1])
+                this.inputList.children[1].remove();
+            entries.forEach(v => this.addEntry(v));
+        };
+    }
+    onAddStation(entry) {
+        this.addEntry(entry.innerText);
+        this.update();
     }
     addEntry(value) {
         let entry = document.createElement('dd');
@@ -603,33 +628,6 @@ class StationListPicker extends Picker {
         this.update();
         if (this.inputList.children.length === 1)
             this.domEmptyList.classList.remove('hidden');
-    }
-    onInput(_) {
-    }
-}
-class StationPicker extends Picker {
-    constructor() {
-        super('station', ['click', 'input']);
-        this.currentContext = '';
-    }
-    open(target) {
-        super.open(target);
-        this.currentContext = DOM.requireData(target, 'context');
-        RAG.views.stationList.attach(this);
-        RAG.views.stationList.selectCode(RAG.state.getStation(this.currentContext));
-    }
-    onChange(ev) {
-        let self = this;
-        let query = `[data-type=station][data-context=${this.currentContext}]`;
-        RAG.views.stationList.onChange(ev, target => {
-            RAG.views.stationList.selectEntry(target);
-            RAG.state.setStation(self.currentContext, target.dataset['code']);
-            RAG.views.editor
-                .getElementsByQuery(query)
-                .forEach(element => element.textContent = target.innerText);
-        });
-    }
-    onInput(_) {
     }
 }
 class TimePicker extends Picker {
@@ -1005,7 +1003,6 @@ class Views {
         this.editor = new Editor();
         this.marquee = new Marquee();
         this.toolbar = new Toolbar();
-        this.stationList = new StationList();
         this.pickers = {};
         [
             new CoachPicker(),
@@ -1071,7 +1068,7 @@ class DOM {
             .replace(/\s{2,}/gi, ' ')
             .replace(/\s([.,])/gi, '$1');
     }
-    static getNextVisibleSibling(from, dir) {
+    static getNextFocusableSibling(from, dir) {
         let current = from;
         let parent = from.parentElement;
         if (!parent)
@@ -1087,7 +1084,7 @@ class DOM {
                 throw new Error("Direction needs to be -1 or 1");
             if (current === from)
                 return null;
-            if (!current.classList.contains('hidden'))
+            if (!current.classList.contains('hidden') && current.tabIndex)
                 return current;
         }
     }

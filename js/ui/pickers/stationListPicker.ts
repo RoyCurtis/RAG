@@ -1,56 +1,53 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 /// <reference path="picker.ts"/>
+/// <reference path="stationPicker.ts"/>
 
 /** Controller for the station list picker dialog */
-class StationListPicker extends Picker
+class StationListPicker extends StationPicker
 {
     /** Reference to placeholder shown if the list is empty */
     private readonly domEmptyList : HTMLElement;
+
     /** Reference to this list's currently selected stations in the UI */
     private readonly inputList    : HTMLDListElement;
 
-    private currentCtx   : string = '';
+    /** Reference to the list item currently being dragged */
     private domDragFrom? : HTMLElement;
 
     constructor()
     {
-        super('stationlist', ['click', 'input']);
+        super("stationlist");
 
         this.inputList    = DOM.require('.stations', this.dom) as HTMLDListElement;
         this.domEmptyList = DOM.require('dt', this.inputList);
-    }
 
-    public open(target: HTMLElement) : void
-    {
-        super.open(target);
-
-        RAG.views.stationList.attach(this);
-        RAG.views.stationList.registerDropHandler( this.onDrop.bind(this) );
-
-        this.currentCtx = DOM.requireData(target, 'context');
-        let entries     = RAG.state.getStationList(this.currentCtx).slice(0);
-
-        // Remove all old elements except for the empty list text
-        while (this.inputList.children[1])
-            this.inputList.children[1].remove();
-
-        entries.forEach( this.addEntry.bind(this) );
-    }
-
-    protected onChange(ev: Event) : void
-    {
-        let self = this;
-
-        RAG.views.stationList.onChange(ev, target =>
+        this.onOpen = (target) =>
         {
-            self.addEntry(target.innerText);
-            self.update();
-        });
+            StationPicker.domList.attach(this, this.onAddStation);
+            StationPicker.domList.registerDropHandler( this.onDrop.bind(this) );
+            StationPicker.domList.selectOnClick = false;
+
+            this.currentCtx = DOM.requireData(target, 'context');
+            let entries     = RAG.state.getStationList(this.currentCtx).slice(0);
+
+            // Remove all old elements except for the empty list text
+            while (this.inputList.children[1])
+                this.inputList.children[1].remove();
+
+            entries.forEach( v => this.addEntry(v) );
+        }
+    }
+
+    private onAddStation(entry: HTMLElement) : void
+    {
+        this.addEntry(entry.innerText);
+        this.update();
     }
 
     private addEntry(value: string) : void
     {
+        // TODO: Tab indexes
         let entry = document.createElement('dd');
 
         entry.draggable = true;
@@ -58,6 +55,7 @@ class StationListPicker extends Picker
         entry.title     =
             "Drag to reorder; double-click or drag into station selector to remove";
 
+        // TODO: Split these off into own functions?
         entry.ondblclick = _ =>
         {
             entry.remove();
@@ -171,10 +169,5 @@ class StationListPicker extends Picker
 
         if (this.inputList.children.length === 1)
             this.domEmptyList.classList.remove('hidden');
-    }
-
-    protected onInput(_: KeyboardEvent) : void
-    {
-        // no-op
     }
 }
