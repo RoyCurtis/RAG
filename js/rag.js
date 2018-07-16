@@ -605,21 +605,11 @@ class StationListPicker extends StationPicker {
         if (children.length === 1)
             return;
         let list = [];
-        let textList = '';
         for (let i = 1; i < children.length; i++) {
             let entry = children[i];
             list.push(entry.innerText);
         }
-        if (list.length === 1)
-            textList = (this.currentCtx === 'calling')
-                ? `${list[0]} only`
-                : list[0];
-        else {
-            let tempList = list.slice(0);
-            let lastStation = tempList.pop();
-            textList = tempList.join(', ');
-            textList += ` and ${lastStation}`;
-        }
+        let textList = Strings.fromStationList(list.slice(0), this.currentCtx);
         let query = `[data-type=stationlist][data-context=${this.currentCtx}]`;
         RAG.state.setStationList(this.currentCtx, list);
         RAG.views.editor
@@ -742,16 +732,7 @@ class ElementProcessors {
     static stationlist(ctx) {
         let context = DOM.requireAttr(ctx.xmlElement, 'context');
         let stations = RAG.state.getStationList(context).slice(0);
-        let stationList = '';
-        if (stations.length === 1)
-            stationList = (context === 'calling')
-                ? `${stations[0]} only`
-                : stations[0];
-        else {
-            let lastStation = stations.pop();
-            stationList = stations.join(', ');
-            stationList += ` and ${lastStation}`;
-        }
+        let stationList = Strings.fromStationList(stations, context);
         ctx.newElement.title = `Click to change this station list ('${context}')`;
         ctx.newElement.textContent = stationList;
         ctx.newElement.dataset['context'] = context;
@@ -1131,6 +1112,19 @@ class Random {
 class Strings {
     static isNullOrEmpty(str) {
         return !str || !str.trim();
+    }
+    static fromStationList(stations, context) {
+        let result = '';
+        if (stations.length === 1)
+            result = (context === 'calling')
+                ? `${stations[0]} only`
+                : stations[0];
+        else {
+            let lastStation = stations.pop();
+            result = stations.join(', ');
+            result += ` and ${lastStation}`;
+        }
+        return result;
     }
 }
 class Database {

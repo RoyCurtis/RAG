@@ -101,7 +101,6 @@ class ElementProcessors
             `Click to change this phrase used in this section ('${ref}')`;
 
         // Handle phrasesets with a chance value as collapsible
-        // TODO: redry these
         if ( ctx.xmlElement.hasAttribute('chance') )
             this.makeCollapsible(ctx, phrase, ref);
         else
@@ -139,21 +138,7 @@ class ElementProcessors
     {
         let context     = DOM.requireAttr(ctx.xmlElement, 'context');
         let stations    = RAG.state.getStationList(context).slice(0);
-        let stationList = '';
-
-        // TODO: Should processors instead become "update" methods for elements?
-        // TODO: DRY with the picker
-        if (stations.length === 1)
-            stationList = (context === 'calling')
-                ? `${stations[0]} only`
-                : stations[0];
-        else
-        {
-            let lastStation = stations.pop();
-
-            stationList  = stations.join(', ');
-            stationList += ` and ${lastStation}`;
-        }
+        let stationList = Strings.fromStationList(stations, context);
 
         ctx.newElement.title       = `Click to change this station list ('${context}')`;
         ctx.newElement.textContent = stationList;

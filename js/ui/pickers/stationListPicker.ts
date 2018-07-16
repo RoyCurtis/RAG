@@ -131,8 +131,7 @@ class StationListPicker extends StationPicker
         if (children.length === 1)
             return;
 
-        let list     = [];
-        let textList = '';
+        let list = [];
 
         for (let i = 1; i < children.length; i++)
         {
@@ -141,20 +140,8 @@ class StationListPicker extends StationPicker
             list.push(entry.innerText);
         }
 
-        if (list.length === 1)
-            textList = (this.currentCtx === 'calling')
-                ? `${list[0]} only`
-                : list[0];
-        else
-        {
-            let tempList    = list.slice(0);
-            let lastStation = tempList.pop();
-
-            textList  = tempList.join(', ');
-            textList += ` and ${lastStation}`;
-        }
-
-        let query = `[data-type=stationlist][data-context=${this.currentCtx}]`;
+        let textList = Strings.fromStationList(list.slice(0), this.currentCtx);
+        let query    = `[data-type=stationlist][data-context=${this.currentCtx}]`;
 
         RAG.state.setStationList(this.currentCtx, list);
         RAG.views.editor
