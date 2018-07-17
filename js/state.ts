@@ -58,7 +58,6 @@ class State
         this._integers[id] = value;
     }
 
-    // TODO: Make "phraseSet" consistent to "phraseset"
     public getPhrasesetIdx(ref: string) : number
     {
         if (this._phrasesets[ref] !== undefined)

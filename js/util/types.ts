@@ -13,7 +13,7 @@ type Dictionary<T> = { [index: string]: T };
 interface RAGConfig
 {
     /** Selector for getting the phrase set XML IFrame element */
-    phraseSetEmbed : string;
+    phrasesetEmbed : string;
     /** Raw array of excuses for train delays or cancellations to use */
     excusesData    : string[];
     /** Raw array of names for special trains to use */

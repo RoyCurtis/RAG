@@ -415,15 +415,15 @@ class PhrasesetPicker extends Picker {
         super.open(target);
         let ref = DOM.requireData(target, 'ref');
         let idx = parseInt(DOM.requireData(target, 'idx'));
-        let phraseSet = RAG.database.getPhraseset(ref);
-        if (!phraseSet)
+        let phraseset = RAG.database.getPhraseset(ref);
+        if (!phraseset)
             throw new Error(`Phraseset '${ref}' doesn't exist`);
         this.currentRef = ref;
         this.domHeader.innerText = `Pick a phrase for the '${ref}' section`;
         this.domList.clear();
-        for (let i = 0; i < phraseSet.children.length; i++) {
+        for (let i = 0; i < phraseset.children.length; i++) {
             let phrase = document.createElement('dd');
-            DOM.cloneInto(phraseSet.children[i], phrase);
+            DOM.cloneInto(phraseset.children[i], phrase);
             RAG.phraser.process(phrase);
             phrase.innerText = DOM.getCleanedVisibleText(phrase);
             phrase.dataset.idx = i.toString();
@@ -1169,10 +1169,10 @@ class Strings {
 }
 class Database {
     constructor(config) {
-        let iframe = DOM.require(config.phraseSetEmbed);
+        let iframe = DOM.require(config.phrasesetEmbed);
         if (!iframe.contentDocument)
             throw new Error("Configured phraseset element is not an iframe embed");
-        this.phraseSets = iframe.contentDocument;
+        this.phrasesets = iframe.contentDocument;
         this.excuses = config.excusesData;
         this.named = config.namedData;
         this.services = config.servicesData;
@@ -1190,10 +1190,10 @@ class Database {
         return Random.array(this.named);
     }
     getPhrase(id) {
-        return this.phraseSets.querySelector('phrase#' + id);
+        return this.phrasesets.querySelector('phrase#' + id);
     }
     getPhraseset(id) {
-        return this.phraseSets.querySelector('phraseset#' + id);
+        return this.phrasesets.querySelector('phraseset#' + id);
     }
     pickService() {
         return Random.array(this.services);

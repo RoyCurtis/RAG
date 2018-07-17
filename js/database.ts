@@ -7,16 +7,16 @@ class Database
     public readonly named      : string[];
     public readonly services   : string[];
     public readonly stations   : Dictionary<string>;
-    public readonly phraseSets : Document;
+    public readonly phrasesets : Document;
 
     constructor(config: RAGConfig)
     {
-        let iframe = DOM.require(config.phraseSetEmbed) as HTMLIFrameElement;
+        let iframe = DOM.require(config.phrasesetEmbed) as HTMLIFrameElement;
 
         if (!iframe.contentDocument)
             throw new Error("Configured phraseset element is not an iframe embed");
 
-        this.phraseSets = iframe.contentDocument;
+        this.phrasesets = iframe.contentDocument;
         this.excuses    = config.excusesData;
         this.named      = config.namedData;
         this.services   = config.servicesData;
@@ -45,13 +45,13 @@ class Database
     public getPhrase(id: string) : HTMLElement | null
     {
         // TODO: test if cloning works, cause it'll be safer
-        return this.phraseSets.querySelector('phrase#' + id);
+        return this.phrasesets.querySelector('phrase#' + id);
     }
 
     /** Gets a phraseset with the given ID, or null if it doesn't exist */
     public getPhraseset(id: string) : HTMLElement | null
     {
-        return this.phraseSets.querySelector('phraseset#' + id);
+        return this.phrasesets.querySelector('phraseset#' + id);
     }
 
     /** Picks a random rail network name */

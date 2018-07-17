@@ -24,9 +24,9 @@ class PhrasesetPicker extends Picker
         let ref = DOM.requireData(target, 'ref');
         let idx = parseInt( DOM.requireData(target, 'idx') );
 
-        let phraseSet = RAG.database.getPhraseset(ref);
+        let phraseset = RAG.database.getPhraseset(ref);
 
-        if (!phraseSet)
+        if (!phraseset)
             throw new Error(`Phraseset '${ref}' doesn't exist`);
 
         this.currentRef          = ref;
@@ -36,11 +36,11 @@ class PhrasesetPicker extends Picker
 
         // For each phrase, we need to run it through the phraser using the current state
         // to generate "previews" of how the phrase will look.
-        for (let i = 0; i < phraseSet.children.length; i++)
+        for (let i = 0; i < phraseset.children.length; i++)
         {
             let phrase = document.createElement('dd');
 
-            DOM.cloneInto(phraseSet.children[i] as HTMLElement, phrase);
+            DOM.cloneInto(phraseset.children[i] as HTMLElement, phrase);
             RAG.phraser.process(phrase);
 
             phrase.innerText   = DOM.getCleanedVisibleText(phrase);
