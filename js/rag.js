@@ -58,7 +58,7 @@ class FilterableList {
         let target = ev.target;
         if (!target)
             return;
-        else if (!this.owns(target))
+        else if (!this.inputFilter.contains(target) && !this.inputList.contains(target))
             return;
         else if (ev.type.toLowerCase() === 'submit')
             this.filter();
@@ -134,15 +134,6 @@ class FilterableList {
             group.classList.add('hidden');
         else
             group.classList.remove('hidden');
-    }
-    owns(target) {
-        let parent = target.parentElement;
-        if (!parent)
-            return false;
-        return target === this.inputList
-            || target === this.inputFilter
-            || parent === this.inputList
-            || parent.parentElement === this.inputList;
     }
     select(entry) {
         if (this.selectOnClick)
@@ -821,7 +812,8 @@ Phraser.LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 class Editor {
     constructor() {
         this.dom = DOM.require('#editor');
-        document.body.onclick = this.handleClick.bind(this);
+        document.body.onclick = this.onClick.bind(this);
+        document.body.onkeydown = this.onInput.bind(this);
         this.dom.textContent = "Please wait...";
     }
     generate() {
@@ -873,7 +865,7 @@ class Editor {
         this.currentPicker = undefined;
         this.domEditing = undefined;
     }
-    handleClick(ev) {
+    onClick(ev) {
         let target = ev.target;
         let type = target ? target.dataset['type'] : undefined;
         let picker = type ? RAG.views.getPicker(type) : undefined;
@@ -895,6 +887,10 @@ class Editor {
             this.toggleCollapsiable(target);
         else if (type && picker)
             this.openPicker(target, picker);
+    }
+    onInput(ev) {
+        if (ev.key === 'Escape')
+            return this.closeDialog();
     }
     toggleCollapsiable(target) {
         let parent = target.parentElement;
