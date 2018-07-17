@@ -419,11 +419,10 @@
       </xs:annotation>
     </xs:enumeration>
 
-    <xs:enumeration value="calling_half1">
+    <xs:enumeration value="calling_first">
       <xs:annotation>
         <xs:documentation>
-          Shows the first half of the calling at list, or a different list if the calling
-          list is too small, with min. 2 max. 5 stations.
+          Copy of the "calling" list, but without "only" if only one station present.
         </xs:documentation>
       </xs:annotation>
     </xs:enumeration>

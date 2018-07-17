@@ -154,7 +154,6 @@
 <phrase id="debug_stationlists">
   (
     Calling: <stationlist context="calling"/>.
-    Calling half 1: <stationlist context="calling_half1"/>.
     Calling half 2: <stationlist context="calling_half2"/>.
     Changes: <stationlist context="changes"/>.
   )
@@ -293,7 +292,7 @@
 <phraseset id="calling_at">
   <phrase>Calling at <stationlist context="calling"/>.</phrase>
   <phrase>
-    For <stationlist context="calling_half1"/>, travel in the front
+    For <stationlist context="calling_first"/>, travel in the front
     <integer id='front_coaches' min="2" max="5" words="true"/> coaches of the train. And
     for <stationlist context="calling_half2"/>, travel in the rear
     <integer id='rear_coaches' min="2" max="5" words="true"/> coaches of the train.
