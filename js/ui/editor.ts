@@ -14,8 +14,9 @@ class Editor
     {
         this.dom = DOM.require('#editor');
 
-        document.body.onclick = this.handleClick.bind(this);
-        this.dom.textContent  = "Please wait...";
+        document.body.onclick   = this.onClick.bind(this);
+        document.body.onkeydown = this.onInput.bind(this);
+        this.dom.textContent    = "Please wait...";
     }
 
     /** Replaces the editor with a root phraseset reference, and expands it into HTML */
@@ -127,7 +128,7 @@ class Editor
     }
 
     /** Handles a click anywhere in the window depending on the context */
-    private handleClick(ev: MouseEvent) : void
+    private onClick(ev: MouseEvent) : void
     {
         let target = ev.target as HTMLElement;
         let type   = target ? target.dataset['type']    : undefined;
@@ -164,6 +165,12 @@ class Editor
         // Find and open picker for the target element
         else if (type && picker)
             this.openPicker(target, picker);
+    }
+
+    private onInput(ev: KeyboardEvent) : void
+    {
+        if (ev.key === 'Escape')
+            return this.closeDialog();
     }
 
     private toggleCollapsiable(target: HTMLElement) : void
