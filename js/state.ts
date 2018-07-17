@@ -110,7 +110,7 @@ class State
                 min = 1; max = 8; break;
         }
 
-        this._stationLists[context] = RAG.database.pickStations(min, max);
+        this._stationLists[context] = RAG.database.pickStationCodes(min, max);
         return this._stationLists[context];
     }
 

@@ -134,7 +134,7 @@ class ElementProcessors
         let code    = RAG.state.getStation(context);
 
         ctx.newElement.title       = `Click to change this station ('${context}')`;
-        ctx.newElement.textContent = RAG.database.getStation(code);
+        ctx.newElement.textContent = RAG.database.getStation(code, true);
 
         ctx.newElement.dataset['context'] = context;
     }

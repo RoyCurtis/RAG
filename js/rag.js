@@ -522,10 +522,12 @@ class StationPicker extends Picker {
     }
     onSelectStation(entry) {
         let query = `[data-type=station][data-context=${this.currentCtx}]`;
-        RAG.state.setStation(this.currentCtx, entry.dataset['code']);
+        let code = entry.dataset['code'];
+        let name = RAG.database.getStation(code, true);
+        RAG.state.setStation(this.currentCtx, code);
         RAG.views.editor
             .getElementsByQuery(query)
-            .forEach(element => element.textContent = entry.innerText);
+            .forEach(element => element.textContent = name);
     }
 }
 class StationListPicker extends StationPicker {
@@ -575,24 +577,25 @@ class StationListPicker extends StationPicker {
             }
     }
     onAddStation(entry) {
-        this.add(entry.innerText);
+        this.add(entry.dataset['code']);
         this.update();
     }
-    add(value) {
-        let entry = document.createElement('dd');
-        entry.draggable = true;
-        entry.innerText = value;
-        entry.tabIndex = -1;
-        entry.title =
+    add(code) {
+        let newEntry = document.createElement('dd');
+        newEntry.draggable = true;
+        newEntry.innerText = RAG.database.getStation(code, false);
+        newEntry.tabIndex = -1;
+        newEntry.title =
             "Drag to reorder; double-click or drag into station selector to remove";
-        entry.ondblclick = _ => this.remove(entry);
-        entry.ondragstart = ev => {
-            this.domDragFrom = entry;
+        newEntry.dataset['code'] = code;
+        newEntry.ondblclick = _ => this.remove(newEntry);
+        newEntry.ondragstart = ev => {
+            this.domDragFrom = newEntry;
             ev.dataTransfer.effectAllowed = "move";
             ev.dataTransfer.dropEffect = "move";
             this.domDragFrom.classList.add('dragging');
         };
-        entry.ondrop = ev => {
+        newEntry.ondrop = ev => {
             if (!ev.target || !this.domDragFrom)
                 throw new Error("Drop event, but target and source are missing");
             if (ev.target === this.domDragFrom)
@@ -602,7 +605,7 @@ class StationListPicker extends StationPicker {
             target.classList.remove('dragover');
             this.update();
         };
-        entry.ondragend = ev => {
+        newEntry.ondragend = ev => {
             if (!this.domDragFrom)
                 throw new Error("Drag ended but there's no tracked drag element");
             if (this.domDragFrom !== ev.target)
@@ -610,14 +613,14 @@ class StationListPicker extends StationPicker {
             this.domDragFrom.classList.remove('dragging');
             this.domDragFrom = undefined;
         };
-        entry.ondragenter = _ => {
-            if (this.domDragFrom === entry)
+        newEntry.ondragenter = _ => {
+            if (this.domDragFrom === newEntry)
                 return;
-            entry.classList.add('dragover');
+            newEntry.classList.add('dragover');
         };
-        entry.ondragover = DOM.preventDefault;
-        entry.ondragleave = _ => entry.classList.remove('dragover');
-        this.inputList.appendChild(entry);
+        newEntry.ondragover = DOM.preventDefault;
+        newEntry.ondragleave = _ => newEntry.classList.remove('dragover');
+        this.inputList.appendChild(newEntry);
         this.domEmptyList.classList.add('hidden');
     }
     remove(entry) {
@@ -635,7 +638,7 @@ class StationListPicker extends StationPicker {
         let list = [];
         for (let i = 1; i < children.length; i++) {
             let entry = children[i];
-            list.push(entry.innerText);
+            list.push(entry.dataset['code']);
         }
         let textList = Strings.fromStationList(list.slice(0), this.currentCtx);
         let query = `[data-type=stationlist][data-context=${this.currentCtx}]`;
@@ -758,7 +761,7 @@ class ElementProcessors {
         let context = DOM.requireAttr(ctx.xmlElement, 'context');
         let code = RAG.state.getStation(context);
         ctx.newElement.title = `Click to change this station ('${context}')`;
-        ctx.newElement.textContent = RAG.database.getStation(code);
+        ctx.newElement.textContent = RAG.database.getStation(code, true);
         ctx.newElement.dataset['context'] = context;
     }
     static stationlist(ctx) {
@@ -1152,15 +1155,17 @@ class Strings {
     static isNullOrEmpty(str) {
         return !str || !str.trim();
     }
-    static fromStationList(stations, context) {
+    static fromStationList(codes, context) {
         let result = '';
-        if (stations.length === 1)
+        let names = codes.slice(0);
+        names.forEach((c, i) => names[i] = RAG.database.getStation(c, true));
+        if (names.length === 1)
             result = (context === 'calling')
-                ? `${stations[0]} only`
-                : stations[0];
+                ? `${names[0]} only`
+                : names[0];
         else {
-            let lastStation = stations.pop();
-            result = stations.join(', ');
+            let lastStation = names.pop();
+            result = names.join(', ');
             result += ` and ${lastStation}`;
         }
         return result;
@@ -1203,21 +1208,23 @@ class Database {
     pickStationCode() {
         return Random.objectKey(this.stations);
     }
-    getStation(code) {
-        if (!this.stations[code])
+    getStation(code, filtered = false) {
+        let station = this.stations[code];
+        if (!station)
             return `UNKNOWN STATION: ${code}`;
-        return this.stations[code];
+        if (filtered)
+            station = station.replace(/\(.+\)/i, '').trim();
+        return station;
     }
-    pickStations(min = 1, max = 16) {
+    pickStationCodes(min = 1, max = 16) {
         if (max - min > Object.keys(this.stations).length)
             throw new Error("Picking too many stations than there are available");
         let result = [];
         let length = Random.int(min, max);
-        let cloned = Object.assign({}, this.stations);
         while (result.length < length) {
-            let key = Random.objectKey(cloned);
-            result.push(cloned[key]);
-            delete cloned[key];
+            let key = Random.objectKey(this.stations);
+            if (!result.includes(key))
+                result.push(key);
         }
         return result;
     }
@@ -1322,7 +1329,7 @@ class State {
                 max = 8;
                 break;
         }
-        this._stationLists[context] = RAG.database.pickStations(min, max);
+        this._stationLists[context] = RAG.database.pickStationCodes(min, max);
         return this._stationLists[context];
     }
     setStationList(context, value) {

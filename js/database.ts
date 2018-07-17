@@ -70,23 +70,34 @@ class Database
         return Random.objectKey(this.stations);
     }
 
-    /** Gets the station name from the given three letter code */
-    public getStation(code: string) : string
+    /**
+     * Gets the station name from the given three letter code.
+     *
+     * @param {string} code Three-letter station code to get the name of
+     * @param {boolean} filtered Whether to filter out parenthesized location context
+     * @returns {string} Station name for the given code, filtered if specified
+     */
+    public getStation(code: string, filtered: boolean = false) : string
     {
-        if (!this.stations[code])
+        let station = this.stations[code];
+
+        if (!station)
             return `UNKNOWN STATION: ${code}`;
 
-        return this.stations[code];
+        if (filtered)
+            station = station.replace(/\(.+\)/i, '').trim();
+
+        return station;
     }
 
     /**
-     * Picks a random range of stations, ensuring there are no duplicates.
+     * Picks a random range of station codes, ensuring there are no duplicates.
      *
      * @param {number} min Minimum amount of stations to pick
      * @param {number} max Maximum amount of stations to pick
      * @returns {string[]} A list of unique station names
      */
-    public pickStations(min = 1, max = 16) : string[]
+    public pickStationCodes(min = 1, max = 16) : string[]
     {
         if (max - min > Object.keys(this.stations).length)
             throw new Error("Picking too many stations than there are available");
@@ -94,13 +105,13 @@ class Database
         let result: string[] = [];
 
         let length = Random.int(min, max);
-        let cloned = Object.assign({}, this.stations);
 
         while (result.length < length)
         {
-            let key = Random.objectKey(cloned);
-            result.push(cloned[key]);
-            delete cloned[key];
+            let key = Random.objectKey(this.stations);
+
+            if ( !result.includes(key) )
+                result.push(key);
         }
 
         return result;

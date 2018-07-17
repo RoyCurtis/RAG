@@ -33,3 +33,9 @@ interface String
     padStart(targetLength: number, padString?: string) : string;
     padEnd(targetLength: number, padString?: string) : string;
 }
+
+/** Fill in for ES2017 array methods */
+interface Array<T>
+{
+    includes(searchElement: T, fromIndex?: number) : boolean;
+}

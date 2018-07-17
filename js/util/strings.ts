@@ -12,23 +12,26 @@ class Strings
     /**
      * Pretty-print's a given list of stations, with context sensitive extras.
      *
-     * @param {string[]} stations List of station names to join
+     * @param {string[]} codes List of station codes to join
      * @param {string} context List's context. If 'calling', handles special case
      * @returns {string} Pretty-printed list of given stations
      */
-    public static fromStationList(stations: string[], context: string) : string
+    public static fromStationList(codes: string[], context: string) : string
     {
         let result = '';
+        let names  = codes.slice(0);
 
-        if (stations.length === 1)
+        names.forEach( (c, i) => names[i] = RAG.database.getStation(c, true) );
+
+        if (names.length === 1)
             result = (context === 'calling')
-                ? `${stations[0]} only`
-                : stations[0];
+                ? `${names[0]} only`
+                : names[0];
         else
         {
-            let lastStation = stations.pop();
+            let lastStation = names.pop();
 
-            result  = stations.join(', ');
+            result  = names.join(', ');
             result += ` and ${lastStation}`;
         }
 

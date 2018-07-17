@@ -50,10 +50,12 @@ class StationPicker extends Picker
     private onSelectStation(entry: HTMLElement) : void
     {
         let query = `[data-type=station][data-context=${this.currentCtx}]`;
+        let code  = entry.dataset['code']!;
+        let name  = RAG.database.getStation(code, true);
 
-        RAG.state.setStation(this.currentCtx, entry.dataset['code']!);
+        RAG.state.setStation(this.currentCtx, code);
         RAG.views.editor
             .getElementsByQuery(query)
-            .forEach(element => element.textContent = entry.innerText);
+            .forEach(element => element.textContent = name);
     }
 }

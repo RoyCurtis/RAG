@@ -95,33 +95,35 @@ class StationListPicker extends StationPicker
 
     private onAddStation(entry: HTMLElement) : void
     {
-        this.add(entry.innerText);
+        this.add(entry.dataset['code']!);
         this.update();
     }
 
-    private add(value: string) : void
+    private add(code: string) : void
     {
-        let entry = document.createElement('dd');
+        let newEntry = document.createElement('dd');
 
-        entry.draggable = true;
-        entry.innerText = value;
-        entry.tabIndex  = -1;
-        entry.title     =
+        newEntry.draggable = true;
+        newEntry.innerText = RAG.database.getStation(code, false);
+        newEntry.tabIndex  = -1;
+        newEntry.title     =
             "Drag to reorder; double-click or drag into station selector to remove";
 
-        entry.ondblclick = _ => this.remove(entry);
+        newEntry.dataset['code'] = code;
+
+        newEntry.ondblclick = _ => this.remove(newEntry);
 
         // TODO: Split these off into own functions?
-        entry.ondragstart = ev =>
+        newEntry.ondragstart = ev =>
         {
-            this.domDragFrom              = entry;
+            this.domDragFrom              = newEntry;
             ev.dataTransfer.effectAllowed = "move";
             ev.dataTransfer.dropEffect    = "move";
 
             this.domDragFrom.classList.add('dragging');
         };
 
-        entry.ondrop = ev =>
+        newEntry.ondrop = ev =>
         {
             if (!ev.target || !this.domDragFrom)
                 throw new Error("Drop event, but target and source are missing");
@@ -137,7 +139,7 @@ class StationListPicker extends StationPicker
             this.update();
         };
 
-        entry.ondragend = ev =>
+        newEntry.ondragend = ev =>
         {
             if (!this.domDragFrom)
                 throw new Error("Drag ended but there's no tracked drag element");
@@ -152,18 +154,18 @@ class StationListPicker extends StationPicker
             this.domDragFrom = undefined;
         };
 
-        entry.ondragenter = _ =>
+        newEntry.ondragenter = _ =>
         {
-            if (this.domDragFrom === entry)
+            if (this.domDragFrom === newEntry)
                 return;
 
-            entry.classList.add('dragover');
+            newEntry.classList.add('dragover');
         };
 
-        entry.ondragover  = DOM.preventDefault;
-        entry.ondragleave = _  => entry.classList.remove('dragover');
+        newEntry.ondragover  = DOM.preventDefault;
+        newEntry.ondragleave = _  => newEntry.classList.remove('dragover');
 
-        this.inputList.appendChild(entry);
+        this.inputList.appendChild(newEntry);
         this.domEmptyList.classList.add('hidden');
     }
 
@@ -193,7 +195,7 @@ class StationListPicker extends StationPicker
         {
             let entry = children[i] as HTMLElement;
 
-            list.push(entry.innerText);
+            list.push(entry.dataset['code']!);
         }
 
         let textList = Strings.fromStationList(list.slice(0), this.currentCtx);
