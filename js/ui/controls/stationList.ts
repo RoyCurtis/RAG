@@ -32,7 +32,7 @@ class StationList extends FilterableList
             {
                 let header       = document.createElement('dt');
                 header.innerText = letter.toUpperCase();
-                header.tabIndex  = 0;
+                header.tabIndex  = -1;
 
                 group = this.domStations[letter] = document.createElement('dl');
                 group.tabIndex = 50;

@@ -74,6 +74,8 @@ class FilterableList {
         let parent = focused.parentElement;
         if (!focused)
             return;
+        if (!this.inputFilter.contains(focused) && !this.inputList.contains(focused))
+            return;
         if (focused === this.inputFilter) {
             window.clearTimeout(this.filterTimeout);
             this.filterTimeout = window.setTimeout(_ => this.filter(), 500);
@@ -169,7 +171,7 @@ class StationList extends FilterableList {
             if (!group) {
                 let header = document.createElement('dt');
                 header.innerText = letter.toUpperCase();
-                header.tabIndex = 0;
+                header.tabIndex = -1;
                 group = this.domStations[letter] = document.createElement('dl');
                 group.tabIndex = 50;
                 group.setAttribute('group', '');
@@ -535,25 +537,49 @@ class StationListPicker extends StationPicker {
                 `Build a station list for the '${this.currentCtx}' context`;
             while (this.inputList.children[1])
                 this.inputList.children[1].remove();
-            entries.forEach(v => this.addEntry(v));
+            entries.forEach(v => this.add(v));
         };
     }
+    onInput(ev) {
+        super.onInput(ev);
+        let key = ev.key;
+        let focused = document.activeElement;
+        if (!focused || !this.inputList.contains(focused))
+            return;
+        if (key === 'ArrowLeft' || key === 'ArrowRight') {
+            let dir = (key === 'ArrowLeft') ? -1 : 1;
+            let nav = null;
+            if (focused.parentElement === this.inputList)
+                nav = DOM.getNextFocusableSibling(focused, dir);
+            else if (dir === -1)
+                nav = DOM.getNextFocusableSibling(focused.firstElementChild, dir);
+            else
+                nav = DOM.getNextFocusableSibling(focused.lastElementChild, dir);
+            if (nav)
+                nav.focus();
+        }
+        if (key === 'Delete' || key === 'Backspace')
+            if (focused.parentElement === this.inputList) {
+                let next = focused.previousElementSibling;
+                if (next === this.domEmptyList)
+                    next = (focused.nextElementSibling || this.inputList);
+                this.remove(focused);
+                console.log(next);
+                next.focus();
+            }
+    }
     onAddStation(entry) {
-        this.addEntry(entry.innerText);
+        this.add(entry.innerText);
         this.update();
     }
-    addEntry(value) {
+    add(value) {
         let entry = document.createElement('dd');
         entry.draggable = true;
         entry.innerText = value;
+        entry.tabIndex = -1;
         entry.title =
             "Drag to reorder; double-click or drag into station selector to remove";
-        entry.ondblclick = _ => {
-            entry.remove();
-            this.update();
-            if (this.inputList.children.length === 1)
-                this.domEmptyList.classList.remove('hidden');
-        };
+        entry.ondblclick = _ => this.remove(entry);
         entry.ondragstart = ev => {
             this.domDragFrom = entry;
             ev.dataTransfer.effectAllowed = "move";
@@ -587,6 +613,14 @@ class StationListPicker extends StationPicker {
         entry.ondragleave = _ => entry.classList.remove('dragover');
         this.inputList.appendChild(entry);
         this.domEmptyList.classList.add('hidden');
+    }
+    remove(entry) {
+        if (entry.parentElement !== this.inputList)
+            throw new Error('Attempted to remove entry not on station list builder');
+        entry.remove();
+        this.update();
+        if (this.inputList.children.length === 1)
+            this.domEmptyList.classList.remove('hidden');
     }
     update() {
         let children = this.inputList.children;

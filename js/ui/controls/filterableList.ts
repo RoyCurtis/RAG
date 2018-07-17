@@ -160,6 +160,10 @@ class FilterableList
 
         if (!focused) return;
 
+        // Only handle events on this list's controls
+        if ( !this.inputFilter.contains(focused) && !this.inputList.contains(focused) )
+            return;
+
         // Handle typing into filter box
         if (focused === this.inputFilter)
         {
@@ -174,7 +178,7 @@ class FilterableList
         if (key.length === 1 || key === 'Backspace')
             return this.inputFilter.focus();
 
-        // Handle pressing ENTER after keyboard navigating to an excuse
+        // Handle pressing ENTER after keyboard navigating to an item
         if ( parent === this.inputList || parent.hasAttribute('group') )
         if (key === 'Enter')
             return this.select(focused as HTMLElement);

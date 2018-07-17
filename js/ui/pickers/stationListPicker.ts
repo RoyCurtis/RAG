@@ -38,36 +38,80 @@ class StationListPicker extends StationPicker
             while (this.inputList.children[1])
                 this.inputList.children[1].remove();
 
-            entries.forEach( v => this.addEntry(v) );
+            entries.forEach( v => this.add(v) );
+        }
+    }
+
+    protected onInput(ev: KeyboardEvent) : void
+    {
+        super.onInput(ev);
+
+        let key     = ev.key;
+        let focused = document.activeElement as HTMLElement;
+
+        // Only handle the station list builder control
+        if ( !focused || !this.inputList.contains(focused) )
+            return;
+
+        // Handle keyboard navigation
+        if (key === 'ArrowLeft' || key === 'ArrowRight')
+        {
+            let dir = (key === 'ArrowLeft') ? -1 : 1;
+            let nav = null;
+
+            // Navigate relative to focused element
+            if (focused.parentElement === this.inputList)
+                nav = DOM.getNextFocusableSibling(focused, dir);
+
+            // Navigate relevant to beginning or end of container
+            else if (dir === -1)
+                nav = DOM.getNextFocusableSibling(
+                    focused.firstElementChild! as HTMLElement, dir
+                );
+            else
+                nav = DOM.getNextFocusableSibling(
+                    focused.lastElementChild! as HTMLElement, dir
+                );
+
+            if (nav) nav.focus();
+        }
+
+        // Handle entry deletion
+        if (key === 'Delete' || key === 'Backspace')
+        if (focused.parentElement === this.inputList)
+        {
+            // Focus to next element or parent on delete
+            let next = focused.previousElementSibling as HTMLElement;
+
+            // Compensate for hidden "empty list" element
+            if (next === this.domEmptyList)
+                next = (focused.nextElementSibling || this.inputList) as HTMLElement;
+
+            this.remove(focused);
+            console.log(next);
+            next.focus();
         }
     }
 
     private onAddStation(entry: HTMLElement) : void
     {
-        this.addEntry(entry.innerText);
+        this.add(entry.innerText);
         this.update();
     }
 
-    private addEntry(value: string) : void
+    private add(value: string) : void
     {
-        // TODO: Tab indexes
         let entry = document.createElement('dd');
 
         entry.draggable = true;
         entry.innerText = value;
+        entry.tabIndex  = -1;
         entry.title     =
             "Drag to reorder; double-click or drag into station selector to remove";
 
+        entry.ondblclick = _ => this.remove(entry);
+
         // TODO: Split these off into own functions?
-        entry.ondblclick = _ =>
-        {
-            entry.remove();
-            this.update();
-
-            if (this.inputList.children.length === 1)
-                this.domEmptyList.classList.remove('hidden');
-        };
-
         entry.ondragstart = ev =>
         {
             this.domDragFrom              = entry;
@@ -121,6 +165,18 @@ class StationListPicker extends StationPicker
 
         this.inputList.appendChild(entry);
         this.domEmptyList.classList.add('hidden');
+    }
+
+    private remove(entry: HTMLElement) : void
+    {
+        if (entry.parentElement !== this.inputList)
+            throw new Error('Attempted to remove entry not on station list builder');
+
+        entry.remove();
+        this.update();
+
+        if (this.inputList.children.length === 1)
+            this.domEmptyList.classList.remove('hidden');
     }
 
     private update() : void
