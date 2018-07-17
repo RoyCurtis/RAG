@@ -143,18 +143,19 @@
   (
     Calling: <station context="calling"/>, <station context="calling"/>,
     Destination: <station context="destination"/>, <station context="destination"/>,
-    Destination 2: <station context="destination2"/>, <station context="destination2"/>,
+    Destination split: <station context="destination_split"/>,
+      <station context="destination_split"/>,
     Excuse: <station context="excuse"/>, <station context="excuse"/>,
     Source: <station context="source"/>, <station context="source"/>,
     Via: <station context="via"/>, <station context="via"/>,
-    Via 2: <station context="via2"/>, <station context="via2"/>
+    Via split: <station context="via_split"/>, <station context="via_split"/>
   )
 </phrase>
 
 <phrase id="debug_stationlists">
   (
     Calling: <stationlist context="calling"/>.
-    Calling half 2: <stationlist context="calling_half2"/>.
+    Calling split: <stationlist context="calling_split"/>.
     Changes: <stationlist context="changes"/>.
   )
 </phrase>
@@ -247,20 +248,20 @@
 </phrase>
 
 <phrase id="destination">
-  <station context="destination"/><phrase ref="dest1_via" chance="10"/>
-  <phrase ref="dest2" chance="5"/>
+  <station context="destination"/><phrase ref="dest_via" chance="10"/>
+  <phrase ref="dest_split" chance="5"/>
 </phrase>
 
-<phrase id="dest1_via">
+<phrase id="dest_via">
   via <station context="via"/>
 </phrase>
 
-<phrase id="dest2">
-  and <station context="destination2"/><phrase ref="dest2_via" chance="10"/>
+<phrase id="dest_split">
+  and <station context="destination_split"/><phrase ref="dest_split_via" chance="10"/>
 </phrase>
 
-<phrase id="dest2_via">
-  via <station context="via2"/>
+<phrase id="dest_split_via">
+  via <station context="via_split"/>
 </phrase>
 
 <phrase id="service_to">
@@ -294,7 +295,7 @@
   <phrase>
     For <stationlist context="calling_first"/>, travel in the front
     <integer id='front_coaches' min="2" max="5" words="true"/> coaches of the train. And
-    for <stationlist context="calling_half2"/>, travel in the rear
+    for <stationlist context="calling_split"/>, travel in the rear
     <integer id='rear_coaches' min="2" max="5" words="true"/> coaches of the train.
   </phrase>
 </phraseset>
