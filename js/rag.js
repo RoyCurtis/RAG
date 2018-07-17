@@ -275,6 +275,7 @@ class Picker {
 class CoachPicker extends Picker {
     constructor() {
         super('coach', ['change']);
+        this.currentCtx = '';
         this.inputLetter = DOM.require('select', this.dom);
         for (let i = 0; i < 26; i++) {
             let option = document.createElement('option');
@@ -285,12 +286,17 @@ class CoachPicker extends Picker {
     }
     open(target) {
         super.open(target);
-        this.inputLetter.value = RAG.state.coach;
+        this.currentCtx = DOM.requireData(target, 'context');
+        this.domHeader.innerText =
+            `Pick a coach letter for the '${this.currentCtx}' context`;
+        this.inputLetter.value = RAG.state.getCoach(this.currentCtx);
         this.inputLetter.focus();
     }
     onChange(_) {
-        RAG.state.coach = this.inputLetter.value;
-        RAG.views.editor.setElementsText('coach', RAG.state.coach);
+        RAG.state.setCoach(this.currentCtx, this.inputLetter.value);
+        RAG.views.editor
+            .getElementsByQuery(`[data-type=coach][data-context=${this.currentCtx}]`)
+            .forEach(element => element.textContent = this.inputLetter.value);
     }
     onInput(_) {
     }
@@ -666,9 +672,13 @@ class TimePicker extends Picker {
 }
 class ElementProcessors {
     static coach(ctx) {
-        ctx.newElement.textContent = RAG.state.coach;
+        let context = DOM.requireAttr(ctx.xmlElement, 'context');
+        ctx.newElement.title = `Click to change this coach ('${context}')`;
+        ctx.newElement.textContent = RAG.state.getCoach(context);
+        ctx.newElement.dataset['context'] = context;
     }
     static excuse(ctx) {
+        ctx.newElement.title = `Click to change this excuse`;
         ctx.newElement.textContent = RAG.state.excuse;
     }
     static integer(ctx) {
@@ -1237,10 +1247,20 @@ class RAG {
 class State {
     constructor() {
         this._collapsibles = {};
+        this._coaches = {};
         this._integers = {};
         this._phrasesets = {};
         this._stations = {};
         this._stationLists = {};
+    }
+    getCoach(context) {
+        if (this._coaches[context] !== undefined)
+            return this._coaches[context];
+        this._coaches[context] = Random.array(Phraser.LETTERS);
+        return this._coaches[context];
+    }
+    setCoach(context, coach) {
+        this._coaches[context] = coach;
     }
     getCollapsed(ref, chance) {
         if (this._collapsibles[ref] !== undefined)
@@ -1305,15 +1325,6 @@ class State {
     }
     setStationList(context, value) {
         this._stationLists[context] = value;
-    }
-    get coach() {
-        if (this._coach)
-            return this._coach;
-        this._coach = Random.array(Phraser.LETTERS);
-        return this._coach;
-    }
-    set coach(value) {
-        this._coach = value;
     }
     get excuse() {
         if (this._excuse)

@@ -6,7 +6,12 @@ class ElementProcessors
     /** Picks a coach letter from A to Z, limited by amount of coaches */
     public static coach(ctx: PhraseContext)
     {
-        ctx.newElement.textContent = RAG.state.coach;
+        let context = DOM.requireAttr(ctx.xmlElement, 'context');
+
+        ctx.newElement.title       = `Click to change this coach ('${context}')`;
+        ctx.newElement.textContent = RAG.state.getCoach(context);
+
+        ctx.newElement.dataset['context'] = context;
     }
 
     /** Picks an excuse for a delay or cancellation */

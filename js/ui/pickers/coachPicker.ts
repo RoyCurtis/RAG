@@ -7,6 +7,8 @@ class CoachPicker extends Picker
 {
     private readonly inputLetter : HTMLSelectElement;
 
+    private currentCtx : string = '';
+
     constructor()
     {
         super('coach', ['change']);
@@ -28,15 +30,21 @@ class CoachPicker extends Picker
     {
         super.open(target);
 
-        this.inputLetter.value = RAG.state.coach;
+        this.currentCtx          = DOM.requireData(target, 'context');
+        this.domHeader.innerText =
+            `Pick a coach letter for the '${this.currentCtx}' context`;
+
+        this.inputLetter.value = RAG.state.getCoach(this.currentCtx);
         this.inputLetter.focus();
     }
 
     protected onChange(_: Event) : void
     {
-        RAG.state.coach = this.inputLetter.value;
+        RAG.state.setCoach(this.currentCtx, this.inputLetter.value);
 
-        RAG.views.editor.setElementsText('coach', RAG.state.coach);
+        RAG.views.editor
+            .getElementsByQuery(`[data-type=coach][data-context=${this.currentCtx}]`)
+            .forEach(element => element.textContent = this.inputLetter.value);
     }
 
     protected onInput(_: KeyboardEvent) : void

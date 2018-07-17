@@ -4,17 +4,31 @@
 class State
 {
     private _collapsibles : Dictionary<boolean>  = {};
+    private _coaches      : Dictionary<string>   = {};
     private _integers     : Dictionary<number>   = {};
     private _phrasesets   : Dictionary<number>   = {};
     private _stations     : Dictionary<string>   = {};
     private _stationLists : Dictionary<string[]> = {};
 
-    private _coach?    : string;
     private _excuse?   : string;
     private _platform? : Platform;
     private _named?    : string;
     private _service?  : string;
     private _time?     : string;
+
+    public getCoach(context: string) : string
+    {
+        if (this._coaches[context] !== undefined)
+            return this._coaches[context];
+
+        this._coaches[context] = Random.array(Phraser.LETTERS);
+        return this._coaches[context];
+    }
+
+    public setCoach(context: string, coach: string) : void
+    {
+        this._coaches[context] = coach;
+    }
 
     public getCollapsed(ref: string, chance: number) : boolean
     {
@@ -107,20 +121,6 @@ class State
     }
 
     // TODO: these are all missing visibility
-    get coach() : string
-    {
-        if (this._coach)
-            return this._coach;
-
-        this._coach = Random.array(Phraser.LETTERS);
-        return this._coach!;
-    }
-
-    set coach(value: string)
-    {
-        this._coach = value;
-    }
-
     get excuse() : string
     {
         if (this._excuse)

@@ -92,23 +92,32 @@
 
   <!-- For debugging -->
   <phrase>
-    Coach: <coach/>,
+    Coach: <phrase ref="debug_coaches" chance="0"/>,
     Excuse: <excuse/>,
-    Integers: <phrase ref="debug_integers"/>,
-    Phrase: <phrase ref="debug_phrase"/>,
+    Integers: <phrase ref="debug_integers" chance="0"/>,
+    Phrase: <phrase ref="debug_phrase" chance="0"/>,
     Phrase (chance): <phrase ref="debug_phrase" chance="15"/>,
     Phraseset: <phraseset ref="debug_phraseset"/>,
     Phraseset (chance): <phraseset ref="debug_phraseset" chance="50"/>,
     Platform: <platform/>,
     Named: <named/>,
     Service: <service/>,
-    Stations: <phrase ref="debug_stations"/>,
-    Station list: <phrase ref="debug_stationlists"/>,
+    Stations: <phrase ref="debug_stations" chance="0"/>,
+    Station list: <phrase ref="debug_stationlists" chance="0"/>,
     Time: <time/>
   </phrase>
 </phraseset>
 
 <!-- Debug phrases -->
+
+<phrase id="debug_coaches">
+  (
+    First: <coach context="first"/>, <coach context="first"/>,
+    Standard 1: <coach context="standard1"/>, <coach context="standard1"/>,
+    Standard 2: <coach context="standard2"/>, <coach context="standard2"/>,
+    Shop: <coach context="shop"/>, <coach context="shop"/>
+  )
+</phrase>
 
 <phrase id="debug_integers">
   (
@@ -407,7 +416,8 @@
 
 <phraseset id="shop_service">
   <phrase>
-    You can find the shop in coach <coach/> for delicious hot and cold refreshments.
+    You can find the shop in coach <coach context="shop"/> for delicious hot and cold
+    refreshments.
   </phrase>
 </phraseset>
 
@@ -439,8 +449,9 @@
 
 <phraseset id="train_seating">
   <phrase>
-    Standard unreserved seating can be found in coaches <coach/> and <coach/>, with
-    First class unreserved seating in coach <coach/>.
+    Standard unreserved seating can be found in coaches <coach context="standard1"/> and
+    <coach context="standard2"/>, with first class unreserved seating in coach
+    <coach context="first"/>.
   </phrase>
   <!-- TODO: Why is this a phraseset? Am I missing an alternative form here? -->
 </phraseset>

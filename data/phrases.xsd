@@ -98,7 +98,7 @@
 
 <xs:group name="phrase_elements">
   <xs:choice>
-    <xs:element name="coach">
+    <xs:element name="coach" type="coach">
       <xs:annotation>
         <xs:documentation>
           Picks a coach letter from A to Z, limited by amount of coaches.
@@ -187,6 +187,17 @@
     </xs:element>
   </xs:choice>
 </xs:group>
+
+
+<xs:complexType name="coach">
+  <xs:attribute name="context" type="coach_context" use="required">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the context to pick a coach for.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+</xs:complexType>
 
 
 <xs:complexType name="integer">
@@ -294,6 +305,43 @@
   <xs:restriction base="xs:int">
     <xs:minInclusive value="0"/>
     <xs:maxInclusive value="100"/>
+  </xs:restriction>
+</xs:simpleType>
+
+
+<xs:simpleType name="coach_context">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="first">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the coach where first class seating is found.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="shop">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the coach where the shop is located.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="standard1">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the first coach where standard class seating is found.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="standard2">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the second coach where standard class seating is found.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
   </xs:restriction>
 </xs:simpleType>
 
