@@ -159,6 +159,12 @@ class DOM
         }
     }
 
+    /** Delegate to give to event handlers, to simply cancel their default function */
+    public static preventDefault(ev: Event) : void
+    {
+        ev.preventDefault();
+    }
+
     /**
      * Swaps one element with another.
      *

@@ -214,7 +214,7 @@ class FilterableList
     /** Hide or show items of the list if they partially match the user query */
     protected filter() : void
     {
-        // TODO: optimize this as much as possible
+        // TODO: Can this be any further optimized? Debug with profiler
         window.clearTimeout(this.filterTimeout);
 
         let filter = this.inputFilter.value.toLowerCase();

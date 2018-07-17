@@ -116,7 +116,7 @@ class StationListPicker extends StationPicker
             entry.classList.add('dragover');
         };
 
-        entry.ondragover  = ev => ev.preventDefault();
+        entry.ondragover  = DOM.preventDefault;
         entry.ondragleave = _  => entry.classList.remove('dragover');
 
         this.inputList.appendChild(entry);

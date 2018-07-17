@@ -83,8 +83,8 @@ class StationList extends FilterableList
     {
         this.inputFilter.ondrop     = handler;
         this.inputList.ondrop       = handler;
-        this.inputFilter.ondragover = StationList.preventDefault;
-        this.inputList.ondragover   = StationList.preventDefault;
+        this.inputFilter.ondragover = DOM.preventDefault;
+        this.inputList.ondragover   = DOM.preventDefault;
     }
 
     private reset() : void
@@ -94,11 +94,5 @@ class StationList extends FilterableList
         this.inputFilter.ondragover = null;
         this.inputList.ondragover   = null;
         this.visualUnselect();
-    }
-
-    // TODO: maybe this could go in DOM?
-    private static preventDefault(ev: Event) : void
-    {
-        ev.preventDefault();
     }
 }

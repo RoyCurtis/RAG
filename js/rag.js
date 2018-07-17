@@ -212,8 +212,8 @@ class StationList extends FilterableList {
     registerDropHandler(handler) {
         this.inputFilter.ondrop = handler;
         this.inputList.ondrop = handler;
-        this.inputFilter.ondragover = StationList.preventDefault;
-        this.inputList.ondragover = StationList.preventDefault;
+        this.inputFilter.ondragover = DOM.preventDefault;
+        this.inputList.ondragover = DOM.preventDefault;
     }
     reset() {
         this.inputFilter.ondrop = null;
@@ -221,9 +221,6 @@ class StationList extends FilterableList {
         this.inputFilter.ondragover = null;
         this.inputList.ondragover = null;
         this.visualUnselect();
-    }
-    static preventDefault(ev) {
-        ev.preventDefault();
     }
 }
 class Picker {
@@ -595,7 +592,7 @@ class StationListPicker extends StationPicker {
                 return;
             entry.classList.add('dragover');
         };
-        entry.ondragover = ev => ev.preventDefault();
+        entry.ondragover = DOM.preventDefault;
         entry.ondragleave = _ => entry.classList.remove('dragover');
         this.inputList.appendChild(entry);
         this.domEmptyList.classList.add('hidden');
@@ -1073,6 +1070,9 @@ class DOM {
             if (!current.classList.contains('hidden') && current.tabIndex)
                 return current;
         }
+    }
+    static preventDefault(ev) {
+        ev.preventDefault();
     }
     static swap(obj1, obj2) {
         if (!obj1.parentNode || !obj2.parentNode)
