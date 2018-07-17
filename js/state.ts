@@ -119,8 +119,7 @@ class State
         this._stationLists[context] = value;
     }
 
-    // TODO: these are all missing visibility
-    get excuse() : string
+    public get excuse() : string
     {
         if (this._excuse)
             return this._excuse;
@@ -129,12 +128,12 @@ class State
         return this._excuse;
     }
 
-    set excuse(value: string)
+    public set excuse(value: string)
     {
         this._excuse = value;
     }
 
-    get platform() : Platform
+    public get platform() : Platform
     {
         if (this._platform)
             return this._platform;
@@ -155,12 +154,12 @@ class State
         return this._platform;
     }
 
-    set platform(value: Platform)
+    public set platform(value: Platform)
     {
         this._platform = value;
     }
 
-    get named() : string
+    public get named() : string
     {
         if (this._named)
             return this._named;
@@ -169,12 +168,12 @@ class State
         return this._named;
     }
 
-    set named(value: string)
+    public set named(value: string)
     {
         this._named = value;
     }
 
-    get service() : string
+    public get service() : string
     {
         if (this._service)
             return this._service;
@@ -183,12 +182,12 @@ class State
         return this._service;
     }
 
-    set service(value: string)
+    public set service(value: string)
     {
         this._service = value;
     }
 
-    get time() : string
+    public get time() : string
     {
         if (!this._time)
         {
@@ -204,7 +203,7 @@ class State
         return this._time;
     }
 
-    set time(value: string)
+    public set time(value: string)
     {
         this._time = value;
     }
