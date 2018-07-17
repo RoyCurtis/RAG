@@ -1,7 +1,6 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 /** Controller for the phrase editor */
-// TODO: This class is getting very big...
 class Editor
 {
     /** Reference to the DOM container for the editor */

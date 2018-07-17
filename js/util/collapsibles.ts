@@ -15,8 +15,7 @@ class Collapsibles
         if (state) span.setAttribute('collapsed', '');
         else       span.removeAttribute('collapsed');
 
-        toggle.innerText = state ? '+' : '-';
-        toggle.title     = state
+        toggle.title = state
             ? "Click to open this optional part"
             : "Click to close this optional part";
     }
