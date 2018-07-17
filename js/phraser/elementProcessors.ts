@@ -185,7 +185,7 @@ class ElementProcessors
         DOM.cloneInto(source, inner);
         ctx.newElement.dataset['chance'] = chance;
 
-        RAG.views.editor.setCollapsible(ctx.newElement, toggle, collapsed);
+        Collapsibles.set(ctx.newElement, toggle, collapsed);
         ctx.newElement.appendChild(toggle);
         ctx.newElement.appendChild(inner);
     }

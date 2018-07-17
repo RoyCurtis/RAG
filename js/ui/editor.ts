@@ -4,10 +4,14 @@
 // TODO: This class is getting very big...
 class Editor
 {
+    /** Reference to the DOM container for the editor */
     private readonly dom : HTMLElement;
 
+    /** Reference to the currently open picker dialog, if any */
     private currentPicker? : Picker;
-    // TODO: should this just be in the picker class?
+
+    /** Reference to the phrase element currently being edited, if any */
+    // Do not DRY; needs to be passed to the picker for cleaner code
     private domEditing?    : HTMLElement;
 
     constructor()
@@ -30,7 +34,6 @@ class Editor
     /** Reprocesses all phraseset elements of the given ref, if their index has changed */
     public refreshPhraseset(ref: string) : void
     {
-        // TODO: potential inline candidate
         // Note, this could potentially bug out if a phraseset's descendant references
         // the same phraseset (recursion). But this is okay because phrasesets should
         // never include themselves, even eventually.
@@ -53,22 +56,10 @@ class Editor
     }
 
     /**
-     * Gets a static NodeList of all phrase elements of the given type.
-     *
-     * @param {string} type Original XML name of elements to get
-     * @returns {NodeList}
-     */
-    public getElementsByType(type: string) : NodeList
-    {
-        // TODO: inline candidate?
-        return this.dom.querySelectorAll(`span[data-type=${type}]`);
-    }
-
-    /**
      * Gets a static NodeList of all phrase elements of the given query.
      *
      * @param {string} query Query string to add onto the `span` selector
-     * @returns {NodeList}
+     * @returns {NodeList} Node list of all elements matching the given span query
      */
     public getElementsByQuery(query: string) : NodeList
     {
@@ -78,7 +69,6 @@ class Editor
     /** Gets the current phrase in the editor as text, excluding the hidden parts */
     public getText() : string
     {
-        // TODO: inline this if the only caller is handlePlay()
         return DOM.getCleanedVisibleText(this.dom);
     }
 
@@ -90,25 +80,8 @@ class Editor
      */
     public setElementsText(type: string, value: string) : void
     {
-        this.getElementsByType(type).forEach(element => element.textContent = value);
-    }
-
-    /**
-     * Sets the collapse state of a collapsible element.
-     *
-     * @param {HTMLElement} span The encapsulating collapsible element
-     * @param {HTMLElement} toggle The toggle child of the collapsible element
-     * @param {boolean} state True to collapse, false to open
-     */
-    public setCollapsible(span: HTMLElement, toggle: HTMLElement, state: boolean) : void
-    {
-        if (state) span.setAttribute('collapsed', '');
-        else       span.removeAttribute('collapsed');
-
-        toggle.innerText = state ? '+' : '-';
-        toggle.title     = state
-            ? "Click to open this optional part"
-            : "Click to close this optional part";
+        this.getElementsByQuery(`[data-type=${type}]`)
+            .forEach(element => element.textContent = value);
     }
 
     /** Closes any currently open editor dialogs */
@@ -191,7 +164,7 @@ class Editor
                 if ( !toggle || !toggle.classList.contains('toggle') )
                     return;
 
-                this.setCollapsible(phraseset, toggle, !collapased);
+                Collapsibles.set(phraseset, toggle, !collapased);
                 // Don't move this to setCollapsible, as state save/load is handled
                 // outside in both usages of setCollapsible.
                 RAG.state.setCollapsed(ref, !collapased);

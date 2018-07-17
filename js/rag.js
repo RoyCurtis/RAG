@@ -786,7 +786,7 @@ class ElementProcessors {
         toggle.classList.add('toggle');
         DOM.cloneInto(source, inner);
         ctx.newElement.dataset['chance'] = chance;
-        RAG.views.editor.setCollapsible(ctx.newElement, toggle, collapsed);
+        Collapsibles.set(ctx.newElement, toggle, collapsed);
         ctx.newElement.appendChild(toggle);
         ctx.newElement.appendChild(inner);
     }
@@ -877,9 +877,6 @@ class Editor {
             RAG.phraser.process(newElement.parentElement);
         });
     }
-    getElementsByType(type) {
-        return this.dom.querySelectorAll(`span[data-type=${type}]`);
-    }
     getElementsByQuery(query) {
         return this.dom.querySelectorAll(`span${query}`);
     }
@@ -887,17 +884,8 @@ class Editor {
         return DOM.getCleanedVisibleText(this.dom);
     }
     setElementsText(type, value) {
-        this.getElementsByType(type).forEach(element => element.textContent = value);
-    }
-    setCollapsible(span, toggle, state) {
-        if (state)
-            span.setAttribute('collapsed', '');
-        else
-            span.removeAttribute('collapsed');
-        toggle.innerText = state ? '+' : '-';
-        toggle.title = state
-            ? "Click to open this optional part"
-            : "Click to close this optional part";
+        this.getElementsByQuery(`[data-type=${type}]`)
+            .forEach(element => element.textContent = value);
     }
     closeDialog() {
         if (this.currentPicker)
@@ -947,7 +935,7 @@ class Editor {
             let toggle = phraseset.children[0];
             if (!toggle || !toggle.classList.contains('toggle'))
                 return;
-            this.setCollapsible(phraseset, toggle, !collapased);
+            Collapsibles.set(phraseset, toggle, !collapased);
             RAG.state.setCollapsed(ref, !collapased);
         });
     }
@@ -1042,6 +1030,18 @@ class Views {
     }
     getPicker(xmlTag) {
         return this.pickers[xmlTag];
+    }
+}
+class Collapsibles {
+    static set(span, toggle, state) {
+        if (state)
+            span.setAttribute('collapsed', '');
+        else
+            span.removeAttribute('collapsed');
+        toggle.innerText = state ? '+' : '-';
+        toggle.title = state
+            ? "Click to open this optional part"
+            : "Click to close this optional part";
     }
 }
 class DOM {
