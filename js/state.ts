@@ -287,7 +287,32 @@ class State
         this.setStation('via',               stVia);
         this.setStation('via_split',         stViaSplit);
 
-        // Step 3. Prepopulate integers
+        // Step 3. Prepopulate coach numbers
 
+        let intCoaches = this.getInteger('coaches');
+
+        // If there are enough coaches, just split the number down the middle instead.
+        // Else, front and rear coaches will be randomly picked (without making sense)
+        if (intCoaches >= 4)
+        {
+            let intFrontCoaches = (intCoaches / 2) | 0;
+            let intRearCoaches  = intCoaches - intFrontCoaches;
+
+            this.setInteger('front_coaches', intFrontCoaches);
+            this.setInteger('rear_coaches', intRearCoaches);
+        }
+
+        // If there are enough coaches, assign coach letters for contexts.
+        // Else, letters will be randomly picked (without making sense)
+        if (intCoaches >= 4)
+        {
+            let letters    = Phraser.LETTERS.slice(0, intCoaches).split('');
+            let randSplice = () => letters.splice(Random.int(0, letters.length), 1)[0];
+
+            this.setCoach( 'first',     randSplice() );
+            this.setCoach( 'shop',      randSplice() );
+            this.setCoach( 'standard1', randSplice() );
+            this.setCoach( 'standard2', randSplice() );
+        }
     }
 }

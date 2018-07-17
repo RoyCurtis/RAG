@@ -1129,8 +1129,7 @@ class Random {
         return Math.floor(Math.random() * (max - min)) + min;
     }
     static array(arr) {
-        let idx = Random.int(0, arr.length);
-        return arr[idx];
+        return arr[Random.int(0, arr.length)];
     }
     static objectKey(obj) {
         return Random.array(Object.keys(obj));
@@ -1448,6 +1447,21 @@ class State {
         this.setStation('source', stSource);
         this.setStation('via', stVia);
         this.setStation('via_split', stViaSplit);
+        let intCoaches = this.getInteger('coaches');
+        if (intCoaches >= 4) {
+            let intFrontCoaches = (intCoaches / 2) | 0;
+            let intRearCoaches = intCoaches - intFrontCoaches;
+            this.setInteger('front_coaches', intFrontCoaches);
+            this.setInteger('rear_coaches', intRearCoaches);
+        }
+        if (intCoaches >= 4) {
+            let letters = Phraser.LETTERS.slice(0, intCoaches).split('');
+            let randSplice = () => letters.splice(Random.int(0, letters.length), 1)[0];
+            this.setCoach('first', randSplice());
+            this.setCoach('shop', randSplice());
+            this.setCoach('standard1', randSplice());
+            this.setCoach('standard2', randSplice());
+        }
     }
 }
 //# sourceMappingURL=rag.js.map

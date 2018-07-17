@@ -18,9 +18,7 @@ class Random
     /** Picks a random element from a given array-like object with a length property */
     public static array(arr: Lengthable) : any
     {
-        let idx: number = Random.int(0, arr.length);
-
-        return arr[idx];
+        return arr[ Random.int(0, arr.length) ];
     }
 
     /** Picks a random key from a given object */
