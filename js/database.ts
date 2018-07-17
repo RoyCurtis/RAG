@@ -9,6 +9,8 @@ class Database
     public readonly stations   : Dictionary<string>;
     public readonly phrasesets : Document;
 
+    private readonly stationsCount : number;
+
     constructor(config: RAGConfig)
     {
         let iframe = DOM.require(config.phrasesetEmbed) as HTMLIFrameElement;
@@ -16,17 +18,18 @@ class Database
         if (!iframe.contentDocument)
             throw new Error("Configured phraseset element is not an iframe embed");
 
-        this.phrasesets = iframe.contentDocument;
-        this.excuses    = config.excusesData;
-        this.named      = config.namedData;
-        this.services   = config.servicesData;
-        this.stations   = config.stationsData;
+        this.phrasesets    = iframe.contentDocument;
+        this.excuses       = config.excusesData;
+        this.named         = config.namedData;
+        this.services      = config.servicesData;
+        this.stations      = config.stationsData;
+        this.stationsCount = Object.keys(this.stations).length;
 
         console.log("[Database] Entries loaded:");
         console.log("\tExcuses:",      this.excuses.length);
         console.log("\tNamed trains:", this.named.length);
         console.log("\tServices:",     this.services.length);
-        console.log("\tStations:",     Object.keys(this.stations).length);
+        console.log("\tStations:",     this.stationsCount);
     }
 
     /** Picks a random excuse for a delay or cancellation */
@@ -65,8 +68,18 @@ class Database
     }
 
     /** Picks a random station code */
-    public pickStationCode() : string
+    public pickStationCode(exclude?: string[]) : string
     {
+        // Give up finding random station that's not in the given list, if we try more
+        // times then there are stations. Inaccurate, but good enough.
+        if (exclude) for (let i = 0; i < this.stationsCount; i++)
+        {
+            let value = Random.objectKey(this.stations);
+
+            if ( !exclude.includes(value) )
+                return value;
+        }
+
         return Random.objectKey(this.stations);
     }
 
@@ -95,9 +108,10 @@ class Database
      *
      * @param {number} min Minimum amount of stations to pick
      * @param {number} max Maximum amount of stations to pick
+     * @param {string[]} exclude
      * @returns {string[]} A list of unique station names
      */
-    public pickStationCodes(min = 1, max = 16) : string[]
+    public pickStationCodes(min = 1, max = 16, exclude? : string[]) : string[]
     {
         if (max - min > Object.keys(this.stations).length)
             throw new Error("Picking too many stations than there are available");
@@ -105,12 +119,23 @@ class Database
         let result: string[] = [];
 
         let length = Random.int(min, max);
+        let tries  = 0;
 
         while (result.length < length)
         {
             let key = Random.objectKey(this.stations);
 
-            if ( !result.includes(key) )
+            // Give up trying to avoid duplicates, if we try more times than there are
+            // stations available. Inaccurate, but good enough.
+            if (tries++ >= this.stationsCount)
+                result.push(key);
+
+            // If given an exclusion list, check against both that and results
+            else if ( exclude && !exclude.includes(key) && !result.includes(key) )
+                result.push(key);
+
+            // If not, just check what results we've already found
+            else if ( !exclude && !result.includes(key) )
                 result.push(key);
         }
 
