@@ -1181,11 +1181,12 @@ class Database {
         this.named = config.namedData;
         this.services = config.servicesData;
         this.stations = config.stationsData;
+        this.stationsCount = Object.keys(this.stations).length;
         console.log("[Database] Entries loaded:");
         console.log("\tExcuses:", this.excuses.length);
         console.log("\tNamed trains:", this.named.length);
         console.log("\tServices:", this.services.length);
-        console.log("\tStations:", Object.keys(this.stations).length);
+        console.log("\tStations:", this.stationsCount);
     }
     pickExcuse() {
         return Random.array(this.excuses);
@@ -1205,7 +1206,13 @@ class Database {
     pickService() {
         return Random.array(this.services);
     }
-    pickStationCode() {
+    pickStationCode(exclude) {
+        if (exclude)
+            for (let i = 0; i < this.stationsCount; i++) {
+                let value = Random.objectKey(this.stations);
+                if (!exclude.includes(value))
+                    return value;
+            }
         return Random.objectKey(this.stations);
     }
     getStation(code, filtered = false) {
@@ -1216,14 +1223,19 @@ class Database {
             station = station.replace(/\(.+\)/i, '').trim();
         return station;
     }
-    pickStationCodes(min = 1, max = 16) {
+    pickStationCodes(min = 1, max = 16, exclude) {
         if (max - min > Object.keys(this.stations).length)
             throw new Error("Picking too many stations than there are available");
         let result = [];
         let length = Random.int(min, max);
+        let tries = 0;
         while (result.length < length) {
             let key = Random.objectKey(this.stations);
-            if (!result.includes(key))
+            if (tries++ >= this.stationsCount)
+                result.push(key);
+            else if (exclude && !exclude.includes(key) && !result.includes(key))
+                result.push(key);
+            else if (!exclude && !result.includes(key))
                 result.push(key);
         }
         return result;
@@ -1261,6 +1273,7 @@ class State {
         this._phrasesets = {};
         this._stations = {};
         this._stationLists = {};
+        this.genState();
     }
     getCoach(context) {
         if (this._coaches[context] !== undefined)
@@ -1313,12 +1326,13 @@ class State {
     getStationList(context) {
         if (this._stationLists[context] !== undefined)
             return this._stationLists[context];
+        else if (context === 'calling_first')
+            return this.getStationList('calling');
         let min = 1, max = 16;
         switch (context) {
-            case "calling_half1":
-            case "calling_half2":
+            case "calling_split":
                 min = 2;
-                max = 5;
+                max = 16;
                 break;
             case "changes":
                 min = 1;
@@ -1334,6 +1348,8 @@ class State {
     }
     setStationList(context, value) {
         this._stationLists[context] = value;
+        if (context === 'calling_first')
+            this._stationLists['calling'] = value;
     }
     get excuse() {
         if (this._excuse)
@@ -1390,6 +1406,41 @@ class State {
     }
     set time(value) {
         this._time = value;
+    }
+    genState() {
+        let slCalling = RAG.database.pickStationCodes(1, 16);
+        let slCallSplit = RAG.database.pickStationCodes(2, 16, slCalling);
+        let allCalling = [...slCalling, ...slCallSplit];
+        let slChanges = RAG.database.pickStationCodes(1, 4, allCalling);
+        let slNotStopping = RAG.database.pickStationCodes(1, 8, [...allCalling, ...slChanges]);
+        let reqCount = Random.int(1, slCalling.length - 1);
+        let slRequests = slCalling.slice(0, reqCount);
+        this.setStationList('calling', slCalling);
+        this.setStationList('calling_split', slCallSplit);
+        this.setStationList('changes', slChanges);
+        this.setStationList('not_stopping', slNotStopping);
+        this.setStationList('request', slRequests);
+        let stExcuse = RAG.database.pickStationCode();
+        let stDest = slCalling[slCalling.length - 1];
+        let stVia = slCalling.length > 1
+            ? Random.array(slCalling.slice(0, -1))
+            : Random.array(slCallSplit.slice(0, -1));
+        let stCalling = slCalling.length > 1
+            ? Random.array(slCalling.slice(0, -1))
+            : Random.array(slCallSplit.slice(0, -1));
+        let stDestSplit = slCallSplit[slCallSplit.length - 1];
+        let stViaSplit = Random.array(slCallSplit.slice(0, -1));
+        let stSource = RAG.database.pickStationCode([
+            ...allCalling, ...slChanges, ...slNotStopping, ...slRequests,
+            stCalling, stDest, stVia, stDestSplit, stViaSplit
+        ]);
+        this.setStation('calling', stCalling);
+        this.setStation('destination', stDest);
+        this.setStation('destination_split', stDestSplit);
+        this.setStation('excuse', stExcuse);
+        this.setStation('source', stSource);
+        this.setStation('via', stVia);
+        this.setStation('via_split', stViaSplit);
     }
 }
 //# sourceMappingURL=rag.js.map

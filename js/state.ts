@@ -16,6 +16,11 @@ class State
     private _service?  : string;
     private _time?     : string;
 
+    constructor()
+    {
+        this.genState();
+    }
+
     public getCoach(context: string) : string
     {
         if (this._coaches[context] !== undefined)
@@ -96,14 +101,15 @@ class State
     {
         if (this._stationLists[context] !== undefined)
             return this._stationLists[context];
+        else if (context === 'calling_first')
+            return this.getStationList('calling');
 
         let min = 1, max = 16;
 
         switch(context)
         {
-            case "calling_half1":
-            case "calling_half2":
-                min = 2; max = 5; break;
+            case "calling_split":
+                min = 2; max = 16; break;
             case "changes":
                 min = 1; max = 4; break;
             case "not_stopping":
@@ -117,6 +123,9 @@ class State
     public setStationList(context: string, value: string[]) : void
     {
         this._stationLists[context] = value;
+
+        if (context === 'calling_first')
+            this._stationLists['calling'] = value;
     }
 
     public get excuse() : string
@@ -206,5 +215,67 @@ class State
     public set time(value: string)
     {
         this._time = value;
+    }
+
+    /**
+     * Sets up the state in a particular way, so that it makes some real-world sense.
+     * To do so, we have to generate data in a particular order, and make sure to avoid
+     * duplicates in inappropriate places and contexts.
+     */
+    private genState() : void
+    {
+        let slCalling   = RAG.database.pickStationCodes(1, 16);
+        let slCallSplit = RAG.database.pickStationCodes(2, 16, slCalling);
+        let allCalling  = [...slCalling, ...slCallSplit];
+
+        // List of other stations found via a specific calling point
+        let slChanges     = RAG.database.pickStationCodes(1, 4, allCalling);
+        // List of other stations that this train usually serves, but currently isn't
+        let slNotStopping = RAG.database.pickStationCodes(1, 8,
+            [...allCalling, ...slChanges]
+        );
+
+        // Take a random slice from the calling list, to identify as request stops
+        let reqCount   = Random.int(1, slCalling.length - 1);
+        let slRequests = slCalling.slice(0, reqCount);
+
+        this.setStationList('calling',       slCalling);
+        this.setStationList('calling_split', slCallSplit);
+        this.setStationList('changes',       slChanges);
+        this.setStationList('not_stopping',  slNotStopping);
+        this.setStationList('request',       slRequests);
+
+        // Any station may be blamed for an excuse, even ones already picked
+        let stExcuse  = RAG.database.pickStationCode();
+        // Destination is final call of the calling list
+        let stDest    = slCalling[slCalling.length - 1];
+        // Via is a call before the destination, or one in the split list if too small
+        let stVia     = slCalling.length > 1
+            ? Random.array( slCalling.slice(0, -1)   )
+            : Random.array( slCallSplit.slice(0, -1) );
+        // Ditto for picking a random calling station as a single request or change stop
+        let stCalling = slCalling.length > 1
+            ? Random.array( slCalling.slice(0, -1)   )
+            : Random.array( slCallSplit.slice(0, -1) );
+
+        // Destination (last call) of the split train's second half of the list
+        let stDestSplit = slCallSplit[slCallSplit.length - 1];
+        // Random non-destination stop of the split train's second half of the list
+        let stViaSplit  = Random.array( slCallSplit.slice(0, -1) );
+        // Where the train comes from, so can't be on any lists or prior stations
+        let stSource    = RAG.database.pickStationCode([
+            ...allCalling, ...slChanges, ...slNotStopping, ...slRequests,
+            stCalling, stDest, stVia, stDestSplit, stViaSplit
+        ]);
+
+        this.setStation('calling',           stCalling);
+        this.setStation('destination',       stDest);
+        this.setStation('destination_split', stDestSplit);
+        this.setStation('excuse',            stExcuse);
+        this.setStation('source',            stSource);
+        this.setStation('via',               stVia);
+        this.setStation('via_split',         stViaSplit);
+
+        // TODO: handle coach letter and integers
     }
 }
