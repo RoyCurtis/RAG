@@ -12,6 +12,7 @@ class ElementProcessors
     /** Picks an excuse for a delay or cancellation */
     public static excuse(ctx: PhraseContext)
     {
+        ctx.newElement.title       = `Click to change this excuse`;
         ctx.newElement.textContent = RAG.state.excuse;
     }
 
