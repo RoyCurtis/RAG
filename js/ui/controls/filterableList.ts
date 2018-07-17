@@ -132,8 +132,8 @@ class FilterableList
         if (!target)
             return;
 
-        // Make sure target is ancestor of this control
-        else if ( !this.owns(target) )
+        // Make sure target is descendant of this control
+        else if ( !this.inputFilter.contains(target) && !this.inputList.contains(target) )
             return;
 
         // Handle pressing ENTER inside filter box
@@ -267,18 +267,6 @@ class FilterableList
             group.classList.add('hidden');
         else
             group.classList.remove('hidden');
-    }
-
-    protected owns(target: HTMLElement) : boolean
-    {
-        let parent = target.parentElement;
-
-        if (!parent) return false;
-
-        return target               === this.inputList
-            || target               === this.inputFilter
-            || parent               === this.inputList
-            || parent.parentElement === this.inputList;
     }
 
     /** Visually changes the current selection, and updates the state and editor */
