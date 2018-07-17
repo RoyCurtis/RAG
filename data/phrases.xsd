@@ -201,13 +201,10 @@
 
 
 <xs:complexType name="integer">
-  <xs:attribute name="min" type="xs:int" use="required"/>
-  <xs:attribute name="max" type="xs:int" use="required"/>
-
-  <xs:attribute name="id" type="xs:string" use="required">
+  <xs:attribute name="context" type="integer_context" use="required">
     <xs:annotation>
       <xs:documentation>
-        Unique ID to give this integer, for state tracking.
+        Specifies the context to pick an integer for.
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
@@ -339,6 +336,43 @@
       <xs:annotation>
         <xs:documentation>
           Specifies the second coach where standard class seating is found.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+  </xs:restriction>
+</xs:simpleType>
+
+
+<xs:simpleType name="integer_context">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="coaches">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the amount of coaches that make up this train.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="delayed">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies how many minutes the train is delayed by, approximately.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="front_coaches">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the amount of coaches that make up the first part of this train.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="rear_coaches">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the amount of coaches that make up the first part of this train.
         </xs:documentation>
       </xs:annotation>
     </xs:enumeration>

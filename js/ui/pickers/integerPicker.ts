@@ -8,12 +8,10 @@ class IntegerPicker extends Picker
     private readonly inputDigit : HTMLInputElement;
     private readonly domLabel   : HTMLLabelElement;
 
-    private min?      : number;
-    private max?      : number;
-    private id?       : string;
-    private singular? : string;
-    private plural?   : string;
-    private words?    : boolean;
+    private currentCtx? : string;
+    private singular?   : string;
+    private plural?     : string;
+    private words?      : boolean;
 
     constructor()
     {
@@ -27,17 +25,12 @@ class IntegerPicker extends Picker
     {
         super.open(target);
 
-        let min = DOM.requireData(target, 'min');
-        let max = DOM.requireData(target, 'max');
+        this.currentCtx = DOM.requireData(target, 'context');
+        this.singular   = target.dataset['singular'];
+        this.plural     = target.dataset['plural'];
+        this.words      = Parse.boolean(target.dataset['words'] || 'false');
 
-        this.min      = parseInt(min);
-        this.max      = parseInt(max);
-        this.id       = DOM.requireData(target, 'id');
-        this.singular = target.dataset['singular'];
-        this.plural   = target.dataset['plural'];
-        this.words    = Parse.boolean(target.dataset['words'] || 'false');
-
-        let value = RAG.state.getInteger(this.id, this.min, this.max);
+        let value = RAG.state.getInteger(this.currentCtx);
 
         if      (this.singular && value === 1)
             this.domLabel.innerText = this.singular;
@@ -46,16 +39,14 @@ class IntegerPicker extends Picker
         else
             this.domLabel.innerText = '';
 
-        this.domHeader.innerText = `Pick a number for the '${this.id}' part`;
-        this.inputDigit.min      = min;
-        this.inputDigit.max      = max;
+        this.domHeader.innerText = `Pick a number for the '${this.currentCtx}' part`;
         this.inputDigit.value    = value.toString();
         this.inputDigit.focus();
     }
 
     protected onChange(_: Event) : void
     {
-        if (!this.id)
+        if (!this.currentCtx)
             throw new Error("onChange fired for integer picker without state");
 
         let int    = parseInt(this.inputDigit.value);
@@ -74,9 +65,9 @@ class IntegerPicker extends Picker
             this.domLabel.innerText = this.plural;
         }
 
-        RAG.state.setInteger(this.id, int);
+        RAG.state.setInteger(this.currentCtx, int);
         RAG.views.editor
-            .getElementsByQuery(`[data-type=integer][data-id=${this.id}]`)
+            .getElementsByQuery(`[data-type=integer][data-context=${this.currentCtx}]`)
             .forEach(element => element.textContent = intStr);
     }
 

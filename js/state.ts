@@ -49,18 +49,28 @@ class State
         this._collapsibles[ref] = state;
     }
 
-    public getInteger(id: string, min: number, max: number) : number
+    public getInteger(context: string) : number
     {
-        if (this._integers[id] !== undefined)
-            return this._integers[id];
+        if (this._integers[context] !== undefined)
+            return this._integers[context];
 
-        this._integers[id] = Random.int(min, max);
-        return this._integers[id];
+        let min = 0, max = 0;
+
+        switch(context)
+        {
+            case "coaches":       min = 1; max = 10;  break;
+            case "delayed":       min = 5; max = 120; break;
+            case "front_coaches": min = 2; max = 5;   break;
+            case "rear_coaches":  min = 2; max = 5;   break;
+        }
+
+        this._integers[context] = Random.int(min, max);
+        return this._integers[context];
     }
 
-    public setInteger(id: string, value: number) : void
+    public setInteger(context: string, value: number) : void
     {
-        this._integers[id] = value;
+        this._integers[context] = value;
     }
 
     public getPhrasesetIdx(ref: string) : number
@@ -108,12 +118,9 @@ class State
 
         switch(context)
         {
-            case "calling_split":
-                min = 2; max = 16; break;
-            case "changes":
-                min = 1; max = 4; break;
-            case "not_stopping":
-                min = 1; max = 8; break;
+            case "calling_split": min = 2; max = 16; break;
+            case "changes":       min = 1; max = 4;  break;
+            case "not_stopping":  min = 1; max = 8;  break;
         }
 
         this._stationLists[context] = RAG.database.pickStationCodes(min, max);
@@ -224,6 +231,8 @@ class State
      */
     private genState() : void
     {
+        // Step 1. Prepopulate station lists
+
         let slCalling   = RAG.database.pickStationCodes(1, 16);
         let slCallSplit = RAG.database.pickStationCodes(2, 16, slCalling);
         let allCalling  = [...slCalling, ...slCallSplit];
@@ -244,6 +253,8 @@ class State
         this.setStationList('changes',       slChanges);
         this.setStationList('not_stopping',  slNotStopping);
         this.setStationList('request',       slRequests);
+
+        // Step 2. Prepopulate stations
 
         // Any station may be blamed for an excuse, even ones already picked
         let stExcuse  = RAG.database.pickStationCode();
@@ -276,6 +287,7 @@ class State
         this.setStation('via',               stVia);
         this.setStation('via_split',         stViaSplit);
 
-        // TODO: handle coach letter and integers
+        // Step 3. Prepopulate integers
+
     }
 }

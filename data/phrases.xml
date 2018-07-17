@@ -121,9 +121,10 @@
 
 <phrase id="debug_integers">
   (
-    Plain: <integer min="-10" max="100" id="debug1"/>,
-    Suffix: <integer min="0" max="999" singular="number" plural="numbers" id="debug2"/>,
-    Words: <integer min="0" max="10" words="true" id="debug3"/>
+    Coaches: <integer context="coaches"/>, <integer context="coaches"/>,
+    Delayed: <integer context="delayed"/>, <integer context="delayed"/>,
+    Front coaches: <integer context="front_coaches"/>, <integer context="front_coaches"/>,
+    Rear coaches: <integer context="rear_coaches"/>, <integer context="rear_coaches"/>,
   )
 </phrase>
 
@@ -294,9 +295,9 @@
   <phrase>Calling at <stationlist context="calling"/>.</phrase>
   <phrase>
     For <stationlist context="calling_first"/>, travel in the front
-    <integer id='front_coaches' min="2" max="5" words="true"/> coaches of the train. And
+    <integer context='front_coaches' words="true"/> coaches of the train. And
     for <stationlist context="calling_split"/>, travel in the rear
-    <integer id='rear_coaches' min="2" max="5" words="true"/> coaches of the train.
+    <integer context='rear_coaches' words="true"/> coaches of the train.
   </phrase>
 </phraseset>
 
@@ -328,7 +329,7 @@
 </phraseset>
 
 <phrase id="delayed_approx">
-  by approximately <integer id="approx" min="5" max="120" plural="minutes"/>
+  by approximately <integer context="delayed" plural="minutes"/>
 </phrase>
 
 <phrase id="delay_at_near">
@@ -406,7 +407,7 @@
 
 <phrase id="coach_count">
   <phraseset ref="coach_count_pre"/>
-  <integer id="coaches" min="1" max="10" singular="coach" plural="coaches" words="true"/>.
+  <integer context="coaches" singular="coach" plural="coaches" words="true"/>.
 </phrase>
 
 <phraseset id="coach_count_pre">

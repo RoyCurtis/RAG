@@ -24,17 +24,12 @@ class ElementProcessors
     /** Picks a whole number, with optional limits, noun and in word form */
     public static integer(ctx: PhraseContext)
     {
-        let id       = DOM.requireAttr(ctx.xmlElement, 'id');
-        let min      = DOM.requireAttr(ctx.xmlElement, 'min');
-        let max      = DOM.requireAttr(ctx.xmlElement, 'max');
+        let context  = DOM.requireAttr(ctx.xmlElement, 'context');
         let singular = ctx.xmlElement.getAttribute('singular');
         let plural   = ctx.xmlElement.getAttribute('plural');
         let words    = ctx.xmlElement.getAttribute('words');
 
-        let intMin = parseInt(min);
-        let intMax = parseInt(max);
-
-        let int    = RAG.state.getInteger(id, intMin, intMax);
+        let int    = RAG.state.getInteger(context);
         let intStr = (words && words.toLowerCase() === 'true')
             ? Phraser.DIGITS[int]
             : int.toString();
@@ -44,11 +39,10 @@ class ElementProcessors
         else if (int !== 1 && plural)
             intStr += ` ${plural}`;
 
-        ctx.newElement.title          = `Click to change this number ('${id}')`;
-        ctx.newElement.textContent    = intStr;
-        ctx.newElement.dataset['id']  = id;
-        ctx.newElement.dataset['min'] = min;
-        ctx.newElement.dataset['max'] = max;
+        ctx.newElement.title       = `Click to change this number ('${context}')`;
+        ctx.newElement.textContent = intStr;
+
+        ctx.newElement.dataset['context'] = context;
 
         if (singular) ctx.newElement.dataset['singular'] = singular;
         if (plural)   ctx.newElement.dataset['plural']   = plural;

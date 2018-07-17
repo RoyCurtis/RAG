@@ -335,29 +335,23 @@ class IntegerPicker extends Picker {
     }
     open(target) {
         super.open(target);
-        let min = DOM.requireData(target, 'min');
-        let max = DOM.requireData(target, 'max');
-        this.min = parseInt(min);
-        this.max = parseInt(max);
-        this.id = DOM.requireData(target, 'id');
+        this.currentCtx = DOM.requireData(target, 'context');
         this.singular = target.dataset['singular'];
         this.plural = target.dataset['plural'];
         this.words = Parse.boolean(target.dataset['words'] || 'false');
-        let value = RAG.state.getInteger(this.id, this.min, this.max);
+        let value = RAG.state.getInteger(this.currentCtx);
         if (this.singular && value === 1)
             this.domLabel.innerText = this.singular;
         else if (this.plural && value !== 1)
             this.domLabel.innerText = this.plural;
         else
             this.domLabel.innerText = '';
-        this.domHeader.innerText = `Pick a number for the '${this.id}' part`;
-        this.inputDigit.min = min;
-        this.inputDigit.max = max;
+        this.domHeader.innerText = `Pick a number for the '${this.currentCtx}' part`;
         this.inputDigit.value = value.toString();
         this.inputDigit.focus();
     }
     onChange(_) {
-        if (!this.id)
+        if (!this.currentCtx)
             throw new Error("onChange fired for integer picker without state");
         let int = parseInt(this.inputDigit.value);
         let intStr = (this.words)
@@ -371,9 +365,9 @@ class IntegerPicker extends Picker {
             intStr += ` ${this.plural}`;
             this.domLabel.innerText = this.plural;
         }
-        RAG.state.setInteger(this.id, int);
+        RAG.state.setInteger(this.currentCtx, int);
         RAG.views.editor
-            .getElementsByQuery(`[data-type=integer][data-id=${this.id}]`)
+            .getElementsByQuery(`[data-type=integer][data-context=${this.currentCtx}]`)
             .forEach(element => element.textContent = intStr);
     }
     onInput(_) {
@@ -685,15 +679,11 @@ class ElementProcessors {
         ctx.newElement.textContent = RAG.state.excuse;
     }
     static integer(ctx) {
-        let id = DOM.requireAttr(ctx.xmlElement, 'id');
-        let min = DOM.requireAttr(ctx.xmlElement, 'min');
-        let max = DOM.requireAttr(ctx.xmlElement, 'max');
+        let context = DOM.requireAttr(ctx.xmlElement, 'context');
         let singular = ctx.xmlElement.getAttribute('singular');
         let plural = ctx.xmlElement.getAttribute('plural');
         let words = ctx.xmlElement.getAttribute('words');
-        let intMin = parseInt(min);
-        let intMax = parseInt(max);
-        let int = RAG.state.getInteger(id, intMin, intMax);
+        let int = RAG.state.getInteger(context);
         let intStr = (words && words.toLowerCase() === 'true')
             ? Phraser.DIGITS[int]
             : int.toString();
@@ -701,11 +691,9 @@ class ElementProcessors {
             intStr += ` ${singular}`;
         else if (int !== 1 && plural)
             intStr += ` ${plural}`;
-        ctx.newElement.title = `Click to change this number ('${id}')`;
+        ctx.newElement.title = `Click to change this number ('${context}')`;
         ctx.newElement.textContent = intStr;
-        ctx.newElement.dataset['id'] = id;
-        ctx.newElement.dataset['min'] = min;
-        ctx.newElement.dataset['max'] = max;
+        ctx.newElement.dataset['context'] = context;
         if (singular)
             ctx.newElement.dataset['singular'] = singular;
         if (plural)
@@ -1293,14 +1281,33 @@ class State {
     setCollapsed(ref, state) {
         this._collapsibles[ref] = state;
     }
-    getInteger(id, min, max) {
-        if (this._integers[id] !== undefined)
-            return this._integers[id];
-        this._integers[id] = Random.int(min, max);
-        return this._integers[id];
+    getInteger(context) {
+        if (this._integers[context] !== undefined)
+            return this._integers[context];
+        let min = 0, max = 0;
+        switch (context) {
+            case "coaches":
+                min = 1;
+                max = 10;
+                break;
+            case "delayed":
+                min = 5;
+                max = 120;
+                break;
+            case "front_coaches":
+                min = 2;
+                max = 5;
+                break;
+            case "rear_coaches":
+                min = 2;
+                max = 5;
+                break;
+        }
+        this._integers[context] = Random.int(min, max);
+        return this._integers[context];
     }
-    setInteger(id, value) {
-        this._integers[id] = value;
+    setInteger(context, value) {
+        this._integers[context] = value;
     }
     getPhrasesetIdx(ref) {
         if (this._phrasesets[ref] !== undefined)
