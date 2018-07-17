@@ -44,8 +44,12 @@ class Database
     /** Gets a phrase with the given ID, or null if it doesn't exist */
     public getPhrase(id: string) : HTMLElement | null
     {
-        // TODO: test if cloning works, cause it'll be safer
-        return this.phrasesets.querySelector('phrase#' + id);
+        let result = this.phrasesets.querySelector('phrase#' + id) as HTMLElement;
+
+        if (result)
+            result = result.cloneNode(true) as HTMLElement;
+
+        return result;
     }
 
     /** Gets a phraseset with the given ID, or null if it doesn't exist */

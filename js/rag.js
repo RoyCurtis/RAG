@@ -1190,7 +1190,10 @@ class Database {
         return Random.array(this.named);
     }
     getPhrase(id) {
-        return this.phrasesets.querySelector('phrase#' + id);
+        let result = this.phrasesets.querySelector('phrase#' + id);
+        if (result)
+            result = result.cloneNode(true);
+        return result;
     }
     getPhraseset(id) {
         return this.phrasesets.querySelector('phraseset#' + id);
