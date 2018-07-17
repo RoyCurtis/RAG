@@ -39,11 +39,20 @@ class RAG
     public static generate() : void
     {
         RAG.state = new State();
+        RAG.state.genDefaultState();
         RAG.views.editor.generate();
     }
 
+    /** Loads state from given JSON */
+    public static load(json: string) : void
+    {
+        RAG.state = Object.assign( new State(), JSON.parse(json) ) as State;
+        RAG.views.editor.generate();
+        RAG.views.marquee.set("State has been loaded from storage.");
+    }
+
     /** Global error handler; throws up a big red panic screen on uncaught error */
-    public static panic(error: string | Event = "Unknown error")
+    private static panic(error: string | Event = "Unknown error")
     {
         let msg = '<div class="panic">';
         msg    += '<h1>"We are sorry to announce that..."</h1>';

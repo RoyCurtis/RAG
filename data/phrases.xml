@@ -92,6 +92,7 @@
 
   <!-- For debugging -->
   <phrase>
+    **DEBUG**
     Coach: <phrase ref="debug_coaches" chance="0"/>,
     Excuse: <excuse/>,
     Integers: <phrase ref="debug_integers" chance="0"/>,
@@ -105,6 +106,7 @@
     Stations: <phrase ref="debug_stations" chance="0"/>,
     Station list: <phrase ref="debug_stationlists" chance="0"/>,
     Time: <time/>
+    **DEBUG**
   </phrase>
 </phraseset>
 

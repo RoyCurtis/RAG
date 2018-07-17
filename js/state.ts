@@ -16,11 +16,6 @@ class State
     private _service?  : string;
     private _time?     : string;
 
-    constructor()
-    {
-        this.genState();
-    }
-
     public getCoach(context: string) : string
     {
         if (this._coaches[context] !== undefined)
@@ -229,7 +224,7 @@ class State
      * To do so, we have to generate data in a particular order, and make sure to avoid
      * duplicates in inappropriate places and contexts.
      */
-    private genState() : void
+    public genDefaultState() : void
     {
         // Step 1. Prepopulate station lists
 

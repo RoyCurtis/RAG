@@ -981,12 +981,12 @@ class Toolbar {
         this.btnSave = DOM.require('#btnSave');
         this.btnRecall = DOM.require('#btnLoad');
         this.btnOption = DOM.require('#btnSettings');
-        this.btnPlay.onclick = () => this.handlePlay();
-        this.btnStop.onclick = () => this.handleStop();
-        this.btnGenerate.onclick = () => RAG.generate();
-        this.btnSave.onclick = () => alert('Unimplemented');
-        this.btnRecall.onclick = () => alert('Unimplemented');
-        this.btnOption.onclick = () => alert('Unimplemented');
+        this.btnPlay.onclick = this.handlePlay.bind(this);
+        this.btnStop.onclick = this.handleStop.bind(this);
+        this.btnGenerate.onclick = RAG.generate;
+        this.btnSave.onclick = this.handleSave.bind(this);
+        this.btnRecall.onclick = this.handleLoad.bind(this);
+        this.btnOption.onclick = this.handleOption.bind(this);
     }
     handlePlay() {
         let text = RAG.views.editor.getText();
@@ -998,6 +998,30 @@ class Toolbar {
     handleStop() {
         RAG.speechSynth.cancel();
         RAG.views.marquee.stop();
+    }
+    handleSave() {
+        try {
+            let css = "font-size: large; font-weight: bold;";
+            let raw = JSON.stringify(RAG.state);
+            window.localStorage['state'] = raw;
+            console.log("%cCopy and paste this in console to load later:", css);
+            console.log("RAG.load('", raw.replace("'", "\\'"), "')");
+            console.log("%cRaw JSON state:", css);
+            console.log(raw);
+            RAG.views.marquee.set("State has been saved to storage, and dumped to console.");
+        }
+        catch (e) {
+            RAG.views.marquee.set(`Sorry, state could not be saved to storage: ${e.message}.`);
+        }
+    }
+    handleLoad() {
+        let data = window.localStorage['state'];
+        return data
+            ? RAG.load(data)
+            : RAG.views.marquee.set("Sorry, no state was found in storage.");
+    }
+    handleOption() {
+        alert("Unimplemented function");
     }
 }
 class Views {
@@ -1241,7 +1265,13 @@ class RAG {
     }
     static generate() {
         RAG.state = new State();
+        RAG.state.genDefaultState();
         RAG.views.editor.generate();
+    }
+    static load(json) {
+        RAG.state = Object.assign(new State(), JSON.parse(json));
+        RAG.views.editor.generate();
+        RAG.views.marquee.set("State has been loaded from storage.");
     }
     static panic(error = "Unknown error") {
         let msg = '<div class="panic">';
@@ -1260,7 +1290,6 @@ class State {
         this._phrasesets = {};
         this._stations = {};
         this._stationLists = {};
-        this.genState();
     }
     getCoach(context) {
         if (this._coaches[context] !== undefined)
@@ -1413,7 +1442,7 @@ class State {
     set time(value) {
         this._time = value;
     }
-    genState() {
+    genDefaultState() {
         let slCalling = RAG.database.pickStationCodes(1, 16);
         let slCallSplit = RAG.database.pickStationCodes(2, 16, slCalling);
         let allCalling = [...slCalling, ...slCallSplit];

@@ -21,12 +21,12 @@ class Toolbar
         this.btnRecall   = DOM.require('#btnLoad');
         this.btnOption   = DOM.require('#btnSettings');
 
-        this.btnPlay.onclick     = () => this.handlePlay();
-        this.btnStop.onclick     = () => this.handleStop();
-        this.btnGenerate.onclick = () => RAG.generate();
-        this.btnSave.onclick     = () => alert('Unimplemented');
-        this.btnRecall.onclick   = () => alert('Unimplemented');
-        this.btnOption.onclick   = () => alert('Unimplemented');
+        this.btnPlay.onclick     = this.handlePlay.bind(this);
+        this.btnStop.onclick     = this.handleStop.bind(this);
+        this.btnGenerate.onclick = RAG.generate;
+        this.btnSave.onclick     = this.handleSave.bind(this);
+        this.btnRecall.onclick   = this.handleLoad.bind(this);
+        this.btnOption.onclick   = this.handleOption.bind(this);
     }
 
     private handlePlay() : void
@@ -50,5 +50,44 @@ class Toolbar
     {
         RAG.speechSynth.cancel();
         RAG.views.marquee.stop();
+    }
+
+    private handleSave() : void
+    {
+        try
+        {
+            let css = "font-size: large; font-weight: bold;";
+            let raw = JSON.stringify(RAG.state);
+            window.localStorage['state'] = raw;
+
+            console.log("%cCopy and paste this in console to load later:", css);
+            console.log("RAG.load('", raw.replace("'", "\\'"), "')");
+            console.log("%cRaw JSON state:", css);
+            console.log(raw);
+
+            RAG.views.marquee.set(
+                "State has been saved to storage, and dumped to console."
+            );
+        }
+        catch (e)
+        {
+            RAG.views.marquee.set(
+                `Sorry, state could not be saved to storage: ${e.message}.`
+            );
+        }
+    }
+
+    private handleLoad() : void
+    {
+        let data = window.localStorage['state'];
+
+        return data
+            ? RAG.load(data)
+            : RAG.views.marquee.set("Sorry, no state was found in storage.");
+    }
+
+    private handleOption() : void
+    {
+        alert("Unimplemented function");
     }
 }
