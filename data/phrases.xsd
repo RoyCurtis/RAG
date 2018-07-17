@@ -373,6 +373,14 @@
       </xs:annotation>
     </xs:enumeration>
 
+    <xs:enumeration value="excuse">
+      <xs:annotation>
+        <xs:documentation>
+          Picks a random station to blame for a delay or cancellation excuse.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
     <xs:enumeration value="via">
       <xs:annotation>
         <xs:documentation>
@@ -386,14 +394,6 @@
         <xs:documentation>
           For a split train, picks a station in the middle of the second half of a calling
           list, as a "via" stop.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:enumeration>
-
-    <xs:enumeration value="random">
-      <xs:annotation>
-        <xs:documentation>
-          Picks a random station not on any calling list or other contexts.
         </xs:documentation>
       </xs:annotation>
     </xs:enumeration>

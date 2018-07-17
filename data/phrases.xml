@@ -144,7 +144,7 @@
     Calling: <station context="calling"/>, <station context="calling"/>,
     Destination: <station context="destination"/>, <station context="destination"/>,
     Destination 2: <station context="destination2"/>, <station context="destination2"/>,
-    Random: <station context="random"/>, <station context="random"/>,
+    Excuse: <station context="excuse"/>, <station context="excuse"/>,
     Source: <station context="source"/>, <station context="source"/>,
     Via: <station context="via"/>, <station context="via"/>,
     Via 2: <station context="via2"/>, <station context="via2"/>
@@ -332,7 +332,7 @@
 </phrase>
 
 <phrase id="delay_at_near">
-  <phraseset ref="at_near"/> <station context="random"/>
+  <phraseset ref="at_near"/> <station context="excuse"/>
 </phrase>
 
 <phraseset id="excuse_pre">
