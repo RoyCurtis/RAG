@@ -1,6 +1,6 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/** Manages data for excuses, trains, services and stations. */
+/** Manages data for excuses, trains, services and stations */
 class Database
 {
     public readonly excuses    : string[];
@@ -11,18 +11,18 @@ class Database
 
     private readonly stationsCount : number;
 
-    constructor(config: RAGConfig)
+    constructor(dataRefs: DataRefs)
     {
-        let iframe = DOM.require <HTMLIFrameElement> (config.phrasesetEmbed);
+        let iframe = DOM.require <HTMLIFrameElement> (dataRefs.phrasesetEmbed);
 
         if (!iframe.contentDocument)
             throw new Error("Configured phraseset element is not an iframe embed");
 
         this.phrasesets    = iframe.contentDocument;
-        this.excuses       = config.excusesData;
-        this.named         = config.namedData;
-        this.services      = config.servicesData;
-        this.stations      = config.stationsData;
+        this.excuses       = dataRefs.excusesData;
+        this.named         = dataRefs.namedData;
+        this.services      = dataRefs.servicesData;
+        this.stations      = dataRefs.stationsData;
         this.stationsCount = Object.keys(this.stations).length;
 
         console.log("[Database] Entries loaded:");

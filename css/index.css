@@ -286,6 +286,103 @@
 #marquee > span {
   position: absolute;
 }
+#settings {
+  align-content: flex-start;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  flex-flow: row wrap;
+  overflow: auto;
+  position: absolute;
+  transform: translateZ(16px);
+  z-index: 900;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+#settings #btnSaveSettings,
+#settings #btnResetSettings,
+#settings #btnVoxTest {
+  background: #222;
+  border: none;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: large;
+  height: 3rem;
+  margin: 1rem;
+}
+#settings #btnSaveSettings:disabled,
+#settings #btnResetSettings:disabled,
+#settings #btnVoxTest:disabled {
+  background: #222;
+  color: #444;
+  cursor: default;
+}
+#settings #btnSaveSettings:disabled:hover,
+#settings #btnResetSettings:disabled:hover,
+#settings #btnVoxTest:disabled:hover {
+  background: #222;
+}
+#settings #btnSaveSettings:hover,
+#settings #btnResetSettings:hover,
+#settings #btnVoxTest:hover,
+#settings #btnSaveSettings:focus,
+#settings #btnResetSettings:focus,
+#settings #btnVoxTest:focus {
+  background: #444;
+}
+#settings #btnSaveSettings:active,
+#settings #btnResetSettings:active,
+#settings #btnVoxTest:active {
+  color: #aaa;
+}
+#settings #btnResetSettings {
+  flex: 4;
+}
+#settings #btnSaveSettings {
+  flex: 6;
+}
+#settings #btnVoxTest {
+  grid-column: 2;
+}
+#settings h1 {
+  border-bottom: 2px solid #ffa500;
+  flex: 100%;
+  font-size: xx-large;
+  padding: 1rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+#settings p {
+  column-count: 2;
+  column-gap: 1.5rem;
+  flex: 100%;
+  font-size: small;
+  line-height: 1.5em;
+  padding: 1.5rem;
+  text-align: justify;
+}
+#settings form {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 40% 60%;
+}
+#settings form label,
+#settings form select,
+#settings form input {
+  flex: 1;
+  font-size: large;
+  margin: 1.5rem;
+}
+.settingsVisible > #marquee,
+.settingsVisible > #toolbar,
+.settingsVisible > #editor,
+.settingsVisible > .dialog {
+  filter: blur(10px);
+}
+.settingsVisible #settings {
+  display: flex;
+}
 * {
   -webkit-overflow-scrolling: touch;
   margin: 0;
@@ -317,11 +414,22 @@ body {
   background: #222;
   border: none;
   box-shadow: 0 0 8px #222;
+  color: #f5f5f5;
   cursor: pointer;
+  fill: #f5f5f5;
   font-weight: bold;
   list-style: none;
   margin: 0 1em;
   padding: 0.5em;
+}
+#toolbar > button:disabled {
+  background: #222;
+  color: #444;
+  cursor: default;
+  fill: #444;
+}
+#toolbar > button:disabled:active {
+  background: #222;
 }
 #toolbar > button:active {
   color: #aaa;

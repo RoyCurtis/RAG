@@ -3,6 +3,8 @@
 /** Main class of the entire Rail Announcements Generator application */
 class RAG
 {
+    /** Gets the configuration holder */
+    public static config      : Config;
     /** Gets the database manager, which holds phrase, station and train data */
     public static database    : Database;
     /** Gets the phrase manager, which generates HTML phrases from XML */
@@ -17,20 +19,22 @@ class RAG
     /**
      * Entry point for RAG, to be called from Javascript.
      *
-     * @param {RAGConfig} config Configuration object, with rail data to use
+     * @param {DataRefs} dataRefs Configuration object, with rail data to use
      */
-    public static main(config: RAGConfig)
+    public static main(dataRefs: DataRefs)
     {
         window.onerror        = error => RAG.panic(error);
         window.onbeforeunload = _ => RAG.speechSynth.cancel();
 
-        RAG.database    = new Database(config);
+        RAG.config      = new Config();
+        RAG.database    = new Database(dataRefs);
         RAG.views       = new Views();
         RAG.phraser     = new Phraser();
         RAG.speechSynth = window.speechSynthesis;
 
         // Begin
 
+        RAG.config.load();
         RAG.views.marquee.set("Welcome to RAG.");
         RAG.generate();
     }

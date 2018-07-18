@@ -4,12 +4,12 @@
 class Toolbar
 {
     private dom         : HTMLElement;
-    private btnPlay     : HTMLElement;
-    private btnStop     : HTMLElement;
-    private btnGenerate : HTMLElement;
-    private btnSave     : HTMLElement;
-    private btnRecall   : HTMLElement;
-    private btnOption   : HTMLElement;
+    private btnPlay     : HTMLButtonElement;
+    private btnStop     : HTMLButtonElement;
+    private btnGenerate : HTMLButtonElement;
+    private btnSave     : HTMLButtonElement;
+    private btnRecall   : HTMLButtonElement;
+    private btnOption   : HTMLButtonElement;
 
     constructor()
     {
@@ -21,12 +21,20 @@ class Toolbar
         this.btnRecall   = DOM.require('#btnLoad');
         this.btnOption   = DOM.require('#btnSettings');
 
-        this.btnPlay.onclick     = this.handlePlay.bind(this);
         this.btnStop.onclick     = this.handleStop.bind(this);
         this.btnGenerate.onclick = RAG.generate;
         this.btnSave.onclick     = this.handleSave.bind(this);
         this.btnRecall.onclick   = this.handleLoad.bind(this);
         this.btnOption.onclick   = this.handleOption.bind(this);
+
+        this.btnPlay.onclick = ev =>
+        {
+            // Has to execute on a delay, as speech cancel is unreliable without it
+            ev.preventDefault();
+            RAG.speechSynth.cancel();
+            this.btnPlay.disabled = true;
+            window.setTimeout(this.handlePlay.bind(this), 200);
+        }
     }
 
     private handlePlay() : void
@@ -35,15 +43,30 @@ class Toolbar
         // automatically change back. However, speech's 'onend' event was found to be
         // unreliable, so I decided to keep play and stop separate.
 
-        let text  = RAG.views.editor.getText();
-        let parts = text.trim().split(/\.\s/i);
+        let text   = RAG.views.editor.getText();
+        let parts  = text.trim().split(/\.\s/i);
+        let voices = RAG.speechSynth.getVoices();
+        let voice  = RAG.config.voxChoice;
+
+        // Reset to default voice, if it's missing
+        if (!voices[voice])
+            RAG.config.voxChoice = voice = 0;
 
         RAG.speechSynth.cancel();
         parts.forEach( segment =>
-            RAG.speechSynth.speak( new SpeechSynthesisUtterance(segment) )
-        );
+        {
+            let utterance = new SpeechSynthesisUtterance(segment);
+
+            utterance.voice  = voices[voice];
+            utterance.volume = RAG.config.voxVolume;
+            utterance.pitch  = RAG.config.voxPitch;
+            utterance.rate   = RAG.config.voxRate;
+
+            RAG.speechSynth.speak(utterance)
+        });
 
         RAG.views.marquee.set(text);
+        this.btnPlay.disabled = false;
     }
 
     private handleStop() : void
@@ -88,6 +111,6 @@ class Toolbar
 
     private handleOption() : void
     {
-        alert("Unimplemented function");
+        RAG.views.settings.open();
     }
 }

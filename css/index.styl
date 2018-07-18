@@ -7,6 +7,9 @@
 @import "dialogs.styl"
 @import "editor.styl"
 @import "signage.styl"
+@import "settings.styl"
+
+// TODO: DRY all CSS
 
 // CSS reset
 
@@ -46,6 +49,15 @@ body
   list-style  none
   margin      0 1em
   padding     0.5em
+
+  &:disabled
+    background #222
+    color      #444
+    cursor     default
+    fill       #444
+
+    &:active
+      background #222
 
   &:active
     activePressable()

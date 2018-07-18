@@ -1,0 +1,88 @@
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+
+#settings
+  align-content flex-start
+  background    rgba(0, 0, 0, 0.75)
+  display       none
+  flex-flow     row wrap
+  overflow      auto
+  position      absolute
+  transform     translateZ(16px)
+  z-index       900
+
+  top    0
+  left   0
+  width  100%
+  height 100%
+
+  #btnSaveSettings,
+  #btnResetSettings,
+  #btnVoxTest
+    background #222
+    border     none
+    color      whitesmoke
+    cursor     pointer
+    font-size  large
+    height     3rem
+    margin     1rem
+
+    &:disabled
+      background #222
+      color      #444
+      cursor     default
+
+      &:hover
+        background #222
+
+    &:hover, &:focus
+      background #444
+
+    &:active
+      color #AAA
+
+  #btnResetSettings
+    flex 4
+
+  #btnSaveSettings
+    flex 6
+
+  #btnVoxTest
+    grid-column 2
+
+  h1
+    border-bottom  2px solid orange
+    flex           100%
+    font-size      xx-large
+    padding        1rem
+    padding-bottom 0.5rem
+    margin-bottom  0.5rem
+
+  p
+    column-count 2
+    column-gap   1.5rem
+    flex         100%
+    font-size    small
+    line-height  1.5em
+    padding      1.5rem
+    text-align   justify
+
+  form
+    display grid
+    flex    1
+
+    grid-template-columns 40% 60%
+
+    label, select, input
+      flex      1
+      font-size large
+      margin    1.5rem
+
+.settingsVisible
+  > #marquee,
+  > #toolbar,
+  > #editor,
+  > .dialog
+    filter: blur(10px);
+
+  #settings
+    display flex

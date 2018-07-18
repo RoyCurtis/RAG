@@ -972,6 +972,96 @@ class Marquee {
         this.domSpan.style.transform = '';
     }
 }
+class Settings {
+    constructor() {
+        this.ready = false;
+        this.dom = DOM.require('#settings');
+        this.btnReset = DOM.require('#btnResetSettings');
+        this.btnSave = DOM.require('#btnSaveSettings');
+        this.btnReset.onclick = this.handleReset.bind(this);
+        this.btnSave.onclick = this.handleSave.bind(this);
+        this.selVoxChoice = DOM.require('#selVoxChoice');
+        this.rangeVoxVol = DOM.require('#rangeVoxVol');
+        this.rangeVoxPitch = DOM.require('#rangeVoxPitch');
+        this.rangeVoxRate = DOM.require('#rangeVoxRate');
+        this.btnVoxTest = DOM.require('#btnVoxTest');
+        this.btnVoxTest.onclick = ev => {
+            ev.preventDefault();
+            RAG.speechSynth.cancel();
+            this.btnVoxTest.disabled = true;
+            window.setTimeout(this.handleVoxTest.bind(this), 200);
+        };
+    }
+    open() {
+        document.body.classList.add('settingsVisible');
+        if (!this.ready)
+            this.init();
+        this.selVoxChoice.selectedIndex = RAG.config.voxChoice;
+        this.rangeVoxVol.valueAsNumber = RAG.config.voxVolume;
+        this.rangeVoxPitch.valueAsNumber = RAG.config.voxPitch;
+        this.rangeVoxRate.valueAsNumber = RAG.config.voxRate;
+    }
+    close() {
+        this.cancelReset();
+        RAG.speechSynth.cancel();
+        document.body.classList.remove('settingsVisible');
+    }
+    init() {
+        let voices = RAG.speechSynth.getVoices();
+        if (voices.length <= 0) {
+            this.ready = true;
+            return;
+        }
+        this.selVoxChoice.innerHTML = '';
+        for (let i = 0; i < voices.length; i++) {
+            let option = document.createElement('option');
+            option.textContent = `${voices[i].name} (${voices[i].lang})`;
+            if (voices[i].default)
+                option.textContent += ' (default)';
+            this.selVoxChoice.appendChild(option);
+        }
+        this.ready = true;
+    }
+    handleReset() {
+        if (!this.resetTimeout) {
+            this.resetTimeout = setTimeout(this.cancelReset.bind(this), 15000);
+            this.btnReset.innerText = 'Are you sure?';
+            this.btnReset.title = 'Confirm reset to defaults';
+            return;
+        }
+        RAG.config.reset();
+        RAG.speechSynth.cancel();
+        this.cancelReset();
+        this.open();
+        alert('Settings have been reset to their defaults, and deleted from storage.');
+    }
+    cancelReset() {
+        window.clearTimeout(this.resetTimeout);
+        this.btnReset.innerText = 'Reset to defaults';
+        this.btnReset.title = 'Reset settings to defaults';
+        this.resetTimeout = undefined;
+    }
+    handleSave() {
+        RAG.config.voxChoice = this.selVoxChoice.selectedIndex;
+        RAG.config.voxVolume = this.rangeVoxVol.valueAsNumber;
+        RAG.config.voxPitch = this.rangeVoxPitch.valueAsNumber;
+        RAG.config.voxRate = this.rangeVoxRate.valueAsNumber;
+        RAG.config.save();
+        this.close();
+    }
+    handleVoxTest() {
+        this.btnVoxTest.disabled = false;
+        let time = new Date();
+        let hour = time.getHours().toString().padStart(2, '0');
+        let minute = time.getMinutes().toString().padStart(2, '0');
+        let utterance = new SpeechSynthesisUtterance(`This is a test of the Rail Announcement Generator at ${hour}:${minute}.`);
+        utterance.volume = this.rangeVoxVol.valueAsNumber;
+        utterance.pitch = this.rangeVoxPitch.valueAsNumber;
+        utterance.rate = this.rangeVoxRate.valueAsNumber;
+        utterance.voice = RAG.speechSynth.getVoices()[this.selVoxChoice.selectedIndex];
+        RAG.speechSynth.speak(utterance);
+    }
+}
 class Toolbar {
     constructor() {
         this.dom = DOM.require('#toolbar');
@@ -981,19 +1071,36 @@ class Toolbar {
         this.btnSave = DOM.require('#btnSave');
         this.btnRecall = DOM.require('#btnLoad');
         this.btnOption = DOM.require('#btnSettings');
-        this.btnPlay.onclick = this.handlePlay.bind(this);
         this.btnStop.onclick = this.handleStop.bind(this);
         this.btnGenerate.onclick = RAG.generate;
         this.btnSave.onclick = this.handleSave.bind(this);
         this.btnRecall.onclick = this.handleLoad.bind(this);
         this.btnOption.onclick = this.handleOption.bind(this);
+        this.btnPlay.onclick = ev => {
+            ev.preventDefault();
+            RAG.speechSynth.cancel();
+            this.btnPlay.disabled = true;
+            window.setTimeout(this.handlePlay.bind(this), 200);
+        };
     }
     handlePlay() {
         let text = RAG.views.editor.getText();
         let parts = text.trim().split(/\.\s/i);
+        let voices = RAG.speechSynth.getVoices();
+        let voice = RAG.config.voxChoice;
+        if (!voices[voice])
+            RAG.config.voxChoice = voice = 0;
         RAG.speechSynth.cancel();
-        parts.forEach(segment => RAG.speechSynth.speak(new SpeechSynthesisUtterance(segment)));
+        parts.forEach(segment => {
+            let utterance = new SpeechSynthesisUtterance(segment);
+            utterance.voice = voices[voice];
+            utterance.volume = RAG.config.voxVolume;
+            utterance.pitch = RAG.config.voxPitch;
+            utterance.rate = RAG.config.voxRate;
+            RAG.speechSynth.speak(utterance);
+        });
         RAG.views.marquee.set(text);
+        this.btnPlay.disabled = false;
     }
     handleStop() {
         RAG.speechSynth.cancel();
@@ -1021,13 +1128,14 @@ class Toolbar {
             : RAG.views.marquee.set("Sorry, no state was found in storage.");
     }
     handleOption() {
-        alert("Unimplemented function");
+        RAG.views.settings.open();
     }
 }
 class Views {
     constructor() {
         this.editor = new Editor();
         this.marquee = new Marquee();
+        this.settings = new Settings();
         this.toolbar = new Toolbar();
         this.pickers = {};
         [
@@ -1182,16 +1290,49 @@ class Strings {
         return result;
     }
 }
+class Config {
+    constructor() {
+        this.voxChoice = 0;
+        this.voxVolume = 1.0;
+        this.voxPitch = 1.0;
+        this.voxRate = 1.0;
+    }
+    load() {
+        if (!window.localStorage['settings'])
+            return;
+        try {
+            let config = JSON.parse(window.localStorage['settings']);
+            Object.assign(this, config);
+        }
+        catch (e) {
+            alert(`Could not load settings: ${e.message}`);
+            console.error(e);
+        }
+    }
+    save() {
+        try {
+            window.localStorage['settings'] = JSON.stringify(this);
+        }
+        catch (e) {
+            alert(`Could not save settings: ${e.message}`);
+            console.error(e);
+        }
+    }
+    reset() {
+        window.localStorage.removeItem('settings');
+        Object.assign(this, new Config());
+    }
+}
 class Database {
-    constructor(config) {
-        let iframe = DOM.require(config.phrasesetEmbed);
+    constructor(dataRefs) {
+        let iframe = DOM.require(dataRefs.phrasesetEmbed);
         if (!iframe.contentDocument)
             throw new Error("Configured phraseset element is not an iframe embed");
         this.phrasesets = iframe.contentDocument;
-        this.excuses = config.excusesData;
-        this.named = config.namedData;
-        this.services = config.servicesData;
-        this.stations = config.stationsData;
+        this.excuses = dataRefs.excusesData;
+        this.named = dataRefs.namedData;
+        this.services = dataRefs.servicesData;
+        this.stations = dataRefs.stationsData;
         this.stationsCount = Object.keys(this.stations).length;
         console.log("[Database] Entries loaded:");
         console.log("\tExcuses:", this.excuses.length);
@@ -1253,13 +1394,15 @@ class Database {
     }
 }
 class RAG {
-    static main(config) {
+    static main(dataRefs) {
         window.onerror = error => RAG.panic(error);
         window.onbeforeunload = _ => RAG.speechSynth.cancel();
-        RAG.database = new Database(config);
+        RAG.config = new Config();
+        RAG.database = new Database(dataRefs);
         RAG.views = new Views();
         RAG.phraser = new Phraser();
         RAG.speechSynth = window.speechSynthesis;
+        RAG.config.load();
         RAG.views.marquee.set("Welcome to RAG.");
         RAG.generate();
     }

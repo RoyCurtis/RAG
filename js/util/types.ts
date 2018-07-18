@@ -9,8 +9,8 @@ type Platform = [string, string];
 /** Represents a generic key-value dictionary, with string keys */
 type Dictionary<T> = { [index: string]: T };
 
-/** Defines the config object passed into RAG.main on init */
-interface RAGConfig
+/** Defines the data references config object passed into RAG.main on init */
+interface DataRefs
 {
     /** Selector for getting the phrase set XML IFrame element */
     phrasesetEmbed : string;

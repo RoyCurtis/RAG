@@ -4,18 +4,20 @@
 class Views
 {
     // Main components
-    public readonly editor  : Editor;
-    public readonly marquee : Marquee;
-    public readonly toolbar : Toolbar;
+    public readonly editor   : Editor;
+    public readonly marquee  : Marquee;
+    public readonly settings : Settings;
+    public readonly toolbar  : Toolbar;
 
     private readonly pickers : Dictionary<Picker>;
 
     constructor()
     {
-        this.editor  = new Editor();
-        this.marquee = new Marquee();
-        this.toolbar = new Toolbar();
-        this.pickers = {};
+        this.editor   = new Editor();
+        this.marquee  = new Marquee();
+        this.settings = new Settings();
+        this.toolbar  = new Toolbar();
+        this.pickers  = {};
 
         [
             new CoachPicker(),
