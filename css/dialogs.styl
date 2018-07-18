@@ -18,6 +18,7 @@
 
   > form
     flexbox(column)
+    height 100%
 
     input, select, label
       backAndForeColor($bgDarkest, $fgBright)
@@ -48,8 +49,8 @@
     width     100%
 
   .flItemPicker
-    flex-grow 1
-    overflow  auto
+    flex-basis 100%
+    overflow   auto
 
     dl
       display   flex
@@ -94,8 +95,11 @@
 
   // For the station list builder
   .stations
-    background $bgDarkest
-
+    background  $bgDarkest
+    flex-shrink 0
+    max-height  40%
+    overflow    auto
+    
     dt
       color   $fgDim
       padding 1rem

@@ -217,6 +217,115 @@ class StationList extends FilterableList {
         this.visualUnselect();
     }
 }
+class StationListItem {
+    constructor(picker, code) {
+        this.dom = document.createElement('dd');
+        this.picker = picker;
+        this.dom.draggable = true;
+        this.dom.className = 'unselectable';
+        this.dom.innerText = RAG.database.getStation(code, false);
+        this.dom.tabIndex = -1;
+        this.dom.title =
+            "Drag to reorder; double-click or drag into station selector to remove";
+        this.dom.dataset['code'] = code;
+        this.dom.ondblclick = _ => picker.remove(this.dom);
+        this.dom.ontouchstart = this.onTouchStart.bind(this);
+        this.dom.ontouchmove = this.onTouchMove.bind(this);
+        this.dom.ontouchend = this.onTouchEnd.bind(this);
+        this.dom.ontouchcancel = this.onTouchEnd.bind(this);
+        this.dom.ondragstart = this.onDragStart.bind(this);
+        this.dom.ondragenter = this.onDragEnter.bind(this);
+        this.dom.ondrop = this.onDrop.bind(this);
+        this.dom.ondragend = this.onDragEnd.bind(this);
+        this.dom.ondragover = DOM.preventDefault;
+        this.dom.ondragleave = _ => this.dom.classList.remove('dragover');
+    }
+    touchLayout(touch) {
+        if (!this.phantom || !this.rect)
+            return;
+        this.phantom.style.left =
+            (touch.clientX - this.rect.left + 10) + 'px';
+        this.phantom.style.top =
+            (touch.clientY - this.rect.top + 40) + 'px';
+    }
+    onStart() {
+        this.picker.domDragFrom = this.dom;
+        this.picker.domDragFrom.classList.add('dragging');
+    }
+    onEnd() {
+    }
+    onTouchStart(ev) {
+        if (ev.targetTouches.length > 1)
+            return;
+        ev.preventDefault();
+        let touch = ev.targetTouches[0];
+        let parent = this.dom.parentElement;
+        this.rect = parent.getBoundingClientRect();
+        this.dom.draggable = false;
+        this.phantom = this.dom.cloneNode(true);
+        this.phantom.classList.add('dragPhantom');
+        parent.appendChild(this.phantom);
+        this.touchLayout(touch);
+        this.onStart();
+    }
+    onTouchMove(ev) {
+        this.touchLayout(ev.targetTouches[0]);
+    }
+    onTouchEnd(ev) {
+        if (ev.targetTouches.length > 1)
+            return;
+        ev.preventDefault();
+        this.dom.draggable = true;
+        if (!this.phantom)
+            return;
+        this.phantom.remove();
+        this.phantom = undefined;
+    }
+    onDragStart(ev) {
+        ev.dataTransfer.effectAllowed = "move";
+        ev.dataTransfer.dropEffect = "move";
+        this.onStart();
+    }
+    onDragEnter(_) {
+        if (this.picker.domDragFrom === this.dom)
+            return;
+        this.dom.classList.add('dragover');
+    }
+    onDrop(ev) {
+        if (!ev.target || !this.picker.domDragFrom)
+            throw new Error("Drop event, but target and source are missing");
+        if (ev.target === this.picker.domDragFrom)
+            return;
+        let target = ev.target;
+        DOM.swap(this.picker.domDragFrom, target);
+        target.classList.remove('dragover');
+        this.picker.update();
+    }
+    onDragEnd(ev) {
+        if (!this.picker.domDragFrom)
+            throw new Error("Drag ended but there's no tracked drag element");
+        if (this.picker.domDragFrom !== ev.target)
+            throw new Error("Drag ended, but tracked element doesn't match");
+        this.picker.domDragFrom.classList.remove('dragging');
+        this.picker.domDragFrom = undefined;
+    }
+}
+class TouchDragDropController {
+    constructor() {
+        document.body.addEventListener('touchstart', this.onTouchStart.bind(this));
+        document.body.addEventListener('touchmove', this.onTouchMove.bind(this));
+        document.body.addEventListener('touchend', this.onTouchEnd.bind(this));
+        document.body.addEventListener('touchcancel', this.onTouchEnd.bind(this));
+    }
+    onTouchStart(_) {
+        console.log(_);
+    }
+    onTouchMove(_) {
+    }
+    onTouchEnd(_) {
+        console.log(_);
+    }
+}
 class Picker {
     constructor(xmlTag, events) {
         this.dom = DOM.require(`#${xmlTag}Picker`);
@@ -587,6 +696,7 @@ class StationListPicker extends StationPicker {
     add(code) {
         let newEntry = document.createElement('dd');
         newEntry.draggable = true;
+        newEntry.className = 'unselectable';
         newEntry.innerText = RAG.database.getStation(code, false);
         newEntry.tabIndex = -1;
         newEntry.title =
