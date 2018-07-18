@@ -97,8 +97,36 @@ body
       padding 0.5rem
 
     dd
+      border        none
       border-radius 0
       margin        0
+      width         100%
+
+      // Show controls for sorting the list, on touch devices
+      &:hover
+        background $bgDarker
+
+      &:focus
+        background $fgFocus
+        display    flex
+        padding    0 0.5rem
+
+        button
+          backAndForeColor(none, $fgBrightest)
+          border        none
+          display       inline-block
+          font-size     x-large
+          margin-bottom 0.1rem
+          width         2em
+          height        1.6em
+
+        .moveDown
+          margin-left 0.5rem
+
+        span
+          flex-basis  100%
+          padding-top 0.75rem
+          text-align  center
 
 #settings
   button

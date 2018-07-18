@@ -134,6 +134,9 @@
 #stationlistPicker .stations dd.dragging {
   opacity: 0.5;
 }
+#stationlistPicker .stations dd button {
+  display: none;
+}
 #editor {
   background: #222;
   flex-grow: 1;
@@ -544,8 +547,37 @@ iframe {
     padding: 0.5rem;
   }
   #stationlistPicker .stations dd {
+    border: none;
     border-radius: 0;
     margin: 0;
+    width: 100%;
+  }
+  #stationlistPicker .stations dd:hover {
+    background: #222;
+  }
+  #stationlistPicker .stations dd:focus {
+    background: #cc7e00;
+    display: flex;
+    padding: 0 0.5rem;
+  }
+  #stationlistPicker .stations dd:focus button {
+    background: none;
+    color: #fff;
+    fill: #fff;
+    border: none;
+    display: inline-block;
+    font-size: x-large;
+    margin-bottom: 0.1rem;
+    width: 2em;
+    height: 1.6em;
+  }
+  #stationlistPicker .stations dd:focus .moveDown {
+    margin-left: 0.5rem;
+  }
+  #stationlistPicker .stations dd:focus span {
+    flex-basis: 100%;
+    padding-top: 0.75rem;
+    text-align: center;
   }
   #settings button {
     font-size: smaller;

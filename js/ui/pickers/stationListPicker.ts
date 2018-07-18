@@ -12,6 +12,8 @@ class StationListPicker extends StationPicker
     /** Reference to this list's currently selected stations in the UI */
     private readonly inputList    : HTMLDListElement;
 
+    private readonly listItemTemplate : HTMLElement;
+
     /** Reference to the list item currently being dragged */
     private domDragFrom? : HTMLElement;
 
@@ -19,8 +21,13 @@ class StationListPicker extends StationPicker
     {
         super("stationlist");
 
-        this.inputList    = DOM.require('.stations', this.dom);
-        this.domEmptyList = DOM.require('dt', this.inputList);
+        this.inputList        = DOM.require('.stations', this.dom);
+        this.domEmptyList     = DOM.require('dt', this.inputList);
+        this.listItemTemplate = DOM.require('#stationListItem');
+
+        this.listItemTemplate.id = '';
+        this.listItemTemplate.classList.remove('hidden');
+        this.listItemTemplate.remove();
 
         this.onOpen = (target) =>
         {
@@ -89,7 +96,6 @@ class StationListPicker extends StationPicker
                 next = (focused.nextElementSibling || this.inputList) as HTMLElement;
 
             this.remove(focused);
-            console.log(next);
             next.focus();
         }
     }
@@ -102,15 +108,13 @@ class StationListPicker extends StationPicker
 
     private add(code: string) : void
     {
-        let newEntry = document.createElement('dd');
+        let newEntry    = this.listItemTemplate.cloneNode(true) as HTMLElement;
+        let span        = DOM.require('span',      newEntry);
+        let btnMoveUp   = DOM.require('.moveUp',   newEntry);
+        let btnMoveDown = DOM.require('.moveDown', newEntry);
+        let btnDelete   = DOM.require('.delete',   newEntry);
 
-        newEntry.draggable = true;
-        newEntry.className = 'unselectable';
-        newEntry.innerText = RAG.database.getStation(code, false);
-        newEntry.tabIndex  = -1;
-        newEntry.title     =
-            "Drag to reorder; double-click or drag into station selector to remove";
-
+        span.innerText           = RAG.database.getStation(code, false);
         newEntry.dataset['code'] = code;
 
         newEntry.ondblclick = _ => this.remove(newEntry);
@@ -167,6 +171,30 @@ class StationListPicker extends StationPicker
         newEntry.ondragover  = DOM.preventDefault;
         newEntry.ondragleave = _  => newEntry.classList.remove('dragover');
 
+        // These buttons are necessary, as dragging and dropping do not work on iOS
+        
+        btnMoveUp.onclick = _ =>
+        {
+            let swap = newEntry.previousElementSibling!;
+
+            if (swap === this.domEmptyList)
+                swap = this.inputList.lastElementChild!;
+
+            DOM.swap(newEntry, swap);
+            newEntry.focus();
+        };
+
+        btnMoveDown.onclick = _ =>
+        {
+            let swap = newEntry.nextElementSibling
+                || this.inputList.children[1]!;
+
+            DOM.swap(newEntry, swap);
+            newEntry.focus();
+        };
+
+        btnDelete.onclick = _ => this.remove(newEntry);
+
         this.inputList.appendChild(newEntry);
         this.domEmptyList.classList.add('hidden');
     }
@@ -214,10 +242,6 @@ class StationListPicker extends StationPicker
         if (!ev.target || !this.domDragFrom)
             throw new Error("Drop event, but target and source are missing");
 
-        this.domDragFrom.remove();
-        this.update();
-
-        if (this.inputList.children.length === 1)
-            this.domEmptyList.classList.remove('hidden');
+        this.remove(this.domDragFrom);
     }
 }
