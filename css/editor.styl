@@ -9,7 +9,7 @@
   overflow-y auto
 
   // All selectable elements
-  span[data-type=coach],       span[data-type=excuse], span[data-type=integer],
+  span[data-type=coach],       span[data-type=excuse],  span[data-type=integer],
   span[data-type=named],       span[data-type=phrase],  span[data-type=phraseset],
   span[data-type=platform],    span[data-type=service], span[data-type=station],
   span[data-type=stationlist], span[data-type=time]
@@ -74,6 +74,10 @@
   // Phrasesets
   span[data-type=phraseset]
     border-left-width 8px
+    padding-left      0.5rem
 
     &:hover
       border-left-style solid
+
+  span[data-type=phraseset][data-chance]
+    padding-left 0
