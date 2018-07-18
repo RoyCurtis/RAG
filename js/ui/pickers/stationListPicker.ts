@@ -105,6 +105,7 @@ class StationListPicker extends StationPicker
         let newEntry = document.createElement('dd');
 
         newEntry.draggable = true;
+        newEntry.className = 'unselectable';
         newEntry.innerText = RAG.database.getStation(code, false);
         newEntry.tabIndex  = -1;
         newEntry.title     =
