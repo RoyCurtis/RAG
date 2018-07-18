@@ -249,12 +249,19 @@ class Picker {
         let width = (rect.width | 0) + 16;
         this.dom.style.height = null;
         if (!fullWidth) {
-            this.dom.style.minWidth = `${width}px`;
-            if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
-                dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
+            if (RAG.views.isMobile) {
+                this.dom.style.width = `100%`;
+                dialogX = 0;
+            }
+            else {
+                this.dom.style.width = `initial`;
+                this.dom.style.minWidth = `${width}px`;
+                if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
+                    dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
+            }
         }
         if (midHeight)
-            dialogY = (this.dom.offsetHeight / 2) | 0;
+            dialogY = (this.dom.offsetHeight / 4) | 0;
         else if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
             dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
@@ -949,16 +956,16 @@ class Marquee {
         this.dom.appendChild(this.domSpan);
     }
     set(msg) {
-        const STEP_PER_MS = 7 / (1000 / 60);
         window.cancelAnimationFrame(this.timer);
         this.domSpan.textContent = msg;
         this.offset = this.dom.clientWidth;
         let last = 0;
         let limit = -this.domSpan.clientWidth - 100;
         let anim = (time) => {
+            let stepPerMs = (RAG.views.isMobile ? 5 : 7) / (1000 / 60);
             this.offset -= (last == 0)
-                ? 6
-                : (time - last) * STEP_PER_MS;
+                ? (RAG.views.isMobile ? 5 : 7)
+                : (time - last) * stepPerMs;
             this.domSpan.style.transform = `translateX(${this.offset}px)`;
             if (this.offset < limit)
                 this.domSpan.style.transform = '';
@@ -1132,6 +1139,9 @@ class Toolbar {
     }
 }
 class Views {
+    get isMobile() {
+        return document.body.clientWidth <= 500;
+    }
     constructor() {
         this.editor = new Editor();
         this.marquee = new Marquee();

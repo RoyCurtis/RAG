@@ -45,6 +45,7 @@
 }
 .dialog.midHeight {
   box-shadow: 0 0 16px rgba(0,0,0,0.5);
+  height: 75%;
 }
 .dialog .flSearchBox {
   background: #000;
@@ -110,6 +111,7 @@
 #stationlistPicker .stations dd {
   background: #222;
   border-radius: 8px;
+  border-right: 2px solid #cc7e00;
   cursor: move;
   display: inline-block;
   margin: 0.5rem;
@@ -502,7 +504,8 @@ iframe {
     padding: 0.5rem;
   }
   #stationlistPicker .stations dd {
-    margin: 0.25rem;
+    border-radius: 0;
+    margin: 0;
   }
   #settings button {
     font-size: smaller;

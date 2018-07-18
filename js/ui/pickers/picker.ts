@@ -81,15 +81,26 @@ abstract class Picker
         // Adjust if horizontally off screen
         if (!fullWidth)
         {
-            this.dom.style.minWidth = `${width}px`;
+            // Force full width on mobile
+            if (RAG.views.isMobile)
+            {
+                this.dom.style.width = `100%`;
 
-            if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
-                dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
+                dialogX = 0;
+            }
+            else
+            {
+                this.dom.style.width    = `initial`;
+                this.dom.style.minWidth = `${width}px`;
+
+                if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
+                    dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
+            }
         }
 
         // Handle pickers that aren't relative to selected element
         if (midHeight)
-            dialogY = (this.dom.offsetHeight / 2) | 0;
+            dialogY = (this.dom.offsetHeight / 4) | 0;
 
         // Adjust if vertically off screen
         else if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
