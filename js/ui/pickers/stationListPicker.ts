@@ -15,6 +15,8 @@ class StationListPicker extends StationPicker
     /** Reference to the list item currently being dragged */
     private domDragFrom? : HTMLElement;
 
+    private domDragTo?   : HTMLElement;
+
     constructor()
     {
         super("stationlist");
@@ -104,7 +106,6 @@ class StationListPicker extends StationPicker
     {
         let newEntry = document.createElement('dd');
 
-        newEntry.draggable = true;
         newEntry.className = 'unselectable';
         newEntry.innerText = RAG.database.getStation(code, false);
         newEntry.tabIndex  = -1;
@@ -115,14 +116,27 @@ class StationListPicker extends StationPicker
 
         newEntry.ondblclick = _ => this.remove(newEntry);
 
-        // TODO: Split these off into own functions?
-        newEntry.ondragstart = ev =>
+        let layout = (ev: MouseEvent) =>
         {
-            this.domDragFrom              = newEntry;
-            ev.dataTransfer.effectAllowed = "move";
-            ev.dataTransfer.dropEffect    = "move";
+            // TODO: this is wasteful, but convinent for now
+            let pickerRect = this.inputList.getBoundingClientRect();
+            let dragRect   = newEntry.getBoundingClientRect();
 
+            newEntry.style.left =
+                (ev.clientX - pickerRect.left - dragRect.width / 2) + 'px';
+            newEntry.style.top  = (ev.clientY - pickerRect.top)  + 'px';
+        };
+
+        // TODO: Split these off into own functions?
+        newEntry.onmousedown = ev =>
+        {
+            // Only handle if primary button being held down
+            if (ev.buttons !== 1)
+                return;
+
+            this.domDragFrom = newEntry;
             this.domDragFrom.classList.add('dragging');
+            layout(ev);
         };
 
         newEntry.ondrop = ev =>
@@ -141,27 +155,54 @@ class StationListPicker extends StationPicker
             this.update();
         };
 
-        newEntry.ondragend = ev =>
+        newEntry.onmouseup = _ =>
         {
             if (!this.domDragFrom)
-                throw new Error("Drag ended but there's no tracked drag element");
-
-            if (this.domDragFrom !== ev.target)
-                throw new Error("Drag ended, but tracked element doesn't match");
-
-            this.domDragFrom.classList.remove('dragging');
-
-            // As per the standard, dragend must fire after drop. So it is safe to do
-            // dereference cleanup here.
-            this.domDragFrom = undefined;
-        };
-
-        newEntry.ondragenter = _ =>
-        {
-            if (this.domDragFrom === newEntry)
                 return;
 
+            this.domDragFrom.classList.remove('dragging');
+            this.domDragFrom.style.left = '';
+            this.domDragFrom.style.top  = '';
+            this.domDragFrom            = undefined;
+        };
+
+        newEntry.onmousemove = ev =>
+        {
+            if (!this.domDragFrom || this.domDragFrom !== newEntry)
+                return;
+
+            if (ev.buttons !== 1)
+                return;
+
+            layout(ev);
+        };
+
+        newEntry.onmouseover = ev =>
+        {
+            if (!this.domDragFrom || this.domDragFrom === newEntry)
+                return;
+
+            if (ev.buttons !== 1)
+                return;
+
+            this.domDragTo = newEntry;
             newEntry.classList.add('dragover');
+        };
+
+        newEntry.onmouseout = ev =>
+        {
+            console.log(ev);
+            if (ev.buttons !== 1)
+                return;
+
+            if (this.domDragTo && this.domDragTo === newEntry)
+            {
+                this.domDragTo = undefined;
+                newEntry.classList.remove('dragover');
+            }
+
+            if (this.domDragFrom && this.domDragFrom === newEntry)
+                layout(ev);
         };
 
         newEntry.ondragover  = DOM.preventDefault;

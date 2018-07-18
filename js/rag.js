@@ -586,18 +586,26 @@ class StationListPicker extends StationPicker {
     }
     add(code) {
         let newEntry = document.createElement('dd');
-        newEntry.draggable = true;
+        newEntry.className = 'unselectable';
         newEntry.innerText = RAG.database.getStation(code, false);
         newEntry.tabIndex = -1;
         newEntry.title =
             "Drag to reorder; double-click or drag into station selector to remove";
         newEntry.dataset['code'] = code;
         newEntry.ondblclick = _ => this.remove(newEntry);
-        newEntry.ondragstart = ev => {
+        let layout = (ev) => {
+            let pickerRect = this.inputList.getBoundingClientRect();
+            let dragRect = newEntry.getBoundingClientRect();
+            newEntry.style.left =
+                (ev.clientX - pickerRect.left - dragRect.width / 2) + 'px';
+            newEntry.style.top = (ev.clientY - pickerRect.top) + 'px';
+        };
+        newEntry.onmousedown = ev => {
+            if (ev.buttons !== 1)
+                return;
             this.domDragFrom = newEntry;
-            ev.dataTransfer.effectAllowed = "move";
-            ev.dataTransfer.dropEffect = "move";
             this.domDragFrom.classList.add('dragging');
+            layout(ev);
         };
         newEntry.ondrop = ev => {
             if (!ev.target || !this.domDragFrom)
@@ -609,21 +617,43 @@ class StationListPicker extends StationPicker {
             target.classList.remove('dragover');
             this.update();
         };
-        newEntry.ondragend = ev => {
+        newEntry.onmouseup = _ => {
             if (!this.domDragFrom)
-                throw new Error("Drag ended but there's no tracked drag element");
-            if (this.domDragFrom !== ev.target)
-                throw new Error("Drag ended, but tracked element doesn't match");
+                return;
             this.domDragFrom.classList.remove('dragging');
+            this.domDragFrom.style.left = '';
+            this.domDragFrom.style.top = '';
             this.domDragFrom = undefined;
         };
-        newEntry.ondragenter = _ => {
-            if (this.domDragFrom === newEntry)
+        newEntry.onmousemove = ev => {
+            if (!this.domDragFrom || this.domDragFrom !== newEntry)
                 return;
+            if (ev.buttons !== 1)
+                return;
+            layout(ev);
+        };
+        newEntry.onmouseover = ev => {
+            if (!this.domDragFrom || this.domDragFrom === newEntry)
+                return;
+            if (ev.buttons !== 1)
+                return;
+            this.domDragTo = newEntry;
             newEntry.classList.add('dragover');
+        };
+        newEntry.onmouseout = ev => {
+            console.log(ev);
+            if (ev.buttons !== 1)
+                return;
+            if (this.domDragTo && this.domDragTo === newEntry) {
+                this.domDragTo = undefined;
+                newEntry.classList.remove('dragover');
+            }
+            if (this.domDragFrom && this.domDragFrom === newEntry)
+                layout(ev);
         };
         newEntry.ondragover = DOM.preventDefault;
         newEntry.ondragleave = _ => newEntry.classList.remove('dragover');
+        Mobile.supportDrag(newEntry);
         this.inputList.appendChild(newEntry);
         this.domEmptyList.classList.add('hidden');
     }
@@ -1262,6 +1292,16 @@ class DOM {
         obj2.parentNode.insertBefore(obj1, obj2);
         temp.parentNode.insertBefore(obj2, temp);
         temp.parentNode.removeChild(temp);
+    }
+}
+class Mobile {
+    static supportDrag(dom) {
+        if (!dom.draggable)
+            return;
+        let phantom;
+        dom.ontouchstart = ev => {
+            ev.preventDefault();
+        };
     }
 }
 class Parse {

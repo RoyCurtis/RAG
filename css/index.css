@@ -3,6 +3,12 @@
 .hidden {
   display: none !important;
 }
+.unselectable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 .dialog {
   display: flex;
   flex-direction: column;
@@ -117,12 +123,16 @@
   margin: 0.5rem;
   padding: 0.5rem;
 }
-#stationlistPicker .stations dd:hover,
-#stationlistPicker .stations dd.dragover {
+#stationlistPicker .stations dd:hover {
   background: #cc7e00;
 }
+#stationlistPicker .stations dd.dragover {
+  background: #f00;
+}
 #stationlistPicker .stations dd.dragging {
-  opacity: 0.5;
+  opacity: 0.75;
+  position: fixed;
+  z-index: 900;
 }
 #editor {
   background: #222;
@@ -274,7 +284,7 @@
   overflow-y: auto;
   position: absolute;
   transform: translateZ(16px);
-  z-index: 900;
+  z-index: 500;
   top: 0;
   left: 0;
   width: 100%;
