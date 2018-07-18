@@ -66,16 +66,19 @@ class StationList extends FilterableList
 
         this.reset();
         this.onSelect = onSelect.bind(picker);
-        this.inputFilter.focus();
+        // this.inputFilter.focus();
     }
 
     /** Pre-selects a station entry by its code */
     public preselectCode(code: string) : void
     {
-        let entry = this.inputList.querySelector(`dd[data-code=${code}]`);
+        let entry = this.inputList.querySelector(`dd[data-code=${code}]`) as HTMLElement;
 
         if (entry)
-            this.visualSelect(entry as HTMLElement);
+        {
+            this.visualSelect(entry);
+            entry.focus();
+        }
     }
 
     /** Registers an event handler for when something (e.g. station name) is dropped */

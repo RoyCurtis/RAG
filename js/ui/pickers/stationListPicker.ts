@@ -39,6 +39,7 @@ class StationListPicker extends StationPicker
                 this.inputList.children[1].remove();
 
             entries.forEach( v => this.add(v) );
+            this.inputList.focus();
         }
     }
 

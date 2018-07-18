@@ -104,6 +104,7 @@
   background: #000;
 }
 #stationlistPicker .stations dt {
+  color: #aaa;
   padding: 1rem;
 }
 #stationlistPicker .stations dd {
@@ -475,6 +476,32 @@ iframe {
   .dialog > form label {
     font-size: medium;
     padding: 0.2rem;
+  }
+  .dialog .flSearchBox {
+    font-size: smaller;
+    padding: 0.5rem;
+  }
+  .dialog .flItemPicker {
+    font-size: smaller;
+  }
+  .dialog .flItemPicker dt {
+    padding: 0.5rem;
+  }
+  .dialog .flItemPicker dd {
+    padding: 0.5rem;
+  }
+  #phrasesetPicker .flItemPicker dd {
+    font-size: smaller;
+    padding: 0.75rem 0.5rem;
+  }
+  #stationlistPicker .stations {
+    font-size: smaller;
+  }
+  #stationlistPicker .stations dt {
+    padding: 0.5rem;
+  }
+  #stationlistPicker .stations dd {
+    margin: 0.25rem;
   }
   #settings button {
     font-size: smaller;

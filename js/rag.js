@@ -195,12 +195,13 @@ class StationList extends FilterableList {
         }
         this.reset();
         this.onSelect = onSelect.bind(picker);
-        this.inputFilter.focus();
     }
     preselectCode(code) {
         let entry = this.inputList.querySelector(`dd[data-code=${code}]`);
-        if (entry)
+        if (entry) {
             this.visualSelect(entry);
+            entry.focus();
+        }
     }
     registerDropHandler(handler) {
         this.inputFilter.ondrop = handler;
@@ -540,6 +541,7 @@ class StationListPicker extends StationPicker {
             while (this.inputList.children[1])
                 this.inputList.children[1].remove();
             entries.forEach(v => this.add(v));
+            this.inputList.focus();
         };
     }
     onInput(ev) {
