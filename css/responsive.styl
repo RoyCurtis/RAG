@@ -53,7 +53,10 @@ body
   // Phrasesets
   span[data-type=phraseset]
     border-left-style solid
-    border-left-width 4px
+    border-left-width 16px
+
+    &[collapsed]
+      border-left-width 4px
 
 .dialog
   border-radius 0
@@ -96,7 +99,6 @@ body
     dd
       border-radius 0
       margin        0
-
 
 #settings
   button
