@@ -1016,8 +1016,6 @@ class Settings {
         for (let i = 0; i < voices.length; i++) {
             let option = document.createElement('option');
             option.textContent = `${voices[i].name} (${voices[i].lang})`;
-            if (voices[i].default)
-                option.textContent += ' (default)';
             this.selVoxChoice.appendChild(option);
         }
         this.ready = true;

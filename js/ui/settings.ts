@@ -84,9 +84,6 @@ class Settings
 
             option.textContent = `${voices[i].name} (${voices[i].lang})`;
 
-            if (voices[i].default)
-                option.textContent += ' (default)';
-
             this.selVoxChoice.appendChild(option);
         }
 
