@@ -263,7 +263,8 @@
   background: rgba(0,0,0,0.75);
   display: none;
   flex-flow: row wrap;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   position: absolute;
   transform: translateZ(16px);
   z-index: 900;
@@ -337,6 +338,10 @@
   flex: 1;
   font-size: large;
   margin: 1.5rem;
+}
+#settings form select {
+  justify-self: right;
+  width: 75%;
 }
 .settingsVisible > #marquee,
 .settingsVisible > #toolbar,
