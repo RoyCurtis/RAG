@@ -127,6 +127,9 @@ abstract class Picker
     /** Closes this picker */
     public close() : void
     {
+        // Fix keyboard staying open in iOS on close
+        DOM.blurActive(this.dom);
+
         this.dom.classList.add('hidden');
     }
 

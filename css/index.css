@@ -436,6 +436,9 @@ iframe {
   margin: 1rem;
 }
 @media (max-width: 500px) {
+  * {
+    cursor: pointer !important;
+  }
   body {
     background: #444;
   }

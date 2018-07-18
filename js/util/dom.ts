@@ -73,6 +73,19 @@ class DOM
     }
 
     /**
+     * Blurs (unfocuses) the currently focused element.
+     *
+     * @param {HTMLElement} parent If given, only blurs if active is descendent
+     */
+    public static blurActive(parent: HTMLElement = document.body) : void
+    {
+        let active = document.activeElement as HTMLElement;
+
+        if ( active && active.blur && parent.contains(active) )
+            active.blur();
+    }
+
+    /**
      * Deep clones all the children of the given element, into the target element.
      * Using innerHTML would be easier, however it handles self-closing tags poorly.
      *

@@ -56,6 +56,7 @@ class Settings
         this.rangeVoxVol.valueAsNumber   = RAG.config.voxVolume;
         this.rangeVoxPitch.valueAsNumber = RAG.config.voxPitch;
         this.rangeVoxRate.valueAsNumber  = RAG.config.voxRate;
+        this.btnSave.focus();
     }
 
     public close() : void
@@ -63,6 +64,7 @@ class Settings
         this.cancelReset();
         RAG.speechSynth.cancel();
         document.body.classList.remove('settingsVisible');
+        DOM.blurActive(this.dom);
     }
 
     private init() : void

@@ -277,6 +277,7 @@ class Picker {
             : `translate(${dialogX}px, ${dialogY}px)`;
     }
     close() {
+        DOM.blurActive(this.dom);
         this.dom.classList.add('hidden');
     }
 }
@@ -1009,11 +1010,13 @@ class Settings {
         this.rangeVoxVol.valueAsNumber = RAG.config.voxVolume;
         this.rangeVoxPitch.valueAsNumber = RAG.config.voxPitch;
         this.rangeVoxRate.valueAsNumber = RAG.config.voxRate;
+        this.btnSave.focus();
     }
     close() {
         this.cancelReset();
         RAG.speechSynth.cancel();
         document.body.classList.remove('settingsVisible');
+        DOM.blurActive(this.dom);
     }
     init() {
         let voices = RAG.speechSynth.getVoices();
@@ -1198,6 +1201,11 @@ class DOM {
         if (Strings.isNullOrEmpty(value))
             throw new Error(`Required dataset key is missing or empty: '${key}'`);
         return value;
+    }
+    static blurActive(parent = document.body) {
+        let active = document.activeElement;
+        if (active && active.blur && parent.contains(active))
+            active.blur();
     }
     static cloneInto(source, target) {
         for (let i = 0; i < source.childNodes.length; i++)
