@@ -331,7 +331,7 @@
 </phraseset>
 
 <phrase id="delayed_approx">
-  by approximately <integer context="delayed" plural="minutes"/>
+  by approximately <integer context="delayed" plural="minutes" singular="minute"/>
 </phrase>
 
 <phrase id="delay_at_near">
