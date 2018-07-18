@@ -450,6 +450,7 @@ iframe {
     flex-grow: 1;
     height: auto;
     margin: 0;
+    padding-top: 0.75rem;
   }
   #toolbar > button svg {
     width: 1.2rem;
