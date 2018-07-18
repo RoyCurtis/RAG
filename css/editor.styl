@@ -1,10 +1,10 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 #editor
-  background #222
+  background $bgDarker
   flex-grow  1
-  font-size  3em
-  padding    0.5em
+  font-size  3rem
+  padding    1rem
   overflow-x hidden
   overflow-y auto
 
@@ -22,13 +22,13 @@
     margin        0 4px
 
     &:hover
-      background   rgba(128, 128, 128, 0.1)
-      border-color white
+      background   alpha($bgMid, 0.1)
+      border-color $fgBrightest
 
     &[editing]
-      background #CC7E00
-      color      white
-      box-shadow 8px 8px 8px rgba(0, 0, 0, 0.5)
+      background $fgFocus
+      color      $fgBrightest
+      box-shadow 8px 8px 8px alpha($bgDarkest, 0.1)
 
       &.above
         border-radius 8px 8px 0 0
@@ -47,17 +47,14 @@
     padding-left 0
 
     > .toggle::before
-      background    linear-gradient(to right, rgba(255, 255, 255, 0.1) 0%, rgba(51, 51, 51, 0) 100%)
-      color         #AAA
+      background    gradient(right, alpha(#FFF, 0.1), 0%, alpha(#333, 0), 100%)
+      border-radius 8px
+      color         $fgDim
       content       '-'
       cursor        pointer
-      border-radius 8px
       display       inline-block
       text-align    center
-      width         1em
-
-      &:hover
-        color #F5F5F5
+      width         3rem
 
     &:hover
       border-left-style  dotted
@@ -67,7 +64,6 @@
         border-radius 0
 
     &[collapsed]
-      padding 0
 
       > .toggle::before
         background none

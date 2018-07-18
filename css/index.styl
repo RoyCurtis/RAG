@@ -9,8 +9,6 @@
 @import "signage.styl"
 @import "settings.styl"
 
-// TODO: DRY all CSS
-
 // CSS reset
 
 *
@@ -29,53 +27,34 @@ body, html
 // Parts
 
 body
-  background     black
-  color          whitesmoke
-  fill           whitesmoke
-  display        flex
-  flex-direction column
-  font-family    sans-serif
+  backAndForeColor($bgDarkest, $fgBright)
+  flexbox(column)
+  font-family sans-serif
 
 #toolbar
-  background      linear-gradient(to bottom, #444 50%, #222 100%)
-  display         flex
-  justify-content center
-  min-height      48px
-  padding-bottom  0.5em
+  flexbox(row, center)
+  background     gradient(bottom, $bgDark, 50%, $bgDarker, 100%)
+  padding-bottom 0.5rem
 
 #toolbar > button
   pressable()
-  font-weight bold
-  list-style  none
-  margin      0 1em
-  padding     0.5em
-
-  &:disabled
-    background #222
-    color      #444
-    cursor     default
-    fill       #444
-
-    &:active
-      background #222
-
-  &:active
-    activePressable()
+  margin  0 0.75rem
+  padding 0.5rem
 
   svg
-    width  24px
-    height 24px
+    width  1.5rem
+    height 1.5rem
 
 iframe
   display none
 
 .panic
-  background #C21D1D
+  background $bgPanic
   flex-grow  1
-  padding    1em
+  padding    1rem
 
   h1
     font-style italic
 
   p
-    margin 1em
+    margin 1rem

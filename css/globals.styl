@@ -1,5 +1,21 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+// Color scheme
+
+$bgPanic   = #C21D1D
+$bgDarkest = #000
+$bgDarker  = #222
+$bgDark    = #444
+$bgMid     = #808080
+
+$fgMarquee   = orange
+$fgFocus     = #CC7E00
+$fgBrightest = white
+$fgBright    = whitesmoke
+$fgDim       = #AAA
+
+// Functions
+
 pressable()
   background  #222
   border      none
@@ -8,10 +24,37 @@ pressable()
   cursor      pointer
   fill        whitesmoke
 
-activePressable()
-  color      #AAA
-  box-shadow 0 0 4px #000 inset
-  fill       #AAA
+  &:hover
+    background #333
+
+  &:active
+    color      #AAA
+    box-shadow 0 0 4px #000 inset
+    fill       #AAA
+
+  &:disabled
+    background #222
+    color      #444
+    cursor     default
+    fill       #444
+
+    &:active
+      background #222
+
+backAndForeColor($bg = $bgDarkest, $fg = $fgBright)
+  background $bg
+  color      $fg
+  fill       $fg
+
+gradient($dir, $col1, $stop1, $col2, $stop2)
+  linear-gradient(to $dir, $col1 $stop1, $col2 $stop2)
+
+flexbox($dir = row, $justify = flex-start)
+  display         flex
+  flex-direction  $dir
+  justify-content $justify
+
+// Global classes
 
 .hidden
   display none !important

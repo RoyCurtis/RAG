@@ -2,7 +2,7 @@
 
 #settings
   align-content flex-start
-  background    rgba(0, 0, 0, 0.75)
+  background    alpha($bgDarkest, 0.75)
   display       none
   flex-flow     row wrap
   overflow      auto
@@ -15,30 +15,11 @@
   width  100%
   height 100%
 
-  #btnSaveSettings,
-  #btnResetSettings,
-  #btnVoxTest
-    background #222
-    border     none
-    color      whitesmoke
-    cursor     pointer
-    font-size  large
-    height     3rem
-    margin     1rem
-
-    &:disabled
-      background #222
-      color      #444
-      cursor     default
-
-      &:hover
-        background #222
-
-    &:hover, &:focus
-      background #444
-
-    &:active
-      color #AAA
+  button
+    pressable()
+    font-size large
+    height    3rem
+    margin    1rem
 
   #btnResetSettings
     flex 4
@@ -50,7 +31,7 @@
     grid-column 2
 
   h1
-    border-bottom  2px solid orange
+    border-bottom  2px solid $fgFocus
     flex           100%
     font-size      xx-large
     padding        1rem
@@ -78,11 +59,8 @@
       margin    1.5rem
 
 .settingsVisible
-  > #marquee,
-  > #toolbar,
-  > #editor,
-  > .dialog
-    filter: blur(10px);
+  > #marquee, > #toolbar, > #editor, > .dialog
+    filter blur(10px)
 
   #settings
     display flex

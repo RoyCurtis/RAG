@@ -4,6 +4,9 @@
   display: none !important;
 }
 .dialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   background: #222;
   border: 8px solid #cc7e00;
   border-radius: 4px;
@@ -16,6 +19,25 @@
   font-weight: bold;
   padding-bottom: 4px;
 }
+.dialog > form {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.dialog > form input,
+.dialog > form select,
+.dialog > form label {
+  background: #000;
+  color: #f5f5f5;
+  fill: #f5f5f5;
+  border: none;
+  flex-grow: 1;
+  font-size: x-large;
+  padding: 0.5rem;
+}
+.dialog > form label {
+  flex-grow: 2;
+}
 .dialog.fullWidth {
   width: 100%;
   height: 50%;
@@ -25,10 +47,11 @@
 }
 .dialog .flSearchBox {
   background: #000;
-  border: none;
   color: inherit;
+  fill: inherit;
+  border: none;
   font-size: inherit;
-  padding: 0.5em 1em;
+  padding: 1rem;
   width: 100%;
 }
 .dialog .flItemPicker {
@@ -43,7 +66,7 @@
   background: #000;
   box-shadow: 0 5px 10px rgba(0,0,0,0.5);
   font-weight: bold;
-  padding: 0.5em 1em;
+  padding: 0.5rem 1rem;
   position: sticky;
   top: 0;
   width: 100%;
@@ -51,7 +74,7 @@
 .dialog .flItemPicker dd {
   cursor: pointer;
   display: inline-block;
-  padding: 1em;
+  padding: 1rem;
 }
 .dialog .flItemPicker dd:hover,
 .dialog .flItemPicker dd[selected] {
@@ -61,41 +84,13 @@
 #integerPicker form,
 #platformPicker form,
 #timePicker form {
-  display: flex;
+  flex-direction: row;
 }
-#coachPicker form input,
-#integerPicker form input,
-#platformPicker form input,
-#timePicker form input,
-#coachPicker form select,
-#integerPicker form select,
-#platformPicker form select,
-#timePicker form select,
-#coachPicker form label,
-#integerPicker form label,
-#platformPicker form label,
-#timePicker form label {
-  background: #fff;
-  border: none;
-  color: #000;
-  flex-grow: 1;
-  font-size: x-large;
-  padding: 0 4px;
-}
-#excusePicker,
-#namedPicker,
-#phrasesetPicker,
-#servicePicker {
-  display: flex;
-  flex-flow: column;
-}
-#excusePicker form,
-#namedPicker form,
-#phrasesetPicker form,
-#servicePicker form {
-  display: flex;
-  flex-flow: column;
-  flex-grow: 1;
+#coachPicker form #integerPickerValue,
+#integerPicker form #integerPickerValue,
+#platformPicker form #integerPickerValue,
+#timePicker form #integerPickerValue {
+  width: 4rem;
 }
 #phrasesetPicker .flItemPicker dd {
   display: block;
@@ -104,51 +99,32 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-#stationPicker,
-#stationlistPicker {
-  display: flex;
-  flex-flow: column;
-}
-#stationPicker form,
-#stationlistPicker form {
-  display: flex;
-  flex-flow: column;
-}
-#stationPicker form .stations,
-#stationlistPicker form .stations {
+#stationlistPicker .stations {
   background: #000;
-  color: #808080;
-  list-style: none;
 }
-#stationPicker form .stations dt,
-#stationlistPicker form .stations dt {
-  padding: 1em;
+#stationlistPicker .stations dt {
+  padding: 1rem;
 }
-#stationPicker form .stations dd,
-#stationlistPicker form .stations dd {
+#stationlistPicker .stations dd {
   background: #222;
   border-radius: 8px;
-  color: #fff;
   cursor: move;
   display: inline-block;
-  margin: 0.5em;
-  padding: 0.5em;
+  margin: 0.5rem;
+  padding: 0.5rem;
 }
-#stationPicker form .stations dd:hover,
-#stationlistPicker form .stations dd:hover,
-#stationPicker form .stations dd.dragover,
-#stationlistPicker form .stations dd.dragover {
+#stationlistPicker .stations dd:hover,
+#stationlistPicker .stations dd.dragover {
   background: #cc7e00;
 }
-#stationPicker form .stations dd.dragging,
-#stationlistPicker form .stations dd.dragging {
+#stationlistPicker .stations dd.dragging {
   opacity: 0.5;
 }
 #editor {
   background: #222;
   flex-grow: 1;
-  font-size: 3em;
-  padding: 0.5em;
+  font-size: 3rem;
+  padding: 1rem;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -198,7 +174,7 @@
 #editor span[data-type=time][editing] {
   background: #cc7e00;
   color: #fff;
-  box-shadow: 8px 8px 8px rgba(0,0,0,0.5);
+  box-shadow: 8px 8px 8px rgba(0,0,0,0.1);
 }
 #editor span[data-type=coach][editing].above,
 #editor span[data-type=excuse][editing].above,
@@ -236,16 +212,13 @@
 }
 #editor span[data-chance] > .toggle::before {
   background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(51,51,51,0) 100%);
+  border-radius: 8px;
   color: #aaa;
   content: '-';
   cursor: pointer;
-  border-radius: 8px;
   display: inline-block;
   text-align: center;
-  width: 1em;
-}
-#editor span[data-chance] > .toggle::before:hover {
-  color: #f5f5f5;
+  width: 3rem;
 }
 #editor span[data-chance]:hover {
   border-left-style: dotted;
@@ -253,9 +226,6 @@
 }
 #editor span[data-chance]:hover > .toggle {
   border-radius: 0;
-}
-#editor span[data-chance][collapsed] {
-  padding: 0;
 }
 #editor span[data-chance][collapsed] > .toggle::before {
   background: none;
@@ -271,15 +241,15 @@
   border-left-style: solid;
 }
 #marquee {
-  border: 0.5em solid;
+  border: 1.5rem solid;
   border-color: #222 #444 #444 #222;
   background: #000;
   color: #ffa500;
   font-family: "5by7", sans-serif;
-  font-size: 3em;
-  min-height: 131px;
+  font-size: 3rem;
+  min-height: 8rem;
   overflow: hidden;
-  padding: 0.5em;
+  padding: 1.5rem;
   position: relative;
   white-space: nowrap;
 }
@@ -300,41 +270,33 @@
   width: 100%;
   height: 100%;
 }
-#settings #btnSaveSettings,
-#settings #btnResetSettings,
-#settings #btnVoxTest {
+#settings button {
   background: #222;
   border: none;
+  box-shadow: 0 0 8px #222;
   color: #f5f5f5;
   cursor: pointer;
+  fill: #f5f5f5;
   font-size: large;
   height: 3rem;
   margin: 1rem;
 }
-#settings #btnSaveSettings:disabled,
-#settings #btnResetSettings:disabled,
-#settings #btnVoxTest:disabled {
+#settings button:hover {
+  background: #333;
+}
+#settings button:active {
+  color: #aaa;
+  box-shadow: 0 0 4px #000 inset;
+  fill: #aaa;
+}
+#settings button:disabled {
   background: #222;
   color: #444;
   cursor: default;
+  fill: #444;
 }
-#settings #btnSaveSettings:disabled:hover,
-#settings #btnResetSettings:disabled:hover,
-#settings #btnVoxTest:disabled:hover {
+#settings button:disabled:active {
   background: #222;
-}
-#settings #btnSaveSettings:hover,
-#settings #btnResetSettings:hover,
-#settings #btnVoxTest:hover,
-#settings #btnSaveSettings:focus,
-#settings #btnResetSettings:focus,
-#settings #btnVoxTest:focus {
-  background: #444;
-}
-#settings #btnSaveSettings:active,
-#settings #btnResetSettings:active,
-#settings #btnVoxTest:active {
-  color: #aaa;
 }
 #settings #btnResetSettings {
   flex: 4;
@@ -346,7 +308,7 @@
   grid-column: 2;
 }
 #settings h1 {
-  border-bottom: 2px solid #ffa500;
+  border-bottom: 2px solid #cc7e00;
   flex: 100%;
   font-size: xx-large;
   padding: 1rem;
@@ -401,14 +363,15 @@ body {
   fill: #f5f5f5;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   font-family: sans-serif;
 }
 #toolbar {
-  background: linear-gradient(to bottom, #444 50%, #222 100%);
   display: flex;
+  flex-direction: row;
   justify-content: center;
-  min-height: 48px;
-  padding-bottom: 0.5em;
+  background: linear-gradient(to bottom, #444 50%, #222 100%);
+  padding-bottom: 0.5rem;
 }
 #toolbar > button {
   background: #222;
@@ -417,10 +380,16 @@ body {
   color: #f5f5f5;
   cursor: pointer;
   fill: #f5f5f5;
-  font-weight: bold;
-  list-style: none;
-  margin: 0 1em;
-  padding: 0.5em;
+  margin: 0 0.75rem;
+  padding: 0.5rem;
+}
+#toolbar > button:hover {
+  background: #333;
+}
+#toolbar > button:active {
+  color: #aaa;
+  box-shadow: 0 0 4px #000 inset;
+  fill: #aaa;
 }
 #toolbar > button:disabled {
   background: #222;
@@ -431,14 +400,9 @@ body {
 #toolbar > button:disabled:active {
   background: #222;
 }
-#toolbar > button:active {
-  color: #aaa;
-  box-shadow: 0 0 4px #000 inset;
-  fill: #aaa;
-}
 #toolbar > button svg {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 iframe {
   display: none;
@@ -446,12 +410,12 @@ iframe {
 .panic {
   background: #c21d1d;
   flex-grow: 1;
-  padding: 1em;
+  padding: 1rem;
 }
 .panic h1 {
   font-style: italic;
 }
 .panic p {
-  margin: 1em;
+  margin: 1rem;
 }
 /*# sourceMappingURL=css/index.css.map */

@@ -3,34 +3,47 @@
 // TODO: rename to pickers
 
 .dialog
-  background    #222
-  border        8px solid #CC7E00
+  flexbox(column)
+  background    $bgDarker
+  border        8px solid $fgFocus
   border-radius 4px
-  box-shadow    8px 8px 8px rgba(0, 0, 0, 0.5)
+  box-shadow    8px 8px 8px alpha($bgDarkest, 0.5)
   position      absolute
   z-index       100
 
   > header
-    background     #CC7E00
+    background     $fgFocus
     font-weight    bold
     padding-bottom 4px
+
+  > form
+    flexbox(column)
+
+    input, select, label
+      backAndForeColor($bgDarkest, $fgBright)
+      border    none
+      flex-grow 1
+      font-size x-large
+      padding   0.5rem
+
+    label
+      flex-grow 2
 
   &.fullWidth
     width  100%
     height 50%
 
   &.midHeight
-    box-shadow 0 0 16px rgba(0, 0, 0, 0.5)
+    box-shadow 0 0 16px alpha($bgDarkest, 0.5)
 
   // Filterable list
 
   .flSearchBox
-    background #000
-    border     none
-    color      inherit
-    font-size  inherit
-    padding    0.5em 1em
-    width      100%
+    backAndForeColor($bgDarkest, inherit)
+    border    none
+    font-size inherit
+    padding   1rem
+    width     100%
 
   .flItemPicker
     flex-grow 1
@@ -41,10 +54,10 @@
       flex-wrap wrap
 
     dt
-      background  black
-      box-shadow  0 5px 10px rgba(0, 0, 0, 0.5)
+      background  $bgDarkest
+      box-shadow  0 5px 10px alpha($bgDarkest, 0.5)
       font-weight bold
-      padding     0.5em 1em
+      padding     0.5rem 1rem
       position    sticky
       top         0
       width       100%
@@ -52,35 +65,22 @@
     dd
       cursor  pointer
       display inline-block
-      padding 1em
+      padding 1rem
 
-      &:hover,
-      &[selected]
-        background #CC7E00
+      &:hover, &[selected]
+        background $fgFocus
 
 #coachPicker, #integerPicker, #platformPicker, #timePicker
   form
-    display flex
+    flex-direction row
 
-    input, select, label
-      background white
-      border     none
-      color      black
-      flex-grow  1
-      font-size  x-large
-      padding    0 4px
-
-#excusePicker, #namedPicker, #phrasesetPicker, #servicePicker
-  display   flex
-  flex-flow column
-
-  form
-    display   flex
-    flex-flow column
-    flex-grow 1
+    // For some reason, integer picker controls are very wide on Chrome
+    #integerPickerValue
+      width 4rem
 
 #phrasesetPicker
 
+  // Each phrase item needs to be full width and trimmed
   .flItemPicker dd
     display       block
     font-size     large
@@ -88,34 +88,25 @@
     text-overflow ellipsis
     white-space   nowrap
 
-#stationPicker, #stationlistPicker
-  display   flex
-  flex-flow column
+#stationlistPicker
 
-  form
-    display   flex
-    flex-flow column
+  // For the station list builder
+  .stations
+    background $bgDarkest
 
-    .stations
-      background black
-      color      grey
-      list-style none
+    dt
+      padding 1rem
 
-      dt
-        padding 1em
+    dd
+      background    $bgDarker
+      border-radius 8px
+      cursor        move
+      display       inline-block
+      margin        0.5rem
+      padding       0.5rem
 
-      dd
-        background    #222
-        border-radius 8px
-        color         white
-        cursor        move
-        display       inline-block
-        margin        0.5em
-        padding       0.5em
+      &:hover, &.dragover
+        background $fgFocus
 
-        &:hover,
-        &.dragover
-          background #CC7E00
-
-        &.dragging
-          opacity 0.5
+      &.dragging
+        opacity 0.5
