@@ -13,7 +13,7 @@ class CoachPicker extends Picker
     {
         super('coach', ['change']);
 
-        this.inputLetter = DOM.require('select', this.dom) as HTMLSelectElement;
+        this.inputLetter = DOM.require('select', this.dom);
 
         for (let i = 0; i < 26; i++)
         {

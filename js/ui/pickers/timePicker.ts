@@ -11,7 +11,7 @@ class TimePicker extends Picker
     {
         super('time', ['change']);
 
-        this.inputTime = DOM.require('input', this.dom) as HTMLInputElement;
+        this.inputTime = DOM.require('input', this.dom);
     }
 
     public open(target: HTMLElement) : void

@@ -26,10 +26,11 @@ class DOM
      * @param {Document} parent Parent object to search; defaults to document
      * @returns {Element} The first element to match the given query
      */
-    public static require(query: string, parent: ParentNode = window.document)
-        : HTMLElement
+    public static require<T extends HTMLElement>
+        (query: string, parent: ParentNode = window.document)
+        : T
     {
-        let result = parent.querySelector(query) as HTMLElement;
+        let result = parent.querySelector(query) as T;
 
         if (!result)
             throw new Error(`Required DOM element is missing: '${query}'`);

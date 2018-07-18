@@ -13,7 +13,7 @@ class Database
 
     constructor(config: RAGConfig)
     {
-        let iframe = DOM.require(config.phrasesetEmbed) as HTMLIFrameElement;
+        let iframe = DOM.require <HTMLIFrameElement> (config.phrasesetEmbed);
 
         if (!iframe.contentDocument)
             throw new Error("Configured phraseset element is not an iframe embed");

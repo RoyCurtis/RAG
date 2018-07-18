@@ -17,8 +17,8 @@ class IntegerPicker extends Picker
     {
         super('integer', ['change']);
 
-        this.inputDigit = DOM.require('input', this.dom) as HTMLInputElement;
-        this.domLabel   = DOM.require('label', this.dom) as HTMLLabelElement;
+        this.inputDigit = DOM.require('input', this.dom);
+        this.domLabel   = DOM.require('label', this.dom);
     }
 
     public open(target: HTMLElement) : void

@@ -12,8 +12,8 @@ class PlatformPicker extends Picker
     {
         super('platform', ['change']);
 
-        this.inputDigit  = DOM.require('input', this.dom)  as HTMLInputElement;
-        this.inputLetter = DOM.require('select', this.dom) as HTMLSelectElement;
+        this.inputDigit  = DOM.require('input', this.dom);
+        this.inputLetter = DOM.require('select', this.dom);
     }
 
     public open(target: HTMLElement) : void

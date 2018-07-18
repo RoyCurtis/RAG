@@ -19,7 +19,7 @@ class StationListPicker extends StationPicker
     {
         super("stationlist");
 
-        this.inputList    = DOM.require('.stations', this.dom) as HTMLDListElement;
+        this.inputList    = DOM.require('.stations', this.dom);
         this.domEmptyList = DOM.require('dt', this.inputList);
 
         this.onOpen = (target) =>

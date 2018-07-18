@@ -7,7 +7,7 @@ abstract class Picker
     public readonly dom     : HTMLElement;
 
     /** Reference to this picker's form DOM element */
-    public readonly domForm : HTMLElement;
+    public readonly domForm : HTMLFormElement;
 
     /** Gets the name of the XML tag this picker handles */
     public readonly xmlTag  : string;
@@ -27,7 +27,7 @@ abstract class Picker
     protected constructor(xmlTag: string, events: string[])
     {
         this.dom       = DOM.require(`#${xmlTag}Picker`);
-        this.domForm   = DOM.require('form', this.dom) as HTMLFormElement;
+        this.domForm   = DOM.require('form', this.dom);
         this.domHeader = DOM.require('header', this.dom);
         this.xmlTag    = xmlTag;
 
