@@ -11,6 +11,11 @@ class Views
 
     private readonly pickers : Dictionary<Picker>;
 
+    public get isMobile() : boolean
+    {
+        return document.body.clientWidth <= 500;
+    }
+
     constructor()
     {
         this.editor   = new Editor();

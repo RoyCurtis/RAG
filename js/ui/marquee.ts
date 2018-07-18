@@ -21,10 +21,6 @@ class Marquee
     /** Sets the message on the scrolling marquee, and starts animating it */
     public set(msg: string) : void
     {
-        // At 60 FPS, the marquee must scroll 7px per frame. So to calculate how many
-        // pixels per ms, we take 1000 ms / 60 fps, then divide 7px by that.
-        const STEP_PER_MS = 7 / (1000 / 60);
-
         window.cancelAnimationFrame(this.timer);
 
         this.domSpan.textContent = msg;
@@ -36,9 +32,14 @@ class Marquee
         let limit = -this.domSpan.clientWidth - 100;
         let anim  = (time: number) =>
         {
+            // At 60 FPS, the marquee must scroll 7px per frame. So to calculate how many
+            // pixels per ms, we take 1000 ms / 60 fps, then divide 7px by that. On a
+            // smaller display, this step amount becomes smaller.
+            let stepPerMs = (RAG.views.isMobile ? 5 : 7) / (1000 / 60);
+
             this.offset -= (last == 0)
-                ? 6
-                : (time - last) * STEP_PER_MS;
+                ? (RAG.views.isMobile ? 5 : 7)
+                : (time - last) * stepPerMs;
 
             this.domSpan.style.transform = `translateX(${this.offset}px)`;
 
