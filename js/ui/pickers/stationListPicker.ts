@@ -172,7 +172,7 @@ class StationListPicker extends StationPicker
         newEntry.ondragleave = _  => newEntry.classList.remove('dragover');
 
         // These buttons are necessary, as dragging and dropping do not work on iOS
-        
+
         btnMoveUp.onclick = _ =>
         {
             let swap = newEntry.previousElementSibling!;

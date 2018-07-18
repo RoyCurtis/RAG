@@ -65,6 +65,7 @@ abstract class Picker
     /** Positions this picker relative to the target phrase element */
     public layout() : void
     {
+        // TODO: fire on browser resize and editor scroll
         if (!this.domEditing)
             return;
 

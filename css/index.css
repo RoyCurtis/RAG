@@ -142,6 +142,7 @@
   flex-grow: 1;
   font-size: 3rem;
   padding: 1rem;
+  padding-right: 3rem;
   overflow-x: hidden;
   overflow-y: auto;
 }

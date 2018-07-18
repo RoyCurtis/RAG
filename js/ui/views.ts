@@ -36,6 +36,8 @@ class Views
             new StationListPicker(),
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);
+
+        // TODO: cancel touchmove event for non-scrollables, to avoid overscroll
     }
 
     public getPicker(xmlTag: string) : Picker
