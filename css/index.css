@@ -3,6 +3,17 @@
 .hidden {
   display: none !important;
 }
+.unselectable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.dragPhantom {
+  opacity: 0.5;
+  position: absolute;
+  z-index: 900;
+}
 .dialog {
   display: flex;
   flex-direction: column;
@@ -274,7 +285,7 @@
   overflow-y: auto;
   position: absolute;
   transform: translateZ(16px);
-  z-index: 900;
+  z-index: 500;
   top: 0;
   left: 0;
   width: 100%;
@@ -491,6 +502,9 @@ iframe {
   }
   #editor span[data-type=phraseset] {
     border-left-style: solid;
+    border-left-width: 16px;
+  }
+  #editor span[data-type=phraseset][collapsed] {
     border-left-width: 4px;
   }
   .dialog {

@@ -12,15 +12,18 @@ class StationListPicker extends StationPicker
     /** Reference to this list's currently selected stations in the UI */
     private readonly inputList    : HTMLDListElement;
 
+    private readonly touchController : TouchDragDropController;
+
     /** Reference to the list item currently being dragged */
-    private domDragFrom? : HTMLElement;
+    public domDragFrom? : HTMLElement;
 
     constructor()
     {
         super("stationlist");
 
-        this.inputList    = DOM.require('.stations', this.dom);
-        this.domEmptyList = DOM.require('dt', this.inputList);
+        this.inputList       = DOM.require('.stations', this.dom);
+        this.domEmptyList    = DOM.require('dt', this.inputList);
+        this.touchController = new TouchDragDropController();
 
         this.onOpen = (target) =>
         {
@@ -102,76 +105,13 @@ class StationListPicker extends StationPicker
 
     private add(code: string) : void
     {
-        let newEntry = document.createElement('dd');
+        let newEntry = new StationListItem(this, code);
 
-        newEntry.draggable = true;
-        newEntry.className = 'unselectable';
-        newEntry.innerText = RAG.database.getStation(code, false);
-        newEntry.tabIndex  = -1;
-        newEntry.title     =
-            "Drag to reorder; double-click or drag into station selector to remove";
-
-        newEntry.dataset['code'] = code;
-
-        newEntry.ondblclick = _ => this.remove(newEntry);
-
-        // TODO: Split these off into own functions?
-        newEntry.ondragstart = ev =>
-        {
-            this.domDragFrom              = newEntry;
-            ev.dataTransfer.effectAllowed = "move";
-            ev.dataTransfer.dropEffect    = "move";
-
-            this.domDragFrom.classList.add('dragging');
-        };
-
-        newEntry.ondrop = ev =>
-        {
-            if (!ev.target || !this.domDragFrom)
-                throw new Error("Drop event, but target and source are missing");
-
-            // Ignore dragging into self
-            if (ev.target === this.domDragFrom)
-                return;
-
-            let target = ev.target as HTMLElement;
-
-            DOM.swap(this.domDragFrom, target);
-            target.classList.remove('dragover');
-            this.update();
-        };
-
-        newEntry.ondragend = ev =>
-        {
-            if (!this.domDragFrom)
-                throw new Error("Drag ended but there's no tracked drag element");
-
-            if (this.domDragFrom !== ev.target)
-                throw new Error("Drag ended, but tracked element doesn't match");
-
-            this.domDragFrom.classList.remove('dragging');
-
-            // As per the standard, dragend must fire after drop. So it is safe to do
-            // dereference cleanup here.
-            this.domDragFrom = undefined;
-        };
-
-        newEntry.ondragenter = _ =>
-        {
-            if (this.domDragFrom === newEntry)
-                return;
-
-            newEntry.classList.add('dragover');
-        };
-
-        newEntry.ondragover  = DOM.preventDefault;
-        newEntry.ondragleave = _  => newEntry.classList.remove('dragover');
-
-        this.inputList.appendChild(newEntry);
+        this.inputList.appendChild(newEntry.dom);
         this.domEmptyList.classList.add('hidden');
     }
 
-    private remove(entry: HTMLElement) : void
+    public remove(entry: HTMLElement) : void
     {
         if (entry.parentElement !== this.inputList)
             throw new Error('Attempted to remove entry not on station list builder');
@@ -183,7 +123,7 @@ class StationListPicker extends StationPicker
             this.domEmptyList.classList.remove('hidden');
     }
 
-    private update() : void
+    public update() : void
     {
         let children = this.inputList.children;
 
