@@ -3,11 +3,11 @@
 // Must be up here, else CSS will fail to load the font
 @import "font/5by7.css"
 // Must be up here, else global function calls will fail elsewhere (order is important)
-@import "globals.styl"
-@import "dialogs.styl"
-@import "editor.styl"
-@import "signage.styl"
-@import "settings.styl"
+@import "globals"
+@import "dialogs"
+@import "editor"
+@import "signage"
+@import "settings"
 
 // CSS reset
 
@@ -34,16 +34,19 @@ body
 #toolbar
   flexbox(row, center)
   background     gradient(bottom, $bgDark, 50%, $bgDarker, 100%)
-  padding-bottom 0.5rem
+  flex-shrink    0
+  height         3rem
+  padding-bottom 1rem
 
-#toolbar > button
-  pressable()
-  margin  0 0.75rem
-  padding 0.5rem
+  > button
+    pressable()
+    height  2.75rem
+    margin  0 0.75rem
+    padding 0.5rem
 
-  svg
-    width  1.5rem
-    height 1.5rem
+    svg
+      width  1.5rem
+      height 1.5rem
 
 iframe
   display none
@@ -58,3 +61,8 @@ iframe
 
   p
     margin 1rem
+
+// Responsive
+
+@media (max-width: 500px)
+  @import "responsive"

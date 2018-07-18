@@ -1,0 +1,83 @@
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+
+body
+  background $bgDark
+
+#marquee
+  background    $bgDarkest
+  border        none
+  border-bottom 0.5rem solid $bgDark
+  font-size     2rem
+  min-height    3.5rem
+  padding       0.75rem
+
+#toolbar
+  background $bgDark
+  height     auto
+  padding    0 0 0.5rem 0
+
+  > button
+    flex-grow 1
+    height    auto
+    margin    0
+
+    svg
+      width  1.2rem
+      height 1.2rem
+
+#editor
+  font-size 2rem
+
+  // Collapsiable elements
+  span[data-chance]
+    > .toggle::before
+      width 2rem
+
+  // Phrasesets
+  span[data-type=phraseset]
+    border-left-width 4px
+
+.dialog
+  border-width 4px 0 4px 0
+
+  > header
+    font-size small
+    padding   0 4px 4px 4px
+
+  > form
+    input, select, label
+      font-size medium
+      padding   0.2rem
+
+#settings
+  button
+    font-size smaller
+    height    2rem
+    margin    0.5rem
+
+  #btnResetSettings
+    flex 1
+
+  #btnSaveSettings
+    flex 1
+
+  h1
+    font-size large
+    padding   0.75rem
+
+  p
+    column-count 1
+    font-size    smaller
+    padding-top  0.5rem
+
+  form
+    grid-template-columns 25% 75%
+
+    label, select, input
+      font-size medium
+      margin    0.75rem
+
+    select
+      justify-self end
+      overflow     hidden
+      width        75%

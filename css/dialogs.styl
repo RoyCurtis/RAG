@@ -21,10 +21,11 @@
 
     input, select, label
       backAndForeColor($bgDarkest, $fgBright)
-      border    none
-      flex-grow 1
-      font-size x-large
-      padding   0.5rem
+      border        none
+      border-radius 0
+      flex-grow     1
+      font-size     x-large
+      padding       0.5rem
 
     label
       flex-grow 2
@@ -75,7 +76,7 @@
     flex-direction row
 
     // For some reason, integer picker controls are very wide on Chrome
-    #integerPickerValue
+    input
       width 4rem
 
 #phrasesetPicker
