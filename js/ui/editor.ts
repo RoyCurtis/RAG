@@ -117,6 +117,10 @@ class Editor
             picker = type ? RAG.views.getPicker(type) : undefined;
         }
 
+        // Ignore clicks to any inner document or unowned element
+        if ( !document.body.contains(target) )
+            return;
+
         // Ignore clicks to any element of already open pickers
         if ( this.currentPicker )
         if ( this.currentPicker.dom.contains(target) )
