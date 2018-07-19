@@ -257,14 +257,6 @@
     </xs:annotation>
   </xs:attribute>
 
-  <xs:attribute name="op" type="phraseset_ref_op" default="random">
-    <xs:annotation>
-      <xs:documentation>
-        Optionally specifies how a phrase should be picked from this set.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:attribute>
-
   <xs:attribute name="chance" type="chance"/>
 </xs:complexType>
 
@@ -491,37 +483,6 @@
       <xs:annotation>
         <xs:documentation>
           Shows the list of calling stops that are request stops. Min. 1 max. 16.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:enumeration>
-  </xs:restriction>
-</xs:simpleType>
-
-
-<xs:simpleType name="phraseset_ref_op">
-  <xs:restriction base="xs:string">
-    <xs:enumeration value="random">
-      <xs:annotation>
-        <xs:documentation>
-          Picks a phrase from the phraseset at random.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:enumeration>
-
-    <xs:enumeration value="cycle">
-      <xs:annotation>
-        <xs:documentation>
-          Picks the next phrase from the phraseset, cycling back to the beginning if the
-          end of the set is reached. If one hadn't been picked before, defaults to random.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:enumeration>
-
-    <xs:enumeration value="repeat">
-      <xs:annotation>
-        <xs:documentation>
-          Repeats the last phrase that was picked from the phraseset. If one hadn't been
-          picked before, defaults to random.
         </xs:documentation>
       </xs:annotation>
     </xs:enumeration>

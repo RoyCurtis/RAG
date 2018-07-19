@@ -430,23 +430,30 @@
 </phrase>
 
 <phraseset id="train_layout">
+  <!-- I was planning to use smarter phraseset tags here to avoid repeating stuff, but -->
+  <!-- I got lazy. -->
   <phrase>
     First class is at the <phraseset ref="front_rear"/> of the train.
   </phrase>
   <phrase>
-    First class is at the <phraseset ref="front_rear"/>, standard class is at
-    the middle and <phraseset ref="front_rear" op="cycle"/>, bicycle spaces are at the
-    very <phraseset ref="front_rear" op="repeat"/>.
-    <phrase ref="bike_booking" chance="50"/>
+    First class is at the front, standard class is at the middle and rear, bicycle spaces
+    are at the very rear. <phrase ref="bike_booking" chance="50"/>
   </phrase>
   <phrase>
-    First class is available at the <phraseset ref="front_rear"/> of the train as it
-    arrives at the station. This will be at the <phraseset ref="front_rear" op="cycle"/>
-    of the train as it departs.
+    First class is at the rear, standard class is at the middle and front, bicycle spaces
+    are at the very front. <phrase ref="bike_booking" chance="50"/>
   </phrase>
   <phrase>
-    First class coaches can be found at the <phraseset ref="front_rear"/> of the train,
-    standard can be found at the <phraseset ref="front_rear" op="cycle"/>.
+    First class is available at the front of the train as it arrives at the station. This
+    will be at the rear of the train as it departs.
+  </phrase>
+  <phrase>
+    First class coaches can be found at the front of the train, standard can be found at
+    the rear.
+  </phrase>
+  <phrase>
+    First class coaches can be found at the rear of the train, standard can be found at
+    the front.
   </phrase>
 </phraseset>
 
