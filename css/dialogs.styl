@@ -1,5 +1,13 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+@css {
+  .flItemPicker dt
+  {
+    position: sticky;
+    position: -webkit-sticky;
+  }
+}
+
 .picker
   flexbox(column)
   background    $bgDarker
@@ -59,7 +67,6 @@
       box-shadow  0 5px 10px alpha($bgDarkest, 0.5)
       font-weight bold
       padding     0.5rem 1rem
-      position    sticky
       top         0
       width       100%
 
