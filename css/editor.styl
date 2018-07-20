@@ -1,13 +1,16 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 #editor
-  background    $bgDarker
-  flex-grow     1
-  font-size     3rem
-  padding       1rem
-  padding-right 3rem
-  overflow-x    hidden
-  overflow-y    auto
+  background $bgDarker
+  flex-grow  1
+  font-size  3rem
+  // Right padding necessary due to bug with first line overflowing
+  padding    1rem 3rem 100vh 1rem
+  // Force vertical scrolling only
+  overflow-x hidden
+  overflow-y auto
+  // Needed to prevent bottom padding from drawing text over toolbar
+  z-index    0
 
   // All selectable elements
   span[data-type=coach],       span[data-type=excuse],  span[data-type=integer],

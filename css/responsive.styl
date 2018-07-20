@@ -5,9 +5,6 @@
 *
   cursor pointer !important
 
-body
-  background $bgDark
-
 #marquee
   background    $bgDarkest
   border        none
@@ -33,6 +30,7 @@ body
 
 #editor
   font-size 2rem
+  padding   0.75rem 2.5rem 100vh 0.75rem
 
   // All selectable elements
   span[data-type=coach],       span[data-type=excuse],  span[data-type=integer],
@@ -61,6 +59,7 @@ body
 .picker
   border-radius 0
   border-width  4px 0 4px 0
+  box-shadow    none
 
   > header
     font-size small
@@ -79,7 +78,8 @@ body
     font-size smaller
 
     dt
-      padding 0.5rem
+      padding   0.3rem 0.5rem
+      font-size smaller
 
     dd
       padding 0.5rem

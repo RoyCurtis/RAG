@@ -9,7 +9,13 @@
   -ms-user-select: none;
   user-select: none;
 }
-.dialog {
+
+.flItemPicker dt
+{
+  position: sticky;
+  position: -webkit-sticky;
+}
+.picker {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -20,20 +26,20 @@
   position: absolute;
   z-index: 100;
 }
-.dialog > header {
+.picker > header {
   background: #cc7e00;
   font-weight: bold;
   padding-bottom: 4px;
 }
-.dialog > form {
+.picker > form {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
 }
-.dialog > form input,
-.dialog > form select,
-.dialog > form label {
+.picker > form input,
+.picker > form select,
+.picker > form label {
   background: #000;
   color: #f5f5f5;
   fill: #f5f5f5;
@@ -43,18 +49,18 @@
   font-size: x-large;
   padding: 0.5rem;
 }
-.dialog > form label {
+.picker > form label {
   flex-grow: 2;
 }
-.dialog.fullWidth {
+.picker.fullWidth {
   width: 100%;
   height: 50%;
 }
-.dialog.midHeight {
+.picker.midHeight {
   box-shadow: 0 0 16px rgba(0,0,0,0.5);
   height: 75%;
 }
-.dialog .flSearchBox {
+.picker .flSearchBox {
   background: #000;
   color: inherit;
   fill: inherit;
@@ -63,30 +69,29 @@
   padding: 1rem;
   width: 100%;
 }
-.dialog .flItemPicker {
+.picker .flItemPicker {
   flex-basis: 100%;
   overflow: auto;
 }
-.dialog .flItemPicker dl {
+.picker .flItemPicker dl {
   display: flex;
   flex-wrap: wrap;
 }
-.dialog .flItemPicker dt {
+.picker .flItemPicker dt {
   background: #000;
   box-shadow: 0 5px 10px rgba(0,0,0,0.5);
   font-weight: bold;
   padding: 0.5rem 1rem;
-  position: sticky;
   top: 0;
   width: 100%;
 }
-.dialog .flItemPicker dd {
+.picker .flItemPicker dd {
   cursor: pointer;
   display: inline-block;
   padding: 1rem;
 }
-.dialog .flItemPicker dd:hover,
-.dialog .flItemPicker dd[selected] {
+.picker .flItemPicker dd:hover,
+.picker .flItemPicker dd[selected] {
   background: #cc7e00;
 }
 #coachPicker form,
@@ -141,10 +146,10 @@
   background: #222;
   flex-grow: 1;
   font-size: 3rem;
-  padding: 1rem;
-  padding-right: 3rem;
+  padding: 1rem 3rem 100vh 1rem;
   overflow-x: hidden;
   overflow-y: auto;
+  z-index: 0;
 }
 #editor span[data-type=coach],
 #editor span[data-type=excuse],
@@ -367,7 +372,7 @@
 .settingsVisible > #marquee,
 .settingsVisible > #toolbar,
 .settingsVisible > #editor,
-.settingsVisible > .dialog {
+.settingsVisible > .picker {
   filter: blur(10px);
 }
 .settingsVisible #settings {
@@ -386,7 +391,7 @@ html {
   overflow: hidden;
 }
 body {
-  background: #000;
+  background: #444;
   color: #f5f5f5;
   fill: #f5f5f5;
   display: flex;
@@ -453,9 +458,6 @@ iframe {
   * {
     cursor: pointer !important;
   }
-  body {
-    background: #444;
-  }
   #marquee {
     background: #000;
     border: none;
@@ -481,6 +483,7 @@ iframe {
   }
   #editor {
     font-size: 2rem;
+    padding: 0.75rem 2.5rem 100vh 0.75rem;
   }
   #editor span[data-type=coach],
   #editor span[data-type=excuse],
@@ -510,31 +513,33 @@ iframe {
   #editor span[data-type=phraseset][collapsed] {
     border-left-width: 4px;
   }
-  .dialog {
+  .picker {
     border-radius: 0;
     border-width: 4px 0 4px 0;
+    box-shadow: none;
   }
-  .dialog > header {
+  .picker > header {
     font-size: small;
     padding: 0 4px 4px 4px;
   }
-  .dialog > form input,
-  .dialog > form select,
-  .dialog > form label {
+  .picker > form input,
+  .picker > form select,
+  .picker > form label {
     font-size: medium;
     padding: 0.2rem;
   }
-  .dialog .flSearchBox {
+  .picker .flSearchBox {
     font-size: smaller;
     padding: 0.5rem;
   }
-  .dialog .flItemPicker {
+  .picker .flItemPicker {
     font-size: smaller;
   }
-  .dialog .flItemPicker dt {
-    padding: 0.5rem;
+  .picker .flItemPicker dt {
+    padding: 0.3rem 0.5rem;
+    font-size: smaller;
   }
-  .dialog .flItemPicker dd {
+  .picker .flItemPicker dd {
     padding: 0.5rem;
   }
   #phrasesetPicker .flItemPicker dd {
