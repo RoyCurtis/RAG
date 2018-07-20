@@ -1451,7 +1451,7 @@ class RAG {
         RAG.views.marquee.set("State has been loaded from storage.");
     }
     static panic(error = "Unknown error") {
-        let msg = '<div class="panic">';
+        let msg = '<div class="panic warningDialog">';
         msg += '<h1>"We are sorry to announce that..."</h1>';
         msg += `<p>RAG has crashed because: <code>${error}</code>.</p>`;
         msg += `<p>Please open the console for more information.</p>`;

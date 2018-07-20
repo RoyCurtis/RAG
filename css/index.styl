@@ -51,18 +51,20 @@ body
 iframe
   display none
 
+#sizeWarning
+  display none
+
 .panic
   background $bgPanic
-  flex-grow  1
-  padding    1rem
-
-  h1
-    font-style italic
-
-  p
-    margin 1rem
 
 // Responsive
 
 @media (max-width 500px)
   @import "responsive"
+
+@media (max-height 400px)
+  #marquee, #toolbar, #editor, .picker, .settingsVisible #settings
+    display none
+
+  #sizeWarning
+    display block

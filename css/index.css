@@ -9,6 +9,17 @@
   -ms-user-select: none;
   user-select: none;
 }
+.warningDialog {
+  flex-grow: 1;
+  padding: 1rem;
+}
+.warningDialog h1 {
+  font-style: italic;
+}
+.warningDialog p {
+  line-height: 150%;
+  margin: 1rem;
+}
 
 .flItemPicker dt
 {
@@ -443,16 +454,11 @@ body {
 iframe {
   display: none;
 }
+#sizeWarning {
+  display: none;
+}
 .panic {
   background: #c21d1d;
-  flex-grow: 1;
-  padding: 1rem;
-}
-.panic h1 {
-  font-style: italic;
-}
-.panic p {
-  margin: 1rem;
 }
 @media (max-width: 500px) {
   * {
@@ -618,6 +624,18 @@ iframe {
     justify-self: end;
     overflow: hidden;
     width: 75%;
+  }
+}
+@media (max-height: 400px) {
+  #marquee,
+  #toolbar,
+  #editor,
+  .picker,
+  .settingsVisible #settings {
+    display: none;
+  }
+  #sizeWarning {
+    display: block;
   }
 }
 /*# sourceMappingURL=css/index.css.map */
