@@ -241,13 +241,13 @@ class Picker {
     layout() {
         if (!this.domEditing)
             return;
-        let rect = this.domEditing.getBoundingClientRect();
+        let editorRect = RAG.views.editor.getRect();
+        let targetRect = this.domEditing.getBoundingClientRect();
         let fullWidth = this.dom.classList.contains('fullWidth');
         let isModal = this.dom.classList.contains('modal');
-        let dialogX = (rect.left | 0) - 8;
-        let dialogY = rect.bottom | 0;
-        let width = (rect.width | 0) + 16;
-        this.dom.style.height = null;
+        let dialogX = (targetRect.left | 0) - 8;
+        let dialogY = targetRect.bottom | 0;
+        let width = (targetRect.width | 0) + 16;
         if (!fullWidth && !isModal) {
             if (RAG.views.isMobile) {
                 this.dom.style.width = `100%`;
@@ -257,7 +257,7 @@ class Picker {
                 this.dom.style.width = `initial`;
                 this.dom.style.minWidth = `${width}px`;
                 if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
-                    dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
+                    dialogX = (targetRect.right | 0) - this.dom.offsetWidth + 8;
             }
         }
         if (isModal) {
@@ -266,16 +266,21 @@ class Picker {
             dialogY = RAG.views.isMobile ? 0 :
                 ((document.body.clientHeight * 0.1) / 2) | 0;
         }
+        else if (dialogY < editorRect.y)
+            dialogY = editorRect.y;
         else if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
-            dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
+            dialogY = (targetRect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
-            if (dialogY < 0) {
-                this.dom.style.height = (this.dom.offsetHeight + dialogY) + 'px';
-                dialogY = 0;
-            }
+            this.domEditing.classList.remove('above');
+            if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
+                dialogY = document.body.clientHeight - this.dom.offsetHeight;
+            if (dialogY < editorRect.y)
+                dialogY = editorRect.y;
         }
-        else
+        else {
             this.domEditing.classList.add('above');
+            this.domEditing.classList.remove('below');
+        }
         this.dom.style.transform = fullWidth
             ? `translateY(${dialogY}px)`
             : `translate(${dialogX}px, ${dialogY}px)`;
@@ -283,6 +288,9 @@ class Picker {
     close() {
         DOM.blurActive(this.dom);
         this.dom.classList.add('hidden');
+    }
+    hasFocus() {
+        return this.dom.contains(document.activeElement);
     }
 }
 class CoachPicker extends Picker {
@@ -881,6 +889,8 @@ class Editor {
         this.dom = DOM.require('#editor');
         document.body.onclick = this.onClick.bind(this);
         document.body.onkeydown = this.onInput.bind(this);
+        window.onresize = this.onResize.bind(this);
+        this.dom.onscroll = this.onScroll.bind(this);
         this.dom.textContent = "Please wait...";
     }
     generate() {
@@ -902,6 +912,9 @@ class Editor {
     }
     getElementsByQuery(query) {
         return this.dom.querySelectorAll(`span${query}`);
+    }
+    getRect() {
+        return this.dom.getBoundingClientRect();
     }
     getText() {
         return DOM.getCleanedVisibleText(this.dom);
@@ -948,6 +961,18 @@ class Editor {
     onInput(ev) {
         if (ev.key === 'Escape')
             return this.closeDialog();
+    }
+    onResize(_) {
+        if (this.currentPicker)
+            this.currentPicker.layout();
+    }
+    onScroll(_) {
+        if (!this.currentPicker)
+            return;
+        if (RAG.views.isMobile)
+            if (this.currentPicker.hasFocus())
+                DOM.blurActive();
+        this.currentPicker.layout();
     }
     toggleCollapsiable(target) {
         let parent = target.parentElement;

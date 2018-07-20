@@ -19,6 +19,8 @@ class Editor
 
         document.body.onclick   = this.onClick.bind(this);
         document.body.onkeydown = this.onInput.bind(this);
+        window.onresize         = this.onResize.bind(this);
+        this.dom.onscroll       = this.onScroll.bind(this);
         this.dom.textContent    = "Please wait...";
     }
 
@@ -63,6 +65,11 @@ class Editor
     public getElementsByQuery(query: string) : NodeList
     {
         return this.dom.querySelectorAll(`span${query}`);
+    }
+
+    public getRect() : DOMRect
+    {
+        return this.dom.getBoundingClientRect() as DOMRect;
     }
 
     /** Gets the current phrase in the editor as text, excluding the hidden parts */
@@ -147,6 +154,25 @@ class Editor
     {
         if (ev.key === 'Escape')
             return this.closeDialog();
+    }
+
+    private onResize(_: Event) : void
+    {
+        if (this.currentPicker)
+            this.currentPicker.layout();
+    }
+
+    private onScroll(_: Event) : void
+    {
+        if (!this.currentPicker)
+            return;
+
+        // Workaround for layout behaving weird when iOS keyboard is open
+        if (RAG.views.isMobile)
+        if (this.currentPicker.hasFocus())
+            DOM.blurActive();
+
+        this.currentPicker.layout();
     }
 
     private toggleCollapsiable(target: HTMLElement) : void

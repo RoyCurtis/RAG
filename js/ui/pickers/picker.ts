@@ -65,19 +65,16 @@ abstract class Picker
     /** Positions this picker relative to the target phrase element */
     public layout() : void
     {
-        // TODO: fire on browser resize and editor scroll
         if (!this.domEditing)
             return;
 
-        let rect      = this.domEditing.getBoundingClientRect();
-        let fullWidth = this.dom.classList.contains('fullWidth');
-        let isModal   = this.dom.classList.contains('modal');
-        let dialogX   = (rect.left | 0) - 8;
-        let dialogY   = rect.bottom | 0;
-        let width     = (rect.width | 0) + 16;
-
-        // Reset any height overrides
-        this.dom.style.height = null;
+        let editorRect = RAG.views.editor.getRect();
+        let targetRect = this.domEditing.getBoundingClientRect();
+        let fullWidth  = this.dom.classList.contains('fullWidth');
+        let isModal    = this.dom.classList.contains('modal');
+        let dialogX    = (targetRect.left | 0) - 8;
+        let dialogY    = targetRect.bottom | 0;
+        let width      = (targetRect.width | 0) + 16;
 
         // Adjust if horizontally off screen
         if (!fullWidth && !isModal)
@@ -95,7 +92,7 @@ abstract class Picker
                 this.dom.style.minWidth = `${width}px`;
 
                 if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
-                    dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
+                    dialogX = (targetRect.right | 0) - this.dom.offsetWidth + 8;
             }
         }
 
@@ -110,22 +107,30 @@ abstract class Picker
                 ( (document.body.clientHeight * 0.1) / 2 ) | 0;
         }
 
+        // Clamp to top edge of editor
+        else if (dialogY < editorRect.y)
+            dialogY = editorRect.y;
+
         // Adjust if vertically off screen
         else if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
         {
-            dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
+            dialogY = (targetRect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
+            this.domEditing.classList.remove('above');
 
-            // Resize if picker is still off-screen
-            if (dialogY < 0)
-            {
-                this.dom.style.height = (this.dom.offsetHeight + dialogY) + 'px';
+            // If still off-screen, clamp to bottom
+            if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
+                dialogY = document.body.clientHeight - this.dom.offsetHeight;
 
-                dialogY = 0;
-            }
+            // Clamp to top edge of editor. Likely happens if target element is large.
+            if (dialogY < editorRect.y)
+                dialogY = editorRect.y;
         }
         else
+        {
             this.domEditing.classList.add('above');
+            this.domEditing.classList.remove('below');
+        }
 
         this.dom.style.transform = fullWidth
             ? `translateY(${dialogY}px)`
@@ -139,6 +144,12 @@ abstract class Picker
         DOM.blurActive(this.dom);
 
         this.dom.classList.add('hidden');
+    }
+
+    /** Returns true if an element in this picker currently has focus */
+    public hasFocus() : boolean
+    {
+        return this.dom.contains(document.activeElement);
     }
 
     /**
