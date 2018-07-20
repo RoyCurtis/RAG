@@ -30,6 +30,12 @@ class Editor
         this.dom.innerHTML = '<phraseset ref="root" />';
 
         RAG.phraser.process(this.dom);
+
+        // For scroll-past padding under the phrase
+        let padding       = document.createElement('span');
+        padding.className = 'bottomPadding';
+
+        this.dom.appendChild(padding);
     }
 
     /** Reprocesses all phraseset elements of the given ref, if their index has changed */

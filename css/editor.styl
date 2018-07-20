@@ -5,12 +5,16 @@
   flex-grow  1
   font-size  48px
   // Right padding necessary due to bug with first line overflowing
-  padding    16px 48px 100vh 16px
+  padding    16px 48px 16px 16px
   // Force vertical scrolling only
   overflow-x hidden
   overflow-y auto
   // Needed to prevent bottom padding from drawing text over toolbar
   z-index    0
+
+  .bottomPadding
+    display block
+    height  50vh
 
   // All selectable elements
   span[data-type=coach],       span[data-type=excuse],  span[data-type=integer],

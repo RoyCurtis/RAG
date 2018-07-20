@@ -58,10 +58,10 @@ class FilterableList {
         let target = ev.target;
         if (!target)
             return;
-        else if (!this.inputFilter.contains(target) && !this.inputList.contains(target))
-            return;
         else if (ev.type.toLowerCase() === 'submit')
             this.filter();
+        else if (!this.inputFilter.contains(target) && !this.inputList.contains(target))
+            return;
         else if (target.tagName.toLowerCase() === 'dd')
             this.select(target);
     }
@@ -621,14 +621,17 @@ class StationListPicker extends StationPicker {
             this.domDragFrom = newEntry;
             ev.dataTransfer.effectAllowed = "move";
             ev.dataTransfer.dropEffect = "move";
+            ev.dataTransfer.setData('text/plain', '');
             this.domDragFrom.classList.add('dragging');
         };
         newEntry.ondrop = ev => {
             if (!ev.target || !this.domDragFrom)
                 throw new Error("Drop event, but target and source are missing");
-            if (ev.target === this.domDragFrom)
+            if (this.domDragFrom.contains(ev.target))
                 return;
             let target = ev.target;
+            if (target.parentElement && target.parentElement.draggable)
+                target = target.parentElement;
             DOM.swap(this.domDragFrom, target);
             target.classList.remove('dragover');
             this.update();
@@ -647,7 +650,11 @@ class StationListPicker extends StationPicker {
             newEntry.classList.add('dragover');
         };
         newEntry.ondragover = DOM.preventDefault;
-        newEntry.ondragleave = _ => newEntry.classList.remove('dragover');
+        newEntry.ondragleave = _ => {
+            if (newEntry.contains(_.relatedTarget))
+                return;
+            newEntry.classList.remove('dragover');
+        };
         btnMoveUp.onclick = _ => {
             let swap = newEntry.previousElementSibling;
             if (swap === this.domEmptyList)
@@ -902,6 +909,9 @@ class Editor {
     generate() {
         this.dom.innerHTML = '<phraseset ref="root" />';
         RAG.phraser.process(this.dom);
+        let padding = document.createElement('span');
+        padding.className = 'bottomPadding';
+        this.dom.appendChild(padding);
     }
     refreshPhraseset(ref) {
         this.dom.querySelectorAll(`span[data-type=phraseset][data-ref=${ref}]`)
