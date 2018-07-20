@@ -245,9 +245,11 @@ class Picker {
         let targetRect = this.domEditing.getBoundingClientRect();
         let fullWidth = this.dom.classList.contains('fullWidth');
         let isModal = this.dom.classList.contains('modal');
+        let docW = document.body.clientWidth;
+        let docH = document.body.clientHeight;
         let dialogX = (targetRect.left | 0) - 8;
         let dialogY = targetRect.bottom | 0;
-        let width = (targetRect.width | 0) + 16;
+        let dialogW = (targetRect.width | 0) + 16;
         if (!fullWidth && !isModal) {
             if (RAG.views.isMobile) {
                 this.dom.style.width = `100%`;
@@ -255,25 +257,25 @@ class Picker {
             }
             else {
                 this.dom.style.width = `initial`;
-                this.dom.style.minWidth = `${width}px`;
-                if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
+                this.dom.style.minWidth = `${dialogW}px`;
+                if (dialogX + this.dom.offsetWidth > docW)
                     dialogX = (targetRect.right | 0) - this.dom.offsetWidth + 8;
             }
         }
         if (isModal) {
             dialogX = RAG.views.isMobile ? 0 :
-                ((document.body.clientWidth * 0.1) / 2) | 0;
+                ((docW * 0.1) / 2) | 0;
             dialogY = RAG.views.isMobile ? 0 :
-                ((document.body.clientHeight * 0.1) / 2) | 0;
+                ((docH * 0.1) / 2) | 0;
         }
         else if (dialogY < editorRect.y)
             dialogY = editorRect.y;
-        else if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
+        else if (dialogY + this.dom.offsetHeight > docH) {
             dialogY = (targetRect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
             this.domEditing.classList.remove('above');
-            if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
-                dialogY = document.body.clientHeight - this.dom.offsetHeight;
+            if (dialogY + this.dom.offsetHeight > docH)
+                dialogY = docH - this.dom.offsetHeight;
             if (dialogY < editorRect.y)
                 dialogY = editorRect.y;
         }
@@ -659,6 +661,7 @@ class StationListPicker extends StationPicker {
         btnDelete.onclick = _ => this.remove(newEntry);
         this.inputList.appendChild(newEntry);
         this.domEmptyList.classList.add('hidden');
+        newEntry.scrollIntoView();
     }
     remove(entry) {
         if (entry.parentElement !== this.inputList)

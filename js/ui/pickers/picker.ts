@@ -72,9 +72,11 @@ abstract class Picker
         let targetRect = this.domEditing.getBoundingClientRect();
         let fullWidth  = this.dom.classList.contains('fullWidth');
         let isModal    = this.dom.classList.contains('modal');
-        let dialogX    = (targetRect.left | 0) - 8;
-        let dialogY    = targetRect.bottom | 0;
-        let width      = (targetRect.width | 0) + 16;
+        let docW       = document.body.clientWidth;
+        let docH       = document.body.clientHeight;
+        let dialogX    = (targetRect.left   | 0) - 8;
+        let dialogY    =  targetRect.bottom | 0;
+        let dialogW    = (targetRect.width  | 0) + 16;
 
         // Adjust if horizontally off screen
         if (!fullWidth && !isModal)
@@ -89,9 +91,9 @@ abstract class Picker
             else
             {
                 this.dom.style.width    = `initial`;
-                this.dom.style.minWidth = `${width}px`;
+                this.dom.style.minWidth = `${dialogW}px`;
 
-                if (dialogX + this.dom.offsetWidth > document.body.clientWidth)
+                if (dialogX + this.dom.offsetWidth > docW)
                     dialogX = (targetRect.right | 0) - this.dom.offsetWidth + 8;
             }
         }
@@ -101,10 +103,10 @@ abstract class Picker
         if (isModal)
         {
             dialogX = RAG.views.isMobile ? 0 :
-                ( (document.body.clientWidth  * 0.1) / 2 ) | 0;
+                ( (docW  * 0.1) / 2 ) | 0;
 
             dialogY = RAG.views.isMobile ? 0 :
-                ( (document.body.clientHeight * 0.1) / 2 ) | 0;
+                ( (docH * 0.1) / 2 ) | 0;
         }
 
         // Clamp to top edge of editor
@@ -112,15 +114,15 @@ abstract class Picker
             dialogY = editorRect.y;
 
         // Adjust if vertically off screen
-        else if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
+        else if (dialogY + this.dom.offsetHeight > docH)
         {
             dialogY = (targetRect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
             this.domEditing.classList.remove('above');
 
             // If still off-screen, clamp to bottom
-            if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
-                dialogY = document.body.clientHeight - this.dom.offsetHeight;
+            if (dialogY + this.dom.offsetHeight > docH)
+                dialogY = docH - this.dom.offsetHeight;
 
             // Clamp to top edge of editor. Likely happens if target element is large.
             if (dialogY < editorRect.y)

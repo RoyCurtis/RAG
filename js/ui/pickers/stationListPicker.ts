@@ -206,6 +206,7 @@ class StationListPicker extends StationPicker
 
         this.inputList.appendChild(newEntry);
         this.domEmptyList.classList.add('hidden');
+        newEntry.scrollIntoView();
     }
 
     private remove(entry: HTMLElement) : void
