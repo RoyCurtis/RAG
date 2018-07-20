@@ -132,13 +132,13 @@ class FilterableList
         if (!target)
             return;
 
-        // Make sure target is descendant of this control
-        else if ( !this.inputFilter.contains(target) && !this.inputList.contains(target) )
-            return;
-
         // Handle pressing ENTER inside filter box
         else if (ev.type.toLowerCase() === 'submit')
             this.filter();
+
+        // Make sure target is descendant of this control
+        else if ( !this.inputFilter.contains(target) && !this.inputList.contains(target) )
+            return;
 
         // Handle item being clicked
         else if (target.tagName.toLowerCase() === 'dd')
