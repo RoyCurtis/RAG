@@ -11,14 +11,14 @@
 }
 .warningDialog {
   flex-grow: 1;
-  padding: 1rem;
+  padding: 16px;
 }
 .warningDialog h1 {
   font-style: italic;
 }
 .warningDialog p {
   line-height: 150%;
-  margin: 1rem;
+  margin: 16px;
 }
 
 .flItemPicker dt
@@ -57,7 +57,7 @@
   border-radius: 0;
   flex-grow: 1;
   font-size: x-large;
-  padding: 0.5rem;
+  padding: 8px;
 }
 .picker > form label {
   flex-grow: 2;
@@ -67,7 +67,7 @@
   height: 50%;
 }
 .picker.modal {
-  box-shadow: 0 0 2rem #000;
+  box-shadow: 0 0 32px #000;
   height: 90%;
   width: 90%;
 }
@@ -77,7 +77,7 @@
   fill: inherit;
   border: none;
   font-size: inherit;
-  padding: 1rem;
+  padding: 16px;
   width: 100%;
 }
 .picker .flItemPicker {
@@ -92,14 +92,14 @@
   background: #000;
   box-shadow: 0 5px 10px rgba(0,0,0,0.5);
   font-weight: bold;
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
   top: 0;
   width: 100%;
 }
 .picker .flItemPicker dd {
   cursor: pointer;
   display: inline-block;
-  padding: 1rem;
+  padding: 16px;
 }
 .picker .flItemPicker dd:hover,
 .picker .flItemPicker dd[selected] {
@@ -115,7 +115,7 @@
 #integerPicker form input,
 #platformPicker form input,
 #timePicker form input {
-  width: 4rem;
+  width: 64px;
 }
 #phrasesetPicker .flItemPicker dd {
   display: block;
@@ -135,7 +135,7 @@
 }
 #stationlistPicker .stations dt {
   color: #aaa;
-  padding: 1rem;
+  padding: 16px;
 }
 #stationlistPicker .stations dd {
   background: #222;
@@ -143,8 +143,8 @@
   border-right: 2px solid #cc7e00;
   cursor: move;
   display: inline-block;
-  margin: 0.5rem;
-  padding: 0.5rem;
+  margin: 8px;
+  padding: 8px;
 }
 #stationlistPicker .stations dd:hover,
 #stationlistPicker .stations dd.dragover {
@@ -159,8 +159,8 @@
 #editor {
   background: #222;
   flex-grow: 1;
-  font-size: 3rem;
-  padding: 1rem 3rem 100vh 1rem;
+  font-size: 48px;
+  padding: 16px 48px 100vh 16px;
   overflow-x: hidden;
   overflow-y: auto;
   z-index: 0;
@@ -255,7 +255,7 @@
   cursor: pointer;
   display: inline-block;
   text-align: center;
-  width: 3rem;
+  width: 48px;
 }
 #editor span[data-chance]:hover {
   border-left-style: dotted;
@@ -273,7 +273,7 @@
 }
 #editor span[data-type=phraseset] {
   border-left-width: 8px;
-  padding-left: 0.5rem;
+  padding-left: 8px;
 }
 #editor span[data-type=phraseset]:hover {
   border-left-style: solid;
@@ -282,16 +282,16 @@
   padding-left: 0;
 }
 #marquee {
-  border: 1.5rem solid;
+  border: 24px solid;
   border-color: #222 #444 #444 #222;
   background: #000;
   color: #ffa500;
   flex-shrink: 0;
   font-family: "5by7", sans-serif;
-  font-size: 3rem;
-  min-height: 8rem;
+  font-size: 48px;
+  min-height: 128px;
   overflow: hidden;
-  padding: 1.5rem;
+  padding: 24px;
   position: relative;
   white-space: nowrap;
 }
@@ -321,8 +321,8 @@
   cursor: pointer;
   fill: #f5f5f5;
   font-size: large;
-  height: 3rem;
-  margin: 1rem;
+  height: 48px;
+  margin: 16px;
 }
 #settings button:hover {
   background: #333;
@@ -354,17 +354,17 @@
   border-bottom: 2px solid #cc7e00;
   flex: 100%;
   font-size: xx-large;
-  padding: 1rem;
-  padding-bottom: 0.5rem;
-  margin-bottom: 0.5rem;
+  padding: 16px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
 }
 #settings p {
   column-count: 2;
-  column-gap: 1.5rem;
+  column-gap: 24px;
   flex: 100%;
   font-size: small;
-  line-height: 1.5em;
-  padding: 1.5rem;
+  line-height: 175%;
+  padding: 24px;
   text-align: justify;
 }
 #settings form {
@@ -377,7 +377,7 @@
 #settings form input {
   flex: 1;
   font-size: large;
-  margin: 1.5rem;
+  margin: 24px;
 }
 #settings form select {
   justify-self: right;
@@ -419,8 +419,8 @@ body {
   justify-content: center;
   background: linear-gradient(to bottom, #444 50%, #222 100%);
   flex-shrink: 0;
-  height: 3rem;
-  padding-bottom: 1rem;
+  height: 48px;
+  padding-bottom: 16px;
 }
 #toolbar > button {
   background: #222;
@@ -429,9 +429,9 @@ body {
   color: #f5f5f5;
   cursor: pointer;
   fill: #f5f5f5;
-  height: 2.75rem;
-  margin: 0 0.75rem;
-  padding: 0.5rem;
+  height: 48px;
+  margin: 0 12px;
+  padding: 8px;
 }
 #toolbar > button:hover {
   background: #333;
@@ -451,8 +451,8 @@ body {
   background: #222;
 }
 #toolbar > button svg {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 24px;
+  height: 24px;
 }
 iframe {
   display: none;
@@ -470,29 +470,35 @@ iframe {
   #marquee {
     background: #000;
     border: none;
-    border-bottom: 0.5rem solid #444;
-    font-size: 2rem;
-    min-height: 3.5rem;
-    padding: 0.75rem;
+    border-bottom: 8px solid #444;
+    font-size: 32px;
+    min-height: 56px;
+    padding: 12px;
   }
   #toolbar {
     background: #444;
     height: auto;
-    padding: 0 0 0.5rem 0;
+    padding: 0 0 8px 0;
   }
   #toolbar > button {
     flex-grow: 1;
     height: auto;
     margin: 0;
-    padding-top: 0.75rem;
+    padding-top: 12px;
   }
   #toolbar > button svg {
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 18px;
+    height: 18px;
   }
   #editor {
-    font-size: 2rem;
-    padding: 0.75rem 2.5rem 100vh 0.75rem;
+    font-size: x-large;
+    padding: 12px 40px 50vh 12px;
+  }
+  #editor span {
+    perspective: 1000;
+    -webkit-perspective: 1000;
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
   }
   #editor span[data-type=coach],
   #editor span[data-type=excuse],
@@ -513,7 +519,7 @@ iframe {
     border-right-style: dotted;
   }
   #editor span[data-chance] > .toggle::before {
-    width: 2rem;
+    width: 32px;
   }
   #editor span[data-type=phraseset] {
     border-left-style: solid;
@@ -535,51 +541,57 @@ iframe {
   .picker > form select,
   .picker > form label {
     font-size: medium;
-    padding: 0.2rem;
+    padding: 4px;
   }
   .picker.modal {
+    border-top: 0;
     box-shadow: none;
     height: 100%;
     width: 100%;
   }
+  .picker.modal > header {
+    align-items: center;
+    display: flex;
+    height: 48px;
+    padding: 8px;
+  }
   .picker .flSearchBox {
     font-size: smaller;
-    padding: 0.5rem;
+    padding: 8px;
   }
   .picker .flItemPicker {
     font-size: smaller;
   }
   .picker .flItemPicker dt {
-    padding: 0.3rem 0.5rem;
+    padding: 5px 8px;
     font-size: smaller;
+    transform: translateY(-1px);
   }
   .picker .flItemPicker dd {
-    padding: 0.5rem;
+    padding: 8px;
   }
   #phrasesetPicker .flItemPicker dd {
     font-size: smaller;
-    padding: 0.75rem 0.5rem;
+    padding: 12px 8px;
   }
-  #stationlistPicker header {
-    align-items: center;
-    display: flex;
+  #stationlistPicker > header {
     justify-content: space-between;
-    padding: 0.5rem;
+    padding: 12px 8px 8px 8px;
   }
-  #stationlistPicker header #btnCloseStationListPicker {
+  #stationlistPicker > header #btnCloseStationListPicker {
     background: none;
     border: none;
     display: block;
   }
-  #stationlistPicker header #btnCloseStationListPicker svg {
-    width: 1.5rem;
-    height: 1.5rem;
+  #stationlistPicker > header #btnCloseStationListPicker svg {
+    width: 24px;
+    height: 24px;
   }
   #stationlistPicker .stations {
     font-size: smaller;
   }
   #stationlistPicker .stations dt {
-    padding: 0.5rem;
+    padding: 8px;
   }
   #stationlistPicker .stations dd {
     border: none;
@@ -593,7 +605,7 @@ iframe {
   #stationlistPicker .stations dd:focus {
     background: #cc7e00;
     display: flex;
-    padding: 0 0.5rem;
+    padding: 0 8px;
   }
   #stationlistPicker .stations dd:focus button {
     background: none;
@@ -602,22 +614,22 @@ iframe {
     border: none;
     display: inline-block;
     font-size: x-large;
-    margin-bottom: 0.1rem;
-    width: 2em;
-    height: 1.6em;
+    margin-bottom: 2px;
+    width: 24px;
+    height: 24px;
   }
   #stationlistPicker .stations dd:focus .moveDown {
-    margin-left: 0.5rem;
+    margin-left: 8px;
   }
   #stationlistPicker .stations dd:focus span {
     flex-basis: 100%;
-    padding-top: 0.75rem;
+    padding-top: 12px;
     text-align: center;
   }
   #settings button {
     font-size: smaller;
-    height: 2rem;
-    margin: 0.5rem;
+    height: 32px;
+    margin: 8px;
   }
   #settings #btnResetSettings {
     flex: 1;
@@ -627,12 +639,12 @@ iframe {
   }
   #settings h1 {
     font-size: large;
-    padding: 0.75rem;
+    padding: 12px;
   }
   #settings p {
     column-count: 1;
     font-size: smaller;
-    padding-top: 0.5rem;
+    padding-top: 8px;
   }
   #settings form {
     grid-template-columns: 25% 75%;
@@ -641,7 +653,7 @@ iframe {
   #settings form select,
   #settings form input {
     font-size: medium;
-    margin: 0.75rem;
+    margin: 12px;
   }
   #settings form select {
     justify-self: end;

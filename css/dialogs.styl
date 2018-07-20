@@ -31,7 +31,7 @@
       border-radius 0
       flex-grow     1
       font-size     x-large
-      padding       0.5rem
+      padding       8px
 
     label
       flex-grow 2
@@ -41,7 +41,7 @@
     height 50%
 
   &.modal
-    box-shadow 0 0 2rem $bgDarkest
+    box-shadow 0 0 32px $bgDarkest
     height     90%
     width      90%
 
@@ -51,7 +51,7 @@
     backAndForeColor($bgDarkest, inherit)
     border    none
     font-size inherit
-    padding   1rem
+    padding   16px
     width     100%
 
   .flItemPicker
@@ -66,14 +66,14 @@
       background  $bgDarkest
       box-shadow  0 5px 10px alpha($bgDarkest, 0.5)
       font-weight bold
-      padding     0.5rem 1rem
+      padding     8px 16px
       top         0
       width       100%
 
     dd
       cursor  pointer
       display inline-block
-      padding 1rem
+      padding 16px
 
       &:hover, &[selected]
         background $fgFocus
@@ -84,7 +84,7 @@
 
     // For some reason, integer picker controls are very wide on Chrome
     input
-      width 4rem
+      width 64px
 
 #phrasesetPicker
 
@@ -111,7 +111,7 @@
 
     dt
       color   $fgDim
-      padding 1rem
+      padding 16px
 
     dd
       background    $bgDarker
@@ -119,8 +119,8 @@
       border-right  2px solid $fgFocus
       cursor        move
       display       inline-block
-      margin        0.5rem
-      padding       0.5rem
+      margin        8px
+      padding       8px
 
       &:hover, &.dragover
         background $fgFocus

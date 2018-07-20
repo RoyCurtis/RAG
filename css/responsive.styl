@@ -8,29 +8,29 @@
 #marquee
   background    $bgDarkest
   border        none
-  border-bottom 0.5rem solid $bgDark
-  font-size     2rem
-  min-height    3.5rem
-  padding       0.75rem
+  border-bottom 8px solid $bgDark
+  font-size     32px
+  min-height    56px
+  padding       12px
 
 #toolbar
   background $bgDark
   height     auto
-  padding    0 0 0.5rem 0
+  padding    0 0 8px 0
 
   > button
     flex-grow   1
     height      auto
     margin      0
-    padding-top 0.75rem
+    padding-top 12px
 
     svg
-      width  1.2rem
-      height 1.2rem
+      width  18px
+      height 18px
 
 #editor
   font-size 2rem
-  padding   0.75rem 2.5rem 50vh 0.75rem
+  padding   12px 40px 50vh 12px
 
   // Fix for iOS visual garbage on editor elements beyond the scrolling area
   // https://stackoverflow.com/a/43636308
@@ -54,7 +54,7 @@
     border-right-style dotted
 
     > .toggle::before
-      width 2rem
+      width 32px
 
   // Phrasesets
   span[data-type=phraseset]
@@ -76,38 +76,43 @@
   > form
     input, select, label
       font-size medium
-      padding   0.2rem
+      padding   4px
 
   &.modal
+    border-top 0
     box-shadow none
     height     100%
     width      100%
 
+    > header
+      align-items center
+      display     flex
+      height      48px
+      padding     8px
+
   .flSearchBox
     font-size smaller
-    padding   0.5rem
+    padding   8px
 
   .flItemPicker
     font-size smaller
 
     dt
-      padding   0.3rem 0.5rem
+      padding   5px 8px
       font-size smaller
 
     dd
-      padding 0.5rem
+      padding 8px
 
 #phrasesetPicker
   .flItemPicker dd
     font-size smaller
-    padding   0.75rem 0.5rem
+    padding   12px 8px
 
 #stationlistPicker
-  header
-    align-items     center
-    display         flex
+  > header
     justify-content space-between
-    padding         0.5rem
+    padding         12px 8px 8px 8px
 
     #btnCloseStationListPicker
       background none
@@ -116,14 +121,14 @@
 
       // TODO: DRY with index
       svg
-        width  1.5rem
-        height 1.5rem
+        width  24px
+        height 24px
 
   .stations
     font-size smaller
 
     dt
-      padding 0.5rem
+      padding 8px
 
     dd
       border        none
@@ -138,30 +143,30 @@
       &:focus
         background $fgFocus
         display    flex
-        padding    0 0.5rem
+        padding    0 8px
 
         button
           backAndForeColor(none, $fgBrightest)
           border        none
           display       inline-block
           font-size     x-large
-          margin-bottom 0.1rem
-          width         2em
-          height        1.6em
+          margin-bottom 2px
+          width         24px
+          height        24px
 
         .moveDown
-          margin-left 0.5rem
+          margin-left 8px
 
         span
           flex-basis  100%
-          padding-top 0.75rem
+          padding-top 12px
           text-align  center
 
 #settings
   button
     font-size smaller
-    height    2rem
-    margin    0.5rem
+    height    32px
+    margin    8px
 
   #btnResetSettings
     flex 1
@@ -171,19 +176,19 @@
 
   h1
     font-size large
-    padding   0.75rem
+    padding   12px
 
   p
     column-count 1
     font-size    smaller
-    padding-top  0.5rem
+    padding-top  8px
 
   form
     grid-template-columns 25% 75%
 
     label, select, input
       font-size medium
-      margin    0.75rem
+      margin    12px
 
     select
       justify-self end
