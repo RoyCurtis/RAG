@@ -134,6 +134,8 @@ class StationListPicker extends StationPicker
             this.domDragFrom              = newEntry;
             ev.dataTransfer.effectAllowed = "move";
             ev.dataTransfer.dropEffect    = "move";
+            // Necessary for dragging to work on Firefox
+            ev.dataTransfer.setData('text/plain', '');
 
             this.domDragFrom.classList.add('dragging');
         };
