@@ -71,7 +71,7 @@ abstract class Picker
 
         let rect      = this.domEditing.getBoundingClientRect();
         let fullWidth = this.dom.classList.contains('fullWidth');
-        let midHeight = this.dom.classList.contains('midHeight');
+        let isModal   = this.dom.classList.contains('modal');
         let dialogX   = (rect.left | 0) - 8;
         let dialogY   = rect.bottom | 0;
         let width     = (rect.width | 0) + 16;
@@ -80,7 +80,7 @@ abstract class Picker
         this.dom.style.height = null;
 
         // Adjust if horizontally off screen
-        if (!fullWidth)
+        if (!fullWidth && !isModal)
         {
             // Force full width on mobile
             if (RAG.views.isMobile)
@@ -99,9 +99,16 @@ abstract class Picker
             }
         }
 
-        // Handle pickers that aren't relative to selected element
-        if (midHeight)
-            dialogY = (this.dom.offsetHeight / 4) | 0;
+        // Handle pickers that instead take up the whole display. CSS isn't used here,
+        // because percentage-based left/top causes subpixel issues on Chrome.
+        if (isModal)
+        {
+            dialogX = RAG.views.isMobile ? 0 :
+                ( (document.body.clientWidth  * 0.1) / 2 ) | 0;
+
+            dialogY = RAG.views.isMobile ? 0 :
+                ( (document.body.clientHeight * 0.1) / 2 ) | 0;
+        }
 
         // Adjust if vertically off screen
         else if (dialogY + this.dom.offsetHeight > document.body.clientHeight)
