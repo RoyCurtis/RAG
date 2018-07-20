@@ -32,6 +32,14 @@
   font-size 2rem
   padding   0.75rem 2.5rem 50vh 0.75rem
 
+  // Fix for iOS visual garbage on editor elements beyond the scrolling area
+  // https://stackoverflow.com/a/43636308
+  span
+    perspective         1000
+    -webkit-perspective 1000
+    transform           translate3d(0, 0, 0)
+    -webkit-transform   translate3d(0, 0, 0)
+
   // All selectable elements
   span[data-type=coach],       span[data-type=excuse],  span[data-type=integer],
   span[data-type=named],       span[data-type=phrase],  span[data-type=phraseset],
