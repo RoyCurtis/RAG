@@ -58,7 +58,7 @@ class RAG
     /** Global error handler; throws up a big red panic screen on uncaught error */
     private static panic(error: string | Event = "Unknown error")
     {
-        let msg = '<div class="panic warningDialog">';
+        let msg = '<div id="panicScreen" class="warningScreen">';
         msg    += '<h1>"We are sorry to announce that..."</h1>';
         msg    += `<p>RAG has crashed because: <code>${error}</code>.</p>`;
         msg    += `<p>Please open the console for more information.</p>`;

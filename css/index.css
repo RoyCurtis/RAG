@@ -9,152 +9,16 @@
   -ms-user-select: none;
   user-select: none;
 }
-.warningDialog {
+.warningScreen {
   flex-grow: 1;
   padding: 16px;
 }
-.warningDialog h1 {
+.warningScreen h1 {
   font-style: italic;
 }
-.warningDialog p {
+.warningScreen p {
   line-height: 150%;
   margin: 16px;
-}
-
-.flItemPicker dt
-{
-  position: sticky;
-  position: -webkit-sticky;
-}
-.picker {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  background: #222;
-  border: 8px solid #cc7e00;
-  border-radius: 4px;
-  position: absolute;
-  z-index: 100;
-}
-.picker > header {
-  background: #cc7e00;
-  font-weight: bold;
-  padding-bottom: 4px;
-}
-.picker > form {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  overflow: auto;
-}
-.picker > form input,
-.picker > form select,
-.picker > form label {
-  background: #000;
-  color: #f5f5f5;
-  fill: #f5f5f5;
-  border: none;
-  border-radius: 0;
-  flex-grow: 1;
-  font-size: x-large;
-  padding: 8px;
-}
-.picker > form label {
-  flex-grow: 2;
-}
-.picker.fullWidth {
-  width: 100%;
-  height: 50%;
-}
-.picker.modal {
-  box-shadow: 0 0 32px #000;
-  height: 90%;
-  width: 90%;
-}
-.picker .flSearchBox {
-  background: #000;
-  color: inherit;
-  fill: inherit;
-  border: none;
-  font-size: inherit;
-  padding: 16px;
-  width: 100%;
-}
-.picker .flItemPicker {
-  flex-basis: 100%;
-  overflow: auto;
-}
-.picker .flItemPicker dl {
-  display: flex;
-  flex-wrap: wrap;
-}
-.picker .flItemPicker dt {
-  background: #000;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.5);
-  font-weight: bold;
-  padding: 8px 16px;
-  top: 0;
-  width: 100%;
-}
-.picker .flItemPicker dd {
-  cursor: pointer;
-  display: inline-block;
-  padding: 16px;
-}
-.picker .flItemPicker dd:hover,
-.picker .flItemPicker dd[selected] {
-  background: #cc7e00;
-}
-#coachPicker form,
-#integerPicker form,
-#platformPicker form,
-#timePicker form {
-  flex-direction: row;
-}
-#coachPicker form input,
-#integerPicker form input,
-#platformPicker form input,
-#timePicker form input {
-  width: 64px;
-}
-#phrasesetPicker .flItemPicker dd {
-  display: block;
-  font-size: large;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-#stationlistPicker #btnCloseStationListPicker {
-  display: none;
-}
-#stationlistPicker .stations {
-  background: #000;
-  flex-shrink: 0;
-  max-height: 40%;
-  overflow: auto;
-}
-#stationlistPicker .stations dt {
-  color: #aaa;
-  padding: 16px;
-}
-#stationlistPicker .stations dd {
-  background: #222;
-  border-radius: 8px;
-  border-right: 2px solid #cc7e00;
-  cursor: move;
-  display: inline-block;
-  margin: 8px;
-  padding: 8px;
-}
-#stationlistPicker .stations dd:hover,
-#stationlistPicker .stations dd.dragover {
-  background: #cc7e00;
-}
-#stationlistPicker .stations dd.dragging {
-  opacity: 0.5;
-}
-#stationlistPicker .stations dd button {
-  display: none;
 }
 #editor {
   background: #222;
@@ -303,6 +167,183 @@
 #marquee > span {
   position: absolute;
 }
+
+.flItemPicker dt
+{
+  position: sticky;
+  position: -webkit-sticky;
+}
+.picker {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: #222;
+  border: 8px solid #cc7e00;
+  border-radius: 4px;
+  position: absolute;
+  z-index: 100;
+}
+.picker > header {
+  background: #cc7e00;
+  font-weight: bold;
+  padding-bottom: 4px;
+}
+.picker > form {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: auto;
+}
+.picker > form input,
+.picker > form select,
+.picker > form label {
+  background: #000;
+  color: #f5f5f5;
+  fill: #f5f5f5;
+  border: none;
+  border-radius: 0;
+  flex-grow: 1;
+  font-size: x-large;
+  padding: 8px;
+}
+.picker > form label {
+  flex-grow: 2;
+}
+.picker.fullWidth {
+  width: 100%;
+  height: 50%;
+}
+.picker.modal {
+  box-shadow: 0 0 32px #000;
+  height: 90%;
+  width: 90%;
+}
+.picker .flSearchBox {
+  background: #000;
+  color: inherit;
+  fill: inherit;
+  border: none;
+  font-size: inherit;
+  padding: 16px;
+  width: 100%;
+}
+.picker .flItemPicker {
+  flex-basis: 100%;
+  overflow: auto;
+}
+.picker .flItemPicker dl {
+  display: flex;
+  flex-wrap: wrap;
+}
+.picker .flItemPicker dt {
+  background: #000;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+  font-weight: bold;
+  padding: 8px 16px;
+  top: 0;
+  width: 100%;
+}
+.picker .flItemPicker dd {
+  cursor: pointer;
+  display: inline-block;
+  padding: 16px;
+}
+.picker .flItemPicker dd:hover,
+.picker .flItemPicker dd[selected] {
+  background: #cc7e00;
+}
+#coachPicker form,
+#integerPicker form,
+#platformPicker form,
+#timePicker form {
+  flex-direction: row;
+}
+#coachPicker form input,
+#integerPicker form input,
+#platformPicker form input,
+#timePicker form input {
+  width: 64px;
+}
+#phrasesetPicker .flItemPicker dd {
+  display: block;
+  font-size: large;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#stationlistPicker #btnCloseStationListPicker {
+  display: none;
+}
+#stationlistPicker .stations {
+  background: #000;
+  flex-shrink: 0;
+  max-height: 40%;
+  overflow: auto;
+}
+#stationlistPicker .stations dt {
+  color: #aaa;
+  padding: 16px;
+}
+#stationlistPicker .stations dd {
+  background: #222;
+  border-radius: 8px;
+  border-right: 2px solid #cc7e00;
+  cursor: move;
+  display: inline-block;
+  margin: 8px;
+  padding: 8px;
+}
+#stationlistPicker .stations dd:hover,
+#stationlistPicker .stations dd.dragover {
+  background: #cc7e00;
+}
+#stationlistPicker .stations dd.dragging {
+  opacity: 0.5;
+}
+#stationlistPicker .stations dd button {
+  display: none;
+}
+#toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background: linear-gradient(to bottom, #444 50%, #222 100%);
+  flex-shrink: 0;
+  height: 48px;
+  padding-bottom: 16px;
+}
+#toolbar > button {
+  background: #222;
+  border: none;
+  box-shadow: 0 0 8px #222;
+  color: #f5f5f5;
+  cursor: pointer;
+  fill: #f5f5f5;
+  height: 42px;
+  margin: 0 12px;
+  padding: 8px;
+}
+#toolbar > button:hover {
+  background: #333;
+}
+#toolbar > button:active {
+  color: #aaa;
+  box-shadow: 0 0 4px #000 inset;
+  fill: #aaa;
+}
+#toolbar > button:disabled {
+  background: #222;
+  color: #444;
+  cursor: default;
+  fill: #444;
+}
+#toolbar > button:disabled:active {
+  background: #222;
+}
+#toolbar > button svg {
+  width: 24px;
+  height: 24px;
+}
 #settings {
   align-content: flex-start;
   background: rgba(0,0,0,0.75);
@@ -419,54 +460,13 @@ body {
   justify-content: flex-start;
   font-family: sans-serif;
 }
-#toolbar {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  background: linear-gradient(to bottom, #444 50%, #222 100%);
-  flex-shrink: 0;
-  height: 48px;
-  padding-bottom: 16px;
-}
-#toolbar > button {
-  background: #222;
-  border: none;
-  box-shadow: 0 0 8px #222;
-  color: #f5f5f5;
-  cursor: pointer;
-  fill: #f5f5f5;
-  height: 42px;
-  margin: 0 12px;
-  padding: 8px;
-}
-#toolbar > button:hover {
-  background: #333;
-}
-#toolbar > button:active {
-  color: #aaa;
-  box-shadow: 0 0 4px #000 inset;
-  fill: #aaa;
-}
-#toolbar > button:disabled {
-  background: #222;
-  color: #444;
-  cursor: default;
-  fill: #444;
-}
-#toolbar > button:disabled:active {
-  background: #222;
-}
-#toolbar > button svg {
-  width: 24px;
-  height: 24px;
-}
 iframe {
   display: none;
 }
-#sizeWarning {
+#tooSmallScreen {
   display: none;
 }
-.panic {
+#panicScreen {
   background: #c21d1d;
 }
 @media (max-width: 500px) {
@@ -676,7 +676,7 @@ iframe {
   .settingsVisible #settings {
     display: none;
   }
-  #sizeWarning {
+  #tooSmallScreen {
     display: block;
   }
 }

@@ -4,9 +4,10 @@
 @import "font/5by7.css"
 // Must be up here, else global function calls will fail elsewhere (order is important)
 @import "globals"
-@import "dialogs"
 @import "editor"
 @import "marquee"
+@import "pickers"
+@import "toolbar"
 @import "settings"
 
 // CSS reset
@@ -31,30 +32,15 @@ body
   flexbox(column)
   font-family sans-serif
 
-#toolbar
-  flexbox(row, center)
-  background     gradient(bottom, $bgDark, 50%, $bgDarker, 100%)
-  flex-shrink    0
-  height         48px
-  padding-bottom 16px
 
-  > button
-    pressable()
-    height  42px
-    margin  0 12px
-    padding 8px
-
-    svg
-      width  24px
-      height 24px
-
+// Hides embedded phraseset XML documents
 iframe
   display none
 
-#sizeWarning
+#tooSmallScreen
   display none
 
-.panic
+#panicScreen
   background $bgPanic
 
 // Responsive
@@ -66,5 +52,5 @@ iframe
   #marquee, #toolbar, #editor, .picker, .settingsVisible #settings
     display none
 
-  #sizeWarning
+  #tooSmallScreen
     display block
