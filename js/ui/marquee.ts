@@ -3,8 +3,8 @@
 /** Controller for the scrolling marquee */
 class Marquee
 {
-    private dom     : HTMLElement;
-    private domSpan : HTMLElement;
+    private readonly dom     : HTMLElement;
+    private readonly domSpan : HTMLElement;
 
     private timer  : number = 0;
     private offset : number = 0;

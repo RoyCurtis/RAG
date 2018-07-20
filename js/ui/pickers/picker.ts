@@ -109,7 +109,7 @@ abstract class Picker
             dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
 
-            // Resize if dialog is still off-screen
+            // Resize if picker is still off-screen
             if (dialogY < 0)
             {
                 this.dom.style.height = (this.dom.offsetHeight + dialogY) + 'px';
