@@ -33,7 +33,6 @@
   background: #222;
   border: 8px solid #cc7e00;
   border-radius: 4px;
-  box-shadow: 8px 8px 8px rgba(0,0,0,0.5);
   position: absolute;
   z-index: 100;
 }
