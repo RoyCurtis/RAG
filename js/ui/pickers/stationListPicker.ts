@@ -144,10 +144,13 @@ class StationListPicker extends StationPicker
                 throw new Error("Drop event, but target and source are missing");
 
             // Ignore dragging into self
-            if (ev.target === this.domDragFrom)
+            if ( this.domDragFrom.contains(ev.target as Node) )
                 return;
 
             let target = ev.target as HTMLElement;
+
+            if (target.parentElement && target.parentElement.draggable)
+                target = target.parentElement;
 
             DOM.swap(this.domDragFrom, target);
             target.classList.remove('dragover');
@@ -178,7 +181,15 @@ class StationListPicker extends StationPicker
         };
 
         newEntry.ondragover  = DOM.preventDefault;
-        newEntry.ondragleave = _  => newEntry.classList.remove('dragover');
+
+        newEntry.ondragleave = _  =>
+        {
+            // If dragging over the span or button elements, dragover isn't over yet
+            if ( newEntry.contains(_.relatedTarget as Node) )
+                return;
+
+            newEntry.classList.remove('dragover');
+        };
 
         // These buttons are necessary, as dragging and dropping do not work on iOS
 
