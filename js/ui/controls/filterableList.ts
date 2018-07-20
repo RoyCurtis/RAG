@@ -276,11 +276,16 @@ class FilterableList
     /** Visually changes the current selection, and updates the state and editor */
     protected select(entry: HTMLElement) : void
     {
+        let alreadySelected = (entry === this.domSelected);
+
         if (this.selectOnClick)
             this.visualSelect(entry);
 
         if (this.onSelect)
             this.onSelect(entry);
+
+        if (alreadySelected)
+            RAG.views.editor.closeDialog();
     }
 
     /** Visually changes the currently selected element */

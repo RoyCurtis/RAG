@@ -138,10 +138,13 @@ class FilterableList {
             group.classList.remove('hidden');
     }
     select(entry) {
+        let alreadySelected = (entry === this.domSelected);
         if (this.selectOnClick)
             this.visualSelect(entry);
         if (this.onSelect)
             this.onSelect(entry);
+        if (alreadySelected)
+            RAG.views.editor.closeDialog();
     }
     visualSelect(entry) {
         this.visualUnselect();
