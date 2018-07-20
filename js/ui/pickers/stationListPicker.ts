@@ -6,6 +6,9 @@
 /** Controller for the station list picker dialog */
 class StationListPicker extends StationPicker
 {
+    /** Reference to the close button for this picker */
+    private readonly btnClose     : HTMLButtonElement;
+
     /** Reference to placeholder shown if the list is empty */
     private readonly domEmptyList : HTMLElement;
 
@@ -21,6 +24,7 @@ class StationListPicker extends StationPicker
     {
         super("stationlist");
 
+        this.btnClose         = DOM.require('#btnCloseStationListPicker', this.dom);
         this.inputList        = DOM.require('.stations', this.dom);
         this.domEmptyList     = DOM.require('dt', this.inputList);
         this.listItemTemplate = DOM.require('#stationListItem');
@@ -28,6 +32,9 @@ class StationListPicker extends StationPicker
         this.listItemTemplate.id = '';
         this.listItemTemplate.classList.remove('hidden');
         this.listItemTemplate.remove();
+
+        // TODO: Should all modal pickers have a close button?
+        this.btnClose.onclick = () => RAG.views.editor.closeDialog();
 
         this.onOpen = (target) =>
         {
@@ -38,8 +45,10 @@ class StationListPicker extends StationPicker
             this.currentCtx = DOM.requireData(target, 'context');
             let entries     = RAG.state.getStationList(this.currentCtx).slice(0);
 
+            this.btnClose.remove();
             this.domHeader.innerText =
                 `Build a station list for the '${this.currentCtx}' context`;
+            this.domHeader.appendChild(this.btnClose);
 
             // Remove all old elements except for the empty list text
             while (this.inputList.children[1])

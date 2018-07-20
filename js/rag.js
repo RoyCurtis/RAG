@@ -243,12 +243,12 @@ class Picker {
             return;
         let rect = this.domEditing.getBoundingClientRect();
         let fullWidth = this.dom.classList.contains('fullWidth');
-        let midHeight = this.dom.classList.contains('midHeight');
+        let isModal = this.dom.classList.contains('modal');
         let dialogX = (rect.left | 0) - 8;
         let dialogY = rect.bottom | 0;
         let width = (rect.width | 0) + 16;
         this.dom.style.height = null;
-        if (!fullWidth) {
+        if (!fullWidth && !isModal) {
             if (RAG.views.isMobile) {
                 this.dom.style.width = `100%`;
                 dialogX = 0;
@@ -260,8 +260,12 @@ class Picker {
                     dialogX = (rect.right | 0) - this.dom.offsetWidth + 8;
             }
         }
-        if (midHeight)
-            dialogY = (this.dom.offsetHeight / 4) | 0;
+        if (isModal) {
+            dialogX = RAG.views.isMobile ? 0 :
+                ((document.body.clientWidth * 0.1) / 2) | 0;
+            dialogY = RAG.views.isMobile ? 0 :
+                ((document.body.clientHeight * 0.1) / 2) | 0;
+        }
         else if (dialogY + this.dom.offsetHeight > document.body.clientHeight) {
             dialogY = (rect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
@@ -536,20 +540,24 @@ class StationPicker extends Picker {
 class StationListPicker extends StationPicker {
     constructor() {
         super("stationlist");
+        this.btnClose = DOM.require('#btnCloseStationListPicker', this.dom);
         this.inputList = DOM.require('.stations', this.dom);
         this.domEmptyList = DOM.require('dt', this.inputList);
         this.listItemTemplate = DOM.require('#stationListItem');
         this.listItemTemplate.id = '';
         this.listItemTemplate.classList.remove('hidden');
         this.listItemTemplate.remove();
+        this.btnClose.onclick = () => RAG.views.editor.closeDialog();
         this.onOpen = (target) => {
             StationPicker.domList.attach(this, this.onAddStation);
             StationPicker.domList.registerDropHandler(this.onDrop.bind(this));
             StationPicker.domList.selectOnClick = false;
             this.currentCtx = DOM.requireData(target, 'context');
             let entries = RAG.state.getStationList(this.currentCtx).slice(0);
+            this.btnClose.remove();
             this.domHeader.innerText =
                 `Build a station list for the '${this.currentCtx}' context`;
+            this.domHeader.appendChild(this.btnClose);
             while (this.inputList.children[1])
                 this.inputList.children[1].remove();
             entries.forEach(v => this.add(v));

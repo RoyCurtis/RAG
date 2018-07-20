@@ -67,9 +67,10 @@
   width: 100%;
   height: 50%;
 }
-.picker.midHeight {
-  box-shadow: 0 0 16px rgba(0,0,0,0.5);
-  height: 75%;
+.picker.modal {
+  box-shadow: 0 0 2rem #000;
+  height: 90%;
+  width: 90%;
 }
 .picker .flSearchBox {
   background: #000;
@@ -123,6 +124,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+#stationlistPicker #btnCloseStationListPicker {
+  display: none;
 }
 #stationlistPicker .stations {
   background: #000;
@@ -534,6 +538,11 @@ iframe {
     font-size: medium;
     padding: 0.2rem;
   }
+  .picker.modal {
+    box-shadow: none;
+    height: 100%;
+    width: 100%;
+  }
   .picker .flSearchBox {
     font-size: smaller;
     padding: 0.5rem;
@@ -551,6 +560,21 @@ iframe {
   #phrasesetPicker .flItemPicker dd {
     font-size: smaller;
     padding: 0.75rem 0.5rem;
+  }
+  #stationlistPicker header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem;
+  }
+  #stationlistPicker header #btnCloseStationListPicker {
+    background: none;
+    border: none;
+    display: block;
+  }
+  #stationlistPicker header #btnCloseStationListPicker svg {
+    width: 1.5rem;
+    height: 1.5rem;
   }
   #stationlistPicker .stations {
     font-size: smaller;
