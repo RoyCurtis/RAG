@@ -54,16 +54,20 @@ flexbox($dir = row, $justify = flex-start)
   flex-direction  $dir
   justify-content $justify
 
+userSelect($value = none)
+  -webkit-user-select $value
+  -khtml-user-select  $value
+  -moz-user-select    $value
+  -ms-user-select     $value
+  user-select         $value
+
 // Global classes
 
 .hidden
   display none !important
 
 .unselectable
-  -webkit-user-select none
-  -moz-user-select    none
-  -ms-user-select     none
-  user-select         none
+  userSelect()
 
 .warningScreen
   flex-grow 1
