@@ -78,19 +78,20 @@
       height      48px
       padding     8px
 
-  .chSearchBox
-    font-size smaller
-    padding   8px
+  .chooser
+    .chSearchBox
+      font-size smaller
+      padding   8px
 
-  .chChoicesBox
-    font-size smaller
-
-    dt
-      padding   5px 8px
+    .chChoicesBox
       font-size smaller
 
-    dd
-      padding 8px
+      dt
+        padding   5px 8px
+        font-size smaller
+
+      dd
+        padding 8px
 
 #phrasesetPicker
   .chChoicesBox dd
@@ -112,43 +113,21 @@
         width  24px
         height 24px
 
-  .stations
-    font-size smaller
+  form
+    flex-direction column
 
-    dt
-      padding 8px
+    .stationList
+      flex-basis 45%
+      font-size  smaller
 
-    dd
-      border        none
-      border-radius 0
-      margin        0
-      width         100%
+      dd
+        margin 0 0 2px 0
 
-      // Show controls for sorting the list, on touch devices
-      &:hover
-        background $bgDarker
+      dt
+        padding 8px
 
-      &:focus
-        background $fgFocus
-        display    flex
-        padding    0 8px
-
-        button
-          backAndForeColor(none, $fgBrightest)
-          border        none
-          display       inline-block
-          font-size     x-large
-          margin-bottom 2px
-          width         24px
-          height        24px
-
-        .moveDown
-          margin-left 8px
-
-        span
-          flex-basis  100%
-          padding-top 12px
-          text-align  center
+    .chooser
+      flex-basis 55%
 
 #settings
   button

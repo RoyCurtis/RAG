@@ -61,9 +61,8 @@ class StationChooser extends Chooser
         if (!current || current !== parent)
             parent.appendChild(this.dom);
 
-        this.reset();
+        this.visualUnselect();
         this.onSelect = onSelect.bind(picker);
-        // this.inputFilter.focus();
     }
 
     /** Pre-selects a station entry by its code */
@@ -76,23 +75,5 @@ class StationChooser extends Chooser
             this.visualSelect(entry);
             entry.focus();
         }
-    }
-
-    /** Registers an event handler for when something (e.g. station name) is dropped */
-    public registerDropHandler(handler: DragDelegate) : void
-    {
-        this.inputFilter.ondrop     = handler;
-        this.inputChoices.ondrop       = handler;
-        this.inputFilter.ondragover = DOM.preventDefault;
-        this.inputChoices.ondragover   = DOM.preventDefault;
-    }
-
-    private reset() : void
-    {
-        this.inputFilter.ondrop     = null;
-        this.inputChoices.ondrop       = null;
-        this.inputFilter.ondragover = null;
-        this.inputChoices.ondragover   = null;
-        this.visualUnselect();
     }
 }

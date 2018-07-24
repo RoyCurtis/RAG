@@ -92,11 +92,9 @@
 
   // Each phrase item needs to be full width and trimmed
   .chChoicesBox dd
-    display       block
-    font-size     large
-    overflow      hidden
-    text-overflow ellipsis
-    white-space   nowrap
+    singleLine()
+    display   block
+    font-size large
 
 #stationlistPicker
 
@@ -104,31 +102,40 @@
   #btnCloseStationListPicker
     display none
 
-  // For the station list builder
-  .stations
-    background  $bgDarkest
-    flex-shrink 0
-    max-height  40%
-    overflow    auto
+  form
+    flex-direction row
 
-    dt
-      color   $fgDim
-      padding 16px
+    // For the station list builder
+    .stationList
+      background $bgDarkest
+      flex-basis 30%
+      overflow   auto
 
-    dd
-      background    $bgDarker
-      border-radius 8px
-      border-right  2px solid $fgFocus
-      cursor        move
-      display       inline-block
-      margin        8px
-      padding       8px
+      dt
+        color   $fgDim
+        padding 16px
 
-      &:hover, &.dragover
-        background $fgFocus
+      dd
+        singleLine()
+        background $bgDarker
+        cursor     move
+        margin     4px
+        padding    8px
 
-      &.dragging
+        &::before
+          color       $bgDark
+          content     '≡'
+          float       right
+          margin-left 8px
+
+      // Draggable library classes
+      .draggable-mirror
         opacity 0.5
 
-      button
+      .draggable--original
         display none
+
+    .chooser
+      flex-basis 70%
+      flex-grow  0
+      height     auto

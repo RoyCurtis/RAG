@@ -2,6 +2,7 @@
 
 /// <reference path="picker.ts"/>
 /// <reference path="stationPicker.ts"/>
+/// <reference path="../../vendor/draggable.d.ts"/>
 
 /** Controller for the station list picker dialog */
 class StationListPicker extends StationPicker
@@ -15,32 +16,43 @@ class StationListPicker extends StationPicker
     /** Reference to this list's currently selected stations in the UI */
     private readonly inputList    : HTMLDListElement;
 
-    private readonly listItemTemplate : HTMLElement;
-
-    /** Reference to the list item currently being dragged */
-    private domDragFrom? : HTMLElement;
-
     constructor()
     {
         super("stationlist");
 
-        this.btnClose         = DOM.require('#btnCloseStationListPicker', this.dom);
-        this.inputList        = DOM.require('.stations', this.dom);
-        this.domEmptyList     = DOM.require('dt', this.inputList);
-        this.listItemTemplate = DOM.require('#stationListItem');
-
-        this.listItemTemplate.id = '';
-        this.listItemTemplate.classList.remove('hidden');
-        this.listItemTemplate.remove();
+        this.btnClose     = DOM.require('#btnCloseStationListPicker', this.dom);
+        this.inputList    = DOM.require('.stationList', this.dom);
+        this.domEmptyList = DOM.require('dt', this.inputList);
 
         // TODO: Should all modal pickers have a close button?
         this.btnClose.onclick = () => RAG.views.editor.closeDialog();
 
+        // TODO: Clean this up
+        // TODO: Attach event handlers and mutate station list
+        // TODO: Make a delete drop zone
+        let sortable = new Draggable.Sortable(this.inputList, {
+            draggable: 'dd'
+        });
+
+        let droppable = new Draggable.Droppable(this.dom, {
+            draggable: 'dd',
+            dropzone: '.chooser'
+        });
+
+        sortable.on('mirror:create', ev =>
+        {
+            // @ts-ignore
+            ev.data.source.style.width = ev.data.originalSource.clientWidth + 'px';
+        });
+
+        droppable.on('droppable:dropped', ev => {
+            console.log(ev);
+        });
+
         this.onOpen = (target) =>
         {
-            StationPicker.domChooser.attach(this, this.onAddStation);
-            StationPicker.domChooser.registerDropHandler( this.onDrop.bind(this) );
-            StationPicker.domChooser.selectOnClick = false;
+            StationPicker.chooser.attach(this, this.onAddStation);
+            StationPicker.chooser.selectOnClick = false;
 
             this.currentCtx = DOM.requireData(target, 'context');
             let entries     = RAG.state.getStationList(this.currentCtx).slice(0);
@@ -117,112 +129,13 @@ class StationListPicker extends StationPicker
 
     private add(code: string) : void
     {
-        let newEntry    = this.listItemTemplate.cloneNode(true) as HTMLElement;
-        let span        = DOM.require('span',      newEntry);
-        let btnMoveUp   = DOM.require('.moveUp',   newEntry);
-        let btnMoveDown = DOM.require('.moveDown', newEntry);
-        let btnDelete   = DOM.require('.delete',   newEntry);
+        let newEntry = new StationListItem(this, code);
 
-        span.innerText           = RAG.database.getStation(code, false);
-        newEntry.dataset['code'] = code;
-
-        newEntry.ondblclick = _ => this.remove(newEntry);
-
-        // TODO: Split these off into own functions?
-        newEntry.ondragstart = ev =>
-        {
-            this.domDragFrom              = newEntry;
-            ev.dataTransfer.effectAllowed = "move";
-            ev.dataTransfer.dropEffect    = "move";
-            // Necessary for dragging to work on Firefox
-            ev.dataTransfer.setData('text/plain', '');
-
-            this.domDragFrom.classList.add('dragging');
-        };
-
-        newEntry.ondrop = ev =>
-        {
-            if (!ev.target || !this.domDragFrom)
-                throw new Error("Drop event, but target and source are missing");
-
-            // Ignore dragging into self
-            if ( this.domDragFrom.contains(ev.target as Node) )
-                return;
-
-            let target = ev.target as HTMLElement;
-
-            if (target.parentElement && target.parentElement.draggable)
-                target = target.parentElement;
-
-            DOM.swap(this.domDragFrom, target);
-            target.classList.remove('dragover');
-            this.update();
-        };
-
-        newEntry.ondragend = ev =>
-        {
-            if (!this.domDragFrom)
-                throw new Error("Drag ended but there's no tracked drag element");
-
-            if (this.domDragFrom !== ev.target)
-                throw new Error("Drag ended, but tracked element doesn't match");
-
-            this.domDragFrom.classList.remove('dragging');
-
-            // As per the standard, dragend must fire after drop. So it is safe to do
-            // dereference cleanup here.
-            this.domDragFrom = undefined;
-        };
-
-        newEntry.ondragenter = _ =>
-        {
-            if (this.domDragFrom === newEntry)
-                return;
-
-            newEntry.classList.add('dragover');
-        };
-
-        newEntry.ondragover  = DOM.preventDefault;
-
-        newEntry.ondragleave = _  =>
-        {
-            // If dragging over the span or button elements, dragover isn't over yet
-            if ( newEntry.contains(_.relatedTarget as Node) )
-                return;
-
-            newEntry.classList.remove('dragover');
-        };
-
-        // These buttons are necessary, as dragging and dropping do not work on iOS
-
-        btnMoveUp.onclick = _ =>
-        {
-            let swap = newEntry.previousElementSibling!;
-
-            if (swap === this.domEmptyList)
-                swap = this.inputList.lastElementChild!;
-
-            DOM.swap(newEntry, swap);
-            newEntry.focus();
-        };
-
-        btnMoveDown.onclick = _ =>
-        {
-            let swap = newEntry.nextElementSibling
-                || this.inputList.children[1]!;
-
-            DOM.swap(newEntry, swap);
-            newEntry.focus();
-        };
-
-        btnDelete.onclick = _ => this.remove(newEntry);
-
-        this.inputList.appendChild(newEntry);
+        this.inputList.appendChild(newEntry.dom);
         this.domEmptyList.classList.add('hidden');
-        newEntry.scrollIntoView();
     }
 
-    private remove(entry: HTMLElement) : void
+    public remove(entry: HTMLElement) : void
     {
         if (entry.parentElement !== this.inputList)
             throw new Error('Attempted to remove entry not on station list builder');
@@ -260,11 +173,10 @@ class StationListPicker extends StationPicker
             .forEach(element => element.textContent = textList);
     }
 
-    private onDrop(ev: DragEvent) : void
+    private onDrop(ev: any) : void
     {
-        if (!ev.target || !this.domDragFrom)
-            throw new Error("Drop event, but target and source are missing");
+        console.log(ev);
 
-        this.remove(this.domDragFrom);
+        // this.remove(this.domDragFrom);
     }
 }

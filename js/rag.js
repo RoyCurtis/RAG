@@ -3,28 +3,28 @@ class Chooser {
     constructor(parent) {
         this.selectOnClick = true;
         this.filterTimeout = 0;
-        this.itemTitle = 'Click to select this item';
         this.groupByABC = false;
-        if (!Chooser.SEARCHBOX)
+        this.itemTitle = 'Click to select this item';
+        if (!Chooser.TEMPLATE)
             Chooser.init();
         let target = DOM.require('chooser', parent);
         let placeholder = DOM.getAttr(target, 'placeholder', 'Filter choices...');
         let title = DOM.getAttr(target, 'title', 'List of choices');
         this.itemTitle = DOM.getAttr(target, 'itemTitle', this.itemTitle);
         this.groupByABC = target.hasAttribute('groupByABC');
-        this.inputFilter = Chooser.SEARCHBOX.cloneNode(false);
-        this.inputChoices = Chooser.PICKERBOX.cloneNode(false);
+        this.dom = Chooser.TEMPLATE.cloneNode(true);
+        this.inputFilter = DOM.require('.chSearchBox', this.dom);
+        this.inputChoices = DOM.require('.chChoicesBox', this.dom);
         this.inputChoices.title = title;
         this.inputFilter.placeholder = placeholder;
+        target.insertAdjacentElement('beforebegin', this.dom);
         target.remove();
-        parent.appendChild(this.inputFilter);
-        parent.appendChild(this.inputChoices);
     }
     static init() {
-        let template = DOM.require('#chooserTemplate');
-        Chooser.SEARCHBOX = DOM.require('.chSearchBox', template);
-        Chooser.PICKERBOX = DOM.require('.chChoicesBox', template);
-        template.remove();
+        Chooser.TEMPLATE = DOM.require('#chooserTemplate');
+        Chooser.TEMPLATE.id = '';
+        Chooser.TEMPLATE.classList.remove('hidden');
+        Chooser.TEMPLATE.remove();
     }
     add(value, select = false) {
         let item = document.createElement('dd');
@@ -194,12 +194,10 @@ class StationChooser extends Chooser {
     }
     attach(picker, onSelect) {
         let parent = picker.domForm;
-        let current = this.inputChoices.parentElement;
-        if (!current || current !== parent) {
-            parent.appendChild(this.inputFilter);
-            parent.appendChild(this.inputChoices);
-        }
-        this.reset();
+        let current = this.dom.parentElement;
+        if (!current || current !== parent)
+            parent.appendChild(this.dom);
+        this.visualUnselect();
         this.onSelect = onSelect.bind(picker);
     }
     preselectCode(code) {
@@ -209,111 +207,26 @@ class StationChooser extends Chooser {
             entry.focus();
         }
     }
-    registerDropHandler(handler) {
-        this.inputFilter.ondrop = handler;
-        this.inputChoices.ondrop = handler;
-        this.inputFilter.ondragover = DOM.preventDefault;
-        this.inputChoices.ondragover = DOM.preventDefault;
-    }
-    reset() {
-        this.inputFilter.ondrop = null;
-        this.inputChoices.ondrop = null;
-        this.inputFilter.ondragover = null;
-        this.inputChoices.ondragover = null;
-        this.visualUnselect();
-    }
 }
 class StationListItem {
+    static init() {
+        StationListItem.TEMPLATE = DOM.require('#stationListItemTemplate');
+        StationListItem.TEMPLATE.id = '';
+        StationListItem.TEMPLATE.classList.remove('hidden');
+        StationListItem.TEMPLATE.remove();
+    }
     constructor(picker, code) {
-        this.dom = document.createElement('dd');
+        if (!StationListItem.TEMPLATE)
+            StationListItem.init();
+        this.dom = StationListItem.TEMPLATE.cloneNode(true);
         this.picker = picker;
-        this.dom.draggable = true;
-        this.dom.className = 'unselectable';
         this.dom.innerText = RAG.database.getStation(code, false);
         this.dom.tabIndex = -1;
         this.dom.title =
             "Drag to reorder; double-click or drag into station selector to remove";
         this.dom.dataset['code'] = code;
         this.dom.ondblclick = _ => picker.remove(this.dom);
-        this.dom.ontouchstart = this.onTouchStart.bind(this);
-        this.dom.ontouchmove = this.onTouchMove.bind(this);
-        this.dom.ontouchend = this.onTouchEnd.bind(this);
-        this.dom.ontouchcancel = this.onTouchEnd.bind(this);
-        this.dom.ondragstart = this.onDragStart.bind(this);
-        this.dom.ondragenter = this.onDragEnter.bind(this);
-        this.dom.ondrop = this.onDrop.bind(this);
-        this.dom.ondragend = this.onDragEnd.bind(this);
-        this.dom.ondragover = DOM.preventDefault;
-        this.dom.ondragleave = _ => this.dom.classList.remove('dragover');
-    }
-    touchLayout(touch) {
-        if (!this.phantom || !this.rect)
-            return;
-        this.phantom.style.left =
-            (touch.clientX - this.rect.left + 10) + 'px';
-        this.phantom.style.top =
-            (touch.clientY - this.rect.top + 40) + 'px';
-    }
-    onStart() {
-        this.picker.domDragFrom = this.dom;
-        this.picker.domDragFrom.classList.add('dragging');
-    }
-    onEnd() {
-    }
-    onTouchStart(ev) {
-        if (ev.targetTouches.length > 1)
-            return;
-        ev.preventDefault();
-        let touch = ev.targetTouches[0];
-        let parent = this.dom.parentElement;
-        this.rect = parent.getBoundingClientRect();
-        this.dom.draggable = false;
-        this.phantom = this.dom.cloneNode(true);
-        this.phantom.classList.add('dragPhantom');
-        parent.appendChild(this.phantom);
-        this.touchLayout(touch);
-        this.onStart();
-    }
-    onTouchMove(ev) {
-        this.touchLayout(ev.targetTouches[0]);
-    }
-    onTouchEnd(ev) {
-        if (ev.targetTouches.length > 1)
-            return;
-        ev.preventDefault();
-        this.dom.draggable = true;
-        if (!this.phantom)
-            return;
-        this.phantom.remove();
-        this.phantom = undefined;
-    }
-    onDragStart(ev) {
-        ev.dataTransfer.effectAllowed = "move";
-        ev.dataTransfer.dropEffect = "move";
-        this.onStart();
-    }
-    onDragEnter(_) {
-        if (this.picker.domDragFrom === this.dom)
-            return;
-        this.dom.classList.add('dragover');
-    }
-    onDrop(ev) {
-        if (!ev.target || !this.picker.domDragFrom)
-            throw new Error("Drop event, but target and source are missing");
-        if (ev.target === this.picker.domDragFrom)
-            return;
-        let target = ev.target;
-        DOM.swap(this.picker.domDragFrom, target);
-        target.classList.remove('dragover');
-        this.picker.update();
-    }
-    onDragEnd(ev) {
-        if (!this.picker.domDragFrom)
-            throw new Error("Drag ended but there's no tracked drag element");
-        if (this.picker.domDragFrom !== ev.target)
-            throw new Error("Drag ended, but tracked element doesn't match");
-        this.picker.domDragFrom.classList.remove('dragging');
-        this.picker.domDragFrom = undefined;
+        this.dom.scrollIntoView();
     }
 }
 class Picker {
@@ -340,7 +253,6 @@ class Picker {
     layout() {
         if (!this.domEditing)
             return;
-        let editorRect = RAG.views.editor.getRect();
         let targetRect = this.domEditing.getBoundingClientRect();
         let fullWidth = this.dom.classList.contains('fullWidth');
         let isModal = this.dom.classList.contains('modal');
@@ -382,9 +294,8 @@ class Picker {
             this.domEditing.classList.add('above');
             this.domEditing.classList.remove('below');
         }
-        this.dom.style.transform = fullWidth
-            ? `translateY(${dialogY}px)`
-            : `translate(${dialogX}px, ${dialogY}px)`;
+        this.dom.style.left = (fullWidth ? 0 : dialogX) + 'px';
+        this.dom.style.top = dialogY + 'px';
     }
     close() {
         DOM.blurActive(this.dom);
@@ -623,10 +534,10 @@ class StationPicker extends Picker {
     constructor(tag = 'station') {
         super(tag, ['click']);
         this.currentCtx = '';
-        if (!StationPicker.domChooser)
-            StationPicker.domChooser = new StationChooser(this.domForm);
+        if (!StationPicker.chooser)
+            StationPicker.chooser = new StationChooser(this.domForm);
         this.onOpen = (target) => {
-            let chooser = StationPicker.domChooser;
+            let chooser = StationPicker.chooser;
             this.currentCtx = DOM.requireData(target, 'context');
             chooser.attach(this, this.onSelectStation);
             chooser.preselectCode(RAG.state.getStation(this.currentCtx));
@@ -640,10 +551,10 @@ class StationPicker extends Picker {
         this.onOpen(target);
     }
     onChange(ev) {
-        StationPicker.domChooser.onChange(ev);
+        StationPicker.chooser.onChange(ev);
     }
     onInput(ev) {
-        StationPicker.domChooser.onInput(ev);
+        StationPicker.chooser.onInput(ev);
     }
     onSelectStation(entry) {
         let query = `[data-type=station][data-context=${this.currentCtx}]`;
@@ -659,17 +570,25 @@ class StationListPicker extends StationPicker {
     constructor() {
         super("stationlist");
         this.btnClose = DOM.require('#btnCloseStationListPicker', this.dom);
-        this.inputList = DOM.require('.stations', this.dom);
+        this.inputList = DOM.require('.stationList', this.dom);
         this.domEmptyList = DOM.require('dt', this.inputList);
-        this.listItemTemplate = DOM.require('#stationListItem');
-        this.listItemTemplate.id = '';
-        this.listItemTemplate.classList.remove('hidden');
-        this.listItemTemplate.remove();
         this.btnClose.onclick = () => RAG.views.editor.closeDialog();
+        let sortable = new Draggable.Sortable(this.inputList, {
+            draggable: 'dd'
+        });
+        let droppable = new Draggable.Droppable(this.dom, {
+            draggable: 'dd',
+            dropzone: '.chooser'
+        });
+        sortable.on('mirror:create', ev => {
+            ev.data.source.style.width = ev.data.originalSource.clientWidth + 'px';
+        });
+        droppable.on('droppable:dropped', ev => {
+            console.log(ev);
+        });
         this.onOpen = (target) => {
-            StationPicker.domChooser.attach(this, this.onAddStation);
-            StationPicker.domChooser.registerDropHandler(this.onDrop.bind(this));
-            StationPicker.domChooser.selectOnClick = false;
+            StationPicker.chooser.attach(this, this.onAddStation);
+            StationPicker.chooser.selectOnClick = false;
             this.currentCtx = DOM.requireData(target, 'context');
             let entries = RAG.state.getStationList(this.currentCtx).slice(0);
             this.btnClose.remove();
@@ -714,69 +633,9 @@ class StationListPicker extends StationPicker {
         this.update();
     }
     add(code) {
-        let newEntry = this.listItemTemplate.cloneNode(true);
-        let span = DOM.require('span', newEntry);
-        let btnMoveUp = DOM.require('.moveUp', newEntry);
-        let btnMoveDown = DOM.require('.moveDown', newEntry);
-        let btnDelete = DOM.require('.delete', newEntry);
-        span.innerText = RAG.database.getStation(code, false);
-        newEntry.dataset['code'] = code;
-        newEntry.ondblclick = _ => this.remove(newEntry);
-        newEntry.ondragstart = ev => {
-            this.domDragFrom = newEntry;
-            ev.dataTransfer.effectAllowed = "move";
-            ev.dataTransfer.dropEffect = "move";
-            ev.dataTransfer.setData('text/plain', '');
-            this.domDragFrom.classList.add('dragging');
-        };
-        newEntry.ondrop = ev => {
-            if (!ev.target || !this.domDragFrom)
-                throw new Error("Drop event, but target and source are missing");
-            if (this.domDragFrom.contains(ev.target))
-                return;
-            let target = ev.target;
-            if (target.parentElement && target.parentElement.draggable)
-                target = target.parentElement;
-            DOM.swap(this.domDragFrom, target);
-            target.classList.remove('dragover');
-            this.update();
-        };
-        newEntry.ondragend = ev => {
-            if (!this.domDragFrom)
-                throw new Error("Drag ended but there's no tracked drag element");
-            if (this.domDragFrom !== ev.target)
-                throw new Error("Drag ended, but tracked element doesn't match");
-            this.domDragFrom.classList.remove('dragging');
-            this.domDragFrom = undefined;
-        };
-        newEntry.ondragenter = _ => {
-            if (this.domDragFrom === newEntry)
-                return;
-            newEntry.classList.add('dragover');
-        };
-        newEntry.ondragover = DOM.preventDefault;
-        newEntry.ondragleave = _ => {
-            if (newEntry.contains(_.relatedTarget))
-                return;
-            newEntry.classList.remove('dragover');
-        };
-        btnMoveUp.onclick = _ => {
-            let swap = newEntry.previousElementSibling;
-            if (swap === this.domEmptyList)
-                swap = this.inputList.lastElementChild;
-            DOM.swap(newEntry, swap);
-            newEntry.focus();
-        };
-        btnMoveDown.onclick = _ => {
-            let swap = newEntry.nextElementSibling
-                || this.inputList.children[1];
-            DOM.swap(newEntry, swap);
-            newEntry.focus();
-        };
-        btnDelete.onclick = _ => this.remove(newEntry);
-        this.inputList.appendChild(newEntry);
+        let newEntry = new StationListItem(this, code);
+        this.inputList.appendChild(newEntry.dom);
         this.domEmptyList.classList.add('hidden');
-        newEntry.scrollIntoView();
     }
     remove(entry) {
         if (entry.parentElement !== this.inputList)
@@ -803,9 +662,7 @@ class StationListPicker extends StationPicker {
             .forEach(element => element.textContent = textList);
     }
     onDrop(ev) {
-        if (!ev.target || !this.domDragFrom)
-            throw new Error("Drop event, but target and source are missing");
-        this.remove(this.domDragFrom);
+        console.log(ev);
     }
 }
 class TimePicker extends Picker {

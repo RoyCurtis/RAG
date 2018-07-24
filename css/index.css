@@ -214,7 +214,15 @@
   height: 90%;
   width: 90%;
 }
-.picker .chSearchBox {
+.picker .chooser {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-grow: 1;
+  height: 100%;
+  overflow: auto;
+}
+.picker .chooser .chSearchBox {
   background: #000;
   color: inherit;
   fill: inherit;
@@ -223,15 +231,15 @@
   padding: 16px;
   width: 100%;
 }
-.picker .chChoicesBox {
+.picker .chooser .chChoicesBox {
   flex-basis: 100%;
   overflow: auto;
 }
-.picker .chChoicesBox dl {
+.picker .chooser .chChoicesBox dl {
   display: flex;
   flex-wrap: wrap;
 }
-.picker .chChoicesBox dt {
+.picker .chooser .chChoicesBox dt {
   background: #000;
   box-shadow: 0 5px 10px rgba(0,0,0,0.5);
   font-weight: bold;
@@ -241,13 +249,13 @@
   transform: translateY(-1px);
   width: 100%;
 }
-.picker .chChoicesBox dd {
+.picker .chooser .chChoicesBox dd {
   cursor: pointer;
   display: inline-block;
   padding: 16px;
 }
-.picker .chChoicesBox dd:hover,
-.picker .chChoicesBox dd[selected] {
+.picker .chooser .chChoicesBox dd:hover,
+.picker .chooser .chChoicesBox dd[selected] {
   background: #cc7e00;
 }
 #coachPicker form,
@@ -263,43 +271,52 @@
   width: 64px;
 }
 #phrasesetPicker .chChoicesBox dd {
-  display: block;
-  font-size: large;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: block;
+  font-size: large;
 }
 #stationlistPicker #btnCloseStationListPicker {
   display: none;
 }
-#stationlistPicker .stations {
+#stationlistPicker form {
+  flex-direction: row;
+}
+#stationlistPicker form .stationList {
   background: #000;
-  flex-shrink: 0;
-  max-height: 40%;
+  flex-basis: 30%;
   overflow: auto;
 }
-#stationlistPicker .stations dt {
+#stationlistPicker form .stationList dt {
   color: #aaa;
   padding: 16px;
 }
-#stationlistPicker .stations dd {
+#stationlistPicker form .stationList dd {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   background: #222;
-  border-radius: 8px;
-  border-right: 2px solid #cc7e00;
   cursor: move;
-  display: inline-block;
-  margin: 8px;
+  margin: 4px;
   padding: 8px;
 }
-#stationlistPicker .stations dd:hover,
-#stationlistPicker .stations dd.dragover {
-  background: #cc7e00;
+#stationlistPicker form .stationList dd::before {
+  color: #444;
+  content: '≡';
+  float: right;
+  margin-left: 8px;
 }
-#stationlistPicker .stations dd.dragging {
+#stationlistPicker form .stationList .draggable-mirror {
   opacity: 0.5;
 }
-#stationlistPicker .stations dd button {
+#stationlistPicker form .stationList .draggable--original {
   display: none;
+}
+#stationlistPicker form .chooser {
+  flex-basis: 70%;
+  flex-grow: 0;
+  height: auto;
 }
 #toolbar {
   display: flex;
@@ -550,18 +567,18 @@ iframe {
     height: 48px;
     padding: 8px;
   }
-  .picker .chSearchBox {
+  .picker .chooser .chSearchBox {
     font-size: smaller;
     padding: 8px;
   }
-  .picker .chChoicesBox {
+  .picker .chooser .chChoicesBox {
     font-size: smaller;
   }
-  .picker .chChoicesBox dt {
+  .picker .chooser .chChoicesBox dt {
     padding: 5px 8px;
     font-size: smaller;
   }
-  .picker .chChoicesBox dd {
+  .picker .chooser .chChoicesBox dd {
     padding: 8px;
   }
   #phrasesetPicker .chChoicesBox dd {
@@ -581,44 +598,21 @@ iframe {
     width: 24px;
     height: 24px;
   }
-  #stationlistPicker .stations {
+  #stationlistPicker form {
+    flex-direction: column;
+  }
+  #stationlistPicker form .stationList {
+    flex-basis: 45%;
     font-size: smaller;
   }
-  #stationlistPicker .stations dt {
+  #stationlistPicker form .stationList dd {
+    margin: 0 0 2px 0;
+  }
+  #stationlistPicker form .stationList dt {
     padding: 8px;
   }
-  #stationlistPicker .stations dd {
-    border: none;
-    border-radius: 0;
-    margin: 0;
-    width: 100%;
-  }
-  #stationlistPicker .stations dd:hover {
-    background: #222;
-  }
-  #stationlistPicker .stations dd:focus {
-    background: #cc7e00;
-    display: flex;
-    padding: 0 8px;
-  }
-  #stationlistPicker .stations dd:focus button {
-    background: none;
-    color: #fff;
-    fill: #fff;
-    border: none;
-    display: inline-block;
-    font-size: x-large;
-    margin-bottom: 2px;
-    width: 24px;
-    height: 24px;
-  }
-  #stationlistPicker .stations dd:focus .moveDown {
-    margin-left: 8px;
-  }
-  #stationlistPicker .stations dd:focus span {
-    flex-basis: 100%;
-    padding-top: 12px;
-    text-align: center;
+  #stationlistPicker form .chooser {
+    flex-basis: 55%;
   }
   #settings button {
     font-size: smaller;
@@ -671,7 +665,8 @@ body.ios * {
   cursor: pointer !important;
 }
 body.ios #editor,
-body.ios .chChoicesBox {
+body.ios .chChoicesBox,
+body.ios .stationList {
   -webkit-overflow-scrolling: touch;
 }
 body.ios #editor span {
