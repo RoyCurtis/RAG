@@ -1,0 +1,1 @@
+![Why I still cannot take a Microsoft-made browser seriously, in their own words](https://i.imgur.com/qrAUcat.jpg)
