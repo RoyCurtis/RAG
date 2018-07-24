@@ -5,16 +5,16 @@
 /** Controller for the excuse picker dialog */
 class ExcusePicker extends Picker
 {
-    private readonly domList : FilterableList;
+    private readonly domChooser : Chooser;
 
     constructor()
     {
         super('excuse', ['click']);
 
-        this.domList          = new FilterableList(this.domForm);
-        this.domList.onSelect = e => this.onSelect(e);
+        this.domChooser          = new Chooser(this.domForm);
+        this.domChooser.onSelect = e => this.onSelect(e);
 
-        RAG.database.excuses.forEach( v => this.domList.add(v) );
+        RAG.database.excuses.forEach( v => this.domChooser.add(v) );
     }
 
     public open(target: HTMLElement) : void
@@ -22,23 +22,23 @@ class ExcusePicker extends Picker
         super.open(target);
 
         // Pre-select the currently used excuse
-        this.domList.preselect(RAG.state.excuse);
+        this.domChooser.preselect(RAG.state.excuse);
     }
 
     public close() : void
     {
         super.close();
-        this.domList.onClose();
+        this.domChooser.onClose();
     }
 
     protected onChange(ev: Event) : void
     {
-        this.domList.onChange(ev);
+        this.domChooser.onChange(ev);
     }
 
     protected onInput(ev: KeyboardEvent) : void
     {
-        this.domList.onInput(ev);
+        this.domChooser.onInput(ev);
     }
 
     private onSelect(entry: HTMLElement) : void

@@ -15,6 +15,7 @@
 
   > form
     flexbox(column)
+    height   100%
     overflow auto
 
     input, select, label
@@ -39,14 +40,14 @@
 
   // Filterable list
 
-  .flSearchBox
+  .chSearchBox
     backAndForeColor($bgDarkest, inherit)
     border    none
     font-size inherit
     padding   16px
     width     100%
 
-  .flItemPicker
+  .chChoicesBox
     flex-basis 100%
     overflow   auto
 
@@ -84,7 +85,7 @@
 #phrasesetPicker
 
   // Each phrase item needs to be full width and trimmed
-  .flItemPicker dd
+  .chChoicesBox dd
     display       block
     font-size     large
     overflow      hidden

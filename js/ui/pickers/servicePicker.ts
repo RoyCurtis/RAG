@@ -5,13 +5,13 @@
 /** Controller for the service picker dialog */
 class ServicePicker extends Picker
 {
-    private readonly domList : FilterableList;
+    private readonly domList : Chooser;
 
     constructor()
     {
         super('service', ['click']);
 
-        this.domList          = new FilterableList(this.domForm);
+        this.domList          = new Chooser(this.domForm);
         this.domList.onSelect = e => this.onSelect(e);
 
         RAG.database.services.forEach( v => this.domList.add(v) );

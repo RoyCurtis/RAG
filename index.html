@@ -10,6 +10,7 @@
   <link href="css/index.css" rel="stylesheet" type="text/css"/>
   <!-- TODO: Lang files -->
   <!-- TODO: Animations -->
+  <!-- TODO: Offline cache manifest -->
 
   <meta name="apple-mobile-web-app-capable"          content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -147,11 +148,11 @@
     <header>Pick an excuse</header>
 
     <form>
-      <filterableList
+      <chooser
         placeholder="Filter excuses..."
         title="List of delay or cancellation excuses"
         itemTitle="Click to select this excuse"
-      ></filterableList>
+      ></chooser>
     </form>
   </div>
 
@@ -168,11 +169,11 @@
     <header>Pick a named train</header>
 
     <form>
-      <filterableList
+      <chooser
         placeholder="Filter train name..."
         title="List of train names"
         itemTitle="Click to select this name"
-      ></filterableList>
+      ></chooser>
     </form>
   </div>
 
@@ -180,11 +181,11 @@
     <header>Pick a phrase</header>
 
     <form>
-      <filterableList
+      <chooser
         placeholder="Filter phrases..."
         title="List of phrases"
         itemTitle="Click to select this phrase"
-      ></filterableList>
+      ></chooser>
     </form>
   </div>
 
@@ -207,11 +208,11 @@
     <header>Pick a service</header>
 
     <form>
-      <filterableList
+      <chooser
         placeholder="Filter services..."
         title="List of service names"
         itemTitle="Click to select this service"
-      ></filterableList>
+      ></chooser>
     </form>
   </div>
 
@@ -219,12 +220,12 @@
     <header>Pick a station</header>
 
     <form>
-      <filterableList
+      <chooser
         placeholder="Filter stations..."
         title="List of station names"
         itemTitle="Click to select or add this service"
         groupByABC
-      ></filterableList>
+      ></chooser>
     </form>
   </div>
 
@@ -255,10 +256,10 @@
 
   <!-- UI definitions for common controls -->
 
-  <div id="filterableList" class="hidden">
-    <input class="flSearchBox" type="text" tabindex="50" title=""/>
+  <div id="chooserTemplate" class="hidden">
+    <input class="chSearchBox" type="text" tabindex="50" title=""/>
 
-    <dl class="flItemPicker" tabindex="50"></dl>
+    <dl class="chChoicesBox" tabindex="50"></dl>
   </div>
 
   <dd id="stationListItem" class="hidden unselectable" draggable="true" tabindex="-1"

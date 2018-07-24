@@ -5,16 +5,16 @@
 /** Controller for the named train picker dialog */
 class NamedPicker extends Picker
 {
-    private readonly domList : FilterableList;
+    private readonly domChooser : Chooser;
 
     constructor()
     {
         super('named', ['click']);
 
-        this.domList          = new FilterableList(this.domForm);
-        this.domList.onSelect = e => this.onSelect(e);
+        this.domChooser          = new Chooser(this.domForm);
+        this.domChooser.onSelect = e => this.onSelect(e);
 
-        RAG.database.named.forEach( v => this.domList.add(v) );
+        RAG.database.named.forEach( v => this.domChooser.add(v) );
     }
 
     public open(target: HTMLElement) : void
@@ -22,23 +22,23 @@ class NamedPicker extends Picker
         super.open(target);
 
         // Pre-select the currently used name
-        this.domList.preselect(RAG.state.named);
+        this.domChooser.preselect(RAG.state.named);
     }
 
     public close() : void
     {
         super.close();
-        this.domList.onClose();
+        this.domChooser.onClose();
     }
 
     protected onChange(ev: Event) : void
     {
-        this.domList.onChange(ev);
+        this.domChooser.onChange(ev);
     }
 
     protected onInput(ev: KeyboardEvent) : void
     {
-        this.domList.onInput(ev);
+        this.domChooser.onInput(ev);
     }
 
     private onSelect(entry: HTMLElement) : void

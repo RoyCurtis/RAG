@@ -187,6 +187,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  height: 100%;
   overflow: auto;
 }
 .picker > form input,
@@ -213,7 +214,7 @@
   height: 90%;
   width: 90%;
 }
-.picker .flSearchBox {
+.picker .chSearchBox {
   background: #000;
   color: inherit;
   fill: inherit;
@@ -222,15 +223,15 @@
   padding: 16px;
   width: 100%;
 }
-.picker .flItemPicker {
+.picker .chChoicesBox {
   flex-basis: 100%;
   overflow: auto;
 }
-.picker .flItemPicker dl {
+.picker .chChoicesBox dl {
   display: flex;
   flex-wrap: wrap;
 }
-.picker .flItemPicker dt {
+.picker .chChoicesBox dt {
   background: #000;
   box-shadow: 0 5px 10px rgba(0,0,0,0.5);
   font-weight: bold;
@@ -240,13 +241,13 @@
   transform: translateY(-1px);
   width: 100%;
 }
-.picker .flItemPicker dd {
+.picker .chChoicesBox dd {
   cursor: pointer;
   display: inline-block;
   padding: 16px;
 }
-.picker .flItemPicker dd:hover,
-.picker .flItemPicker dd[selected] {
+.picker .chChoicesBox dd:hover,
+.picker .chChoicesBox dd[selected] {
   background: #cc7e00;
 }
 #coachPicker form,
@@ -261,7 +262,7 @@
 #timePicker form input {
   width: 64px;
 }
-#phrasesetPicker .flItemPicker dd {
+#phrasesetPicker .chChoicesBox dd {
   display: block;
   font-size: large;
   overflow: hidden;
@@ -549,21 +550,21 @@ iframe {
     height: 48px;
     padding: 8px;
   }
-  .picker .flSearchBox {
+  .picker .chSearchBox {
     font-size: smaller;
     padding: 8px;
   }
-  .picker .flItemPicker {
+  .picker .chChoicesBox {
     font-size: smaller;
   }
-  .picker .flItemPicker dt {
+  .picker .chChoicesBox dt {
     padding: 5px 8px;
     font-size: smaller;
   }
-  .picker .flItemPicker dd {
+  .picker .chChoicesBox dd {
     padding: 8px;
   }
-  #phrasesetPicker .flItemPicker dd {
+  #phrasesetPicker .chChoicesBox dd {
     font-size: smaller;
     padding: 12px 8px;
   }
@@ -670,7 +671,7 @@ body.ios * {
   cursor: pointer !important;
 }
 body.ios #editor,
-body.ios .flItemPicker {
+body.ios .chChoicesBox {
   -webkit-overflow-scrolling: touch;
 }
 body.ios #editor span {
@@ -688,7 +689,7 @@ body.ios select {
   -ms-user-select: text !important;
   user-select: text !important;
 }
-body.ios .flItemPicker dt {
+body.ios .chChoicesBox dt {
   position: -webkit-sticky;
 }
 /*# sourceMappingURL=css/index.css.map */

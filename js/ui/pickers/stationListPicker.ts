@@ -38,9 +38,9 @@ class StationListPicker extends StationPicker
 
         this.onOpen = (target) =>
         {
-            StationPicker.domList.attach(this, this.onAddStation);
-            StationPicker.domList.registerDropHandler( this.onDrop.bind(this) );
-            StationPicker.domList.selectOnClick = false;
+            StationPicker.domChooser.attach(this, this.onAddStation);
+            StationPicker.domChooser.registerDropHandler( this.onDrop.bind(this) );
+            StationPicker.domChooser.selectOnClick = false;
 
             this.currentCtx = DOM.requireData(target, 'context');
             let entries     = RAG.state.getStationList(this.currentCtx).slice(0);

@@ -5,7 +5,7 @@
  * stations, this element would take up a lot of memory and generate a lot of DOM. So, it
  * has to be "swapped" between pickers and views that want to use it.
  */
-class StationList extends FilterableList
+class StationChooser extends Chooser
 {
     /** Shortcut references to all the generated A-Z station list elements */
     private readonly domStations : Dictionary<HTMLDListElement> = {};
@@ -14,7 +14,7 @@ class StationList extends FilterableList
     {
         super(parent);
 
-        this.inputList.tabIndex = 0;
+        this.inputChoices.tabIndex = 0;
 
         // Next, populate the list of stations from the database. We do this by creating
         // a dl element for each letter of the alphabet, creating a dt element header, and
@@ -39,7 +39,7 @@ class StationList extends FilterableList
 
                 group.setAttribute('group', '');
                 group.appendChild(header);
-                this.inputList.appendChild(group);
+                this.inputChoices.appendChild(group);
             }
 
             let entry             = document.createElement('dd');
@@ -56,12 +56,12 @@ class StationList extends FilterableList
     public attach(picker: Picker, onSelect: SelectDelegate) : void
     {
         let parent  = picker.domForm;
-        let current = this.inputList.parentElement;
+        let current = this.inputChoices.parentElement;
 
         if (!current || current !== parent)
         {
             parent.appendChild(this.inputFilter);
-            parent.appendChild(this.inputList);
+            parent.appendChild(this.inputChoices);
         }
 
         this.reset();
@@ -72,7 +72,7 @@ class StationList extends FilterableList
     /** Pre-selects a station entry by its code */
     public preselectCode(code: string) : void
     {
-        let entry = this.inputList.querySelector(`dd[data-code=${code}]`) as HTMLElement;
+        let entry = this.inputChoices.querySelector(`dd[data-code=${code}]`) as HTMLElement;
 
         if (entry)
         {
@@ -85,17 +85,17 @@ class StationList extends FilterableList
     public registerDropHandler(handler: DragDelegate) : void
     {
         this.inputFilter.ondrop     = handler;
-        this.inputList.ondrop       = handler;
+        this.inputChoices.ondrop       = handler;
         this.inputFilter.ondragover = DOM.preventDefault;
-        this.inputList.ondragover   = DOM.preventDefault;
+        this.inputChoices.ondragover   = DOM.preventDefault;
     }
 
     private reset() : void
     {
         this.inputFilter.ondrop     = null;
-        this.inputList.ondrop       = null;
+        this.inputChoices.ondrop       = null;
         this.inputFilter.ondragover = null;
-        this.inputList.ondragover   = null;
+        this.inputChoices.ondragover   = null;
         this.visualUnselect();
     }
 }

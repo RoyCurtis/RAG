@@ -1,20 +1,20 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/** Delegate type for list select event handlers */
+/** Delegate type for chooser select event handlers */
 type SelectDelegate = (entry: HTMLElement) => void;
 
 /** UI element with a filterable and keyboard navigable list of choices */
-class FilterableList
+class Chooser
 {
     private static SEARCHBOX : HTMLElement;
     private static PICKERBOX : HTMLElement;
 
     private static init() : void
     {
-        let template = DOM.require('#filterableList');
+        let template = DOM.require('#chooserTemplate');
 
-        FilterableList.SEARCHBOX = DOM.require('.flSearchBox',  template);
-        FilterableList.PICKERBOX = DOM.require('.flItemPicker', template);
+        Chooser.SEARCHBOX = DOM.require('.chSearchBox',  template);
+        Chooser.PICKERBOX = DOM.require('.chChoicesBox', template);
         template.remove();
     }
 
@@ -24,11 +24,11 @@ class FilterableList
     /** Whether to visually select the clicked element */
     public    selectOnClick : boolean = true;
 
-    /** DOM reference to this list's filter input box */
+    /** DOM reference to this chooser's filter input box */
     protected inputFilter   : HTMLInputElement;
 
-    /** DOM reference to this list's container of item elements */
-    protected inputList     : HTMLElement;
+    /** DOM reference to this chooser's container of item elements */
+    protected inputChoices : HTMLElement;
 
     /** DOM reference to the currently selected item, if any */
     protected domSelected?  : HTMLElement;
@@ -42,31 +42,31 @@ class FilterableList
     /** Whether to group added elements by alphabetical sections */
     protected groupByABC    : boolean = false;
 
-    /** Creates a filterable list, by replacing the placeholder in a given parent */
+    /** Creates a chooser, by replacing the placeholder in a given parent */
     constructor(parent: HTMLElement)
     {
-        if (!FilterableList.SEARCHBOX)
-            FilterableList.init();
+        if (!Chooser.SEARCHBOX)
+            Chooser.init();
 
-        let target      = DOM.require('filterableList', parent);
+        let target      = DOM.require('chooser', parent);
         let placeholder = DOM.getAttr(target, 'placeholder', 'Filter choices...');
         let title       = DOM.getAttr(target, 'title', 'List of choices');
         this.itemTitle  = DOM.getAttr(target, 'itemTitle', this.itemTitle);
         this.groupByABC = target.hasAttribute('groupByABC');
 
-        this.inputFilter = FilterableList.SEARCHBOX.cloneNode(false) as HTMLInputElement;
-        this.inputList   = FilterableList.PICKERBOX.cloneNode(false) as HTMLElement;
+        this.inputFilter  = Chooser.SEARCHBOX.cloneNode(false) as HTMLInputElement;
+        this.inputChoices = Chooser.PICKERBOX.cloneNode(false) as HTMLElement;
 
-        this.inputList.title         = title;
+        this.inputChoices.title         = title;
         this.inputFilter.placeholder = placeholder;
 
         target.remove();
         parent.appendChild(this.inputFilter);
-        parent.appendChild(this.inputList);
+        parent.appendChild(this.inputChoices);
     }
 
     /**
-     * Adds the given value to the list as a selectable item.
+     * Adds the given value to the chooser as a selectable item.
      *
      * @param {string} value Text of the selectable item
      * @param {boolean} select Whether to select this item once added
@@ -81,9 +81,9 @@ class FilterableList
     }
 
     /**
-     * Adds the given element to the list as a selectable item.
+     * Adds the given element to the chooser as a selectable item.
      *
-     * @param {string} item Element to add to the list
+     * @param {string} item Element to add to the chooser
      * @param {boolean} select Whether to select this item once added
      */
     public addRaw(item: HTMLElement, select: boolean = false) : void
@@ -91,7 +91,7 @@ class FilterableList
         item.title    = this.itemTitle;
         item.tabIndex = -1;
 
-        this.inputList.appendChild(item);
+        this.inputChoices.appendChild(item);
 
         if (select)
         {
@@ -100,19 +100,19 @@ class FilterableList
         }
     }
 
-    /** Clears all items from this list and the current filter */
+    /** Clears all items from this chooser and the current filter */
     public clear() : void
     {
-        this.inputList.innerHTML = '';
-        this.inputFilter.value   = '';
+        this.inputChoices.innerHTML = '';
+        this.inputFilter.value      = '';
     }
 
     /** Select and focus the entry that matches the given value */
     public preselect(value: string) : void
     {
-        for (let key in this.inputList.children)
+        for (let key in this.inputChoices.children)
         {
-            let item = this.inputList.children[key] as HTMLElement;
+            let item = this.inputChoices.children[key] as HTMLElement;
 
             if (value === item.innerText)
             {
@@ -137,7 +137,7 @@ class FilterableList
             this.filter();
 
         // Make sure target is descendant of this control
-        else if ( !this.inputFilter.contains(target) && !this.inputList.contains(target) )
+        else if ( !this.owns(target) )
             return;
 
         // Handle item being clicked
@@ -160,8 +160,8 @@ class FilterableList
 
         if (!focused) return;
 
-        // Only handle events on this list's controls
-        if ( !this.inputFilter.contains(focused) && !this.inputList.contains(focused) )
+        // Only handle events on this chooser's controls
+        if ( !this.owns(focused) )
             return;
 
         // Handle typing into filter box
@@ -179,7 +179,7 @@ class FilterableList
             return this.inputFilter.focus();
 
         // Handle pressing ENTER after keyboard navigating to an item
-        if ( parent === this.inputList || parent.hasAttribute('group') )
+        if ( parent === this.inputChoices || parent.hasAttribute('group') )
         if (key === 'Enter')
             return this.select(focused as HTMLElement);
 
@@ -193,8 +193,8 @@ class FilterableList
             if      ( this.groupByABC && parent.hasAttribute('group') )
                 nav = DOM.getNextFocusableSibling(focused, dir);
 
-            // Navigate relative to currently focused element, if list is flat
-            else if (!this.groupByABC && focused.parentElement === this.inputList)
+            // Navigate relative to currently focused element, if choices are flat
+            else if (!this.groupByABC && focused.parentElement === this.inputChoices)
                 nav = DOM.getNextFocusableSibling(focused, dir);
 
             // Navigate relative to currently selected element
@@ -215,26 +215,26 @@ class FilterableList
         }
     }
 
-    /** Hide or show items of the list if they partially match the user query */
+    /** Hide or show choices if they partially match the user query */
     protected filter() : void
     {
         // TODO: Can this be any further optimized? Debug with profiler
         window.clearTimeout(this.filterTimeout);
 
         let filter = this.inputFilter.value.toLowerCase();
-        let items  = this.inputList.children;
+        let items  = this.inputChoices.children;
         let engine = this.groupByABC
-            ? FilterableList.filterGroup
-            : FilterableList.filterItem;
+            ? Chooser.filterGroup
+            : Chooser.filterItem;
 
         // Prevent browser redraw/reflow during filtering
-        this.inputList.classList.add('hidden');
+        this.inputChoices.classList.add('hidden');
 
         // Iterate through all the items
         for (let i = 0; i < items.length; i++)
             engine(items[i] as HTMLElement, filter);
 
-        this.inputList.classList.remove('hidden');
+        this.inputChoices.classList.remove('hidden');
     }
 
     /** Applies filter to an item, showing it if matched, hiding if not */
@@ -264,7 +264,7 @@ class FilterableList
 
         // Iterate through each station name in this letter section. Header skipped.
         for (let i = 1; i < entries.length; i++)
-            hidden += FilterableList.filterItem(entries[i] as HTMLElement, filter);
+            hidden += Chooser.filterItem(entries[i] as HTMLElement, filter);
 
         // If all station names in this letter section were hidden, hide the section
         if (hidden >= count)
@@ -307,5 +307,15 @@ class FilterableList
         this.domSelected.removeAttribute('selected');
         this.domSelected.tabIndex = -1;
         this.domSelected          = undefined;
+    }
+
+    /**
+     * Whether this chooser is an ancestor (owner) of the given element.
+     *
+     * @param target Element to check if this chooser is an ancestor of
+     */
+    protected owns(target: HTMLElement) : boolean
+    {
+        return this.inputFilter.contains(target) || this.inputChoices.contains(target);
     }
 }

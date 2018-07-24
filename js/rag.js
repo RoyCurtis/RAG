@@ -1,29 +1,29 @@
 "use strict";
-class FilterableList {
+class Chooser {
     constructor(parent) {
         this.selectOnClick = true;
         this.filterTimeout = 0;
         this.itemTitle = 'Click to select this item';
         this.groupByABC = false;
-        if (!FilterableList.SEARCHBOX)
-            FilterableList.init();
-        let target = DOM.require('filterableList', parent);
+        if (!Chooser.SEARCHBOX)
+            Chooser.init();
+        let target = DOM.require('chooser', parent);
         let placeholder = DOM.getAttr(target, 'placeholder', 'Filter choices...');
         let title = DOM.getAttr(target, 'title', 'List of choices');
         this.itemTitle = DOM.getAttr(target, 'itemTitle', this.itemTitle);
         this.groupByABC = target.hasAttribute('groupByABC');
-        this.inputFilter = FilterableList.SEARCHBOX.cloneNode(false);
-        this.inputList = FilterableList.PICKERBOX.cloneNode(false);
-        this.inputList.title = title;
+        this.inputFilter = Chooser.SEARCHBOX.cloneNode(false);
+        this.inputChoices = Chooser.PICKERBOX.cloneNode(false);
+        this.inputChoices.title = title;
         this.inputFilter.placeholder = placeholder;
         target.remove();
         parent.appendChild(this.inputFilter);
-        parent.appendChild(this.inputList);
+        parent.appendChild(this.inputChoices);
     }
     static init() {
-        let template = DOM.require('#filterableList');
-        FilterableList.SEARCHBOX = DOM.require('.flSearchBox', template);
-        FilterableList.PICKERBOX = DOM.require('.flItemPicker', template);
+        let template = DOM.require('#chooserTemplate');
+        Chooser.SEARCHBOX = DOM.require('.chSearchBox', template);
+        Chooser.PICKERBOX = DOM.require('.chChoicesBox', template);
         template.remove();
     }
     add(value, select = false) {
@@ -34,19 +34,19 @@ class FilterableList {
     addRaw(item, select = false) {
         item.title = this.itemTitle;
         item.tabIndex = -1;
-        this.inputList.appendChild(item);
+        this.inputChoices.appendChild(item);
         if (select) {
             this.visualSelect(item);
             item.focus();
         }
     }
     clear() {
-        this.inputList.innerHTML = '';
+        this.inputChoices.innerHTML = '';
         this.inputFilter.value = '';
     }
     preselect(value) {
-        for (let key in this.inputList.children) {
-            let item = this.inputList.children[key];
+        for (let key in this.inputChoices.children) {
+            let item = this.inputChoices.children[key];
             if (value === item.innerText) {
                 this.visualSelect(item);
                 item.focus();
@@ -60,7 +60,7 @@ class FilterableList {
             return;
         else if (ev.type.toLowerCase() === 'submit')
             this.filter();
-        else if (!this.inputFilter.contains(target) && !this.inputList.contains(target))
+        else if (!this.owns(target))
             return;
         else if (target.tagName.toLowerCase() === 'dd')
             this.select(target);
@@ -74,7 +74,7 @@ class FilterableList {
         let parent = focused.parentElement;
         if (!focused)
             return;
-        if (!this.inputFilter.contains(focused) && !this.inputList.contains(focused))
+        if (!this.owns(focused))
             return;
         if (focused === this.inputFilter) {
             window.clearTimeout(this.filterTimeout);
@@ -84,7 +84,7 @@ class FilterableList {
         if (focused !== this.inputFilter)
             if (key.length === 1 || key === 'Backspace')
                 return this.inputFilter.focus();
-        if (parent === this.inputList || parent.hasAttribute('group'))
+        if (parent === this.inputChoices || parent.hasAttribute('group'))
             if (key === 'Enter')
                 return this.select(focused);
         if (key === 'ArrowLeft' || key === 'ArrowRight') {
@@ -92,7 +92,7 @@ class FilterableList {
             let nav = null;
             if (this.groupByABC && parent.hasAttribute('group'))
                 nav = DOM.getNextFocusableSibling(focused, dir);
-            else if (!this.groupByABC && focused.parentElement === this.inputList)
+            else if (!this.groupByABC && focused.parentElement === this.inputChoices)
                 nav = DOM.getNextFocusableSibling(focused, dir);
             else if (focused === this.domSelected)
                 nav = DOM.getNextFocusableSibling(this.domSelected, dir);
@@ -107,14 +107,14 @@ class FilterableList {
     filter() {
         window.clearTimeout(this.filterTimeout);
         let filter = this.inputFilter.value.toLowerCase();
-        let items = this.inputList.children;
+        let items = this.inputChoices.children;
         let engine = this.groupByABC
-            ? FilterableList.filterGroup
-            : FilterableList.filterItem;
-        this.inputList.classList.add('hidden');
+            ? Chooser.filterGroup
+            : Chooser.filterItem;
+        this.inputChoices.classList.add('hidden');
         for (let i = 0; i < items.length; i++)
             engine(items[i], filter);
-        this.inputList.classList.remove('hidden');
+        this.inputChoices.classList.remove('hidden');
     }
     static filterItem(item, filter) {
         if (item.innerText.toLowerCase().indexOf(filter) >= 0) {
@@ -131,7 +131,7 @@ class FilterableList {
         let count = entries.length - 1;
         let hidden = 0;
         for (let i = 1; i < entries.length; i++)
-            hidden += FilterableList.filterItem(entries[i], filter);
+            hidden += Chooser.filterItem(entries[i], filter);
         if (hidden >= count)
             group.classList.add('hidden');
         else
@@ -159,12 +159,15 @@ class FilterableList {
         this.domSelected.tabIndex = -1;
         this.domSelected = undefined;
     }
+    owns(target) {
+        return this.inputFilter.contains(target) || this.inputChoices.contains(target);
+    }
 }
-class StationList extends FilterableList {
+class StationChooser extends Chooser {
     constructor(parent) {
         super(parent);
         this.domStations = {};
-        this.inputList.tabIndex = 0;
+        this.inputChoices.tabIndex = 0;
         Object.keys(RAG.database.stations).forEach(code => {
             let station = RAG.database.stations[code];
             let letter = station[0];
@@ -179,7 +182,7 @@ class StationList extends FilterableList {
                 group.tabIndex = 50;
                 group.setAttribute('group', '');
                 group.appendChild(header);
-                this.inputList.appendChild(group);
+                this.inputChoices.appendChild(group);
             }
             let entry = document.createElement('dd');
             entry.dataset['code'] = code;
@@ -191,16 +194,16 @@ class StationList extends FilterableList {
     }
     attach(picker, onSelect) {
         let parent = picker.domForm;
-        let current = this.inputList.parentElement;
+        let current = this.inputChoices.parentElement;
         if (!current || current !== parent) {
             parent.appendChild(this.inputFilter);
-            parent.appendChild(this.inputList);
+            parent.appendChild(this.inputChoices);
         }
         this.reset();
         this.onSelect = onSelect.bind(picker);
     }
     preselectCode(code) {
-        let entry = this.inputList.querySelector(`dd[data-code=${code}]`);
+        let entry = this.inputChoices.querySelector(`dd[data-code=${code}]`);
         if (entry) {
             this.visualSelect(entry);
             entry.focus();
@@ -208,16 +211,109 @@ class StationList extends FilterableList {
     }
     registerDropHandler(handler) {
         this.inputFilter.ondrop = handler;
-        this.inputList.ondrop = handler;
+        this.inputChoices.ondrop = handler;
         this.inputFilter.ondragover = DOM.preventDefault;
-        this.inputList.ondragover = DOM.preventDefault;
+        this.inputChoices.ondragover = DOM.preventDefault;
     }
     reset() {
         this.inputFilter.ondrop = null;
-        this.inputList.ondrop = null;
+        this.inputChoices.ondrop = null;
         this.inputFilter.ondragover = null;
-        this.inputList.ondragover = null;
+        this.inputChoices.ondragover = null;
         this.visualUnselect();
+    }
+}
+class StationListItem {
+    constructor(picker, code) {
+        this.dom = document.createElement('dd');
+        this.picker = picker;
+        this.dom.draggable = true;
+        this.dom.className = 'unselectable';
+        this.dom.innerText = RAG.database.getStation(code, false);
+        this.dom.tabIndex = -1;
+        this.dom.title =
+            "Drag to reorder; double-click or drag into station selector to remove";
+        this.dom.dataset['code'] = code;
+        this.dom.ondblclick = _ => picker.remove(this.dom);
+        this.dom.ontouchstart = this.onTouchStart.bind(this);
+        this.dom.ontouchmove = this.onTouchMove.bind(this);
+        this.dom.ontouchend = this.onTouchEnd.bind(this);
+        this.dom.ontouchcancel = this.onTouchEnd.bind(this);
+        this.dom.ondragstart = this.onDragStart.bind(this);
+        this.dom.ondragenter = this.onDragEnter.bind(this);
+        this.dom.ondrop = this.onDrop.bind(this);
+        this.dom.ondragend = this.onDragEnd.bind(this);
+        this.dom.ondragover = DOM.preventDefault;
+        this.dom.ondragleave = _ => this.dom.classList.remove('dragover');
+    }
+    touchLayout(touch) {
+        if (!this.phantom || !this.rect)
+            return;
+        this.phantom.style.left =
+            (touch.clientX - this.rect.left + 10) + 'px';
+        this.phantom.style.top =
+            (touch.clientY - this.rect.top + 40) + 'px';
+    }
+    onStart() {
+        this.picker.domDragFrom = this.dom;
+        this.picker.domDragFrom.classList.add('dragging');
+    }
+    onEnd() {
+    }
+    onTouchStart(ev) {
+        if (ev.targetTouches.length > 1)
+            return;
+        ev.preventDefault();
+        let touch = ev.targetTouches[0];
+        let parent = this.dom.parentElement;
+        this.rect = parent.getBoundingClientRect();
+        this.dom.draggable = false;
+        this.phantom = this.dom.cloneNode(true);
+        this.phantom.classList.add('dragPhantom');
+        parent.appendChild(this.phantom);
+        this.touchLayout(touch);
+        this.onStart();
+    }
+    onTouchMove(ev) {
+        this.touchLayout(ev.targetTouches[0]);
+    }
+    onTouchEnd(ev) {
+        if (ev.targetTouches.length > 1)
+            return;
+        ev.preventDefault();
+        this.dom.draggable = true;
+        if (!this.phantom)
+            return;
+        this.phantom.remove();
+        this.phantom = undefined;
+    }
+    onDragStart(ev) {
+        ev.dataTransfer.effectAllowed = "move";
+        ev.dataTransfer.dropEffect = "move";
+        this.onStart();
+    }
+    onDragEnter(_) {
+        if (this.picker.domDragFrom === this.dom)
+            return;
+        this.dom.classList.add('dragover');
+    }
+    onDrop(ev) {
+        if (!ev.target || !this.picker.domDragFrom)
+            throw new Error("Drop event, but target and source are missing");
+        if (ev.target === this.picker.domDragFrom)
+            return;
+        let target = ev.target;
+        DOM.swap(this.picker.domDragFrom, target);
+        target.classList.remove('dragover');
+        this.picker.update();
+    }
+    onDragEnd(ev) {
+        if (!this.picker.domDragFrom)
+            throw new Error("Drag ended but there's no tracked drag element");
+        if (this.picker.domDragFrom !== ev.target)
+            throw new Error("Drag ended, but tracked element doesn't match");
+        this.picker.domDragFrom.classList.remove('dragging');
+        this.picker.domDragFrom = undefined;
     }
 }
 class Picker {
@@ -330,23 +426,23 @@ class CoachPicker extends Picker {
 class ExcusePicker extends Picker {
     constructor() {
         super('excuse', ['click']);
-        this.domList = new FilterableList(this.domForm);
-        this.domList.onSelect = e => this.onSelect(e);
-        RAG.database.excuses.forEach(v => this.domList.add(v));
+        this.domChooser = new Chooser(this.domForm);
+        this.domChooser.onSelect = e => this.onSelect(e);
+        RAG.database.excuses.forEach(v => this.domChooser.add(v));
     }
     open(target) {
         super.open(target);
-        this.domList.preselect(RAG.state.excuse);
+        this.domChooser.preselect(RAG.state.excuse);
     }
     close() {
         super.close();
-        this.domList.onClose();
+        this.domChooser.onClose();
     }
     onChange(ev) {
-        this.domList.onChange(ev);
+        this.domChooser.onChange(ev);
     }
     onInput(ev) {
-        this.domList.onInput(ev);
+        this.domChooser.onInput(ev);
     }
     onSelect(entry) {
         RAG.state.excuse = entry.innerText;
@@ -406,23 +502,23 @@ class IntegerPicker extends Picker {
 class NamedPicker extends Picker {
     constructor() {
         super('named', ['click']);
-        this.domList = new FilterableList(this.domForm);
-        this.domList.onSelect = e => this.onSelect(e);
-        RAG.database.named.forEach(v => this.domList.add(v));
+        this.domChooser = new Chooser(this.domForm);
+        this.domChooser.onSelect = e => this.onSelect(e);
+        RAG.database.named.forEach(v => this.domChooser.add(v));
     }
     open(target) {
         super.open(target);
-        this.domList.preselect(RAG.state.named);
+        this.domChooser.preselect(RAG.state.named);
     }
     close() {
         super.close();
-        this.domList.onClose();
+        this.domChooser.onClose();
     }
     onChange(ev) {
-        this.domList.onChange(ev);
+        this.domChooser.onChange(ev);
     }
     onInput(ev) {
-        this.domList.onInput(ev);
+        this.domChooser.onInput(ev);
     }
     onSelect(entry) {
         RAG.state.named = entry.innerText;
@@ -432,8 +528,8 @@ class NamedPicker extends Picker {
 class PhrasesetPicker extends Picker {
     constructor() {
         super('phraseset', ['click']);
-        this.domList = new FilterableList(this.domForm);
-        this.domList.onSelect = e => this.onSelect(e);
+        this.domChooser = new Chooser(this.domForm);
+        this.domChooser.onSelect = e => this.onSelect(e);
     }
     open(target) {
         super.open(target);
@@ -444,25 +540,25 @@ class PhrasesetPicker extends Picker {
             throw new Error(`Phraseset '${ref}' doesn't exist`);
         this.currentRef = ref;
         this.domHeader.innerText = `Pick a phrase for the '${ref}' section`;
-        this.domList.clear();
+        this.domChooser.clear();
         for (let i = 0; i < phraseset.children.length; i++) {
             let phrase = document.createElement('dd');
             DOM.cloneInto(phraseset.children[i], phrase);
             RAG.phraser.process(phrase);
             phrase.innerText = DOM.getCleanedVisibleText(phrase);
             phrase.dataset.idx = i.toString();
-            this.domList.addRaw(phrase, i === idx);
+            this.domChooser.addRaw(phrase, i === idx);
         }
     }
     close() {
         super.close();
-        this.domList.onClose();
+        this.domChooser.onClose();
     }
     onChange(ev) {
-        this.domList.onChange(ev);
+        this.domChooser.onChange(ev);
     }
     onInput(ev) {
-        this.domList.onInput(ev);
+        this.domChooser.onInput(ev);
     }
     onSelect(entry) {
         if (!this.currentRef)
@@ -500,7 +596,7 @@ class PlatformPicker extends Picker {
 class ServicePicker extends Picker {
     constructor() {
         super('service', ['click']);
-        this.domList = new FilterableList(this.domForm);
+        this.domList = new Chooser(this.domForm);
         this.domList.onSelect = e => this.onSelect(e);
         RAG.database.services.forEach(v => this.domList.add(v));
     }
@@ -527,13 +623,14 @@ class StationPicker extends Picker {
     constructor(tag = 'station') {
         super(tag, ['click']);
         this.currentCtx = '';
-        if (!StationPicker.domList)
-            StationPicker.domList = new StationList(this.domForm);
+        if (!StationPicker.domChooser)
+            StationPicker.domChooser = new StationChooser(this.domForm);
         this.onOpen = (target) => {
+            let chooser = StationPicker.domChooser;
             this.currentCtx = DOM.requireData(target, 'context');
-            StationPicker.domList.attach(this, this.onSelectStation);
-            StationPicker.domList.preselectCode(RAG.state.getStation(this.currentCtx));
-            StationPicker.domList.selectOnClick = true;
+            chooser.attach(this, this.onSelectStation);
+            chooser.preselectCode(RAG.state.getStation(this.currentCtx));
+            chooser.selectOnClick = true;
             this.domHeader.innerText =
                 `Pick a station for the '${this.currentCtx}' context`;
         };
@@ -543,10 +640,10 @@ class StationPicker extends Picker {
         this.onOpen(target);
     }
     onChange(ev) {
-        StationPicker.domList.onChange(ev);
+        StationPicker.domChooser.onChange(ev);
     }
     onInput(ev) {
-        StationPicker.domList.onInput(ev);
+        StationPicker.domChooser.onInput(ev);
     }
     onSelectStation(entry) {
         let query = `[data-type=station][data-context=${this.currentCtx}]`;
@@ -570,9 +667,9 @@ class StationListPicker extends StationPicker {
         this.listItemTemplate.remove();
         this.btnClose.onclick = () => RAG.views.editor.closeDialog();
         this.onOpen = (target) => {
-            StationPicker.domList.attach(this, this.onAddStation);
-            StationPicker.domList.registerDropHandler(this.onDrop.bind(this));
-            StationPicker.domList.selectOnClick = false;
+            StationPicker.domChooser.attach(this, this.onAddStation);
+            StationPicker.domChooser.registerDropHandler(this.onDrop.bind(this));
+            StationPicker.domChooser.selectOnClick = false;
             this.currentCtx = DOM.requireData(target, 'context');
             let entries = RAG.state.getStationList(this.currentCtx).slice(0);
             this.btnClose.remove();

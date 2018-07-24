@@ -5,7 +5,7 @@
 /** Controller for the phraseset picker dialog */
 class PhrasesetPicker extends Picker
 {
-    private readonly domList : FilterableList;
+    private readonly domChooser : Chooser;
 
     private currentRef? : string;
 
@@ -13,8 +13,8 @@ class PhrasesetPicker extends Picker
     {
         super('phraseset', ['click']);
 
-        this.domList          = new FilterableList(this.domForm);
-        this.domList.onSelect = e => this.onSelect(e);
+        this.domChooser          = new Chooser(this.domForm);
+        this.domChooser.onSelect = e => this.onSelect(e);
     }
 
     public open(target: HTMLElement) : void
@@ -32,7 +32,7 @@ class PhrasesetPicker extends Picker
         this.currentRef          = ref;
         this.domHeader.innerText = `Pick a phrase for the '${ref}' section`;
 
-        this.domList.clear();
+        this.domChooser.clear();
 
         // For each phrase, we need to run it through the phraser using the current state
         // to generate "previews" of how the phrase will look.
@@ -46,24 +46,24 @@ class PhrasesetPicker extends Picker
             phrase.innerText   = DOM.getCleanedVisibleText(phrase);
             phrase.dataset.idx = i.toString();
 
-            this.domList.addRaw(phrase, i === idx);
+            this.domChooser.addRaw(phrase, i === idx);
         }
     }
 
     public close() : void
     {
         super.close();
-        this.domList.onClose();
+        this.domChooser.onClose();
     }
 
     protected onChange(ev: Event) : void
     {
-        this.domList.onChange(ev);
+        this.domChooser.onChange(ev);
     }
 
     protected onInput(ev: KeyboardEvent) : void
     {
-        this.domList.onInput(ev);
+        this.domChooser.onInput(ev);
     }
 
     private onSelect(entry: HTMLElement) : void
