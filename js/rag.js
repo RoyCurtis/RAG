@@ -254,7 +254,7 @@ class Picker {
         let dialogY = targetRect.bottom | 0;
         let dialogW = (targetRect.width | 0) + 16;
         if (!fullWidth && !isModal) {
-            if (RAG.views.isMobile) {
+            if (DOM.isMobile) {
                 this.dom.style.width = `100%`;
                 dialogX = 0;
             }
@@ -266,9 +266,9 @@ class Picker {
             }
         }
         if (isModal) {
-            dialogX = RAG.views.isMobile ? 0 :
+            dialogX = DOM.isMobile ? 0 :
                 ((docW * 0.1) / 2) | 0;
-            dialogY = RAG.views.isMobile ? 0 :
+            dialogY = DOM.isMobile ? 0 :
                 ((docH * 0.1) / 2) | 0;
         }
         else if (dialogY < editorRect.y)
@@ -985,7 +985,7 @@ class Editor {
     onScroll(_) {
         if (!this.currentPicker)
             return;
-        if (RAG.views.isMobile)
+        if (DOM.isMobile)
             if (this.currentPicker.hasFocus())
                 DOM.blurActive();
         this.currentPicker.layout();
@@ -1028,9 +1028,9 @@ class Marquee {
         let last = 0;
         let limit = -this.domSpan.clientWidth - 100;
         let anim = (time) => {
-            let stepPerMs = (RAG.views.isMobile ? 5 : 7) / (1000 / 60);
+            let stepPerMs = (DOM.isMobile ? 5 : 7) / (1000 / 60);
             this.offset -= (last == 0)
-                ? (RAG.views.isMobile ? 5 : 7)
+                ? (DOM.isMobile ? 5 : 7)
                 : (time - last) * stepPerMs;
             this.domSpan.style.transform = `translateX(${this.offset}px)`;
             if (this.offset < limit)
@@ -1207,9 +1207,6 @@ class Toolbar {
     }
 }
 class Views {
-    get isMobile() {
-        return document.body.clientWidth <= 500;
-    }
     constructor() {
         this.editor = new Editor();
         this.marquee = new Marquee();
@@ -1245,6 +1242,12 @@ class Collapsibles {
     }
 }
 class DOM {
+    static get isMobile() {
+        return document.body.clientWidth <= 500;
+    }
+    static get isiOS() {
+        return navigator.platform.match(/iPhone|iPod|iPad/gi) !== null;
+    }
     static getAttr(element, attr, def) {
         return element.hasAttribute(attr)
             ? element.getAttribute(attr)

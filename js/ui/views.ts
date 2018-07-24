@@ -11,11 +11,6 @@ class Views
 
     private readonly pickers : Dictionary<Picker>;
 
-    public get isMobile() : boolean
-    {
-        return document.body.clientWidth <= 500;
-    }
-
     constructor()
     {
         this.editor   = new Editor();
@@ -36,8 +31,6 @@ class Views
             new StationListPicker(),
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);
-
-        // TODO: cancel touchmove event for non-scrollables, to avoid overscroll
     }
 
     public getPicker(xmlTag: string) : Picker

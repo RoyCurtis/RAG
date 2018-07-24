@@ -82,7 +82,7 @@ abstract class Picker
         if (!fullWidth && !isModal)
         {
             // Force full width on mobile
-            if (RAG.views.isMobile)
+            if (DOM.isMobile)
             {
                 this.dom.style.width = `100%`;
 
@@ -102,10 +102,10 @@ abstract class Picker
         // because percentage-based left/top causes subpixel issues on Chrome.
         if (isModal)
         {
-            dialogX = RAG.views.isMobile ? 0 :
+            dialogX = DOM.isMobile ? 0 :
                 ( (docW  * 0.1) / 2 ) | 0;
 
-            dialogY = RAG.views.isMobile ? 0 :
+            dialogY = DOM.isMobile ? 0 :
                 ( (docH * 0.1) / 2 ) | 0;
         }
 

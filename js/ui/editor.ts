@@ -174,7 +174,7 @@ class Editor
             return;
 
         // Workaround for layout behaving weird when iOS keyboard is open
-        if (RAG.views.isMobile)
+        if (DOM.isMobile)
         if (this.currentPicker.hasFocus())
             DOM.blurActive();
 

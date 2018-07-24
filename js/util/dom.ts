@@ -3,6 +3,18 @@
 /** Utility methods for dealing with the DOM */
 class DOM
 {
+    /** Whether the window is thinner than a specific size (and, thus, is "mobile") */
+    public static get isMobile() : boolean
+    {
+        return document.body.clientWidth <= 500;
+    }
+
+    /** Whether RAG appears to be running on an iOS device */
+    public static get isiOS() : boolean
+    {
+        return navigator.platform.match(/iPhone|iPod|iPad/gi) !== null;
+    }
+
     /**
      * Finds the value of the given attribute from the given element, or returns the given
      * default value if unset.
