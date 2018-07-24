@@ -14,6 +14,13 @@ class PlatformPicker extends Picker
 
         this.inputDigit  = DOM.require('input', this.dom);
         this.inputLetter = DOM.require('select', this.dom);
+
+        // iOS needs different type and pattern to show a numerical keyboard
+        if (DOM.isiOS)
+        {
+            this.inputDigit.type    = 'tel';
+            this.inputDigit.pattern = '[0-9]+';
+        }
     }
 
     public open(target: HTMLElement) : void

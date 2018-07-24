@@ -358,6 +358,10 @@ class IntegerPicker extends Picker {
         super('integer', ['change']);
         this.inputDigit = DOM.require('input', this.dom);
         this.domLabel = DOM.require('label', this.dom);
+        if (DOM.isiOS) {
+            this.inputDigit.type = 'tel';
+            this.inputDigit.pattern = '[0-9]+';
+        }
     }
     open(target) {
         super.open(target);
@@ -474,6 +478,10 @@ class PlatformPicker extends Picker {
         super('platform', ['change']);
         this.inputDigit = DOM.require('input', this.dom);
         this.inputLetter = DOM.require('select', this.dom);
+        if (DOM.isiOS) {
+            this.inputDigit.type = 'tel';
+            this.inputDigit.pattern = '[0-9]+';
+        }
     }
     open(target) {
         super.open(target);
@@ -1225,6 +1233,8 @@ class Views {
             new StationListPicker(),
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);
+        if (DOM.isiOS)
+            document.body.classList.add('ios');
     }
     getPicker(xmlTag) {
         return this.pickers[xmlTag];

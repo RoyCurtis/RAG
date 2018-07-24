@@ -1,10 +1,5 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-// Workaround for click events not bubbling in iOS
-// http://gravitydept.com/blog/js-click-event-bubbling-on-ios
-*
-  cursor pointer !important
-
 #marquee
   background    $bgDarkest
   border        none
@@ -32,14 +27,6 @@
 #editor
   font-size x-large
   padding   12px 40px 12px 12px
-
-  // Fix for iOS visual garbage on editor elements beyond the scrolling area
-  // https://stackoverflow.com/a/43636308
-  span
-    perspective         1000
-    -webkit-perspective 1000
-    transform           translate3d(0, 0, 0)
-    -webkit-transform   translate3d(0, 0, 0)
 
   // All selectable elements
   span[data-type=coach],       span[data-type=excuse],  span[data-type=integer],
@@ -101,8 +88,6 @@
     dt
       padding   5px 8px
       font-size smaller
-      // Fixes 1 pixel line offset in iOS
-      transform translateY(-1px)
 
     dd
       padding 8px

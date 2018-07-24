@@ -124,7 +124,7 @@
   </div>
 
   <!-- Display size warning -->
-  <div id="tooSmallScreen" class="warningDialog">
+  <div id="tooSmallScreen" class="warningScreen">
     <h1>"May I have your attention please..."</h1>
 
     <p>
@@ -159,7 +159,7 @@
     <header>Pick a number</header>
 
     <form>
-      <input id="integerPickerValue" title="Integer value" type="tel" pattern="[0-9]+">
+      <input id="integerPickerValue" title="Integer value" type="number">
       <label for="integerPickerValue"></label>
     </form>
   </div>
@@ -192,7 +192,7 @@
     <header>Pick a platform</header>
 
     <form>
-      <input title="Platform number" min="0" max="99" type="tel" pattern="[0-9]+">
+      <input title="Platform number" min="0" max="99" type="number">
 
       <select title="Optional platform letter">
         <option value=""></option>

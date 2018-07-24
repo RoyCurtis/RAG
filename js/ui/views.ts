@@ -31,6 +31,10 @@ class Views
             new StationListPicker(),
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);
+
+        // Apply iOS-specific CSS fixes
+        if (DOM.isiOS)
+            document.body.classList.add('ios');
     }
 
     public getPicker(xmlTag: string) : Picker
