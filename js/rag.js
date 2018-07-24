@@ -271,16 +271,16 @@ class Picker {
             dialogY = DOM.isMobile ? 0 :
                 ((docH * 0.1) / 2) | 0;
         }
-        else if (dialogY < editorRect.y)
-            dialogY = editorRect.y;
+        else if (dialogY < 0)
+            dialogY = 0;
         else if (dialogY + this.dom.offsetHeight > docH) {
             dialogY = (targetRect.top | 0) - this.dom.offsetHeight + 1;
             this.domEditing.classList.add('below');
             this.domEditing.classList.remove('above');
             if (dialogY + this.dom.offsetHeight > docH)
                 dialogY = docH - this.dom.offsetHeight;
-            if (dialogY < editorRect.y)
-                dialogY = editorRect.y;
+            if (dialogY < 0)
+                dialogY = 0;
         }
         else {
             this.domEditing.classList.add('above');

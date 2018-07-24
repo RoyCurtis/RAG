@@ -109,9 +109,9 @@ abstract class Picker
                 ( (docH * 0.1) / 2 ) | 0;
         }
 
-        // Clamp to top edge of editor
-        else if (dialogY < editorRect.y)
-            dialogY = editorRect.y;
+        // Clamp to top edge of document
+        else if (dialogY < 0)
+            dialogY = 0;
 
         // Adjust if vertically off screen
         else if (dialogY + this.dom.offsetHeight > docH)
@@ -124,9 +124,9 @@ abstract class Picker
             if (dialogY + this.dom.offsetHeight > docH)
                 dialogY = docH - this.dom.offsetHeight;
 
-            // Clamp to top edge of editor. Likely happens if target element is large.
-            if (dialogY < editorRect.y)
-                dialogY = editorRect.y;
+            // Clamp to top edge of document. Likely happens if target element is large.
+            if (dialogY < 0)
+                dialogY = 0;
         }
         else
         {
