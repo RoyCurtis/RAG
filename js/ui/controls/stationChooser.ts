@@ -56,13 +56,10 @@ class StationChooser extends Chooser
     public attach(picker: Picker, onSelect: SelectDelegate) : void
     {
         let parent  = picker.domForm;
-        let current = this.inputChoices.parentElement;
+        let current = this.dom.parentElement;
 
         if (!current || current !== parent)
-        {
-            parent.appendChild(this.inputFilter);
-            parent.appendChild(this.inputChoices);
-        }
+            parent.appendChild(this.dom);
 
         this.reset();
         this.onSelect = onSelect.bind(picker);

@@ -6,17 +6,25 @@ type SelectDelegate = (entry: HTMLElement) => void;
 /** UI element with a filterable and keyboard navigable list of choices */
 class Chooser
 {
-    private static SEARCHBOX : HTMLElement;
-    private static PICKERBOX : HTMLElement;
+    private static TEMPLATE : HTMLElement;
 
     private static init() : void
     {
-        let template = DOM.require('#chooserTemplate');
+        Chooser.TEMPLATE    = DOM.require('#chooserTemplate');
+        Chooser.TEMPLATE.id = '';
 
-        Chooser.SEARCHBOX = DOM.require('.chSearchBox',  template);
-        Chooser.PICKERBOX = DOM.require('.chChoicesBox', template);
-        template.remove();
+        Chooser.TEMPLATE.classList.remove('hidden');
+        Chooser.TEMPLATE.remove();
     }
+
+    /** DOM reference to this chooser's container */
+    protected readonly dom          : HTMLElement;
+
+    /** DOM reference to this chooser's filter input box */
+    protected readonly inputFilter  : HTMLInputElement;
+
+    /** DOM reference to this chooser's container of item elements */
+    protected readonly inputChoices : HTMLElement;
 
     /** Optional event handler to fire when an item is selected by the user */
     public    onSelect?     : SelectDelegate;
@@ -24,28 +32,22 @@ class Chooser
     /** Whether to visually select the clicked element */
     public    selectOnClick : boolean = true;
 
-    /** DOM reference to this chooser's filter input box */
-    protected inputFilter   : HTMLInputElement;
-
-    /** DOM reference to this chooser's container of item elements */
-    protected inputChoices : HTMLElement;
-
     /** DOM reference to the currently selected item, if any */
     protected domSelected?  : HTMLElement;
 
     /** Reference to the auto-filter timeout, if any */
     protected filterTimeout : number = 0;
 
-    /** Title attribute to apply to every item added */
-    protected itemTitle     : string = 'Click to select this item';
-
     /** Whether to group added elements by alphabetical sections */
     protected groupByABC    : boolean = false;
+
+    /** Title attribute to apply to every item added */
+    protected itemTitle     : string = 'Click to select this item';
 
     /** Creates a chooser, by replacing the placeholder in a given parent */
     constructor(parent: HTMLElement)
     {
-        if (!Chooser.SEARCHBOX)
+        if (!Chooser.TEMPLATE)
             Chooser.init();
 
         let target      = DOM.require('chooser', parent);
@@ -54,15 +56,15 @@ class Chooser
         this.itemTitle  = DOM.getAttr(target, 'itemTitle', this.itemTitle);
         this.groupByABC = target.hasAttribute('groupByABC');
 
-        this.inputFilter  = Chooser.SEARCHBOX.cloneNode(false) as HTMLInputElement;
-        this.inputChoices = Chooser.PICKERBOX.cloneNode(false) as HTMLElement;
+        this.dom          = Chooser.TEMPLATE.cloneNode(true) as HTMLElement;
+        this.inputFilter  = DOM.require('.chSearchBox',  this.dom);
+        this.inputChoices = DOM.require('.chChoicesBox', this.dom);
 
-        this.inputChoices.title         = title;
+        this.inputChoices.title      = title;
         this.inputFilter.placeholder = placeholder;
 
+        target.insertAdjacentElement('beforebegin', this.dom);
         target.remove();
-        parent.appendChild(this.inputFilter);
-        parent.appendChild(this.inputChoices);
     }
 
     /**

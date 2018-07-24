@@ -5,7 +5,7 @@
 /** Controller for the station picker dialog */
 class StationPicker extends Picker
 {
-    protected static domChooser : StationChooser;
+    protected static chooser : StationChooser;
 
     protected currentCtx : string = '';
 
@@ -15,12 +15,12 @@ class StationPicker extends Picker
     {
         super(tag, ['click']);
 
-        if (!StationPicker.domChooser)
-            StationPicker.domChooser = new StationChooser(this.domForm);
+        if (!StationPicker.chooser)
+            StationPicker.chooser = new StationChooser(this.domForm);
 
         this.onOpen = (target) =>
         {
-            let chooser     = StationPicker.domChooser;
+            let chooser     = StationPicker.chooser;
             this.currentCtx = DOM.requireData(target, 'context');
 
             chooser.attach(this, this.onSelectStation);
@@ -40,12 +40,12 @@ class StationPicker extends Picker
 
     protected onChange(ev: Event) : void
     {
-        StationPicker.domChooser.onChange(ev);
+        StationPicker.chooser.onChange(ev);
     }
 
     protected onInput(ev: KeyboardEvent) : void
     {
-        StationPicker.domChooser.onInput(ev);
+        StationPicker.chooser.onInput(ev);
     }
 
     private onSelectStation(entry: HTMLElement) : void

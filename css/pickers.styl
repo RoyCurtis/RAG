@@ -40,39 +40,45 @@
 
   // Filterable list
 
-  .chSearchBox
-    backAndForeColor($bgDarkest, inherit)
-    border    none
-    font-size inherit
-    padding   16px
-    width     100%
+  .chooser
+    flexbox(column)
+    flex-grow 1
+    height    100%
+    overflow  auto
 
-  .chChoicesBox
-    flex-basis 100%
-    overflow   auto
+    .chSearchBox
+      backAndForeColor($bgDarkest, inherit)
+      border    none
+      font-size inherit
+      padding   16px
+      width     100%
 
-    dl
-      display   flex
-      flex-wrap wrap
+    .chChoicesBox
+      flex-basis 100%
+      overflow   auto
 
-    dt
-      background  $bgDarkest
-      box-shadow  0 5px 10px alpha($bgDarkest, 0.5)
-      font-weight bold
-      padding     8px 16px
-      position    sticky
-      top         0
-      // Fixes 1 pixel line offset in various browsers
-      transform   translateY(-1px)
-      width       100%
+      dl
+        display   flex
+        flex-wrap wrap
 
-    dd
-      cursor  pointer
-      display inline-block
-      padding 16px
+      dt
+        background  $bgDarkest
+        box-shadow  0 5px 10px alpha($bgDarkest, 0.5)
+        font-weight bold
+        padding     8px 16px
+        position    sticky
+        top         0
+        // Fixes 1 pixel line offset in various browsers
+        transform   translateY(-1px)
+        width       100%
 
-      &:hover, &[selected]
-        background $fgFocus
+      dd
+        cursor  pointer
+        display inline-block
+        padding 16px
+
+        &:hover, &[selected]
+          background $fgFocus
 
 #coachPicker, #integerPicker, #platformPicker, #timePicker
   form
