@@ -68,7 +68,6 @@ abstract class Picker
         if (!this.domEditing)
             return;
 
-        let editorRect = RAG.views.editor.getRect();
         let targetRect = this.domEditing.getBoundingClientRect();
         let fullWidth  = this.dom.classList.contains('fullWidth');
         let isModal    = this.dom.classList.contains('modal');
@@ -134,9 +133,8 @@ abstract class Picker
             this.domEditing.classList.remove('below');
         }
 
-        this.dom.style.transform = fullWidth
-            ? `translateY(${dialogY}px)`
-            : `translate(${dialogX}px, ${dialogY}px)`;
+        this.dom.style.left = (fullWidth ? 0 : dialogX) + 'px';
+        this.dom.style.top  = dialogY + 'px';
     }
 
     /** Closes this picker */
