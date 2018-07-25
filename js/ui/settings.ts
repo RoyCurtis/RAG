@@ -120,9 +120,9 @@ class Settings
     private handleSave() : void
     {
         RAG.config.voxChoice = this.selVoxChoice.selectedIndex;
-        RAG.config.voxVolume = this.rangeVoxVol.valueAsNumber;
-        RAG.config.voxPitch  = this.rangeVoxPitch.valueAsNumber;
-        RAG.config.voxRate   = this.rangeVoxRate.valueAsNumber;
+        RAG.config.voxVolume = parseInt(this.rangeVoxVol.value);
+        RAG.config.voxPitch  = parseInt(this.rangeVoxPitch.value);
+        RAG.config.voxRate   = parseInt(this.rangeVoxRate.value);
         RAG.config.save();
         this.close();
     }
