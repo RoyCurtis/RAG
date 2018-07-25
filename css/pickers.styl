@@ -17,19 +17,19 @@
   > form
     flexbox(column)
     height   100%
-    overflow auto
+    overflow hidden
 
     input, select, label
       backAndForeColor($bgDarkest, $fgBright)
       border        none
       border-radius 0
-      flex-grow     1
       font-size     x-large
+      // Fix https://bugzilla.mozilla.org/show_bug.cgi?id=1088586
+      min-width     0
       padding       8px
 
     label
       unselectable()
-      flex-basis 60%
 
   &.fullWidth
     width  100%
@@ -90,10 +90,17 @@
   form
     flex-direction row
 
-    // For some reason, integer picker controls are very wide on Chrome
+#coachPicker form select,
+#timePicker form input
+  flex-grow 1
+
+#integerPicker
+  form
     input
-      flex-basis 40%
-      width      80px
+      max-width 100px
+
+    label
+      flex-grow 1
 
 #phrasesetPicker
 
@@ -102,6 +109,12 @@
     singleLine()
     display   block
     font-size large
+
+#platformPicker
+  form
+    input, select
+      flex-basis 50%
+      max-width  100px
 
 #stationlistPicker
   form
@@ -115,7 +128,6 @@
 
       menu, .delStation
         flex-shrink 0
-        margin      4px
 
       // Only shown on mobile displays
       menu
@@ -124,13 +136,20 @@
         .addStation, .closePicker
           pressable()
           flex-basis 50%
-          margin     4px
-          padding    4px
+          margin     4px 4px
+          padding    8px
+
+        .addStation
+          margin-right 2px
+
+        .closePicker
+          margin-left 2px
 
       .delStation
         unselectable()
         border      2px solid $fgFocus
         line-height 28px
+        margin      4px
         padding     8px auto
         text-align  center
 
