@@ -5,13 +5,15 @@
 /** Controller for the coach picker dialog */
 class CoachPicker extends Picker
 {
+    /** Reference to this picker's letter drop-down input control */
     private readonly inputLetter : HTMLSelectElement;
 
+    /** Holds the context for the current coach element being edited */
     private currentCtx : string = '';
 
-    constructor()
+    public constructor()
     {
-        super('coach', ['change']);
+        super('coach');
 
         this.inputLetter = DOM.require('select', this.dom);
 
@@ -26,6 +28,7 @@ class CoachPicker extends Picker
         }
     }
 
+    /** Populates the form with the target context's coach letter */
     public open(target: HTMLElement) : void
     {
         super.open(target);
@@ -38,6 +41,7 @@ class CoachPicker extends Picker
         this.inputLetter.focus();
     }
 
+    /** Updates the coach element and state currently being edited */
     protected onChange(_: Event) : void
     {
         RAG.state.setCoach(this.currentCtx, this.inputLetter.value);
@@ -47,8 +51,6 @@ class CoachPicker extends Picker
             .forEach(element => element.textContent = this.inputLetter.value);
     }
 
-    protected onInput(_: KeyboardEvent) : void
-    {
-        // no-op
-    }
+    protected onClick(_: MouseEvent)    : void { /* no-op */ }
+    protected onInput(_: KeyboardEvent) : void { /* no-op */ }
 }

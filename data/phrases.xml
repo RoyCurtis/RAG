@@ -123,8 +123,8 @@
 
 <phrase id="debug_integers">
   (
-    Coaches: <integer context="coaches"/>, <integer context="coaches"/>,
-    Delayed: <integer context="delayed"/>, <integer context="delayed"/>,
+    Coaches: <integer context="coaches" words="true" singular="mouse"/>,
+    Delayed: <integer context="delayed" singular="elephant" plural="elephants"/>,
     Front coaches: <integer context="front_coaches"/>, <integer context="front_coaches"/>,
     Rear coaches: <integer context="rear_coaches"/>, <integer context="rear_coaches"/>,
   )

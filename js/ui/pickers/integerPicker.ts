@@ -5,17 +5,23 @@
 /** Controller for the integer picker dialog */
 class IntegerPicker extends Picker
 {
+    /** Reference to this picker's numerical input spinner */
     private readonly inputDigit : HTMLInputElement;
+    /** Reference to this picker's optional suffix label */
     private readonly domLabel   : HTMLLabelElement;
 
+    /** Holds the context for the current integer element being edited */
     private currentCtx? : string;
+    /** Holds the optional singular suffix for the current integer being edited */
     private singular?   : string;
+    /** Holds the optional plural suffix for the current integer being edited */
     private plural?     : string;
+    /** Whether the current integer being edited wants word digits */
     private words?      : boolean;
 
-    constructor()
+    public constructor()
     {
-        super('integer', ['change']);
+        super('integer');
 
         this.inputDigit = DOM.require('input', this.dom);
         this.domLabel   = DOM.require('label', this.dom);
@@ -28,6 +34,7 @@ class IntegerPicker extends Picker
         }
     }
 
+    /** Populates the form with the target context's integer data */
     public open(target: HTMLElement) : void
     {
         super.open(target);
@@ -51,6 +58,7 @@ class IntegerPicker extends Picker
         this.inputDigit.focus();
     }
 
+    /** Updates the integer element and state currently being edited */
     protected onChange(_: Event) : void
     {
         if (!this.currentCtx)
@@ -60,6 +68,8 @@ class IntegerPicker extends Picker
         let intStr = (this.words)
             ? Phraser.DIGITS[int]
             : int.toString();
+
+        this.domLabel.innerText = '';
 
         if (int === 1 && this.singular)
         {
@@ -78,8 +88,6 @@ class IntegerPicker extends Picker
             .forEach(element => element.textContent = intStr);
     }
 
-    protected onInput(_: KeyboardEvent) : void
-    {
-        // no-op
-    }
+    protected onClick(_: MouseEvent)    : void { /* no-op */ }
+    protected onInput(_: KeyboardEvent) : void { /* no-op */ }
 }

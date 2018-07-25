@@ -5,18 +5,21 @@
 /** Controller for the phraseset picker dialog */
 class PhrasesetPicker extends Picker
 {
+    /** Reference to this picker's chooser control */
     private readonly domChooser : Chooser;
 
+    /** Holds the reference tag for the current phraseset element being edited */
     private currentRef? : string;
 
-    constructor()
+    public constructor()
     {
-        super('phraseset', ['click']);
+        super('phraseset');
 
         this.domChooser          = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
     }
 
+    /** Populates the chooser with the current phraseset's list of phrases */
     public open(target: HTMLElement) : void
     {
         super.open(target);
@@ -43,6 +46,7 @@ class PhrasesetPicker extends Picker
             DOM.cloneInto(phraseset.children[i] as HTMLElement, phrase);
             RAG.phraser.process(phrase);
 
+            // TODO: Why isn't this excluding hidden parts?
             phrase.innerText   = DOM.getCleanedVisibleText(phrase);
             phrase.dataset.idx = i.toString();
 
@@ -50,22 +54,20 @@ class PhrasesetPicker extends Picker
         }
     }
 
+    /** Close this picker */
     public close() : void
     {
         super.close();
         this.domChooser.onClose();
     }
 
-    protected onChange(ev: Event) : void
-    {
-        this.domChooser.onChange(ev);
-    }
+    // Forward these events to the chooser
+    protected onChange(ev: Event)        : void { this.domChooser.onChange(ev); }
+    protected onClick(ev: MouseEvent)    : void { this.domChooser.onClick(ev);  }
+    protected onInput(ev: KeyboardEvent) : void { this.domChooser.onInput(ev);  }
+    protected onSubmit(ev: Event)        : void { this.domChooser.onSubmit(ev); }
 
-    protected onInput(ev: KeyboardEvent) : void
-    {
-        this.domChooser.onInput(ev);
-    }
-
+    /** Handles chooser selection by updating the phraseset element and state */
     private onSelect(entry: HTMLElement) : void
     {
         if (!this.currentRef)

@@ -4,49 +4,56 @@
 abstract class Picker
 {
     /** Reference to this picker's DOM element */
-    public readonly dom     : HTMLElement;
-
+    public readonly dom       : HTMLElement;
     /** Reference to this picker's form DOM element */
-    public readonly domForm : HTMLFormElement;
-
+    public readonly domForm   : HTMLFormElement;
+    /** Reference to this picker's header element */
+    public readonly domHeader : HTMLElement;
     /** Gets the name of the XML tag this picker handles */
-    public readonly xmlTag  : string;
+    public readonly xmlTag    : string;
 
     /** Reference to the phrase element being edited by this picker */
     protected domEditing? : HTMLElement;
-
-    /** Reference to this picker's header element */
-    protected domHeader   : HTMLElement;
 
     /**
      * Creates a picker to handle the given phrase element type.
      *
      * @param {string} xmlTag Name of the XML tag this picker will handle.
-     * @param {string[]} events List of events to trigger onChange, when data is changed
      */
-    protected constructor(xmlTag: string, events: string[])
+    protected constructor(xmlTag: string)
     {
         this.dom       = DOM.require(`#${xmlTag}Picker`);
         this.domForm   = DOM.require('form', this.dom);
         this.domHeader = DOM.require('header', this.dom);
         this.xmlTag    = xmlTag;
 
-        // Self needed here, as 'this' breaks inside event delegates
-        let self = this;
+        this.domForm.onchange  = this.onChange.bind(this);
+        this.domForm.onclick   = this.onClick.bind(this);
+        this.domForm.onkeydown = this.onInput.bind(this);
+        this.domForm.onsubmit  = this.onSubmit.bind(this);
+    }
 
-        events.forEach(event =>
-        {
-            self.domForm.addEventListener(event, self.onChange.bind(self))
-        });
+    /**
+     * Called when data changes. The implementing picker should update all linked elements
+     * (e.g. of same type) with the new data here.
+     */
+    protected abstract onChange(ev: Event) : void;
 
-        this.domForm.onsubmit = ev =>
-        {
-            // TODO: this should be changed to a submit-and-close handler
-            ev.preventDefault();
-            self.onChange(ev);
-        };
+    /** Called when a mouse click happens anywhere in or on the picker's form */
+    protected abstract onClick(ev: MouseEvent) : void;
 
-        this.domForm.onkeydown = self.onInput.bind(self);
+    /** Called when a key is pressed whilst the picker's form is focused */
+    protected abstract onInput(ev: KeyboardEvent) : void;
+
+    /**
+     * Called when ENTER is pressed whilst a form control of the picker is focused.
+     * By default, this will trigger the onChange handler and close the dialog.
+     */
+    protected onSubmit(ev: Event) : void
+    {
+        ev.preventDefault();
+        this.onChange(ev);
+        RAG.views.editor.closeDialog();
     }
 
     /**
@@ -60,6 +67,15 @@ abstract class Picker
         this.dom.classList.remove('hidden');
         this.domEditing = target;
         this.layout();
+    }
+
+    /** Closes this picker */
+    public close() : void
+    {
+        // Fix keyboard staying open in iOS on close
+        DOM.blurActive(this.dom);
+
+        this.dom.classList.add('hidden');
     }
 
     /** Positions this picker relative to the target phrase element */
@@ -137,27 +153,9 @@ abstract class Picker
         this.dom.style.top  = dialogY + 'px';
     }
 
-    /** Closes this picker */
-    public close() : void
-    {
-        // Fix keyboard staying open in iOS on close
-        DOM.blurActive(this.dom);
-
-        this.dom.classList.add('hidden');
-    }
-
     /** Returns true if an element in this picker currently has focus */
     public hasFocus() : boolean
     {
         return this.dom.contains(document.activeElement);
     }
-
-    /**
-     * Called when data changes. The implementing picker should update all linked elements
-     * (e.g. of same type) with the new data here.
-     */
-    protected abstract onChange(ev: Event) : void;
-
-    /** Called when a key is pressed whilst the picker's form is focused. */
-    protected abstract onInput(ev: KeyboardEvent) : void;
 }

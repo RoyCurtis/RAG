@@ -54,16 +54,13 @@ class Chooser {
             }
         }
     }
-    onChange(ev) {
+    onChange(_) {
+    }
+    onClick(ev) {
         let target = ev.target;
-        if (!target)
-            return;
-        else if (ev.type.toLowerCase() === 'submit')
-            this.filter();
-        else if (!this.owns(target))
-            return;
-        else if (target.tagName.toLowerCase() === 'dd')
-            this.select(target);
+        if (target && target.tagName.toLowerCase() === 'dd')
+            if (this.owns(target))
+                this.select(target);
     }
     onClose() {
         window.clearTimeout(this.filterTimeout);
@@ -103,6 +100,10 @@ class Chooser {
             if (nav)
                 nav.focus();
         }
+    }
+    onSubmit(ev) {
+        ev.preventDefault();
+        this.filter();
     }
     filter() {
         window.clearTimeout(this.filterTimeout);
@@ -224,25 +225,29 @@ class StationListItem {
     }
 }
 class Picker {
-    constructor(xmlTag, events) {
+    constructor(xmlTag) {
         this.dom = DOM.require(`#${xmlTag}Picker`);
         this.domForm = DOM.require('form', this.dom);
         this.domHeader = DOM.require('header', this.dom);
         this.xmlTag = xmlTag;
-        let self = this;
-        events.forEach(event => {
-            self.domForm.addEventListener(event, self.onChange.bind(self));
-        });
-        this.domForm.onsubmit = ev => {
-            ev.preventDefault();
-            self.onChange(ev);
-        };
-        this.domForm.onkeydown = self.onInput.bind(self);
+        this.domForm.onchange = this.onChange.bind(this);
+        this.domForm.onclick = this.onClick.bind(this);
+        this.domForm.onkeydown = this.onInput.bind(this);
+        this.domForm.onsubmit = this.onSubmit.bind(this);
+    }
+    onSubmit(ev) {
+        ev.preventDefault();
+        this.onChange(ev);
+        RAG.views.editor.closeDialog();
     }
     open(target) {
         this.dom.classList.remove('hidden');
         this.domEditing = target;
         this.layout();
+    }
+    close() {
+        DOM.blurActive(this.dom);
+        this.dom.classList.add('hidden');
     }
     layout() {
         if (!this.domEditing)
@@ -291,17 +296,13 @@ class Picker {
         this.dom.style.left = (fullWidth ? 0 : dialogX) + 'px';
         this.dom.style.top = dialogY + 'px';
     }
-    close() {
-        DOM.blurActive(this.dom);
-        this.dom.classList.add('hidden');
-    }
     hasFocus() {
         return this.dom.contains(document.activeElement);
     }
 }
 class CoachPicker extends Picker {
     constructor() {
-        super('coach', ['change']);
+        super('coach');
         this.currentCtx = '';
         this.inputLetter = DOM.require('select', this.dom);
         for (let i = 0; i < 26; i++) {
@@ -325,12 +326,12 @@ class CoachPicker extends Picker {
             .getElementsByQuery(`[data-type=coach][data-context=${this.currentCtx}]`)
             .forEach(element => element.textContent = this.inputLetter.value);
     }
-    onInput(_) {
-    }
+    onClick(_) { }
+    onInput(_) { }
 }
 class ExcusePicker extends Picker {
     constructor() {
-        super('excuse', ['click']);
+        super('excuse');
         this.domChooser = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
         RAG.database.excuses.forEach(v => this.domChooser.add(v));
@@ -343,12 +344,10 @@ class ExcusePicker extends Picker {
         super.close();
         this.domChooser.onClose();
     }
-    onChange(ev) {
-        this.domChooser.onChange(ev);
-    }
-    onInput(ev) {
-        this.domChooser.onInput(ev);
-    }
+    onChange(ev) { this.domChooser.onChange(ev); }
+    onClick(ev) { this.domChooser.onClick(ev); }
+    onInput(ev) { this.domChooser.onInput(ev); }
+    onSubmit(ev) { this.domChooser.onSubmit(ev); }
     onSelect(entry) {
         RAG.state.excuse = entry.innerText;
         RAG.views.editor.setElementsText('excuse', RAG.state.excuse);
@@ -356,7 +355,7 @@ class ExcusePicker extends Picker {
 }
 class IntegerPicker extends Picker {
     constructor() {
-        super('integer', ['change']);
+        super('integer');
         this.inputDigit = DOM.require('input', this.dom);
         this.domLabel = DOM.require('label', this.dom);
         if (DOM.isiOS) {
@@ -388,6 +387,7 @@ class IntegerPicker extends Picker {
         let intStr = (this.words)
             ? Phraser.DIGITS[int]
             : int.toString();
+        this.domLabel.innerText = '';
         if (int === 1 && this.singular) {
             intStr += ` ${this.singular}`;
             this.domLabel.innerText = this.singular;
@@ -401,12 +401,12 @@ class IntegerPicker extends Picker {
             .getElementsByQuery(`[data-type=integer][data-context=${this.currentCtx}]`)
             .forEach(element => element.textContent = intStr);
     }
-    onInput(_) {
-    }
+    onClick(_) { }
+    onInput(_) { }
 }
 class NamedPicker extends Picker {
     constructor() {
-        super('named', ['click']);
+        super('named');
         this.domChooser = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
         RAG.database.named.forEach(v => this.domChooser.add(v));
@@ -419,12 +419,10 @@ class NamedPicker extends Picker {
         super.close();
         this.domChooser.onClose();
     }
-    onChange(ev) {
-        this.domChooser.onChange(ev);
-    }
-    onInput(ev) {
-        this.domChooser.onInput(ev);
-    }
+    onChange(ev) { this.domChooser.onChange(ev); }
+    onClick(ev) { this.domChooser.onClick(ev); }
+    onInput(ev) { this.domChooser.onInput(ev); }
+    onSubmit(ev) { this.domChooser.onSubmit(ev); }
     onSelect(entry) {
         RAG.state.named = entry.innerText;
         RAG.views.editor.setElementsText('named', RAG.state.named);
@@ -432,7 +430,7 @@ class NamedPicker extends Picker {
 }
 class PhrasesetPicker extends Picker {
     constructor() {
-        super('phraseset', ['click']);
+        super('phraseset');
         this.domChooser = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
     }
@@ -459,12 +457,10 @@ class PhrasesetPicker extends Picker {
         super.close();
         this.domChooser.onClose();
     }
-    onChange(ev) {
-        this.domChooser.onChange(ev);
-    }
-    onInput(ev) {
-        this.domChooser.onInput(ev);
-    }
+    onChange(ev) { this.domChooser.onChange(ev); }
+    onClick(ev) { this.domChooser.onClick(ev); }
+    onInput(ev) { this.domChooser.onInput(ev); }
+    onSubmit(ev) { this.domChooser.onSubmit(ev); }
     onSelect(entry) {
         if (!this.currentRef)
             throw new Error("Got select event when currentRef is unset");
@@ -476,7 +472,7 @@ class PhrasesetPicker extends Picker {
 }
 class PlatformPicker extends Picker {
     constructor() {
-        super('platform', ['change']);
+        super('platform');
         this.inputDigit = DOM.require('input', this.dom);
         this.inputLetter = DOM.require('select', this.dom);
         if (DOM.isiOS) {
@@ -495,30 +491,28 @@ class PlatformPicker extends Picker {
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
         RAG.views.editor.setElementsText('platform', RAG.state.platform.join(''));
     }
-    onInput(_) {
-    }
+    onClick(_) { }
+    onInput(_) { }
 }
 class ServicePicker extends Picker {
     constructor() {
-        super('service', ['click']);
-        this.domList = new Chooser(this.domForm);
-        this.domList.onSelect = e => this.onSelect(e);
-        RAG.database.services.forEach(v => this.domList.add(v));
+        super('service');
+        this.domChooser = new Chooser(this.domForm);
+        this.domChooser.onSelect = e => this.onSelect(e);
+        RAG.database.services.forEach(v => this.domChooser.add(v));
     }
     open(target) {
         super.open(target);
-        this.domList.preselect(RAG.state.service);
+        this.domChooser.preselect(RAG.state.service);
     }
     close() {
         super.close();
-        this.domList.onClose();
+        this.domChooser.onClose();
     }
-    onChange(ev) {
-        this.domList.onChange(ev);
-    }
-    onInput(ev) {
-        this.domList.onInput(ev);
-    }
+    onChange(ev) { this.domChooser.onChange(ev); }
+    onClick(ev) { this.domChooser.onClick(ev); }
+    onInput(ev) { this.domChooser.onInput(ev); }
+    onSubmit(ev) { this.domChooser.onSubmit(ev); }
     onSelect(entry) {
         RAG.state.service = entry.innerText;
         RAG.views.editor.setElementsText('service', RAG.state.service);
@@ -526,7 +520,7 @@ class ServicePicker extends Picker {
 }
 class StationPicker extends Picker {
     constructor(tag = 'station') {
-        super(tag, ['click']);
+        super(tag);
         this.currentCtx = '';
         if (!StationPicker.chooser)
             StationPicker.chooser = new StationChooser(this.domForm);
@@ -545,12 +539,10 @@ class StationPicker extends Picker {
         this.domHeader.innerText =
             `Pick a station for the '${this.currentCtx}' context`;
     }
-    onChange(ev) {
-        StationPicker.chooser.onChange(ev);
-    }
-    onInput(ev) {
-        StationPicker.chooser.onInput(ev);
-    }
+    onChange(ev) { StationPicker.chooser.onChange(ev); }
+    onClick(ev) { StationPicker.chooser.onClick(ev); }
+    onInput(ev) { StationPicker.chooser.onInput(ev); }
+    onSubmit(ev) { StationPicker.chooser.onSubmit(ev); }
     onSelectStation(entry) {
         let query = `[data-type=station][data-context=${this.currentCtx}]`;
         let code = entry.dataset['code'];
@@ -571,7 +563,6 @@ class StationListPicker extends StationPicker {
         this.inputList = DOM.require('dl', this.domList);
         this.domEmptyList = DOM.require('p', this.domList);
         this.onOpen = this.onStationListPickerOpen.bind(this);
-        this.btnClose.onclick = () => RAG.views.editor.closeDialog();
         new Draggable.Sortable([this.inputList, this.domDel], { draggable: 'dd' })
             .on('drag:stop', ev => setTimeout(() => this.onDragStop(ev), 1))
             .on('mirror:create', this.onDragMirrorCreate.bind(this));
@@ -587,8 +578,12 @@ class StationListPicker extends StationPicker {
         entries.forEach(v => this.add(v));
         this.inputList.focus();
     }
-    onChange(ev) {
-        super.onChange(ev);
+    onChange(ev) { super.onChange(ev); }
+    onSubmit(ev) { super.onSubmit(ev); }
+    onClick(ev) {
+        super.onClick(ev);
+        if (ev.target === this.btnClose)
+            RAG.views.editor.closeDialog();
         if (ev.target === this.btnAdd)
             this.dom.classList.add('addingStation');
     }
@@ -675,7 +670,7 @@ class StationListPicker extends StationPicker {
 }
 class TimePicker extends Picker {
     constructor() {
-        super('time', ['change']);
+        super('time');
         this.inputTime = DOM.require('input', this.dom);
     }
     open(target) {
@@ -687,8 +682,8 @@ class TimePicker extends Picker {
         RAG.state.time = this.inputTime.value;
         RAG.views.editor.setElementsText('time', RAG.state.time.toString());
     }
-    onInput(_) {
-    }
+    onClick(_) { }
+    onInput(_) { }
 }
 class ElementProcessors {
     static coach(ctx) {

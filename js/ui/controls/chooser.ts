@@ -9,6 +9,7 @@ class Chooser
     /** Reference to the DOM template to clone, for each chooser created */
     private static TEMPLATE : HTMLElement;
 
+    /** Creates and detaches the template on first create */
     private static init() : void
     {
         Chooser.TEMPLATE    = DOM.require('#chooserTemplate');
@@ -29,7 +30,6 @@ class Chooser
     public    onSelect?     : SelectDelegate;
     /** Whether to visually select the clicked element */
     public    selectOnClick : boolean = true;
-
     /** Reference to the currently selected item, if any */
     protected domSelected?  : HTMLElement;
     /** Reference to the auto-filter timeout, if any */
@@ -40,7 +40,7 @@ class Chooser
     protected itemTitle     : string = 'Click to select this item';
 
     /** Creates a chooser, by replacing the placeholder in a given parent */
-    constructor(parent: HTMLElement)
+    public constructor(parent: HTMLElement)
     {
         if (!Chooser.TEMPLATE)
             Chooser.init();
@@ -120,25 +120,19 @@ class Chooser
         }
     }
 
-    /** Handles pickers' change events, for filtering or choosing items */
-    public onChange(ev: Event) : void
+    /** Handles pickers' change events */
+    public onChange(_: Event) : void
+    {
+        // TODO: Currently no-op, may be removable
+    }
+
+    /** Handles pickers' click events, for choosing items */
+    public onClick(ev: MouseEvent) : void
     {
         let target = ev.target as HTMLElement;
 
-        // Skip for target-less events
-        if (!target)
-            return;
-
-        // Handle pressing ENTER inside filter box
-        else if (ev.type.toLowerCase() === 'submit')
-            this.filter();
-
-        // Make sure target is descendant of this control
-        else if ( !this.owns(target) )
-            return;
-
-        // Handle item being clicked
-        else if (target.tagName.toLowerCase() === 'dd')
+        if (target && target.tagName.toLowerCase() === 'dd')
+        if ( this.owns(target) )
             this.select(target);
     }
 
@@ -210,6 +204,13 @@ class Chooser
 
             if (nav) nav.focus();
         }
+    }
+
+    /** Handles pickers' submit events, for instant filtering */
+    public onSubmit(ev: Event) : void
+    {
+        ev.preventDefault();
+        this.filter();
     }
 
     /** Hide or show choices if they partially match the user query */

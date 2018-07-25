@@ -5,12 +5,14 @@
 /** Controller for the platform picker dialog */
 class PlatformPicker extends Picker
 {
+    /** Reference to this picker's numerical input spinner */
     private readonly inputDigit  : HTMLInputElement;
+    /** Reference to this picker's letter drop-down input control */
     private readonly inputLetter : HTMLSelectElement;
 
-    constructor()
+    public constructor()
     {
-        super('platform', ['change']);
+        super('platform');
 
         this.inputDigit  = DOM.require('input', this.dom);
         this.inputLetter = DOM.require('select', this.dom);
@@ -23,6 +25,7 @@ class PlatformPicker extends Picker
         }
     }
 
+    /** Populates the form with the current state's platform data */
     public open(target: HTMLElement) : void
     {
         super.open(target);
@@ -34,6 +37,7 @@ class PlatformPicker extends Picker
         this.inputDigit.focus();
     }
 
+    /** Updates the platform element and state currently being edited */
     protected onChange(_: Event) : void
     {
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
@@ -41,8 +45,6 @@ class PlatformPicker extends Picker
         RAG.views.editor.setElementsText( 'platform', RAG.state.platform.join('') );
     }
 
-    protected onInput(_: KeyboardEvent) : void
-    {
-        // no-op
-    }
+    protected onClick(_: MouseEvent)    : void { /* no-op */ }
+    protected onInput(_: KeyboardEvent) : void { /* no-op */ }
 }

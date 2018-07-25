@@ -20,7 +20,7 @@ class StationListPicker extends StationPicker
     /** Reference to placeholder shown if the list is empty */
     private readonly domEmptyList : HTMLElement;
 
-    constructor()
+    public constructor()
     {
         // TODO: Disable/remove already picked stations
         super("stationlist");
@@ -31,9 +31,7 @@ class StationListPicker extends StationPicker
         this.domDel       = DOM.require('.delStation',  this.domList);
         this.inputList    = DOM.require('dl',           this.domList);
         this.domEmptyList = DOM.require('p',            this.domList);
-
-        this.onOpen           = this.onStationListPickerOpen.bind(this);
-        this.btnClose.onclick = () => RAG.views.editor.closeDialog();
+        this.onOpen       = this.onStationListPickerOpen.bind(this);
 
         new Draggable.Sortable([this.inputList, this.domDel], { draggable: 'dd' })
             // Have to use timeout, to let Draggable finish sorting the list
@@ -68,11 +66,17 @@ class StationListPicker extends StationPicker
         this.inputList.focus();
     }
 
-    /** Handles click on the "Add..." button, else forwards to chooser */
-    protected onChange(ev: Event) : void
-    {
-        super.onChange(ev);
+    // Forward these events to the chooser
+    protected onChange(ev: Event) : void { super.onChange(ev); }
+    protected onSubmit(ev: Event) : void { super.onSubmit(ev); }
 
+    /** Handles pickers' click events, for choosing items */
+    protected onClick(ev: MouseEvent) : void
+    {
+        super.onClick(ev);
+
+        if (ev.target === this.btnClose)
+            RAG.views.editor.closeDialog();
         // For mobile users, switch to station chooser screen if "Add..." was clicked
         if (ev.target === this.btnAdd)
             this.dom.classList.add('addingStation');

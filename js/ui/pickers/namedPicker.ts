@@ -5,11 +5,12 @@
 /** Controller for the named train picker dialog */
 class NamedPicker extends Picker
 {
+    /** Reference to this picker's chooser control */
     private readonly domChooser : Chooser;
 
-    constructor()
+    public constructor()
     {
-        super('named', ['click']);
+        super('named');
 
         this.domChooser          = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
@@ -17,6 +18,7 @@ class NamedPicker extends Picker
         RAG.database.named.forEach( v => this.domChooser.add(v) );
     }
 
+    /** Populates the chooser with the current state's named train */
     public open(target: HTMLElement) : void
     {
         super.open(target);
@@ -31,16 +33,13 @@ class NamedPicker extends Picker
         this.domChooser.onClose();
     }
 
-    protected onChange(ev: Event) : void
-    {
-        this.domChooser.onChange(ev);
-    }
+    // Forward these events to the chooser
+    protected onChange(ev: Event)        : void { this.domChooser.onChange(ev); }
+    protected onClick(ev: MouseEvent)    : void { this.domChooser.onClick(ev);  }
+    protected onInput(ev: KeyboardEvent) : void { this.domChooser.onInput(ev);  }
+    protected onSubmit(ev: Event)        : void { this.domChooser.onSubmit(ev); }
 
-    protected onInput(ev: KeyboardEvent) : void
-    {
-        this.domChooser.onInput(ev);
-    }
-
+    /** Handles chooser selection by updating the named element and state */
     private onSelect(entry: HTMLElement) : void
     {
         RAG.state.named = entry.innerText;

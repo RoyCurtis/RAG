@@ -5,15 +5,17 @@
 /** Controller for the station picker dialog */
 class StationPicker extends Picker
 {
+    /** Reference to this picker's shared station chooser control */
     protected static chooser : StationChooser;
 
+    /** Holds the context for the current station element being edited */
     protected currentCtx : string = '';
+    /** Holds the onOpen delegate for StationPicker or for StationListPicker */
+    protected onOpen     : (target: HTMLElement) => void;
 
-    protected onOpen : (target: HTMLElement) => void;
-
-    constructor(tag: string = 'station')
+    public constructor(tag: string = 'station')
     {
-        super(tag, ['click']);
+        super(tag);
 
         if (!StationPicker.chooser)
             StationPicker.chooser = new StationChooser(this.domForm);
@@ -21,12 +23,14 @@ class StationPicker extends Picker
         this.onOpen = this.onStationPickerOpen.bind(this);
     }
 
+    /** Fires the onOpen delegate registered for this picker */
     public open(target: HTMLElement) : void
     {
         super.open(target);
         this.onOpen(target);
     }
 
+    /** Attaches the station chooser and focuses it onto the current element's station */
     protected onStationPickerOpen(target: HTMLElement) : void
     {
         let chooser     = StationPicker.chooser;
@@ -40,16 +44,13 @@ class StationPicker extends Picker
             `Pick a station for the '${this.currentCtx}' context`;
     }
 
-    protected onChange(ev: Event) : void
-    {
-        StationPicker.chooser.onChange(ev);
-    }
+    // Forward these events to the station chooser
+    protected onChange(ev: Event)        : void { StationPicker.chooser.onChange(ev); }
+    protected onClick(ev: MouseEvent)    : void { StationPicker.chooser.onClick(ev); }
+    protected onInput(ev: KeyboardEvent) : void { StationPicker.chooser.onInput(ev); }
+    protected onSubmit(ev: Event)        : void { StationPicker.chooser.onSubmit(ev); }
 
-    protected onInput(ev: KeyboardEvent) : void
-    {
-        StationPicker.chooser.onInput(ev);
-    }
-
+    /** Handles chooser selection by updating the station element and state */
     private onSelectStation(entry: HTMLElement) : void
     {
         let query = `[data-type=station][data-context=${this.currentCtx}]`;
