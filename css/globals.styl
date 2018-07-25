@@ -16,30 +16,32 @@ $fgDim       = #AAA
 
 // Functions
 
+hoverable()
+  &:hover
+    background $bgDark
+
 pressable()
-  background  #222
+  hoverable()
+  background  $bgDarker
   border      none
-  box-shadow  0 0 8px #222
+  box-shadow  0 0 8px $bgDarker
   color       whitesmoke
   cursor      pointer
   fill        whitesmoke
 
-  &:hover
-    background #333
-
   &:active
-    color      #AAA
-    box-shadow 0 0 4px #000 inset
-    fill       #AAA
+    color      $fgDim
+    box-shadow 0 0 4px $bgDarkest inset
+    fill       $fgDim
 
   &:disabled
-    background #222
-    color      #444
+    background $bgDarker
+    color      $bgDark
     cursor     default
-    fill       #444
+    fill       $bgDark
 
     &:active
-      background #222
+      background $bgDarker
 
 backAndForeColor($bg = $bgDarkest, $fg = $fgBright)
   background $bg

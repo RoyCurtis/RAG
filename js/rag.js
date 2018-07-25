@@ -220,9 +220,6 @@ class StationListItem {
             StationListItem.init();
         this.dom = StationListItem.TEMPLATE.cloneNode(true);
         this.dom.innerText = RAG.database.getStation(code, false);
-        this.dom.tabIndex = -1;
-        this.dom.title =
-            "Drag to reorder; double-click or drag into station selector to remove";
         this.dom.dataset['code'] = code;
     }
 }

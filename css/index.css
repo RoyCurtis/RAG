@@ -265,7 +265,9 @@
   display: inline-block;
   padding: 16px;
 }
-.picker .chooser .chChoicesBox dd:hover,
+.picker .chooser .chChoicesBox dd:hover {
+  background: #444;
+}
 .picker .chooser .chChoicesBox dd[selected] {
   background: #cc7e00;
 }
@@ -317,7 +319,7 @@
   display: none;
 }
 #stationlistPicker form .stationList .addStation:hover {
-  background: #333;
+  background: #444;
 }
 #stationlistPicker form .stationList .addStation:active {
   color: #aaa;
@@ -376,11 +378,20 @@
   margin: 4px;
   padding: 6px;
 }
+#stationlistPicker form .stationList dl dd:hover {
+  background: #444;
+}
 #stationlistPicker form .stationList dl dd::before {
   color: #444;
   content: '≡';
   float: right;
   margin-left: 8px;
+}
+#stationlistPicker form .stationList dl dd:hover {
+  border-color: #444;
+}
+#stationlistPicker form .stationList dl dd:hover::before {
+  color: #222;
 }
 #stationlistPicker form .stationList .draggable-mirror {
   opacity: 0.5;
@@ -388,7 +399,8 @@
 #stationlistPicker form .stationList .draggable--original {
   display: none;
 }
-#stationlistPicker form .stationList .draggable-source--is-dragging {
+#stationlistPicker form .stationList .draggable-source--is-dragging,
+#stationlistPicker form .stationList .draggable-source--is-dragging:hover {
   background: none;
   color: #000;
   fill: #000;
@@ -423,7 +435,7 @@
   padding: 8px;
 }
 #toolbar > button:hover {
-  background: #333;
+  background: #444;
 }
 #toolbar > button:active {
   color: #aaa;
@@ -470,7 +482,7 @@
   margin: 16px;
 }
 #settings button:hover {
-  background: #333;
+  background: #444;
 }
 #settings button:active {
   color: #aaa;
