@@ -770,6 +770,7 @@ iframe {
 body.ios * {
   cursor: pointer !important;
 }
+body.ios #settings,
 body.ios #editor,
 body.ios .chChoicesBox,
 body.ios .stationList {

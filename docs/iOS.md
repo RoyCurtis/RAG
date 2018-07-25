@@ -111,6 +111,12 @@ For example, `touchend` events do not have the destination element set to `targe
 
 In fairness, the Android browsers (Firefox, Chrome, native) are missing this too.
 
+## Draggable
+
+I have fixed this by using the [Draggable][DRAGGABLE] library by Shopify. It magically
+fixes all of the drag and drop hassle across all platforms. I have also rewritten the
+station list UI to better suit mobile devices.
+
 # Click event bubbling
 
 The editor element has a single `onclick` handler, to handle click events for all its
@@ -187,3 +193,4 @@ actively hostile to its users and developers.
 [R2]: https://github.com/RemoteDebug/remotedebug-ios-webkit-adapter/issues/79#issuecomment-351472710
 [VORLON]: http://www.vorlonjs.io/
 [MONOPOLY]: https://www.howtogeek.com/184283/why-third-party-browsers-will-always-be-inferior-to-safari-on-iphone-and-ipad/
+[DRAGGABLE]: https://shopify.github.io/draggable/
