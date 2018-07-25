@@ -9,6 +9,7 @@
   z-index       100
 
   > header
+    unselectable()
     background     $fgFocus
     font-weight    bold
     padding-bottom 4px
@@ -27,6 +28,7 @@
       padding       8px
 
     label
+      unselectable()
       flex-grow 2
 
   &.fullWidth
@@ -56,6 +58,9 @@
     .chChoicesBox
       flex-basis 100%
       overflow   auto
+
+      dt, dd
+        unselectable()
 
       dl
         display   flex
@@ -122,6 +127,7 @@
         display none
 
       .delStation
+        unselectable()
         border      2px solid $fgFocus
         line-height 28px
         padding     8px auto
@@ -132,6 +138,7 @@
 
       // For the empty list notification
       p
+        unselectable()
         color   $fgDim
         padding 16px
 
@@ -144,6 +151,7 @@
         // For each station in the list
         dd
           singleLine()
+          unselectable()
           background $bgDarker
           border     2px solid $bgDarker
           cursor     move

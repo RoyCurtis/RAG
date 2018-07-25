@@ -59,20 +59,17 @@ singleLine()
   text-overflow ellipsis
   white-space   nowrap
 
-userSelect($value = none)
-  -webkit-user-select $value
-  -khtml-user-select  $value
-  -moz-user-select    $value
-  -ms-user-select     $value
-  user-select         $value
+unselectable()
+  -webkit-user-select none
+  -khtml-user-select  none
+  -moz-user-select    none
+  -ms-user-select     none
+  user-select         none
 
 // Global classes
 
 .hidden
   display none !important
-
-.unselectable
-  userSelect()
 
 .warningScreen
   flex-grow 1

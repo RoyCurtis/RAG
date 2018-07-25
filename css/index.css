@@ -3,13 +3,6 @@
 .hidden {
   display: none !important;
 }
-.unselectable {
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
 .warningScreen {
   flex-grow: 1;
   padding: 16px;
@@ -179,6 +172,11 @@
   z-index: 100;
 }
 .picker > header {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   background: #cc7e00;
   font-weight: bold;
   padding-bottom: 4px;
@@ -203,6 +201,11 @@
   padding: 8px;
 }
 .picker > form label {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   flex-grow: 2;
 }
 .picker.fullWidth {
@@ -234,6 +237,14 @@
 .picker .chooser .chChoicesBox {
   flex-basis: 100%;
   overflow: auto;
+}
+.picker .chooser .chChoicesBox dt,
+.picker .chooser .chChoicesBox dd {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .picker .chooser .chChoicesBox dl {
   display: flex;
@@ -323,6 +334,11 @@
   background: #222;
 }
 #stationlistPicker form .stationList .delStation {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   border: 2px solid #cc7e00;
   line-height: 28px;
   padding: 8px auto;
@@ -332,6 +348,11 @@
   display: none;
 }
 #stationlistPicker form .stationList p {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   color: #aaa;
   padding: 16px;
 }
@@ -344,6 +365,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   background: #222;
   border: 2px solid #222;
   cursor: move;
@@ -470,6 +496,11 @@
   grid-column: 2;
 }
 #settings h1 {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   border-bottom: 2px solid #cc7e00;
   flex: 100%;
   font-size: xx-large;
@@ -490,6 +521,13 @@
   display: grid;
   flex: 1;
   grid-template-columns: 40% 60%;
+}
+#settings form label {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 #settings form label,
 #settings form select,
