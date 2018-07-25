@@ -206,7 +206,7 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  flex-grow: 2;
+  flex-basis: 60%;
 }
 .picker.fullWidth {
   width: 100%;
@@ -281,7 +281,8 @@
 #integerPicker form input,
 #platformPicker form input,
 #timePicker form input {
-  width: 64px;
+  flex-basis: 40%;
+  width: 80px;
 }
 #phrasesetPicker .chChoicesBox dd {
   overflow: hidden;
