@@ -18,24 +18,26 @@ class StationPicker extends Picker
         if (!StationPicker.chooser)
             StationPicker.chooser = new StationChooser(this.domForm);
 
-        this.onOpen = (target) =>
-        {
-            let chooser     = StationPicker.chooser;
-            this.currentCtx = DOM.requireData(target, 'context');
-
-            chooser.attach(this, this.onSelectStation);
-            chooser.preselectCode( RAG.state.getStation(this.currentCtx) );
-            chooser.selectOnClick = true;
-
-            this.domHeader.innerText =
-                `Pick a station for the '${this.currentCtx}' context`;
-        };
+        this.onOpen = this.onStationPickerOpen.bind(this);
     }
 
     public open(target: HTMLElement) : void
     {
         super.open(target);
         this.onOpen(target);
+    }
+
+    protected onStationPickerOpen(target: HTMLElement) : void
+    {
+        let chooser     = StationPicker.chooser;
+        this.currentCtx = DOM.requireData(target, 'context');
+
+        chooser.attach(this, this.onSelectStation);
+        chooser.preselectCode( RAG.state.getStation(this.currentCtx) );
+        chooser.selectOnClick = true;
+
+        this.domHeader.innerText =
+            `Pick a station for the '${this.currentCtx}' context`;
     }
 
     protected onChange(ev: Event) : void

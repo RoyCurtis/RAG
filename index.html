@@ -240,9 +240,24 @@
     </button>
 
     <form>
-      <dl class="stationList" title="List of stations in this list" tabindex="50">
-        <dt>Please add at least one station to this list</dt>
-      </dl>
+      <div class="stationList">
+        <button class="addStation" tabindex="50" title="Add station to this list">
+          Add station...
+        </button>
+
+        <p>
+          Please add at least one station to this list
+        </p>
+
+        <dl title="Draggable selection of stations for this list" tabindex="50">
+
+        </dl>
+
+        <div class="delStation"
+             title="Drop station here to delete it from this list">
+          Drop here to delete
+        </div>
+      </div>
     </form>
   </div>
 
@@ -264,7 +279,7 @@
   </div>
 
   <dd id="stationListItemTemplate" class="hidden unselectable" tabindex="-1"
-      title="Drag to reorder; double-click or drag into station selector to remove">
+      title="Drag to reorder; double-click or drag into delete zone to remove">
 
   </dd>
 

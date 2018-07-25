@@ -1,23 +1,41 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-type ContainerList = HTMLElement[] | NodeList | HTMLElement;
-
 /** This is the core draggable library that does the heavy lifting */
 declare namespace Draggable
 {
+    /** Union type for containers that Draggable constructors accept */
+    type ContainerList = HTMLElement[] | NodeList | HTMLElement;
+    /** Draggable event callback */
+    type EventCallback = (ev: DragEvent) => void;
+
+    /** Base drag event */
+    class DragEvent
+    {
+        data : DragData;
+    }
+
+    /** Data container for all events */
+    class DragData
+    {
+        /** Draggable's mirror element */
+        mirror?          : HTMLElement;
+        /** Original event that triggered sensor event */
+        originalEvent?   : HTMLElement;
+        /** Draggable's original source element */
+        originalSource?  : HTMLElement;
+        /** Sensor event */
+        sensorEvent?     : HTMLElement;
+        /** Draggable's source element */
+        source?          : HTMLElement;
+        /** Draggable's source container element */
+        sourceContainer? : HTMLElement;
+    }
+
     export class Draggable
     {
         constructor(containers: ContainerList, options: Object);
 
-        on(type: string, ...callbacks: EventHandlerNonNull[]) : Draggable;
-    }
-
-    /**
-     * Droppable is built on top of Draggable and allows dropping draggable elements into
-     * dropzone element.
-     */
-    export class Droppable extends Draggable
-    {
+        on(type: string, ...callbacks: EventCallback[]) : Draggable;
     }
 
     /**

@@ -107,26 +107,54 @@
 
     // For the station list builder
     .stationList
+      flexbox(column)
       background $bgDarkest
       flex-basis 30%
-      overflow   auto
 
-      dt
+      .addStation, .delStation
+        flex-shrink 0
+        height      32px
+        margin      4px
+
+      // Only shown on mobile displays
+      .addStation
+        pressable()
+        display none
+
+      .delStation
+        border      2px solid $fgFocus
+        line-height 28px
+        padding     8px auto
+        text-align  center
+
+        dd
+          display none
+
+      // For the empty list notification
+      p
         color   $fgDim
         padding 16px
 
-      dd
-        singleLine()
-        background $bgDarker
-        cursor     move
-        margin     4px
-        padding    8px
+      // For the actual, sortable list of stations
+      dl
+        flex-grow  1
+        overflow-x hidden
+        overflow-y auto
 
-        &::before
-          color       $bgDark
-          content     '≡'
-          float       right
-          margin-left 8px
+        // For each station in the list
+        dd
+          singleLine()
+          background $bgDarker
+          border     2px solid $bgDarker
+          cursor     move
+          margin     4px
+          padding    6px
+
+          &::before
+            color       $bgDark
+            content     '≡'
+            float       right
+            margin-left 8px
 
       // Draggable library classes
       .draggable-mirror
@@ -134,6 +162,13 @@
 
       .draggable--original
         display none
+
+      .draggable-source--is-dragging
+        backAndForeColor(none, black)
+        border 2px solid $bgDark
+
+      .delStation.draggable-container--over
+        background $fgFocus
 
     .chooser
       flex-basis 70%

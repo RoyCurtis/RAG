@@ -117,17 +117,26 @@
     flex-direction column
 
     .stationList
-      flex-basis 45%
-      font-size  smaller
+      flex-grow 1
+      font-size smaller
 
-      dd
-        margin 0 0 2px 0
+      .addStation
+        display block
 
-      dt
-        padding 8px
+      dl
+        dd
+          margin 0 0 2px 0
 
     .chooser
-      flex-basis 55%
+      display   none
+      flex-grow 1
+
+  &.addingStation
+    .stationList
+      display none
+
+    .chooser
+      display flex
 
 #settings
   button

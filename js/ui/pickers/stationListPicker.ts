@@ -7,70 +7,81 @@
 /** Controller for the station list picker dialog */
 class StationListPicker extends StationPicker
 {
-    /** Reference to the close button for this picker */
+    /** Reference to the mobile-only close button for this picker */
     private readonly btnClose     : HTMLButtonElement;
-
+    /** Reference to this picker's container for the list control */
+    private readonly domList      : HTMLElement;
+    /** Reference to the mobile add station button */
+    private readonly btnAdd       : HTMLButtonElement;
+    /** Reference to the drop zone for deleting station elements */
+    private readonly domDel       : HTMLElement;
+    /** Reference to the actual sortable list of stations */
+    private readonly inputList    : HTMLDListElement;
     /** Reference to placeholder shown if the list is empty */
     private readonly domEmptyList : HTMLElement;
 
-    /** Reference to this list's currently selected stations in the UI */
-    private readonly inputList    : HTMLDListElement;
-
     constructor()
     {
+        // TODO: Disable/remove already picked stations
         super("stationlist");
 
         this.btnClose     = DOM.require('#btnCloseStationListPicker', this.dom);
-        this.inputList    = DOM.require('.stationList', this.dom);
-        this.domEmptyList = DOM.require('dt', this.inputList);
+        this.domList      = DOM.require('.stationList', this.dom);
+        this.btnAdd       = DOM.require('.addStation', this.domList);
+        this.domDel       = DOM.require('.delStation', this.domList);
+        this.inputList    = DOM.require('dl', this.domList);
+        this.domEmptyList = DOM.require('p', this.domList);
 
-        // TODO: Should all modal pickers have a close button?
+        this.onOpen           = this.onStationListPickerOpen.bind(this);
         this.btnClose.onclick = () => RAG.views.editor.closeDialog();
 
-        // TODO: Clean this up
-        // TODO: Attach event handlers and mutate station list
-        // TODO: Make a delete drop zone
-        let sortable = new Draggable.Sortable(this.inputList, {
-            draggable: 'dd'
-        });
-
-        let droppable = new Draggable.Droppable(this.dom, {
-            draggable: 'dd',
-            dropzone: '.chooser'
-        });
-
-        sortable.on('mirror:create', ev =>
-        {
-            // @ts-ignore
-            ev.data.source.style.width = ev.data.originalSource.clientWidth + 'px';
-        });
-
-        droppable.on('droppable:dropped', ev => {
-            console.log(ev);
-        });
-
-        this.onOpen = (target) =>
-        {
-            StationPicker.chooser.attach(this, this.onAddStation);
-            StationPicker.chooser.selectOnClick = false;
-
-            this.currentCtx = DOM.requireData(target, 'context');
-            let entries     = RAG.state.getStationList(this.currentCtx).slice(0);
-
-            this.btnClose.remove();
-            this.domHeader.innerText =
-                `Build a station list for the '${this.currentCtx}' context`;
-            this.domHeader.appendChild(this.btnClose);
-
-            // Remove all old elements except for the empty list text
-            while (this.inputList.children[1])
-                this.inputList.children[1].remove();
-
-            entries.forEach( v => this.add(v) );
-            this.inputList.focus();
-        }
+        new Draggable.Sortable([this.inputList, this.domDel], { draggable: 'dd' })
+            // Have to use timeout, to let Draggable finish sorting the list
+            .on( 'drag:stop', ev => setTimeout(() => this.onDragStop(ev), 1) )
+            .on( 'mirror:create', this.onDragMirrorCreate.bind(this) );
     }
 
+    /**
+     * Populates the station list builder, with the selected list. Because this picker
+     * extends from StationList, this handler overrides the 'onOpen' delegate property
+     * of StationList.
+     *
+     * @param target Station list editor element to open for
+     */
+    protected onStationListPickerOpen(target: HTMLElement) : void
+    {
+        // Since we share the station picker with StationList, grab it
+        StationPicker.chooser.attach(this, this.onAddStation);
+        StationPicker.chooser.selectOnClick = false;
+
+        this.currentCtx = DOM.requireData(target, 'context');
+        let entries     = RAG.state.getStationList(this.currentCtx).slice(0);
+
+        // Remove and reattach close button, else it gets destroyed setting innerText
+        this.btnClose.remove();
+        this.domHeader.innerText =
+            `Build a station list for the '${this.currentCtx}' context`;
+        this.domHeader.appendChild(this.btnClose);
+
+        // Remove all old list elements
+        this.inputList.innerHTML = '';
+
+        // Finally, populate list from the clicked station list element
+        entries.forEach( v => this.add(v) );
+        this.inputList.focus();
+    }
+
+    /** Handles click on the "Add..." button, else forwards to chooser */
+    protected onChange(ev: Event) : void
+    {
+        super.onChange(ev);
+
+        // For mobile users, switch to station chooser screen if "Add..." was clicked
+        if (ev.target === this.btnAdd)
+            this.dom.classList.add('addingStation');
+    }
+
+    /** Handles keyboard navigation for the station list builder */
     protected onInput(ev: KeyboardEvent) : void
     {
         super.onInput(ev);
@@ -109,55 +120,100 @@ class StationListPicker extends StationPicker
         if (key === 'Delete' || key === 'Backspace')
         if (focused.parentElement === this.inputList)
         {
-            // Focus to next element or parent on delete
-            let next = focused.previousElementSibling as HTMLElement;
-
-            // Compensate for hidden "empty list" element
-            if (next === this.domEmptyList)
-                next = (focused.nextElementSibling || this.inputList) as HTMLElement;
+            // Focus on next element or parent on delete
+            let next = focused.previousElementSibling as HTMLElement
+                    || focused.nextElementSibling     as HTMLElement
+                    || this.inputList;
 
             this.remove(focused);
             next.focus();
         }
     }
 
+    /** Handler for when a station is chosen */
     private onAddStation(entry: HTMLElement) : void
     {
-        this.add(entry.dataset['code']!);
+        let newEntry = this.add(entry.dataset['code']!);
+
+        // Switch back to builder screen, if on mobile
+        this.dom.classList.remove('addingStation');
         this.update();
+
+        // Focus only if on mobile, since the station list is on a dedicated screen
+        if (DOM.isMobile)
+            newEntry.dom.focus();
+        else
+            newEntry.dom.scrollIntoView();
     }
 
-    private add(code: string) : void
+    /** Fixes mirrors not having correct width of the source element, on create */
+    private onDragMirrorCreate(ev: Draggable.DragEvent) : void
     {
-        let newEntry = new StationListItem(this, code);
+        if (!ev.data.source || !ev.data.originalSource)
+            throw new Error('Draggable: Missing source elements for mirror event');
+
+        ev.data.source.style.width = ev.data.originalSource.clientWidth + 'px';
+    }
+
+    /** Handles draggable station name being dropped */
+    private onDragStop(ev: Draggable.DragEvent) : void
+    {
+        if (!ev.data.originalSource)
+            return;
+
+        if (ev.data.originalSource.parentElement === this.domDel)
+            this.remove(ev.data.originalSource);
+        else
+            this.update();
+    }
+
+    /**
+     * Creates and adds a new entry for the builder list.
+     *
+     * @param code Three-letter station code to create an item for
+     */
+    private add(code: string) : StationListItem
+    {
+        let newEntry = new StationListItem(code);
 
         this.inputList.appendChild(newEntry.dom);
         this.domEmptyList.classList.add('hidden');
+
+        // Delete item on double click
+        newEntry.dom.ondblclick = _ => this.remove(newEntry.dom);
+
+        return newEntry;
     }
 
-    public remove(entry: HTMLElement) : void
+    /**
+     * Removes the given station entry element from the builder.
+     *
+     * @param entry Element of the station entry to remove
+     */
+    private remove(entry: HTMLElement) : void
     {
-        if (entry.parentElement !== this.inputList)
+        if ( !this.domList.contains(entry) )
             throw new Error('Attempted to remove entry not on station list builder');
 
         entry.remove();
         this.update();
 
-        if (this.inputList.children.length === 1)
+        if (this.inputList.children.length === 0)
             this.domEmptyList.classList.remove('hidden');
     }
 
+    /** Updates the station list element and state currently being edited */
     private update() : void
     {
         let children = this.inputList.children;
 
         // Don't update if list is empty
-        if (children.length === 1)
+        if (children.length === 0)
             return;
 
         let list = [];
 
-        for (let i = 1; i < children.length; i++)
+        for (let i = 0; i < children.length; i++)
         {
             let entry = children[i] as HTMLElement;
 
@@ -171,12 +227,5 @@ class StationListPicker extends StationPicker
         RAG.views.editor
             .getElementsByQuery(query)
             .forEach(element => element.textContent = textList);
-    }
-
-    private onDrop(ev: any) : void
-    {
-        console.log(ev);
-
-        // this.remove(this.domDragFrom);
     }
 }

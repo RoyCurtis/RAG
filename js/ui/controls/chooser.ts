@@ -6,6 +6,7 @@ type SelectDelegate = (entry: HTMLElement) => void;
 /** UI element with a filterable and keyboard navigable list of choices */
 class Chooser
 {
+    /** Reference to the DOM template to clone, for each chooser created */
     private static TEMPLATE : HTMLElement;
 
     private static init() : void
@@ -17,30 +18,24 @@ class Chooser
         Chooser.TEMPLATE.remove();
     }
 
-    /** DOM reference to this chooser's container */
+    /** Reference to this chooser's container */
     protected readonly dom          : HTMLElement;
-
-    /** DOM reference to this chooser's filter input box */
+    /** Reference to this chooser's filter input box */
     protected readonly inputFilter  : HTMLInputElement;
-
-    /** DOM reference to this chooser's container of item elements */
+    /** Reference to this chooser's container of item elements */
     protected readonly inputChoices : HTMLElement;
 
     /** Optional event handler to fire when an item is selected by the user */
     public    onSelect?     : SelectDelegate;
-
     /** Whether to visually select the clicked element */
     public    selectOnClick : boolean = true;
 
-    /** DOM reference to the currently selected item, if any */
+    /** Reference to the currently selected item, if any */
     protected domSelected?  : HTMLElement;
-
     /** Reference to the auto-filter timeout, if any */
     protected filterTimeout : number = 0;
-
     /** Whether to group added elements by alphabetical sections */
     protected groupByABC    : boolean = false;
-
     /** Title attribute to apply to every item added */
     protected itemTitle     : string = 'Click to select this item';
 

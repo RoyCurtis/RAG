@@ -215,18 +215,15 @@ class StationListItem {
         StationListItem.TEMPLATE.classList.remove('hidden');
         StationListItem.TEMPLATE.remove();
     }
-    constructor(picker, code) {
+    constructor(code) {
         if (!StationListItem.TEMPLATE)
             StationListItem.init();
         this.dom = StationListItem.TEMPLATE.cloneNode(true);
-        this.picker = picker;
         this.dom.innerText = RAG.database.getStation(code, false);
         this.dom.tabIndex = -1;
         this.dom.title =
             "Drag to reorder; double-click or drag into station selector to remove";
         this.dom.dataset['code'] = code;
-        this.dom.ondblclick = _ => picker.remove(this.dom);
-        this.dom.scrollIntoView();
     }
 }
 class Picker {
@@ -536,19 +533,20 @@ class StationPicker extends Picker {
         this.currentCtx = '';
         if (!StationPicker.chooser)
             StationPicker.chooser = new StationChooser(this.domForm);
-        this.onOpen = (target) => {
-            let chooser = StationPicker.chooser;
-            this.currentCtx = DOM.requireData(target, 'context');
-            chooser.attach(this, this.onSelectStation);
-            chooser.preselectCode(RAG.state.getStation(this.currentCtx));
-            chooser.selectOnClick = true;
-            this.domHeader.innerText =
-                `Pick a station for the '${this.currentCtx}' context`;
-        };
+        this.onOpen = this.onStationPickerOpen.bind(this);
     }
     open(target) {
         super.open(target);
         this.onOpen(target);
+    }
+    onStationPickerOpen(target) {
+        let chooser = StationPicker.chooser;
+        this.currentCtx = DOM.requireData(target, 'context');
+        chooser.attach(this, this.onSelectStation);
+        chooser.preselectCode(RAG.state.getStation(this.currentCtx));
+        chooser.selectOnClick = true;
+        this.domHeader.innerText =
+            `Pick a station for the '${this.currentCtx}' context`;
     }
     onChange(ev) {
         StationPicker.chooser.onChange(ev);
@@ -570,36 +568,34 @@ class StationListPicker extends StationPicker {
     constructor() {
         super("stationlist");
         this.btnClose = DOM.require('#btnCloseStationListPicker', this.dom);
-        this.inputList = DOM.require('.stationList', this.dom);
-        this.domEmptyList = DOM.require('dt', this.inputList);
+        this.domList = DOM.require('.stationList', this.dom);
+        this.btnAdd = DOM.require('.addStation', this.domList);
+        this.domDel = DOM.require('.delStation', this.domList);
+        this.inputList = DOM.require('dl', this.domList);
+        this.domEmptyList = DOM.require('p', this.domList);
+        this.onOpen = this.onStationListPickerOpen.bind(this);
         this.btnClose.onclick = () => RAG.views.editor.closeDialog();
-        let sortable = new Draggable.Sortable(this.inputList, {
-            draggable: 'dd'
-        });
-        let droppable = new Draggable.Droppable(this.dom, {
-            draggable: 'dd',
-            dropzone: '.chooser'
-        });
-        sortable.on('mirror:create', ev => {
-            ev.data.source.style.width = ev.data.originalSource.clientWidth + 'px';
-        });
-        droppable.on('droppable:dropped', ev => {
-            console.log(ev);
-        });
-        this.onOpen = (target) => {
-            StationPicker.chooser.attach(this, this.onAddStation);
-            StationPicker.chooser.selectOnClick = false;
-            this.currentCtx = DOM.requireData(target, 'context');
-            let entries = RAG.state.getStationList(this.currentCtx).slice(0);
-            this.btnClose.remove();
-            this.domHeader.innerText =
-                `Build a station list for the '${this.currentCtx}' context`;
-            this.domHeader.appendChild(this.btnClose);
-            while (this.inputList.children[1])
-                this.inputList.children[1].remove();
-            entries.forEach(v => this.add(v));
-            this.inputList.focus();
-        };
+        new Draggable.Sortable([this.inputList, this.domDel], { draggable: 'dd' })
+            .on('drag:stop', ev => setTimeout(() => this.onDragStop(ev), 1))
+            .on('mirror:create', this.onDragMirrorCreate.bind(this));
+    }
+    onStationListPickerOpen(target) {
+        StationPicker.chooser.attach(this, this.onAddStation);
+        StationPicker.chooser.selectOnClick = false;
+        this.currentCtx = DOM.requireData(target, 'context');
+        let entries = RAG.state.getStationList(this.currentCtx).slice(0);
+        this.btnClose.remove();
+        this.domHeader.innerText =
+            `Build a station list for the '${this.currentCtx}' context`;
+        this.domHeader.appendChild(this.btnClose);
+        this.inputList.innerHTML = '';
+        entries.forEach(v => this.add(v));
+        this.inputList.focus();
+    }
+    onChange(ev) {
+        super.onChange(ev);
+        if (ev.target === this.btnAdd)
+            this.dom.classList.add('addingStation');
     }
     onInput(ev) {
         super.onInput(ev);
@@ -621,36 +617,56 @@ class StationListPicker extends StationPicker {
         }
         if (key === 'Delete' || key === 'Backspace')
             if (focused.parentElement === this.inputList) {
-                let next = focused.previousElementSibling;
-                if (next === this.domEmptyList)
-                    next = (focused.nextElementSibling || this.inputList);
+                let next = focused.previousElementSibling
+                    || focused.nextElementSibling
+                    || this.inputList;
                 this.remove(focused);
                 next.focus();
             }
     }
     onAddStation(entry) {
-        this.add(entry.dataset['code']);
+        let newEntry = this.add(entry.dataset['code']);
+        this.dom.classList.remove('addingStation');
         this.update();
+        if (DOM.isMobile)
+            newEntry.dom.focus();
+        else
+            newEntry.dom.scrollIntoView();
+    }
+    onDragMirrorCreate(ev) {
+        if (!ev.data.source || !ev.data.originalSource)
+            throw new Error('Draggable: Missing source elements for mirror event');
+        ev.data.source.style.width = ev.data.originalSource.clientWidth + 'px';
+    }
+    onDragStop(ev) {
+        if (!ev.data.originalSource)
+            return;
+        if (ev.data.originalSource.parentElement === this.domDel)
+            this.remove(ev.data.originalSource);
+        else
+            this.update();
     }
     add(code) {
-        let newEntry = new StationListItem(this, code);
+        let newEntry = new StationListItem(code);
         this.inputList.appendChild(newEntry.dom);
         this.domEmptyList.classList.add('hidden');
+        newEntry.dom.ondblclick = _ => this.remove(newEntry.dom);
+        return newEntry;
     }
     remove(entry) {
-        if (entry.parentElement !== this.inputList)
+        if (!this.domList.contains(entry))
             throw new Error('Attempted to remove entry not on station list builder');
         entry.remove();
         this.update();
-        if (this.inputList.children.length === 1)
+        if (this.inputList.children.length === 0)
             this.domEmptyList.classList.remove('hidden');
     }
     update() {
         let children = this.inputList.children;
-        if (children.length === 1)
+        if (children.length === 0)
             return;
         let list = [];
-        for (let i = 1; i < children.length; i++) {
+        for (let i = 0; i < children.length; i++) {
             let entry = children[i];
             list.push(entry.dataset['code']);
         }
@@ -660,9 +676,6 @@ class StationListPicker extends StationPicker {
         RAG.views.editor
             .getElementsByQuery(query)
             .forEach(element => element.textContent = textList);
-    }
-    onDrop(ev) {
-        console.log(ev);
     }
 }
 class TimePicker extends Picker {

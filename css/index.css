@@ -284,24 +284,73 @@
   flex-direction: row;
 }
 #stationlistPicker form .stationList {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   background: #000;
   flex-basis: 30%;
-  overflow: auto;
 }
-#stationlistPicker form .stationList dt {
+#stationlistPicker form .stationList .addStation,
+#stationlistPicker form .stationList .delStation {
+  flex-shrink: 0;
+  height: 32px;
+  margin: 4px;
+}
+#stationlistPicker form .stationList .addStation {
+  background: #222;
+  border: none;
+  box-shadow: 0 0 8px #222;
+  color: #f5f5f5;
+  cursor: pointer;
+  fill: #f5f5f5;
+  display: none;
+}
+#stationlistPicker form .stationList .addStation:hover {
+  background: #333;
+}
+#stationlistPicker form .stationList .addStation:active {
+  color: #aaa;
+  box-shadow: 0 0 4px #000 inset;
+  fill: #aaa;
+}
+#stationlistPicker form .stationList .addStation:disabled {
+  background: #222;
+  color: #444;
+  cursor: default;
+  fill: #444;
+}
+#stationlistPicker form .stationList .addStation:disabled:active {
+  background: #222;
+}
+#stationlistPicker form .stationList .delStation {
+  border: 2px solid #cc7e00;
+  line-height: 28px;
+  padding: 8px auto;
+  text-align: center;
+}
+#stationlistPicker form .stationList .delStation dd {
+  display: none;
+}
+#stationlistPicker form .stationList p {
   color: #aaa;
   padding: 16px;
 }
-#stationlistPicker form .stationList dd {
+#stationlistPicker form .stationList dl {
+  flex-grow: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+#stationlistPicker form .stationList dl dd {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   background: #222;
+  border: 2px solid #222;
   cursor: move;
   margin: 4px;
-  padding: 8px;
+  padding: 6px;
 }
-#stationlistPicker form .stationList dd::before {
+#stationlistPicker form .stationList dl dd::before {
   color: #444;
   content: '≡';
   float: right;
@@ -312,6 +361,15 @@
 }
 #stationlistPicker form .stationList .draggable--original {
   display: none;
+}
+#stationlistPicker form .stationList .draggable-source--is-dragging {
+  background: none;
+  color: #000;
+  fill: #000;
+  border: 2px solid #444;
+}
+#stationlistPicker form .stationList .delStation.draggable-container--over {
+  background: #cc7e00;
 }
 #stationlistPicker form .chooser {
   flex-basis: 70%;
@@ -602,17 +660,24 @@ iframe {
     flex-direction: column;
   }
   #stationlistPicker form .stationList {
-    flex-basis: 45%;
+    flex-grow: 1;
     font-size: smaller;
   }
-  #stationlistPicker form .stationList dd {
+  #stationlistPicker form .stationList .addStation {
+    display: block;
+  }
+  #stationlistPicker form .stationList dl dd {
     margin: 0 0 2px 0;
   }
-  #stationlistPicker form .stationList dt {
-    padding: 8px;
-  }
   #stationlistPicker form .chooser {
-    flex-basis: 55%;
+    display: none;
+    flex-grow: 1;
+  }
+  #stationlistPicker.addingStation .stationList {
+    display: none;
+  }
+  #stationlistPicker.addingStation .chooser {
+    display: flex;
   }
   #settings button {
     font-size: smaller;
