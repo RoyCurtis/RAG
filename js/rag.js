@@ -231,6 +231,7 @@ class Picker {
         this.domHeader = DOM.require('header', this.dom);
         this.xmlTag = xmlTag;
         this.domForm.onchange = this.onChange.bind(this);
+        this.domForm.oninput = this.onChange.bind(this);
         this.domForm.onclick = this.onClick.bind(this);
         this.domForm.onkeydown = this.onInput.bind(this);
         this.domForm.onsubmit = this.onSubmit.bind(this);
@@ -385,8 +386,10 @@ class IntegerPicker extends Picker {
             throw new Error("onChange fired for integer picker without state");
         let int = parseInt(this.inputDigit.value);
         let intStr = (this.words)
-            ? Phraser.DIGITS[int]
+            ? Phraser.DIGITS[int] || int.toString()
             : int.toString();
+        if (isNaN(int))
+            return;
         this.domLabel.innerText = '';
         if (int === 1 && this.singular) {
             intStr += ` ${this.singular}`;
@@ -401,8 +404,10 @@ class IntegerPicker extends Picker {
             .getElementsByQuery(`[data-type=integer][data-context=${this.currentCtx}]`)
             .forEach(element => element.textContent = intStr);
     }
+    onInput(ev) {
+        setTimeout(() => this.onChange(ev), 1);
+    }
     onClick(_) { }
-    onInput(_) { }
 }
 class NamedPicker extends Picker {
     constructor() {
@@ -488,6 +493,8 @@ class PlatformPicker extends Picker {
         this.inputDigit.focus();
     }
     onChange(_) {
+        if (isNaN(parseInt(this.inputDigit.value)))
+            return;
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
         RAG.views.editor.setElementsText('platform', RAG.state.platform.join(''));
     }
@@ -1083,9 +1090,9 @@ class Settings {
     }
     handleSave() {
         RAG.config.voxChoice = this.selVoxChoice.selectedIndex;
-        RAG.config.voxVolume = this.rangeVoxVol.valueAsNumber;
-        RAG.config.voxPitch = this.rangeVoxPitch.valueAsNumber;
-        RAG.config.voxRate = this.rangeVoxRate.valueAsNumber;
+        RAG.config.voxVolume = parseInt(this.rangeVoxVol.value);
+        RAG.config.voxPitch = parseInt(this.rangeVoxPitch.value);
+        RAG.config.voxRate = parseInt(this.rangeVoxRate.value);
         RAG.config.save();
         this.close();
     }

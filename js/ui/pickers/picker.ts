@@ -28,6 +28,7 @@ abstract class Picker
         this.xmlTag    = xmlTag;
 
         this.domForm.onchange  = this.onChange.bind(this);
+        this.domForm.oninput   = this.onChange.bind(this);
         this.domForm.onclick   = this.onClick.bind(this);
         this.domForm.onkeydown = this.onInput.bind(this);
         this.domForm.onsubmit  = this.onSubmit.bind(this);

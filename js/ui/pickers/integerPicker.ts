@@ -64,10 +64,15 @@ class IntegerPicker extends Picker
         if (!this.currentCtx)
             throw new Error("onChange fired for integer picker without state");
 
+        // Can't use valueAsNumber due to iOS input type workarounds
         let int    = parseInt(this.inputDigit.value);
         let intStr = (this.words)
-            ? Phraser.DIGITS[int]
+            ? Phraser.DIGITS[int] || int.toString()
             : int.toString();
+
+        // Ignore invalid values
+        if ( isNaN(int) )
+            return;
 
         this.domLabel.innerText = '';
 
@@ -88,6 +93,10 @@ class IntegerPicker extends Picker
             .forEach(element => element.textContent = intStr);
     }
 
+    protected onInput(ev: KeyboardEvent) : void
+    {
+        setTimeout( () => this.onChange(ev), 1 );
+    }
+
     protected onClick(_: MouseEvent)    : void { /* no-op */ }
-    protected onInput(_: KeyboardEvent) : void { /* no-op */ }
 }

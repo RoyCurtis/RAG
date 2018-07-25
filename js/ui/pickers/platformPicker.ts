@@ -40,6 +40,10 @@ class PlatformPicker extends Picker
     /** Updates the platform element and state currently being edited */
     protected onChange(_: Event) : void
     {
+        // Ignore invalid values
+        if ( isNaN( parseInt(this.inputDigit.value) ) )
+            return;
+
         RAG.state.platform = [this.inputDigit.value, this.inputLetter.value];
 
         RAG.views.editor.setElementsText( 'platform', RAG.state.platform.join('') );

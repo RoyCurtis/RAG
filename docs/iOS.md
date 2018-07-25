@@ -137,6 +137,13 @@ to be explicitly blurred.
 Also, when the pop-up is open, properties like `clientTop` and rect dimensions are offset
 or incorrect. I have not bothered to figure out how or why.
 
+# Numerical input controls
+
+For sane browsers, `<input type='number'>` renders a special input control with a spinner,
+suited for inputting numbers. Except, when such a control is focused on iOS... it shows
+the QWERTY keyboard. To show the numeric keypad, the type has to be set to `tel` and a
+pattern of `[0-9]+`. But then this breaks `.valueAsNumber`. WTF?
+
 # `position: sticky`
 
 In the station list control, the list is divided into groups of A-Z. Each group has a
