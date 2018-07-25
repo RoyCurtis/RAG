@@ -564,9 +564,9 @@ class StationPicker extends Picker {
 class StationListPicker extends StationPicker {
     constructor() {
         super("stationlist");
-        this.btnClose = DOM.require('#btnCloseStationListPicker', this.dom);
         this.domList = DOM.require('.stationList', this.dom);
         this.btnAdd = DOM.require('.addStation', this.domList);
+        this.btnClose = DOM.require('.closePicker', this.domList);
         this.domDel = DOM.require('.delStation', this.domList);
         this.inputList = DOM.require('dl', this.domList);
         this.domEmptyList = DOM.require('p', this.domList);
@@ -581,10 +581,8 @@ class StationListPicker extends StationPicker {
         StationPicker.chooser.selectOnClick = false;
         this.currentCtx = DOM.requireData(target, 'context');
         let entries = RAG.state.getStationList(this.currentCtx).slice(0);
-        this.btnClose.remove();
         this.domHeader.innerText =
             `Build a station list for the '${this.currentCtx}' context`;
-        this.domHeader.appendChild(this.btnClose);
         this.inputList.innerHTML = '';
         entries.forEach(v => this.add(v));
         this.inputList.focus();

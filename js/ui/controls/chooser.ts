@@ -215,7 +215,6 @@ class Chooser
     /** Hide or show choices if they partially match the user query */
     protected filter() : void
     {
-        // TODO: Can this be any further optimized? Debug with profiler
         window.clearTimeout(this.filterTimeout);
 
         let filter = this.inputFilter.value.toLowerCase();

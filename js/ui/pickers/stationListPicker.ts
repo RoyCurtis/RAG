@@ -7,12 +7,12 @@
 /** Controller for the station list picker dialog */
 class StationListPicker extends StationPicker
 {
-    /** Reference to the mobile-only close button for this picker */
-    private readonly btnClose     : HTMLButtonElement;
     /** Reference to this picker's container for the list control */
     private readonly domList      : HTMLElement;
-    /** Reference to the mobile add station button */
+    /** Reference to the mobile-only add station button */
     private readonly btnAdd       : HTMLButtonElement;
+    /** Reference to the mobile-only close picker button */
+    private readonly btnClose     : HTMLButtonElement;
     /** Reference to the drop zone for deleting station elements */
     private readonly domDel       : HTMLElement;
     /** Reference to the actual sortable list of stations */
@@ -25,12 +25,12 @@ class StationListPicker extends StationPicker
         // TODO: Disable/remove already picked stations
         super("stationlist");
 
-        this.btnClose     = DOM.require('#btnCloseStationListPicker', this.dom);
         this.domList      = DOM.require('.stationList', this.dom);
-        this.btnAdd       = DOM.require('.addStation', this.domList);
-        this.domDel       = DOM.require('.delStation', this.domList);
-        this.inputList    = DOM.require('dl', this.domList);
-        this.domEmptyList = DOM.require('p', this.domList);
+        this.btnAdd       = DOM.require('.addStation',  this.domList);
+        this.btnClose     = DOM.require('.closePicker', this.domList);
+        this.domDel       = DOM.require('.delStation',  this.domList);
+        this.inputList    = DOM.require('dl',           this.domList);
+        this.domEmptyList = DOM.require('p',            this.domList);
 
         this.onOpen           = this.onStationListPickerOpen.bind(this);
         this.btnClose.onclick = () => RAG.views.editor.closeDialog();
@@ -57,11 +57,8 @@ class StationListPicker extends StationPicker
         this.currentCtx = DOM.requireData(target, 'context');
         let entries     = RAG.state.getStationList(this.currentCtx).slice(0);
 
-        // Remove and reattach close button, else it gets destroyed setting innerText
-        this.btnClose.remove();
         this.domHeader.innerText =
             `Build a station list for the '${this.currentCtx}' context`;
-        this.domHeader.appendChild(this.btnClose);
 
         // Remove all old list elements
         this.inputList.innerHTML = '';

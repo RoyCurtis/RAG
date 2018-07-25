@@ -290,9 +290,6 @@
   display: block;
   font-size: large;
 }
-#stationlistPicker #btnCloseStationListPicker {
-  display: none;
-}
 #stationlistPicker form {
   flex-direction: row;
 }
@@ -303,36 +300,45 @@
   background: #000;
   flex-basis: 30%;
 }
-#stationlistPicker form .stationList .addStation,
+#stationlistPicker form .stationList menu,
 #stationlistPicker form .stationList .delStation {
   flex-shrink: 0;
-  height: 32px;
   margin: 4px;
 }
-#stationlistPicker form .stationList .addStation {
+#stationlistPicker form .stationList menu {
+  display: none;
+}
+#stationlistPicker form .stationList menu .addStation,
+#stationlistPicker form .stationList menu .closePicker {
   background: #222;
   border: none;
   box-shadow: 0 0 8px #222;
   color: #f5f5f5;
   cursor: pointer;
   fill: #f5f5f5;
-  display: none;
+  flex-basis: 50%;
+  margin: 4px;
+  padding: 4px;
 }
-#stationlistPicker form .stationList .addStation:hover {
+#stationlistPicker form .stationList menu .addStation:hover,
+#stationlistPicker form .stationList menu .closePicker:hover {
   background: #444;
 }
-#stationlistPicker form .stationList .addStation:active {
+#stationlistPicker form .stationList menu .addStation:active,
+#stationlistPicker form .stationList menu .closePicker:active {
   color: #aaa;
   box-shadow: 0 0 4px #000 inset;
   fill: #aaa;
 }
-#stationlistPicker form .stationList .addStation:disabled {
+#stationlistPicker form .stationList menu .addStation:disabled,
+#stationlistPicker form .stationList menu .closePicker:disabled {
   background: #222;
   color: #444;
   cursor: default;
   fill: #444;
 }
-#stationlistPicker form .stationList .addStation:disabled:active {
+#stationlistPicker form .stationList menu .addStation:disabled:active,
+#stationlistPicker form .stationList menu .closePicker:disabled:active {
   background: #222;
 }
 #stationlistPicker form .stationList .delStation {
@@ -670,9 +676,6 @@ iframe {
     width: 100%;
   }
   .picker.modal > header {
-    align-items: center;
-    display: flex;
-    height: 48px;
     padding: 8px;
   }
   .picker .chooser .chSearchBox {
@@ -693,19 +696,6 @@ iframe {
     font-size: smaller;
     padding: 12px 8px;
   }
-  #stationlistPicker > header {
-    justify-content: space-between;
-    padding: 12px 8px 8px 8px;
-  }
-  #stationlistPicker > header #btnCloseStationListPicker {
-    background: none;
-    border: none;
-    display: block;
-  }
-  #stationlistPicker > header #btnCloseStationListPicker svg {
-    width: 24px;
-    height: 24px;
-  }
   #stationlistPicker form {
     flex-direction: column;
   }
@@ -713,8 +703,8 @@ iframe {
     flex-grow: 1;
     font-size: smaller;
   }
-  #stationlistPicker form .stationList .addStation {
-    display: block;
+  #stationlistPicker form .stationList menu {
+    display: flex;
   }
   #stationlistPicker form .stationList dl dd {
     margin: 0 0 2px 0;

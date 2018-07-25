@@ -235,15 +235,17 @@
       Build a station list
     </header>
 
-    <button tabindex="50" id="btnCloseStationListPicker" title="Close picker">
-      <svg><use xlink:href="css/icons/icoMoon.svg#icon-cross"></use></svg>
-    </button>
-
     <form>
       <div class="stationList">
-        <button class="addStation" tabindex="50" title="Add station to this list">
-          Add station...
-        </button>
+        <menu>
+          <button class="addStation" tabindex="50" title="Add station to this list">
+            Add station...
+          </button>
+
+          <button class="closePicker" tabindex="50" title="Close this picker">
+            Close
+          </button>
+        </menu>
 
         <p>
           Please add at least one station to this list

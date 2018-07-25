@@ -103,11 +103,6 @@
     font-size large
 
 #stationlistPicker
-
-  // Only show close button on mobile
-  #btnCloseStationListPicker
-    display none
-
   form
     flex-direction row
 
@@ -117,15 +112,19 @@
       background $bgDarkest
       flex-basis 30%
 
-      .addStation, .delStation
+      menu, .delStation
         flex-shrink 0
-        height      32px
         margin      4px
 
       // Only shown on mobile displays
-      .addStation
-        pressable()
+      menu
         display none
+
+        .addStation, .closePicker
+          pressable()
+          flex-basis 50%
+          margin     4px
+          padding    4px
 
       .delStation
         unselectable()
