@@ -24,9 +24,6 @@ interface DataRefs
     stationsData   : Dictionary<string>;
 }
 
-/** Delegate type for drag event handlers */
-type DragDelegate = (this: HTMLElement, ev: DragEvent) => any;
-
 /** Fill in for ES2017 string padding methods */
 interface String
 {
