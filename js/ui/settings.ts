@@ -135,9 +135,9 @@ class Settings
     private handleSave() : void
     {
         RAG.config.voxChoice = this.selVoxChoice.selectedIndex;
-        RAG.config.voxVolume = parseInt(this.rangeVoxVol.value);
-        RAG.config.voxPitch  = parseInt(this.rangeVoxPitch.value);
-        RAG.config.voxRate   = parseInt(this.rangeVoxRate.value);
+        RAG.config.voxVolume = parseFloat(this.rangeVoxVol.value);
+        RAG.config.voxPitch  = parseFloat(this.rangeVoxPitch.value);
+        RAG.config.voxRate   = parseFloat(this.rangeVoxRate.value);
         RAG.config.save();
         this.close();
     }
