@@ -184,36 +184,4 @@ class DOM
                 return current;
         }
     }
-
-    /** Delegate to give to event handlers, to simply cancel their default function */
-    public static preventDefault(ev: Event) : void
-    {
-        ev.preventDefault();
-    }
-
-    /**
-     * Swaps one element with another.
-     *
-     * @see https://stackoverflow.com/a/10717422
-     * @param {Element} obj1 Element to swap with second element
-     * @param {Element} obj2 Element to swap with first element
-     */
-    public static swap(obj1: Element, obj2: Element) : void
-    {
-        if (!obj1.parentNode || !obj2.parentNode)
-            throw new Error("Parent node required for swapping");
-
-        // Create marker element and insert it where obj1 is
-        let temp = document.createElement("div");
-        obj1.parentNode.insertBefore(temp, obj1);
-
-        // Move obj1 to right before obj2
-        obj2.parentNode.insertBefore(obj1, obj2);
-
-        // Move obj2 to right before where obj1 used to be
-        temp.parentNode!.insertBefore(obj2, temp);
-
-        // Remove temporary marker node
-        temp.parentNode!.removeChild(temp);
-    }
 }
