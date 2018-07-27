@@ -1254,9 +1254,9 @@ class Settings {
     }
     handleSave() {
         RAG.config.voxChoice = this.selVoxChoice.selectedIndex;
-        RAG.config.voxVolume = parseInt(this.rangeVoxVol.value);
-        RAG.config.voxPitch = parseInt(this.rangeVoxPitch.value);
-        RAG.config.voxRate = parseInt(this.rangeVoxRate.value);
+        RAG.config.voxVolume = parseFloat(this.rangeVoxVol.value);
+        RAG.config.voxPitch = parseFloat(this.rangeVoxPitch.value);
+        RAG.config.voxRate = parseFloat(this.rangeVoxRate.value);
         RAG.config.save();
         this.close();
     }
@@ -1508,6 +1508,14 @@ class Config {
         this.voxVolume = 1.0;
         this.voxPitch = 1.0;
         this.voxRate = 1.0;
+        let voices = window.speechSynthesis.getVoices();
+        for (let i = 0; i < voices.length; i++) {
+            let lang = voices[i].lang;
+            if (lang === 'en-GB' || lang === 'en-US') {
+                this.voxChoice = i;
+                break;
+            }
+        }
     }
     load() {
         if (!window.localStorage['settings'])

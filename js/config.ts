@@ -4,13 +4,30 @@
 class Config
 {
     /** Choice of speech engine to use, as getVoices index */
-    voxChoice : number = 0;
+    public voxChoice : number = 0;
     /** Volume for speech to be set at */
-    voxVolume : number = 1.0;
+    public voxVolume : number = 1.0;
     /** Pitch for speech to be set at */
-    voxPitch  : number = 1.0;
+    public voxPitch  : number = 1.0;
     /** Rate for speech to be set at */
-    voxRate   : number = 1.0;
+    public voxRate   : number = 1.0;
+
+    public constructor()
+    {
+        let voices = window.speechSynthesis.getVoices();
+
+        // Select English voices by default
+        for (let i = 0; i < voices.length ; i++)
+        {
+            let lang = voices[i].lang;
+
+            if (lang === 'en-GB' || lang === 'en-US')
+            {
+                this.voxChoice = i;
+                break;
+            }
+        }
+    }
 
     /** Safely loads runtime configuration from localStorage, if any */
     public load() : void
