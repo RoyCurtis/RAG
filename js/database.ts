@@ -3,20 +3,26 @@
 /** Manages data for excuses, trains, services and stations */
 class Database
 {
-    public readonly excuses    : string[];
-    public readonly named      : string[];
-    public readonly services   : string[];
-    public readonly stations   : Dictionary<string>;
-    public readonly phrasesets : Document;
-
+    /** Loaded dataset of delay or cancellation excuses */
+    public  readonly excuses       : string[];
+    /** Loaded dataset of named trains */
+    public  readonly named         : string[];
+    /** Loaded dataset of service or network names */
+    public  readonly services      : string[];
+    /** Loaded dictionary of station names, with three-letter code keys (e.g. ABC) */
+    public  readonly stations      : Dictionary<string>;
+    /** Loaded XML document containing phraseset data */
+    public  readonly phrasesets    : Document;
+    /** Amount of stations in the currently loaded dataset */
     private readonly stationsCount : number;
 
-    constructor(dataRefs: DataRefs)
+    public constructor(dataRefs: DataRefs)
     {
-        let iframe = DOM.require <HTMLIFrameElement> (dataRefs.phrasesetEmbed);
+        let query  = dataRefs.phrasesetEmbed;
+        let iframe = DOM.require <HTMLIFrameElement> (query);
 
         if (!iframe.contentDocument)
-            throw new Error("Configured phraseset element is not an iframe embed");
+            throw Error( L.DB_ELEMENT_NOT_PHRASESET_IFRAME(query) );
 
         this.phrasesets    = iframe.contentDocument;
         this.excuses       = dataRefs.excusesData;
@@ -25,11 +31,11 @@ class Database
         this.stations      = dataRefs.stationsData;
         this.stationsCount = Object.keys(this.stations).length;
 
-        console.log("[Database] Entries loaded:");
-        console.log("\tExcuses:",      this.excuses.length);
-        console.log("\tNamed trains:", this.named.length);
-        console.log("\tServices:",     this.services.length);
-        console.log("\tStations:",     this.stationsCount);
+        console.log('[Database] Entries loaded:');
+        console.log('\tExcuses:',      this.excuses.length);
+        console.log('\tNamed trains:', this.named.length);
+        console.log('\tServices:',     this.services.length);
+        console.log('\tStations:',     this.stationsCount);
     }
 
     /** Picks a random excuse for a delay or cancellation */
@@ -44,7 +50,11 @@ class Database
         return Random.array(this.named);
     }
 
-    /** Gets a phrase with the given ID, or null if it doesn't exist */
+    /**
+     * Clones and gets phrase with the given ID, or null if it doesn't exist.
+     *
+     * @param id ID of the phrase to get
+     */
     public getPhrase(id: string) : HTMLElement | null
     {
         let result = this.phrasesets.querySelector('phrase#' + id) as HTMLElement;
@@ -55,7 +65,12 @@ class Database
         return result;
     }
 
-    /** Gets a phraseset with the given ID, or null if it doesn't exist */
+    /**
+     * Gets a phraseset with the given ID, or null if it doesn't exist. Note that the
+     * returned phraseset comes from the XML document, so it should not be mutated.
+     *
+     * @param id ID of the phraseset to get
+     */
     public getPhraseset(id: string) : HTMLElement | null
     {
         return this.phrasesets.querySelector('phraseset#' + id);
@@ -67,11 +82,15 @@ class Database
         return Random.array(this.services);
     }
 
-    /** Picks a random station code */
+    /**
+     * Picks a random station code from the dataset.
+     *
+     * @param exclude List of codes to exclude. May be ignored if search takes too long.
+     */
     public pickStationCode(exclude?: string[]) : string
     {
         // Give up finding random station that's not in the given list, if we try more
-        // times then there are stations. Inaccurate, but good enough.
+        // times then there are stations. Inaccurate, but avoids infinite loops.
         if (exclude) for (let i = 0; i < this.stationsCount; i++)
         {
             let value = Random.objectKey(this.stations);
@@ -86,16 +105,18 @@ class Database
     /**
      * Gets the station name from the given three letter code.
      *
-     * @param {string} code Three-letter station code to get the name of
-     * @param {boolean} filtered Whether to filter out parenthesized location context
-     * @returns {string} Station name for the given code, filtered if specified
+     * @param code Three-letter station code to get the name of
+     * @param filtered Whether to filter out parenthesized location context
+     * @returns Station name for the given code, filtered if specified
      */
     public getStation(code: string, filtered: boolean = false) : string
     {
         let station = this.stations[code];
 
-        if (!station)
-            return `UNKNOWN STATION: ${code}`;
+        if      (!station)
+            return L.DB_UNKNOWN_STATION(code);
+        else if ( Strings.isNullOrEmpty(station) )
+            return L.DB_EMPTY_STATION(code);
 
         if (filtered)
             station = station.replace(/\(.+\)/i, '').trim();
@@ -106,15 +127,15 @@ class Database
     /**
      * Picks a random range of station codes, ensuring there are no duplicates.
      *
-     * @param {number} min Minimum amount of stations to pick
-     * @param {number} max Maximum amount of stations to pick
-     * @param {string[]} exclude
-     * @returns {string[]} A list of unique station names
+     * @param min Minimum amount of stations to pick
+     * @param max Maximum amount of stations to pick
+     * @param exclude
+     * @returns A list of unique station names
      */
     public pickStationCodes(min = 1, max = 16, exclude? : string[]) : string[]
     {
         if (max - min > Object.keys(this.stations).length)
-            throw new Error("Picking too many stations than there are available");
+            throw Error( L.DB_TOO_MANY_STATIONS() );
 
         let result: string[] = [];
 

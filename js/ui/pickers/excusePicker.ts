@@ -14,6 +14,7 @@ class ExcusePicker extends Picker
 
         this.domChooser          = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
+        this.domHeader.innerText = L.HEADER_EXCUSE();
 
         RAG.database.excuses.forEach( v => this.domChooser.add(v) );
     }

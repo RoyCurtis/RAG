@@ -1,4 +1,55 @@
 "use strict";
+let L;
+class I18n {
+    static init() {
+        if (this.languages)
+            throw new Error('I18n is already initialized');
+        this.languages = {
+            'en': new EnglishLanguage()
+        };
+        L = this.currentLang = this.languages['en'];
+        I18n.applyToDom();
+    }
+    static applyToDom() {
+        let next;
+        let walk = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, { acceptNode: I18n.nodeFilter }, false);
+        while (next = walk.nextNode()) {
+            if (next.nodeType === Node.ELEMENT_NODE) {
+                let element = next;
+                for (let i = 0; i < element.attributes.length; i++)
+                    I18n.expandAttribute(element.attributes[i]);
+            }
+            else if (next.nodeType === Node.TEXT_NODE && next.textContent)
+                I18n.expandTextNode(next);
+        }
+    }
+    static nodeFilter(node) {
+        let tag = (node.nodeType === Node.ELEMENT_NODE)
+            ? node.tagName.toUpperCase()
+            : node.parentElement.tagName.toUpperCase();
+        return ['SCRIPT', 'STYLE'].includes(tag)
+            ? NodeFilter.FILTER_REJECT
+            : NodeFilter.FILTER_ACCEPT;
+    }
+    static expandAttribute(attr) {
+        if (attr.value.match(this.TAG_REGEX))
+            attr.value = attr.value.replace(this.TAG_REGEX, I18n.replace);
+    }
+    static expandTextNode(node) {
+        node.textContent = node.textContent.replace(this.TAG_REGEX, I18n.replace);
+    }
+    static replace(match) {
+        let key = match.slice(1, -1);
+        let value = L[key];
+        if (!value) {
+            console.error('Missing translation key:', match);
+            return match;
+        }
+        else
+            return value();
+    }
+}
+I18n.TAG_REGEX = /%[A-Z_]+%/;
 class Chooser {
     constructor(parent) {
         this.selectOnClick = true;
@@ -17,6 +68,7 @@ class Chooser {
         this.inputChoices = DOM.require('.chChoicesBox', this.dom);
         this.inputChoices.title = title;
         this.inputFilter.placeholder = placeholder;
+        this.inputFilter.title = placeholder;
         target.insertAdjacentElement('beforebegin', this.dom);
         target.remove();
     }
@@ -173,8 +225,6 @@ class StationChooser extends Chooser {
             let station = RAG.database.stations[code];
             let letter = station[0];
             let group = this.domStations[letter];
-            if (!letter)
-                throw new Error('Station database appears to contain an empty name');
             if (!group) {
                 let header = document.createElement('dt');
                 header.innerText = letter.toUpperCase();
@@ -308,7 +358,7 @@ class CoachPicker extends Picker {
         this.inputLetter = DOM.require('select', this.dom);
         for (let i = 0; i < 26; i++) {
             let option = document.createElement('option');
-            let letter = Phraser.LETTERS[i];
+            let letter = L.LETTERS[i];
             option.text = option.value = letter;
             this.inputLetter.appendChild(option);
         }
@@ -316,12 +366,13 @@ class CoachPicker extends Picker {
     open(target) {
         super.open(target);
         this.currentCtx = DOM.requireData(target, 'context');
-        this.domHeader.innerText =
-            `Pick a coach letter for the '${this.currentCtx}' context`;
+        this.domHeader.innerText = L.HEADER_COACH(this.currentCtx);
         this.inputLetter.value = RAG.state.getCoach(this.currentCtx);
         this.inputLetter.focus();
     }
     onChange(_) {
+        if (!this.currentCtx)
+            throw Error(L.P_COACH_MISSING_STATE());
         RAG.state.setCoach(this.currentCtx, this.inputLetter.value);
         RAG.views.editor
             .getElementsByQuery(`[data-type=coach][data-context=${this.currentCtx}]`)
@@ -335,6 +386,7 @@ class ExcusePicker extends Picker {
         super('excuse');
         this.domChooser = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
+        this.domHeader.innerText = L.HEADER_EXCUSE();
         RAG.database.excuses.forEach(v => this.domChooser.add(v));
     }
     open(target) {
@@ -377,16 +429,16 @@ class IntegerPicker extends Picker {
             this.domLabel.innerText = this.plural;
         else
             this.domLabel.innerText = '';
-        this.domHeader.innerText = `Pick a number for the '${this.currentCtx}' part`;
+        this.domHeader.innerText = L.HEADER_INTEGER(this.currentCtx);
         this.inputDigit.value = value.toString();
         this.inputDigit.focus();
     }
     onChange(_) {
         if (!this.currentCtx)
-            throw new Error("onChange fired for integer picker without state");
+            throw Error(L.P_INT_MISSING_STATE());
         let int = parseInt(this.inputDigit.value);
         let intStr = (this.words)
-            ? Phraser.DIGITS[int] || int.toString()
+            ? L.DIGITS[int] || int.toString()
             : int.toString();
         if (isNaN(int))
             return;
@@ -404,16 +456,15 @@ class IntegerPicker extends Picker {
             .getElementsByQuery(`[data-type=integer][data-context=${this.currentCtx}]`)
             .forEach(element => element.textContent = intStr);
     }
-    onInput(ev) {
-        setTimeout(() => this.onChange(ev), 1);
-    }
     onClick(_) { }
+    onInput(_) { }
 }
 class NamedPicker extends Picker {
     constructor() {
         super('named');
         this.domChooser = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
+        this.domHeader.innerText = L.HEADER_NAMED();
         RAG.database.named.forEach(v => this.domChooser.add(v));
     }
     open(target) {
@@ -445,9 +496,9 @@ class PhrasesetPicker extends Picker {
         let idx = parseInt(DOM.requireData(target, 'idx'));
         let phraseset = RAG.database.getPhraseset(ref);
         if (!phraseset)
-            throw new Error(`Phraseset '${ref}' doesn't exist`);
+            throw Error(L.P_PSET_UNKNOWN(ref));
         this.currentRef = ref;
-        this.domHeader.innerText = `Pick a phrase for the '${ref}' section`;
+        this.domHeader.innerText = L.HEADER_PHRASESET(ref);
         this.domChooser.clear();
         for (let i = 0; i < phraseset.children.length; i++) {
             let phrase = document.createElement('dd');
@@ -468,7 +519,7 @@ class PhrasesetPicker extends Picker {
     onSubmit(ev) { this.domChooser.onSubmit(ev); }
     onSelect(entry) {
         if (!this.currentRef)
-            throw new Error("Got select event when currentRef is unset");
+            throw Error(L.P_PSET_MISSING_STATE());
         let idx = parseInt(entry.dataset['idx']);
         RAG.state.setPhrasesetIdx(this.currentRef, idx);
         RAG.views.editor.closeDialog();
@@ -480,6 +531,7 @@ class PlatformPicker extends Picker {
         super('platform');
         this.inputDigit = DOM.require('input', this.dom);
         this.inputLetter = DOM.require('select', this.dom);
+        this.domHeader.innerText = L.HEADER_PLATFORM();
         if (DOM.isiOS) {
             this.inputDigit.type = 'tel';
             this.inputDigit.pattern = '[0-9]+';
@@ -506,6 +558,7 @@ class ServicePicker extends Picker {
         super('service');
         this.domChooser = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
+        this.domHeader.innerText = L.HEADER_SERVICE();
         RAG.database.services.forEach(v => this.domChooser.add(v));
     }
     open(target) {
@@ -543,8 +596,7 @@ class StationPicker extends Picker {
         chooser.attach(this, this.onSelectStation);
         chooser.preselectCode(RAG.state.getStation(this.currentCtx));
         chooser.selectOnClick = true;
-        this.domHeader.innerText =
-            `Pick a station for the '${this.currentCtx}' context`;
+        this.domHeader.innerText = L.HEADER_STATION(this.currentCtx);
     }
     onChange(ev) { StationPicker.chooser.onChange(ev); }
     onClick(ev) { StationPicker.chooser.onClick(ev); }
@@ -579,8 +631,7 @@ class StationListPicker extends StationPicker {
         StationPicker.chooser.selectOnClick = false;
         this.currentCtx = DOM.requireData(target, 'context');
         let entries = RAG.state.getStationList(this.currentCtx).slice(0);
-        this.domHeader.innerText =
-            `Build a station list for the '${this.currentCtx}' context`;
+        this.domHeader.innerText = L.HEADER_STATIONLIST(this.currentCtx);
         this.inputList.innerHTML = '';
         entries.forEach(v => this.add(v));
         this.inputList.focus();
@@ -632,7 +683,7 @@ class StationListPicker extends StationPicker {
     }
     onDragMirrorCreate(ev) {
         if (!ev.data.source || !ev.data.originalSource)
-            throw new Error('Draggable: Missing source elements for mirror event');
+            throw Error(L.P_SL_DRAG_MISSING());
         ev.data.source.style.width = ev.data.originalSource.clientWidth + 'px';
     }
     onDragStop(ev) {
@@ -652,7 +703,7 @@ class StationListPicker extends StationPicker {
     }
     remove(entry) {
         if (!this.domList.contains(entry))
-            throw new Error('Attempted to remove entry not on station list builder');
+            throw Error('Attempted to remove entry not on station list builder');
         entry.remove();
         this.update();
         if (this.inputList.children.length === 0)
@@ -679,6 +730,7 @@ class TimePicker extends Picker {
     constructor() {
         super('time');
         this.inputTime = DOM.require('input', this.dom);
+        this.domHeader.innerText = L.HEADER_TIME();
     }
     open(target) {
         super.open(target);
@@ -692,15 +744,134 @@ class TimePicker extends Picker {
     onClick(_) { }
     onInput(_) { }
 }
+class BaseLanguage {
+}
+class EnglishLanguage extends BaseLanguage {
+    constructor() {
+        super(...arguments);
+        this.WELCOME = () => 'Welcome to Rail Announcement Generator.';
+        this.DOM_MISSING = (q) => `Required DOM element is missing: '${q}'`;
+        this.ATTR_MISSING = (a) => `Required attribute is missing: '${a}'`;
+        this.DATA_MISSING = (k) => `Required dataset key is missing or empty: '${k}'`;
+        this.BAD_DIRECTION = (v) => `Direction needs to be -1 or 1, not '${v}'`;
+        this.BAD_BOOLEAN = (v) => `Given string does not represent a boolean: '${v}'`;
+        this.STATE_FROM_STORAGE = () => 'State has been loaded from storage.';
+        this.STATE_TO_STORAGE = () => 'State has been saved to storage, and dumped to console.';
+        this.STATE_COPY_PASTE = () => '%cCopy and paste this in console to load later:';
+        this.STATE_RAW_JSON = () => '%cRaw JSON state:';
+        this.STATE_SAVE_FAIL = (msg) => `Sorry, state could not be saved to storage: ${msg}.`;
+        this.STATE_SAVE_MISSING = () => 'Sorry, no state was found in storage.';
+        this.STATE_NONEXISTANT_PHRASESET = (r) => `Attempted to get chosen index for phraseset (${r}) that doesn't exist`;
+        this.CONFIG_LOAD_FAIL = (msg) => `Could not load settings: ${msg}`;
+        this.CONFIG_SAVE_FAIL = (msg) => `Could not save settings: ${msg}`;
+        this.CONFIG_RESET_FAIL = (msg) => `Could not clear settings: ${msg}`;
+        this.DB_ELEMENT_NOT_PHRASESET_IFRAME = (e) => `Configured phraseset element query (${e}) does not point to an iFrame embed`;
+        this.DB_UNKNOWN_STATION = (c) => `UNKNOWN STATION: ${c}`;
+        this.DB_EMPTY_STATION = (c) => `Station database appears to contain an empty name for code '${c}'`;
+        this.DB_TOO_MANY_STATIONS = () => 'Picking too many stations than there are available';
+        this.TOOLBAR_PLAY = () => 'Play phrase';
+        this.TOOLBAR_STOP = () => 'Stop playing phrase';
+        this.TOOLBAR_SHUFFLE = () => 'Generate random phrase';
+        this.TOOLBAR_SAVE = () => 'Save state to storage';
+        this.TOOLBAR_LOAD = () => 'Recall state from storage';
+        this.TOOLBAR_SETTINGS = () => 'Open settings';
+        this.TITLE_COACH = (c) => `Click to change this coach ('${c}')`;
+        this.TITLE_EXCUSE = () => 'Click to change this excuse';
+        this.TITLE_INTEGER = (c) => `Click to change this number ('${c}')`;
+        this.TITLE_NAMED = () => "Click to change this train's name";
+        this.TITLE_OPT_OPEN = () => 'Click to open this optional part';
+        this.TITLE_OPT_CLOSE = () => 'Click to close this optional part';
+        this.TITLE_PHRASESET = (r) => `Click to change the phrase used in this section ('${r}')`;
+        this.TITLE_PLATFORM = () => "Click to change this train's platform";
+        this.TITLE_SERVICE = () => "Click to change this train's network";
+        this.TITLE_STATION = (c) => `Click to change this station ('${c}')`;
+        this.TITLE_STATIONLIST = (c) => `Click to change this station list ('${c}')`;
+        this.TITLE_TIME = () => "Click to change this train's time";
+        this.EDITOR_INIT = () => 'Please wait...';
+        this.EDITOR_UNKNOWN_ELEMENT = (n) => `(UNKNOWN XML ELEMENT: ${n})`;
+        this.EDITOR_UNKNOWN_PHRASE = (r) => `(UNKNOWN PHRASE: ${r})`;
+        this.EDITOR_UNKNOWN_PHRASESET = (r) => `(UNKNOWN PHRASESET: ${r})`;
+        this.PHRASER_TOO_RECURSIVE = () => 'Too many levels of recursion whilst processing phrase';
+        this.HEADER_COACH = (c) => `Pick a coach letter for the '${c}' context`;
+        this.HEADER_EXCUSE = () => 'Pick an excuse';
+        this.HEADER_INTEGER = (c) => `Pick a number for the '${c}' context`;
+        this.HEADER_NAMED = () => 'Pick a named train';
+        this.HEADER_PHRASESET = (r) => `Pick a phrase for the '${r}' section`;
+        this.HEADER_PLATFORM = () => 'Pick a platform';
+        this.HEADER_SERVICE = () => 'Pick a service';
+        this.HEADER_STATION = (c) => `Pick a station for the '${c}' context`;
+        this.HEADER_STATIONLIST = (c) => `Build a station list for the '${c}' context`;
+        this.HEADER_TIME = () => 'Pick a time';
+        this.P_COACH_T = () => 'Coach letter';
+        this.P_EXCUSE_T = () => 'List of delay or cancellation excuses';
+        this.P_EXCUSE_PH = () => 'Filter excuses...';
+        this.P_EXCUSE_ITEM_T = () => 'Click to select this excuse';
+        this.P_INT_T = () => 'Integer value';
+        this.P_NAMED_T = () => 'List of train names';
+        this.P_NAMED_PH = () => 'Filter train name...';
+        this.P_NAMED_ITEM_T = () => 'Click to select this name';
+        this.P_PSET_T = () => 'List of phrases';
+        this.P_PSET_PH = () => 'Filter phrases...';
+        this.P_PSET_ITEM_T = () => 'Click to select this phrase';
+        this.P_PLAT_NUMBER_T = () => 'Platform number';
+        this.P_PLAT_LETTER_T = () => 'Optional platform letter';
+        this.P_SERV_T = () => 'List of service names';
+        this.P_SERV_PH = () => 'Filter services...';
+        this.P_SERV_ITEM_T = () => 'Click to select this service';
+        this.P_STATION_T = () => 'List of station names';
+        this.P_STATION_PH = () => 'Filter stations...';
+        this.P_STATION_ITEM_T = () => 'Click to select or add this station';
+        this.P_SL_ADD = () => 'Add station...';
+        this.P_SL_ADD_T = () => 'Add station to this list';
+        this.P_SL_CLOSE = () => 'Close';
+        this.P_SL_CLOSE_T = () => 'Close this picker';
+        this.P_SL_EMPTY = () => 'Please add at least one station to this list';
+        this.P_SL_DRAG_T = () => 'Draggable selection of stations for this list';
+        this.P_SL_DELETE = () => 'Drop here to delete';
+        this.P_SL_DELETE_T = () => 'Drop station here to delete it from this list';
+        this.P_SL_ITEM_T = () => 'Drag to reorder; double-click or drag into delete zone to remove';
+        this.P_TIME_T = () => 'Time editor';
+        this.P_COACH_MISSING_STATE = () => 'onChange fired for coach picker without state';
+        this.P_INT_MISSING_STATE = () => 'onChange fired for integer picker without state';
+        this.P_PSET_MISSING_STATE = () => 'onSelect fired for phraseset picker without state';
+        this.P_PSET_UNKNOWN = (r) => `Phraseset '${r}' doesn't exist`;
+        this.P_SL_DRAG_MISSING = () => 'Draggable: Missing source elements for mirror event';
+        this.ST_RESET = () => 'Reset to defaults';
+        this.ST_RESET_T = () => 'Reset settings to defaults';
+        this.ST_RESET_CONFIRM = () => 'Are you sure?';
+        this.ST_RESET_CONFIRM_T = () => 'Confirm reset to defaults';
+        this.ST_RESET_DONE = () => 'Settings have been reset to their defaults, and deleted from storage.';
+        this.ST_SAVE = () => 'Save & close';
+        this.ST_SAVE_T = () => 'Save and close settings';
+        this.ST_VOX = () => 'Speech';
+        this.ST_VOX_CHOICE = () => 'Voice';
+        this.ST_VOX_EMPTY = () => 'None available';
+        this.ST_VOX_VOL = () => 'Volume';
+        this.ST_VOX_PITCH = () => 'Pitch';
+        this.ST_VOX_RATE = () => 'Rate';
+        this.ST_VOX_TEST = () => 'Test speech';
+        this.ST_VOX_TEST_T = () => 'Play a speech sample with the current settings';
+        this.ST_LEGAL = () => 'Legal & Acknowledgements';
+        this.WARN_SHORT_HEADER = () => '"May I have your attention please..."';
+        this.WARN_SHORT = () => 'This display is too short to support RAG. Please make this window taller, or' +
+            ' rotate your device from landscape to portrait.';
+        this.LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        this.DIGITS = [
+            'zero', 'one', 'two', 'three', 'four', 'five', 'six',
+            'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen',
+            'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'ninteen', 'twenty'
+        ];
+    }
+}
 class ElementProcessors {
     static coach(ctx) {
         let context = DOM.requireAttr(ctx.xmlElement, 'context');
-        ctx.newElement.title = `Click to change this coach ('${context}')`;
+        ctx.newElement.title = L.TITLE_COACH(context);
         ctx.newElement.textContent = RAG.state.getCoach(context);
         ctx.newElement.dataset['context'] = context;
     }
     static excuse(ctx) {
-        ctx.newElement.title = `Click to change this excuse`;
+        ctx.newElement.title = L.TITLE_EXCUSE();
         ctx.newElement.textContent = RAG.state.excuse;
     }
     static integer(ctx) {
@@ -710,13 +881,13 @@ class ElementProcessors {
         let words = ctx.xmlElement.getAttribute('words');
         let int = RAG.state.getInteger(context);
         let intStr = (words && words.toLowerCase() === 'true')
-            ? Phraser.DIGITS[int]
+            ? L.DIGITS[int] || int.toString()
             : int.toString();
         if (int === 1 && singular)
             intStr += ` ${singular}`;
         else if (int !== 1 && plural)
             intStr += ` ${plural}`;
-        ctx.newElement.title = `Click to change this number ('${context}')`;
+        ctx.newElement.title = L.TITLE_INTEGER(context);
         ctx.newElement.textContent = intStr;
         ctx.newElement.dataset['context'] = context;
         if (singular)
@@ -727,7 +898,7 @@ class ElementProcessors {
             ctx.newElement.dataset['words'] = words;
     }
     static named(ctx) {
-        ctx.newElement.title = "Click to change this train's name";
+        ctx.newElement.title = L.TITLE_NAMED();
         ctx.newElement.textContent = RAG.state.named;
     }
     static phrase(ctx) {
@@ -736,7 +907,7 @@ class ElementProcessors {
         ctx.newElement.title = '';
         ctx.newElement.dataset['ref'] = ref;
         if (!phrase) {
-            ctx.newElement.textContent = `(UNKNOWN PHRASE: ${ref})`;
+            ctx.newElement.textContent = L.EDITOR_UNKNOWN_PHRASE(ref);
             return;
         }
         if (ctx.xmlElement.hasAttribute('chance'))
@@ -749,31 +920,30 @@ class ElementProcessors {
         let phraseset = RAG.database.getPhraseset(ref);
         ctx.newElement.dataset['ref'] = ref;
         if (!phraseset) {
-            ctx.newElement.textContent = `(UNKNOWN PHRASESET: ${ref})`;
+            ctx.newElement.textContent = L.EDITOR_UNKNOWN_PHRASESET(ref);
             return;
         }
         let idx = RAG.state.getPhrasesetIdx(ref);
         let phrase = phraseset.children[idx];
         ctx.newElement.dataset['idx'] = idx.toString();
-        ctx.newElement.title =
-            `Click to change this phrase used in this section ('${ref}')`;
+        ctx.newElement.title = L.TITLE_PHRASESET(ref);
         if (ctx.xmlElement.hasAttribute('chance'))
             this.makeCollapsible(ctx, phrase, ref);
         else
             DOM.cloneInto(phrase, ctx.newElement);
     }
     static platform(ctx) {
-        ctx.newElement.title = "Click to change the platform number";
+        ctx.newElement.title = L.TITLE_PLATFORM();
         ctx.newElement.textContent = RAG.state.platform.join('');
     }
     static service(ctx) {
-        ctx.newElement.title = "Click to change this train's network";
+        ctx.newElement.title = L.TITLE_SERVICE();
         ctx.newElement.textContent = RAG.state.service;
     }
     static station(ctx) {
         let context = DOM.requireAttr(ctx.xmlElement, 'context');
         let code = RAG.state.getStation(context);
-        ctx.newElement.title = `Click to change this station ('${context}')`;
+        ctx.newElement.title = L.TITLE_STATION(context);
         ctx.newElement.textContent = RAG.database.getStation(code, true);
         ctx.newElement.dataset['context'] = context;
     }
@@ -781,17 +951,17 @@ class ElementProcessors {
         let context = DOM.requireAttr(ctx.xmlElement, 'context');
         let stations = RAG.state.getStationList(context).slice(0);
         let stationList = Strings.fromStationList(stations, context);
-        ctx.newElement.title = `Click to change this station list ('${context}')`;
+        ctx.newElement.title = L.TITLE_STATIONLIST(context);
         ctx.newElement.textContent = stationList;
         ctx.newElement.dataset['context'] = context;
     }
     static time(ctx) {
-        ctx.newElement.title = "Click to change the time";
+        ctx.newElement.title = L.TITLE_TIME();
         ctx.newElement.textContent = RAG.state.time;
     }
     static unknown(ctx) {
         let name = ctx.xmlElement.nodeName;
-        ctx.newElement.textContent = `(UNKNOWN XML ELEMENT: ${name})`;
+        ctx.newElement.textContent = L.EDITOR_UNKNOWN_ELEMENT(name);
     }
     static makeCollapsible(ctx, source, ref) {
         let chance = ctx.xmlElement.getAttribute('chance');
@@ -863,12 +1033,9 @@ class Phraser {
         if (level < 20)
             this.process(container, level + 1);
         else
-            throw new Error("Too many levels of recursion, when processing phrase.");
+            throw Error(L.PHRASER_TOO_RECURSIVE());
     }
 }
-Phraser.DIGITS = ['zero', 'one', 'two', 'three', 'four',
-    'five', 'six', 'seven', 'eight', 'nine', 'ten'];
-Phraser.LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 class Editor {
     constructor() {
         this.dom = DOM.require('#editor');
@@ -876,7 +1043,7 @@ class Editor {
         document.body.onkeydown = this.onInput.bind(this);
         window.onresize = this.onResize.bind(this);
         this.dom.onscroll = this.onScroll.bind(this);
-        this.dom.textContent = "Please wait...";
+        this.dom.textContent = L.EDITOR_INIT();
     }
     generate() {
         this.dom.innerHTML = '<phraseset ref="root" />';
@@ -900,9 +1067,6 @@ class Editor {
     }
     getElementsByQuery(query) {
         return this.dom.querySelectorAll(`span${query}`);
-    }
-    getRect() {
-        return this.dom.getBoundingClientRect();
     }
     getText() {
         return DOM.getCleanedVisibleText(this.dom);
@@ -1072,20 +1236,20 @@ class Settings {
     handleReset() {
         if (!this.resetTimeout) {
             this.resetTimeout = setTimeout(this.cancelReset.bind(this), 15000);
-            this.btnReset.innerText = 'Are you sure?';
-            this.btnReset.title = 'Confirm reset to defaults';
+            this.btnReset.innerText = L.ST_RESET_CONFIRM();
+            this.btnReset.title = L.ST_RESET_CONFIRM_T();
             return;
         }
         RAG.config.reset();
         RAG.speechSynth.cancel();
         this.cancelReset();
         this.open();
-        alert('Settings have been reset to their defaults, and deleted from storage.');
+        alert(L.ST_RESET_DONE());
     }
     cancelReset() {
         window.clearTimeout(this.resetTimeout);
-        this.btnReset.innerText = 'Reset to defaults';
-        this.btnReset.title = 'Reset settings to defaults';
+        this.btnReset.innerText = L.ST_RESET();
+        this.btnReset.title = L.ST_RESET_T();
         this.resetTimeout = undefined;
     }
     handleSave() {
@@ -1155,24 +1319,24 @@ class Toolbar {
     }
     handleSave() {
         try {
-            let css = "font-size: large; font-weight: bold;";
+            let css = 'font-size: large; font-weight: bold;';
             let raw = JSON.stringify(RAG.state);
             window.localStorage['state'] = raw;
-            console.log("%cCopy and paste this in console to load later:", css);
+            console.log(L.STATE_COPY_PASTE(), css);
             console.log("RAG.load('", raw.replace("'", "\\'"), "')");
-            console.log("%cRaw JSON state:", css);
+            console.log(L.STATE_RAW_JSON(), css);
             console.log(raw);
-            RAG.views.marquee.set("State has been saved to storage, and dumped to console.");
+            RAG.views.marquee.set(L.STATE_TO_STORAGE());
         }
         catch (e) {
-            RAG.views.marquee.set(`Sorry, state could not be saved to storage: ${e.message}.`);
+            RAG.views.marquee.set(L.STATE_SAVE_FAIL(e.message));
         }
     }
     handleLoad() {
         let data = window.localStorage['state'];
         return data
             ? RAG.load(data)
-            : RAG.views.marquee.set("Sorry, no state was found in storage.");
+            : RAG.views.marquee.set(L.STATE_SAVE_MISSING());
     }
     handleOption() {
         RAG.views.settings.open();
@@ -1211,8 +1375,8 @@ class Collapsibles {
         else
             span.removeAttribute('collapsed');
         toggle.title = state
-            ? "Click to open this optional part"
-            : "Click to close this optional part";
+            ? L.TITLE_OPT_OPEN()
+            : L.TITLE_OPT_CLOSE();
     }
 }
 class DOM {
@@ -1230,18 +1394,18 @@ class DOM {
     static require(query, parent = window.document) {
         let result = parent.querySelector(query);
         if (!result)
-            throw new Error(`Required DOM element is missing: '${query}'`);
+            throw Error(L.DOM_MISSING(query));
         return result;
     }
     static requireAttr(element, attr) {
         if (!element.hasAttribute(attr))
-            throw new Error(`Required attribute is missing: '${attr}'`);
+            throw Error(L.ATTR_MISSING(attr));
         return element.getAttribute(attr);
     }
     static requireData(element, key) {
         let value = element.dataset[key];
         if (Strings.isNullOrEmpty(value))
-            throw new Error(`Required dataset key is missing or empty: '${key}'`);
+            throw Error(L.DATA_MISSING(key));
         return value;
     }
     static blurActive(parent = document.body) {
@@ -1286,24 +1450,12 @@ class DOM {
                 current = current.nextElementSibling
                     || parent.firstElementChild;
             else
-                throw new Error("Direction needs to be -1 or 1");
+                throw Error(L.BAD_DIRECTION(dir.toString()));
             if (current === from)
                 return null;
             if (!current.classList.contains('hidden') && current.tabIndex)
                 return current;
         }
-    }
-    static preventDefault(ev) {
-        ev.preventDefault();
-    }
-    static swap(obj1, obj2) {
-        if (!obj1.parentNode || !obj2.parentNode)
-            throw new Error("Parent node required for swapping");
-        let temp = document.createElement("div");
-        obj1.parentNode.insertBefore(temp, obj1);
-        obj2.parentNode.insertBefore(obj1, obj2);
-        temp.parentNode.insertBefore(obj2, temp);
-        temp.parentNode.removeChild(temp);
     }
 }
 class Parse {
@@ -1313,7 +1465,7 @@ class Parse {
             return true;
         if (str === 'false' || str === '0')
             return false;
-        throw new Error("Given string does not represent a boolean");
+        throw Error(L.BAD_BOOLEAN(str));
     }
 }
 class Random {
@@ -1365,7 +1517,7 @@ class Config {
             Object.assign(this, config);
         }
         catch (e) {
-            alert(`Could not load settings: ${e.message}`);
+            alert(L.CONFIG_LOAD_FAIL(e.message));
             console.error(e);
         }
     }
@@ -1374,31 +1526,38 @@ class Config {
             window.localStorage['settings'] = JSON.stringify(this);
         }
         catch (e) {
-            alert(`Could not save settings: ${e.message}`);
+            alert(L.CONFIG_SAVE_FAIL(e.message));
             console.error(e);
         }
     }
     reset() {
-        window.localStorage.removeItem('settings');
-        Object.assign(this, new Config());
+        try {
+            Object.assign(this, new Config());
+            window.localStorage.removeItem('settings');
+        }
+        catch (e) {
+            alert(L.CONFIG_RESET_FAIL(e.message));
+            console.error(e);
+        }
     }
 }
 class Database {
     constructor(dataRefs) {
-        let iframe = DOM.require(dataRefs.phrasesetEmbed);
+        let query = dataRefs.phrasesetEmbed;
+        let iframe = DOM.require(query);
         if (!iframe.contentDocument)
-            throw new Error("Configured phraseset element is not an iframe embed");
+            throw Error(L.DB_ELEMENT_NOT_PHRASESET_IFRAME(query));
         this.phrasesets = iframe.contentDocument;
         this.excuses = dataRefs.excusesData;
         this.named = dataRefs.namedData;
         this.services = dataRefs.servicesData;
         this.stations = dataRefs.stationsData;
         this.stationsCount = Object.keys(this.stations).length;
-        console.log("[Database] Entries loaded:");
-        console.log("\tExcuses:", this.excuses.length);
-        console.log("\tNamed trains:", this.named.length);
-        console.log("\tServices:", this.services.length);
-        console.log("\tStations:", this.stationsCount);
+        console.log('[Database] Entries loaded:');
+        console.log('\tExcuses:', this.excuses.length);
+        console.log('\tNamed trains:', this.named.length);
+        console.log('\tServices:', this.services.length);
+        console.log('\tStations:', this.stationsCount);
     }
     pickExcuse() {
         return Random.array(this.excuses);
@@ -1430,14 +1589,16 @@ class Database {
     getStation(code, filtered = false) {
         let station = this.stations[code];
         if (!station)
-            return `UNKNOWN STATION: ${code}`;
+            return L.DB_UNKNOWN_STATION(code);
+        else if (Strings.isNullOrEmpty(station))
+            return L.DB_EMPTY_STATION(code);
         if (filtered)
             station = station.replace(/\(.+\)/i, '').trim();
         return station;
     }
     pickStationCodes(min = 1, max = 16, exclude) {
         if (max - min > Object.keys(this.stations).length)
-            throw new Error("Picking too many stations than there are available");
+            throw Error(L.DB_TOO_MANY_STATIONS());
         let result = [];
         let length = Random.int(min, max);
         let tries = 0;
@@ -1455,15 +1616,16 @@ class Database {
 }
 class RAG {
     static main(dataRefs) {
+        I18n.init();
         window.onerror = error => RAG.panic(error);
-        window.onbeforeunload = _ => RAG.speechSynth.cancel();
+        window.onbeforeunload = () => RAG.speechSynth.cancel();
         RAG.config = new Config();
         RAG.database = new Database(dataRefs);
         RAG.views = new Views();
         RAG.phraser = new Phraser();
         RAG.speechSynth = window.speechSynthesis;
         RAG.config.load();
-        RAG.views.marquee.set("Welcome to RAG.");
+        RAG.views.marquee.set(L.WELCOME());
         RAG.generate();
     }
     static generate() {
@@ -1474,7 +1636,7 @@ class RAG {
     static load(json) {
         RAG.state = Object.assign(new State(), JSON.parse(json));
         RAG.views.editor.generate();
-        RAG.views.marquee.set("State has been loaded from storage.");
+        RAG.views.marquee.set(L.STATE_FROM_STORAGE());
     }
     static panic(error = "Unknown error") {
         let msg = '<div id="panicScreen" class="warningScreen">';
@@ -1497,7 +1659,7 @@ class State {
     getCoach(context) {
         if (this._coaches[context] !== undefined)
             return this._coaches[context];
-        this._coaches[context] = Random.array(Phraser.LETTERS);
+        this._coaches[context] = Random.array(L.LETTERS);
         return this._coaches[context];
     }
     setCoach(context, coach) {
@@ -1545,7 +1707,7 @@ class State {
             return this._phrasesets[ref];
         let phraseset = RAG.database.getPhraseset(ref);
         if (!phraseset)
-            throw new Error("Shouldn't get phraseset idx for one that doesn't exist");
+            throw Error(L.STATE_NONEXISTANT_PHRASESET(ref));
         this._phrasesets[ref] = Random.int(0, phraseset.children.length);
         return this._phrasesets[ref];
     }
@@ -1568,15 +1730,15 @@ class State {
             return this.getStationList('calling');
         let min = 1, max = 16;
         switch (context) {
-            case "calling_split":
+            case 'calling_split':
                 min = 2;
                 max = 16;
                 break;
-            case "changes":
+            case 'changes':
                 min = 1;
                 max = 4;
                 break;
-            case "not_stopping":
+            case 'not_stopping':
                 min = 1;
                 max = 8;
                 break;
@@ -1584,10 +1746,10 @@ class State {
         this._stationLists[context] = RAG.database.pickStationCodes(min, max);
         return this._stationLists[context];
     }
-    setStationList(context, value) {
-        this._stationLists[context] = value;
+    setStationList(context, codes) {
+        this._stationLists[context] = codes;
         if (context === 'calling_first')
-            this._stationLists['calling'] = value;
+            this._stationLists['calling'] = codes;
     }
     get excuse() {
         if (this._excuse)
@@ -1687,7 +1849,7 @@ class State {
             this.setInteger('rear_coaches', intRearCoaches);
         }
         if (intCoaches >= 4) {
-            let letters = Phraser.LETTERS.slice(0, intCoaches).split('');
+            let letters = L.LETTERS.slice(0, intCoaches).split('');
             let randSplice = () => letters.splice(Random.int(0, letters.length), 1)[0];
             this.setCoach('first', randSplice());
             this.setCoach('shop', randSplice());

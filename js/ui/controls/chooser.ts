@@ -46,6 +46,7 @@ class Chooser
             Chooser.init();
 
         let target      = DOM.require('chooser', parent);
+        // TODO: Simplify and use translation
         let placeholder = DOM.getAttr(target, 'placeholder', 'Filter choices...');
         let title       = DOM.getAttr(target, 'title', 'List of choices');
         this.itemTitle  = DOM.getAttr(target, 'itemTitle', this.itemTitle);
@@ -57,6 +58,9 @@ class Chooser
 
         this.inputChoices.title      = title;
         this.inputFilter.placeholder = placeholder;
+        // TODO: Reusing the placeholder as title is probably bad
+        // https://laken.net/blog/most-common-a11y-mistakes/
+        this.inputFilter.title       = placeholder;
 
         target.insertAdjacentElement('beforebegin', this.dom);
         target.remove();
@@ -65,8 +69,8 @@ class Chooser
     /**
      * Adds the given value to the chooser as a selectable item.
      *
-     * @param {string} value Text of the selectable item
-     * @param {boolean} select Whether to select this item once added
+     * @param value Text of the selectable item
+     * @param select Whether to select this item once added
      */
     public add(value: string, select: boolean = false) : void
     {
@@ -80,8 +84,8 @@ class Chooser
     /**
      * Adds the given element to the chooser as a selectable item.
      *
-     * @param {string} item Element to add to the chooser
-     * @param {boolean} select Whether to select this item once added
+     * @param item Element to add to the chooser
+     * @param select Whether to select this item once added
      */
     public addRaw(item: HTMLElement, select: boolean = false) : void
     {

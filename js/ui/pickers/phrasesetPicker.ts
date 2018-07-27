@@ -30,10 +30,10 @@ class PhrasesetPicker extends Picker
         let phraseset = RAG.database.getPhraseset(ref);
 
         if (!phraseset)
-            throw new Error(`Phraseset '${ref}' doesn't exist`);
+            throw Error( L.P_PSET_UNKNOWN(ref) );
 
         this.currentRef          = ref;
-        this.domHeader.innerText = `Pick a phrase for the '${ref}' section`;
+        this.domHeader.innerText = L.HEADER_PHRASESET(ref);
 
         this.domChooser.clear();
 
@@ -71,7 +71,7 @@ class PhrasesetPicker extends Picker
     private onSelect(entry: HTMLElement) : void
     {
         if (!this.currentRef)
-            throw new Error("Got select event when currentRef is unset");
+            throw Error( L.P_PSET_MISSING_STATE() );
 
         let idx = parseInt(entry.dataset['idx']!);
 

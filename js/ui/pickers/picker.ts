@@ -23,7 +23,7 @@ abstract class Picker
     protected constructor(xmlTag: string)
     {
         this.dom       = DOM.require(`#${xmlTag}Picker`);
-        this.domForm   = DOM.require('form', this.dom);
+        this.domForm   = DOM.require('form',   this.dom);
         this.domHeader = DOM.require('header', this.dom);
         this.xmlTag    = xmlTag;
 

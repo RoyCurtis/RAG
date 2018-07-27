@@ -1,5 +1,8 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+/// <reference path="lang/BaseLanguage.ts"/>
+/// <reference path="lang/EnglishLanguage.ts"/>
+
 /** Main class of the entire Rail Announcements Generator application */
 class RAG
 {
@@ -19,12 +22,14 @@ class RAG
     /**
      * Entry point for RAG, to be called from Javascript.
      *
-     * @param {DataRefs} dataRefs Configuration object, with rail data to use
+     * @param dataRefs Configuration object, with rail data to use
      */
-    public static main(dataRefs: DataRefs)
+    public static main(dataRefs: DataRefs) : void
     {
+        I18n.init();
+
         window.onerror        = error => RAG.panic(error);
-        window.onbeforeunload = _ => RAG.speechSynth.cancel();
+        window.onbeforeunload = () => RAG.speechSynth.cancel();
 
         RAG.config      = new Config();
         RAG.database    = new Database(dataRefs);
@@ -35,7 +40,7 @@ class RAG
         // Begin
 
         RAG.config.load();
-        RAG.views.marquee.set("Welcome to RAG.");
+        RAG.views.marquee.set( L.WELCOME() );
         RAG.generate();
     }
 
@@ -52,7 +57,7 @@ class RAG
     {
         RAG.state = Object.assign( new State(), JSON.parse(json) ) as State;
         RAG.views.editor.generate();
-        RAG.views.marquee.set("State has been loaded from storage.");
+        RAG.views.marquee.set( L.STATE_FROM_STORAGE() );
     }
 
     /** Global error handler; throws up a big red panic screen on uncaught error */

@@ -10,7 +10,7 @@ class StationChooser extends Chooser
     /** Shortcut references to all the generated A-Z station list elements */
     private readonly domStations : Dictionary<HTMLDListElement> = {};
 
-    constructor(parent: HTMLElement)
+    public constructor(parent: HTMLElement)
     {
         super(parent);
 
@@ -24,9 +24,6 @@ class StationChooser extends Chooser
             let station = RAG.database.stations[code];
             let letter  = station[0];
             let group   = this.domStations[letter];
-
-            if (!letter)
-                throw new Error('Station database appears to contain an empty name');
 
             if (!group)
             {
@@ -52,7 +49,12 @@ class StationChooser extends Chooser
         });
     }
 
-    /** Attaches this control to the given parent and resets some state */
+    /**
+     * Attaches this control to the given parent and resets some state.
+     *
+     * @param picker Picker to attach this control to
+     * @param onSelect Delegate to fire when choosing a station
+     */
     public attach(picker: Picker, onSelect: SelectDelegate) : void
     {
         let parent  = picker.domForm;

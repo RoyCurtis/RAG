@@ -3,20 +3,28 @@
 /** Controller for the settings dialog */
 class Settings
 {
+    /** Reference to the container for the settings dialog */
     private dom           : HTMLElement;
+    /** Reference to the "Reset settings" button */
     private btnReset      : HTMLButtonElement;
+    /** Reference to the "Save and close" button */
     private btnSave       : HTMLButtonElement;
+    /** Reference to the voice selection box */
     private selVoxChoice  : HTMLSelectElement;
+    /** Reference to the voice volume slider */
     private rangeVoxVol   : HTMLInputElement;
+    /** Reference to the voice pitch slider */
     private rangeVoxPitch : HTMLInputElement;
+    /** Reference to the voice rate slider */
     private rangeVoxRate  : HTMLInputElement;
+    /** Reference to the speech test button */
     private btnVoxTest    : HTMLInputElement;
-
+    /** Reference to the timer for the "Reset" button confirmation step */
     private resetTimeout? : number;
+    /** Whether this dialog has been initialized yet */
+    private ready         : boolean = false;
 
-    private ready : boolean = false;
-
-    constructor()
+    public constructor()
     {
         // General settings form
 
@@ -45,6 +53,7 @@ class Settings
         };
     }
 
+    /** Opens the settings dialog */
     public open() : void
     {
         document.body.classList.add('settingsVisible');
@@ -59,6 +68,7 @@ class Settings
         this.btnSave.focus();
     }
 
+    /** Closes the settings dialog */
     public close() : void
     {
         this.cancelReset();
@@ -67,6 +77,7 @@ class Settings
         DOM.blurActive(this.dom);
     }
 
+    /** Prepares the settings dialog by populating the voice list */
     private init() : void
     {
         let voices = RAG.speechSynth.getVoices();
@@ -80,6 +91,7 @@ class Settings
         this.selVoxChoice.innerHTML = '';
 
         // https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis
+        // TODO: Pick english voice by default
         for (let i = 0; i < voices.length ; i++)
         {
             let option = document.createElement('option');
@@ -92,13 +104,14 @@ class Settings
         this.ready = true;
     }
 
+    /** Handles the reset button, with a confirm step that cancels after 15 seconds */
     private handleReset() : void
     {
         if (!this.resetTimeout)
         {
             this.resetTimeout       = setTimeout(this.cancelReset.bind(this), 15000);
-            this.btnReset.innerText = 'Are you sure?';
-            this.btnReset.title     = 'Confirm reset to defaults';
+            this.btnReset.innerText = L.ST_RESET_CONFIRM();
+            this.btnReset.title     = L.ST_RESET_CONFIRM_T();
             return;
         }
 
@@ -106,17 +119,19 @@ class Settings
         RAG.speechSynth.cancel();
         this.cancelReset();
         this.open();
-        alert('Settings have been reset to their defaults, and deleted from storage.');
+        alert( L.ST_RESET_DONE() );
     }
 
+    /** Cancel the reset timeout and restore the reset button to normal */
     private cancelReset() : void
     {
         window.clearTimeout(this.resetTimeout);
-        this.btnReset.innerText = 'Reset to defaults';
-        this.btnReset.title     = 'Reset settings to defaults';
+        this.btnReset.innerText = L.ST_RESET();
+        this.btnReset.title     = L.ST_RESET_T();
         this.resetTimeout       = undefined;
     }
 
+    /** Handles the save button, saving config to storage */
     private handleSave() : void
     {
         RAG.config.voxChoice = this.selVoxChoice.selectedIndex;
@@ -127,6 +142,7 @@ class Settings
         this.close();
     }
 
+    /** Handles the speech test button, speaking a test phrase */
     private handleVoxTest() : void
     {
         this.btnVoxTest.disabled = false;

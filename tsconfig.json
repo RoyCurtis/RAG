@@ -21,6 +21,7 @@
   "compileOnSave": true,
 
   "include": [
+    "js/lang/I18n.ts",
     "js/*/*/*.ts",
     "js/*/*.ts",
     "js/*.ts"

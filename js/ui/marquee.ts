@@ -3,13 +3,17 @@
 /** Controller for the scrolling marquee */
 class Marquee
 {
+    /** Reference to the marquee's DOM element */
     private readonly dom     : HTMLElement;
+    /** Reference to the span element in the marquee, where the text is set */
     private readonly domSpan : HTMLElement;
 
+    /** Reference ID for the scrolling animation timer */
     private timer  : number = 0;
+    /** Current offset (in pixels) of the scrolling marquee */
     private offset : number = 0;
 
-    constructor()
+    public constructor()
     {
         this.dom     = DOM.require('#marquee');
         this.domSpan = document.createElement('span');

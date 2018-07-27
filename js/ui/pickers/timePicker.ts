@@ -12,7 +12,8 @@ class TimePicker extends Picker
     {
         super('time');
 
-        this.inputTime = DOM.require('input', this.dom);
+        this.inputTime           = DOM.require('input', this.dom);
+        this.domHeader.innerText = L.HEADER_TIME();
     }
 
     /** Populates the form with the current state's time */

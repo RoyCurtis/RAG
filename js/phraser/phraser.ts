@@ -6,13 +6,12 @@
  */
 class Phraser
 {
-    // TODO: Move to language file
-    public static readonly DIGITS : string[] = ['zero', 'one', 'two', 'three', 'four',
-        'five', 'six', 'seven', 'eight', 'nine', 'ten'];
-
-    public static readonly LETTERS : string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-    /** Recursively processes elements, filling in data and applying transforms */
+    /**
+     * Recursively processes XML elements, filling in data and applying transforms.
+     *
+     * @param container Parent to process the children of
+     * @param level Current level of recursion, max. 20
+     */
     public process(container: HTMLElement, level: number = 0)
     {
         // Initially, this method was supposed to just add the XML elements directly into
@@ -66,6 +65,6 @@ class Phraser
         if (level < 20)
             this.process(container, level + 1);
         else
-            throw new Error("Too many levels of recursion, when processing phrase.");
+            throw Error( L.PHRASER_TOO_RECURSIVE() );
     }
 }

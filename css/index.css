@@ -10,7 +10,8 @@
 .warningScreen h1 {
   font-style: italic;
 }
-.warningScreen p {
+.warningScreen p,
+.warningScreen pre {
   line-height: 150%;
   margin: 16px;
 }

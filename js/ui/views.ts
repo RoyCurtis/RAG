@@ -3,15 +3,18 @@
 /** Manages UI elements and their logic */
 class Views
 {
-    // Main components
-    public readonly editor   : Editor;
-    public readonly marquee  : Marquee;
-    public readonly settings : Settings;
-    public readonly toolbar  : Toolbar;
+    /** Reference to the main editor component */
+    public  readonly editor   : Editor;
+    /** Reference to the main marquee component */
+    public  readonly marquee  : Marquee;
+    /** Reference to the main settings dialog */
+    public  readonly settings : Settings;
+    /** Reference to the main toolbar component */
+    public  readonly toolbar  : Toolbar;
+    /** References to all the pickers, one for each type of XML element */
+    private readonly pickers  : Dictionary<Picker>;
 
-    private readonly pickers : Dictionary<Picker>;
-
-    constructor()
+    public constructor()
     {
         this.editor   = new Editor();
         this.marquee  = new Marquee();
@@ -37,6 +40,7 @@ class Views
             document.body.classList.add('ios');
     }
 
+    /** Gets the picker that handles a given tag, if any */
     public getPicker(xmlTag: string) : Picker
     {
         return this.pickers[xmlTag];

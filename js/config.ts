@@ -12,6 +12,7 @@ class Config
     /** Rate for speech to be set at */
     voxRate   : number = 1.0;
 
+    /** Safely loads runtime configuration from localStorage, if any */
     public load() : void
     {
         if (!window.localStorage['settings'])
@@ -24,11 +25,12 @@ class Config
         }
         catch (e)
         {
-            alert(`Could not load settings: ${e.message}`);
+            alert( L.CONFIG_LOAD_FAIL(e.message) );
             console.error(e);
         }
     }
 
+    /** Safely saves runtime configuration to localStorage */
     public save() : void
     {
         try
@@ -37,14 +39,23 @@ class Config
         }
         catch (e)
         {
-            alert(`Could not save settings: ${e.message}`);
+            alert( L.CONFIG_SAVE_FAIL(e.message) );
             console.error(e);
         }
     }
 
+    /** Safely deletes runtime configuration from localStorage and resets state */
     public reset() : void
     {
-        window.localStorage.removeItem('settings');
-        Object.assign( this, new Config() );
+        try
+        {
+            Object.assign(this, new Config());
+            window.localStorage.removeItem('settings');
+        }
+        catch (e)
+        {
+            alert( L.CONFIG_RESET_FAIL(e.message) );
+            console.error(e);
+        }
     }
 }

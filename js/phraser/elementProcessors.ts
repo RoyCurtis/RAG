@@ -1,27 +1,31 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/** Holds methods for processing each type of phrase element into HTML, with data */
+/**
+ * Holds methods for processing each type of phrase element into HTML, with data taken
+ * from the current state. Each method takes a context object, holding data for the
+ * current XML element being processed and the XML document being used.
+ */
 class ElementProcessors
 {
-    /** Picks a coach letter from A to Z, limited by amount of coaches */
+    /** Fills in coach letters from A to Z */
     public static coach(ctx: PhraseContext)
     {
         let context = DOM.requireAttr(ctx.xmlElement, 'context');
 
-        ctx.newElement.title       = `Click to change this coach ('${context}')`;
+        ctx.newElement.title       = L.TITLE_COACH(context);
         ctx.newElement.textContent = RAG.state.getCoach(context);
 
         ctx.newElement.dataset['context'] = context;
     }
 
-    /** Picks an excuse for a delay or cancellation */
+    /** Fills in the excuse, for a delay or cancellation */
     public static excuse(ctx: PhraseContext)
     {
-        ctx.newElement.title       = `Click to change this excuse`;
+        ctx.newElement.title       = L.TITLE_EXCUSE();
         ctx.newElement.textContent = RAG.state.excuse;
     }
 
-    /** Picks a whole number, with optional limits, noun and in word form */
+    /** Fills in integers, optionally with nouns and in word form */
     public static integer(ctx: PhraseContext)
     {
         let context  = DOM.requireAttr(ctx.xmlElement, 'context');
@@ -31,7 +35,7 @@ class ElementProcessors
 
         let int    = RAG.state.getInteger(context);
         let intStr = (words && words.toLowerCase() === 'true')
-            ? Phraser.DIGITS[int]
+            ? L.DIGITS[int] || int.toString()
             : int.toString();
 
         if      (int === 1 && singular)
@@ -39,7 +43,7 @@ class ElementProcessors
         else if (int !== 1 && plural)
             intStr += ` ${plural}`;
 
-        ctx.newElement.title       = `Click to change this number ('${context}')`;
+        ctx.newElement.title       = L.TITLE_INTEGER(context);
         ctx.newElement.textContent = intStr;
 
         ctx.newElement.dataset['context'] = context;
@@ -49,10 +53,10 @@ class ElementProcessors
         if (words)    ctx.newElement.dataset['words']    = words;
     }
 
-    /** Picks a named train */
+    /** Fills in the named train */
     public static named(ctx: PhraseContext)
     {
-        ctx.newElement.title       = "Click to change this train's name";
+        ctx.newElement.title       = L.TITLE_NAMED();
         ctx.newElement.textContent = RAG.state.named;
     }
 
@@ -67,7 +71,7 @@ class ElementProcessors
 
         if (!phrase)
         {
-            ctx.newElement.textContent = `(UNKNOWN PHRASE: ${ref})`;
+            ctx.newElement.textContent = L.EDITOR_UNKNOWN_PHRASE(ref);
             return;
         }
 
@@ -78,7 +82,7 @@ class ElementProcessors
             DOM.cloneInto(phrase, ctx.newElement);
     }
 
-    /** Picks a phrase from a previously defined phraseset, by its `id` */
+    /** Includes a phrase from a previously defined phraseset, by its `id` */
     public static phraseset(ctx: PhraseContext)
     {
         let ref       = DOM.requireAttr(ctx.xmlElement, 'ref');
@@ -88,7 +92,7 @@ class ElementProcessors
 
         if (!phraseset)
         {
-            ctx.newElement.textContent = `(UNKNOWN PHRASESET: ${ref})`;
+            ctx.newElement.textContent = L.EDITOR_UNKNOWN_PHRASESET(ref);
             return;
         }
 
@@ -97,8 +101,7 @@ class ElementProcessors
 
         ctx.newElement.dataset['idx'] = idx.toString();
 
-        ctx.newElement.title =
-            `Click to change this phrase used in this section ('${ref}')`;
+        ctx.newElement.title = L.TITLE_PHRASESET(ref);
 
         // Handle phrasesets with a chance value as collapsible
         if ( ctx.xmlElement.hasAttribute('chance') )
@@ -107,58 +110,58 @@ class ElementProcessors
             DOM.cloneInto(phrase, ctx.newElement);
     }
 
-    /** Gets the current platform number */
+    /** Fills in the current platform */
     public static platform(ctx: PhraseContext)
     {
-        ctx.newElement.title       = "Click to change the platform number";
+        ctx.newElement.title       = L.TITLE_PLATFORM();
         ctx.newElement.textContent = RAG.state.platform.join('');
     }
 
-    /** Picks a rail network name */
+    /** Fills in the rail network name */
     public static service(ctx: PhraseContext)
     {
-        ctx.newElement.title       = "Click to change this train's network";
+        ctx.newElement.title       = L.TITLE_SERVICE();
         ctx.newElement.textContent = RAG.state.service;
     }
 
-    /** Picks a station name */
+    /** Fills in station names */
     public static station(ctx: PhraseContext)
     {
         let context = DOM.requireAttr(ctx.xmlElement, 'context');
         let code    = RAG.state.getStation(context);
 
-        ctx.newElement.title       = `Click to change this station ('${context}')`;
+        ctx.newElement.title       = L.TITLE_STATION(context);
         ctx.newElement.textContent = RAG.database.getStation(code, true);
 
         ctx.newElement.dataset['context'] = context;
     }
 
-    /** Picks a selection of stations */
+    /** Fills in station lists */
     public static stationlist(ctx: PhraseContext)
     {
         let context     = DOM.requireAttr(ctx.xmlElement, 'context');
         let stations    = RAG.state.getStationList(context).slice(0);
         let stationList = Strings.fromStationList(stations, context);
 
-        ctx.newElement.title       = `Click to change this station list ('${context}')`;
+        ctx.newElement.title       = L.TITLE_STATIONLIST(context);
         ctx.newElement.textContent = stationList;
 
         ctx.newElement.dataset['context'] = context;
     }
 
-    /** Picks a 24 hour time, with hours and minutes */
+    /** Fills in the time */
     public static time(ctx: PhraseContext)
     {
-        ctx.newElement.title       = "Click to change the time";
+        ctx.newElement.title       = L.TITLE_TIME();
         ctx.newElement.textContent = RAG.state.time;
     }
 
-    /** Handles unknown elements in an inline error message */
+    /** Handles unknown elements with an inline error message */
     public static unknown(ctx: PhraseContext)
     {
         let name = ctx.xmlElement.nodeName;
 
-        ctx.newElement.textContent = `(UNKNOWN XML ELEMENT: ${name})`;
+        ctx.newElement.textContent = L.EDITOR_UNKNOWN_ELEMENT(name);
     }
 
     /**

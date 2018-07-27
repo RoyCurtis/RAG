@@ -3,33 +3,61 @@
 /** Disposable class that holds state for the current schedule, train, etc. */
 class State
 {
+    /** State of collapsible elements. Key is reference ID, value is collapsed. */
     private _collapsibles : Dictionary<boolean>  = {};
+    /** Current coach letter choices. Key is context ID, value is letter. */
     private _coaches      : Dictionary<string>   = {};
+    /** Current integer choices. Key is context ID, value is integer. */
     private _integers     : Dictionary<number>   = {};
+    /** Current phraseset phrase choices. Key is reference ID, value is index. */
     private _phrasesets   : Dictionary<number>   = {};
+    /** Current station choices. Key is context ID, value is station code. */
     private _stations     : Dictionary<string>   = {};
+    /** Current station list choices. Key is context ID, value is array of codes. */
     private _stationLists : Dictionary<string[]> = {};
 
+    /** Currently chosen excuse */
     private _excuse?   : string;
+    /** Currently chosen platform */
     private _platform? : Platform;
+    /** Currently chosen named train */
     private _named?    : string;
+    /** Currently chosen service/network name */
     private _service?  : string;
+    /** Currently chosen train time */
     private _time?     : string;
 
+    /**
+     * Gets the currently chosen coach letter, or randomly picks one from A to Z.
+     *
+     * @param context Context ID to get or choose the letter for
+     */
     public getCoach(context: string) : string
     {
         if (this._coaches[context] !== undefined)
             return this._coaches[context];
 
-        this._coaches[context] = Random.array(Phraser.LETTERS);
+        this._coaches[context] = Random.array(L.LETTERS);
         return this._coaches[context];
     }
 
+    /**
+     * Sets a coach letter.
+     *
+     * @param context Context ID to set the letter for
+     * @param coach Value to set
+     */
     public setCoach(context: string, coach: string) : void
     {
         this._coaches[context] = coach;
     }
 
+    /**
+     * Gets the collapse state of a collapsible, or randomly picks one.
+     *
+     * @param ref Reference ID to get the collapsible state of
+     * @param chance Chance between 0 and 100 of choosing true, if unset
+     */
     public getCollapsed(ref: string, chance: number) : boolean
     {
         if (this._collapsibles[ref] !== undefined)
@@ -39,11 +67,22 @@ class State
         return this._collapsibles[ref];
     }
 
+    /**
+     * Sets a collapsible's state.
+     *
+     * @param ref Reference ID to set the collapsible state of
+     * @param state Value to set, where true is "collapsed"
+     */
     public setCollapsed(ref: string, state: boolean) : void
     {
         this._collapsibles[ref] = state;
     }
 
+    /**
+     * Gets the currently chosen integer, or randomly picks one.
+     *
+     * @param context Context ID to get or choose the integer for
+     */
     public getInteger(context: string) : number
     {
         if (this._integers[context] !== undefined)
@@ -63,11 +102,22 @@ class State
         return this._integers[context];
     }
 
+    /**
+     * Sets an integer.
+     *
+     * @param context Context ID to set the integer for
+     * @param value Value to set
+     */
     public setInteger(context: string, value: number) : void
     {
         this._integers[context] = value;
     }
 
+    /**
+     * Gets the currently chosen phrase of a phraseset, or randomly picks one.
+     *
+     * @param ref Reference ID to get or choose the phraseset's phrase of
+     */
     public getPhrasesetIdx(ref: string) : number
     {
         if (this._phrasesets[ref] !== undefined)
@@ -77,17 +127,28 @@ class State
 
         // TODO: is this safe across phraseset changes?
         if (!phraseset)
-            throw new Error("Shouldn't get phraseset idx for one that doesn't exist");
+            throw Error( L.STATE_NONEXISTANT_PHRASESET(ref) );
 
         this._phrasesets[ref] = Random.int(0, phraseset.children.length);
         return this._phrasesets[ref];
     }
 
+    /**
+     * Sets the chosen index for a phraseset.
+     *
+     * @param ref Reference ID to set the phraseset index of
+     * @param idx Index to set
+     */
     public setPhrasesetIdx(ref: string, idx: number) : void
     {
         this._phrasesets[ref] = idx;
     }
 
+    /**
+     * Gets the currently chosen station code, or randomly picks one.
+     *
+     * @param context Context ID to get or choose the station for
+     */
     public getStation(context: string) : string
     {
         if (this._stations[context] !== undefined)
@@ -97,11 +158,22 @@ class State
         return this._stations[context];
     }
 
+    /**
+     * Sets a station code.
+     *
+     * @param context Context ID to set the station code for
+     * @param code Station code to set
+     */
     public setStation(context: string, code: string) : void
     {
         this._stations[context] = code;
     }
 
+    /**
+     * Gets the currently chosen list of station codes, or randomly generates one.
+     *
+     * @param context Context ID to get or choose the station list for
+     */
     public getStationList(context: string) : string[]
     {
         if (this._stationLists[context] !== undefined)
@@ -113,23 +185,30 @@ class State
 
         switch(context)
         {
-            case "calling_split": min = 2; max = 16; break;
-            case "changes":       min = 1; max = 4;  break;
-            case "not_stopping":  min = 1; max = 8;  break;
+            case 'calling_split': min = 2; max = 16; break;
+            case 'changes':       min = 1; max = 4;  break;
+            case 'not_stopping':  min = 1; max = 8;  break;
         }
 
         this._stationLists[context] = RAG.database.pickStationCodes(min, max);
         return this._stationLists[context];
     }
 
-    public setStationList(context: string, value: string[]) : void
+    /**
+     * Sets a list of station codes.
+     *
+     * @param context Context ID to set the station code list for
+     * @param codes Station codes to set
+     */
+    public setStationList(context: string, codes: string[]) : void
     {
-        this._stationLists[context] = value;
+        this._stationLists[context] = codes;
 
         if (context === 'calling_first')
-            this._stationLists['calling'] = value;
+            this._stationLists['calling'] = codes;
     }
 
+    /** Gets the chosen excuse, or randomly picks one */
     public get excuse() : string
     {
         if (this._excuse)
@@ -139,17 +218,19 @@ class State
         return this._excuse;
     }
 
+    /** Sets the current excuse */
     public set excuse(value: string)
     {
         this._excuse = value;
     }
 
+    /** Gets the chosen platform, or randomly picks one */
     public get platform() : Platform
     {
         if (this._platform)
             return this._platform;
 
-        let platform: Platform = ['', ''];
+        let platform : Platform = ['', ''];
 
         // Only 2% chance for platform 0, since it's rare
         platform[0] = Random.bool(98)
@@ -165,11 +246,13 @@ class State
         return this._platform;
     }
 
+    /** Sets the current platform */
     public set platform(value: Platform)
     {
         this._platform = value;
     }
 
+    /** Gets the chosen named train, or randomly picks one */
     public get named() : string
     {
         if (this._named)
@@ -179,11 +262,13 @@ class State
         return this._named;
     }
 
+    /** Sets the current named train */
     public set named(value: string)
     {
         this._named = value;
     }
 
+    /** Gets the chosen service, or randomly picks one */
     public get service() : string
     {
         if (this._service)
@@ -193,11 +278,13 @@ class State
         return this._service;
     }
 
+    /** Sets the current service */
     public set service(value: string)
     {
         this._service = value;
     }
 
+    /** Gets the chosen time, or randomly picks one within 59 minutes from now */
     public get time() : string
     {
         if (!this._time)
@@ -214,6 +301,7 @@ class State
         return this._time;
     }
 
+    /** Sets the current time */
     public set time(value: string)
     {
         this._time = value;
@@ -301,7 +389,7 @@ class State
         // Else, letters will be randomly picked (without making sense)
         if (intCoaches >= 4)
         {
-            let letters    = Phraser.LETTERS.slice(0, intCoaches).split('');
+            let letters    = L.LETTERS.slice(0, intCoaches).split('');
             let randSplice = () => letters.splice(Random.int(0, letters.length), 1)[0];
 
             this.setCoach( 'first',     randSplice() );

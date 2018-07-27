@@ -19,10 +19,10 @@ class DOM
      * Finds the value of the given attribute from the given element, or returns the given
      * default value if unset.
      *
-     * @param {HTMLElement} element Element to get the attribute of
-     * @param {string} attr Name of the attribute to get the value of
-     * @param {string} def Default value if attribute isn't set
-     * @returns {string} The given attribute's value, or default value if unset
+     * @param element Element to get the attribute of
+     * @param attr Name of the attribute to get the value of
+     * @param def Default value if attribute isn't set
+     * @returns The given attribute's value, or default value if unset
      */
     public static getAttr(element: HTMLElement, attr: string, def: string) : string
     {
@@ -34,9 +34,9 @@ class DOM
     /**
      * Finds an element from the given document, throwing an error if no match is found.
      *
-     * @param {string} query CSS selector query to use
-     * @param {Document} parent Parent object to search; defaults to document
-     * @returns {Element} The first element to match the given query
+     * @param query CSS selector query to use
+     * @param parent Parent object to search; defaults to document
+     * @returns The first element to match the given query
      */
     public static require<T extends HTMLElement>
         (query: string, parent: ParentNode = window.document)
@@ -45,7 +45,7 @@ class DOM
         let result = parent.querySelector(query) as T;
 
         if (!result)
-            throw new Error(`Required DOM element is missing: '${query}'`);
+            throw Error( L.DOM_MISSING(query) );
 
         return result;
     }
@@ -54,14 +54,14 @@ class DOM
      * Finds the value of the given attribute from the given element, throwing an error
      * if the attribute is missing.
      *
-     * @param {HTMLElement} element Element to get the attribute of
-     * @param {string} attr Name of the attribute to get the value of
-     * @returns {string} The given attribute's value
+     * @param element Element to get the attribute of
+     * @param attr Name of the attribute to get the value of
+     * @returns The given attribute's value
      */
     public static requireAttr(element: HTMLElement, attr: string) : string
     {
         if ( !element.hasAttribute(attr) )
-            throw new Error(`Required attribute is missing: '${attr}'`);
+            throw Error( L.ATTR_MISSING(attr) );
 
         return element.getAttribute(attr)!;
     }
@@ -70,16 +70,16 @@ class DOM
      * Finds the value of the given key of the given element's dataset, throwing an error
      * if the value is missing or empty.
      *
-     * @param {HTMLElement} element Element to get the data of
-     * @param {string} key Key to get the value of
-     * @returns {string} The given dataset's value
+     * @param element Element to get the data of
+     * @param key Key to get the value of
+     * @returns The given dataset's value
      */
     public static requireData(element: HTMLElement, key: string) : string
     {
         let value = element.dataset[key];
 
         if ( Strings.isNullOrEmpty(value) )
-            throw new Error(`Required dataset key is missing or empty: '${key}'`);
+            throw Error( L.DATA_MISSING(key) );
 
         return value!;
     }
@@ -87,7 +87,7 @@ class DOM
     /**
      * Blurs (unfocuses) the currently focused element.
      *
-     * @param {HTMLElement} parent If given, only blurs if active is descendent
+     * @param parent If given, only blurs if active is descendant
      */
     public static blurActive(parent: HTMLElement = document.body) : void
     {
@@ -101,8 +101,8 @@ class DOM
      * Deep clones all the children of the given element, into the target element.
      * Using innerHTML would be easier, however it handles self-closing tags poorly.
      *
-     * @param {HTMLElement} source Element whose children to clone
-     * @param {HTMLElement} target Element to append the cloned children to
+     * @param source Element whose children to clone
+     * @param target Element to append the cloned children to
      */
     public static cloneInto(source: HTMLElement, target: HTMLElement) : void
     {
@@ -114,8 +114,8 @@ class DOM
      * Gets the text content of the given element, excluding the text of hidden children.
      *
      * @see https://stackoverflow.com/a/19986328
-     * @param {Element} element Element to recursively get text content of
-     * @returns {string} Text content of given element, without text of hidden children
+     * @param element Element to recursively get text content of
+     * @returns Text content of given element, without text of hidden children
      */
     public static getVisibleText(element: Element) : string
     {
@@ -142,8 +142,8 @@ class DOM
      * and excess whitespace as a result of converting from HTML/XML.
      *
      * @see https://stackoverflow.com/a/19986328
-     * @param {Element} element Element to recursively get text content of
-     * @returns {string} Cleaned text of given element, without text of hidden children
+     * @param element Element to recursively get text content of
+     * @returns Cleaned text of given element, without text of hidden children
      */
     public static getCleanedVisibleText(element: Element) : string
     {
@@ -173,7 +173,7 @@ class DOM
                 current = current.nextElementSibling as HTMLElement
                     || parent.firstElementChild as HTMLElement;
             else
-                throw new Error("Direction needs to be -1 or 1");
+                throw Error( L.BAD_DIRECTION( dir.toString() ) );
 
             // If we've come back to the starting element, nothing was found
             if (current === from)

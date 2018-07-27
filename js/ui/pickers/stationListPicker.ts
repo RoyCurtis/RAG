@@ -55,8 +55,7 @@ class StationListPicker extends StationPicker
         this.currentCtx = DOM.requireData(target, 'context');
         let entries     = RAG.state.getStationList(this.currentCtx).slice(0);
 
-        this.domHeader.innerText =
-            `Build a station list for the '${this.currentCtx}' context`;
+        this.domHeader.innerText = L.HEADER_STATIONLIST(this.currentCtx);
 
         // Remove all old list elements
         this.inputList.innerHTML = '';
@@ -151,7 +150,7 @@ class StationListPicker extends StationPicker
     private onDragMirrorCreate(ev: Draggable.DragEvent) : void
     {
         if (!ev.data.source || !ev.data.originalSource)
-            throw new Error('Draggable: Missing source elements for mirror event');
+            throw Error( L.P_SL_DRAG_MISSING() );
 
         ev.data.source.style.width = ev.data.originalSource.clientWidth + 'px';
     }
@@ -194,7 +193,7 @@ class StationListPicker extends StationPicker
     private remove(entry: HTMLElement) : void
     {
         if ( !this.domList.contains(entry) )
-            throw new Error('Attempted to remove entry not on station list builder');
+            throw Error('Attempted to remove entry not on station list builder');
 
         entry.remove();
         this.update();

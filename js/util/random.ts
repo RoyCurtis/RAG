@@ -6,9 +6,9 @@ class Random
     /**
      * Picks a random integer from the given range.
      *
-     * @param {number} min Minimum integer to pick, inclusive
-     * @param {number} max Maximum integer to pick, inclusive
-     * @returns {number}
+     * @param min Minimum integer to pick, inclusive
+     * @param max Maximum integer to pick, inclusive
+     * @returns Random integer within the given range
      */
     public static int(min: number = 0, max: number = 1) : number
     {
@@ -30,8 +30,7 @@ class Random
     /**
      * Picks true or false.
      *
-     * @param {number} chance Chance out of 100, to pick `true`
-     * @returns {boolean}
+     * @param chance Chance out of 100, to pick `true`
      */
     public static bool(chance: number = 50) : boolean
     {

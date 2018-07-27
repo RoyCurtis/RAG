@@ -20,7 +20,7 @@ class CoachPicker extends Picker
         for (let i = 0; i < 26; i++)
         {
             let option = document.createElement('option');
-            let letter = Phraser.LETTERS[i];
+            let letter = L.LETTERS[i];
 
             option.text = option.value = letter;
 
@@ -34,8 +34,7 @@ class CoachPicker extends Picker
         super.open(target);
 
         this.currentCtx          = DOM.requireData(target, 'context');
-        this.domHeader.innerText =
-            `Pick a coach letter for the '${this.currentCtx}' context`;
+        this.domHeader.innerText = L.HEADER_COACH(this.currentCtx);
 
         this.inputLetter.value = RAG.state.getCoach(this.currentCtx);
         this.inputLetter.focus();
@@ -44,8 +43,10 @@ class CoachPicker extends Picker
     /** Updates the coach element and state currently being edited */
     protected onChange(_: Event) : void
     {
-        RAG.state.setCoach(this.currentCtx, this.inputLetter.value);
+        if (!this.currentCtx)
+            throw Error( L.P_COACH_MISSING_STATE() );
 
+        RAG.state.setCoach(this.currentCtx, this.inputLetter.value);
         RAG.views.editor
             .getElementsByQuery(`[data-type=coach][data-context=${this.currentCtx}]`)
             .forEach(element => element.textContent = this.inputLetter.value);

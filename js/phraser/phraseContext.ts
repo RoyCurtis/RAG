@@ -4,7 +4,7 @@
 interface PhraseContext
 {
     /** Gets the XML phrase element that is being replaced */
-    xmlElement: HTMLElement;
+    xmlElement : HTMLElement;
     /** Gets the HTML span element that is replacing the XML element */
-    newElement: HTMLSpanElement;
+    newElement : HTMLSpanElement;
 }

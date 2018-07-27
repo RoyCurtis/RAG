@@ -12,9 +12,9 @@ class Strings
     /**
      * Pretty-print's a given list of stations, with context sensitive extras.
      *
-     * @param {string[]} codes List of station codes to join
-     * @param {string} context List's context. If 'calling', handles special case
-     * @returns {string} Pretty-printed list of given stations
+     * @param codes List of station codes to join
+     * @param context List's context. If 'calling', handles special case
+     * @returns Pretty-printed list of given stations
      */
     public static fromStationList(codes: string[], context: string) : string
     {

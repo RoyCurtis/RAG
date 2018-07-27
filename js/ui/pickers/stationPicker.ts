@@ -40,8 +40,7 @@ class StationPicker extends Picker
         chooser.preselectCode( RAG.state.getStation(this.currentCtx) );
         chooser.selectOnClick = true;
 
-        this.domHeader.innerText =
-            `Pick a station for the '${this.currentCtx}' context`;
+        this.domHeader.innerText = L.HEADER_STATION(this.currentCtx);
     }
 
     // Forward these events to the station chooser

@@ -53,7 +53,7 @@ class IntegerPicker extends Picker
         else
             this.domLabel.innerText = '';
 
-        this.domHeader.innerText = `Pick a number for the '${this.currentCtx}' part`;
+        this.domHeader.innerText = L.HEADER_INTEGER(this.currentCtx);
         this.inputDigit.value    = value.toString();
         this.inputDigit.focus();
     }
@@ -62,12 +62,12 @@ class IntegerPicker extends Picker
     protected onChange(_: Event) : void
     {
         if (!this.currentCtx)
-            throw new Error("onChange fired for integer picker without state");
+            throw Error( L.P_INT_MISSING_STATE() );
 
         // Can't use valueAsNumber due to iOS input type workarounds
         let int    = parseInt(this.inputDigit.value);
         let intStr = (this.words)
-            ? Phraser.DIGITS[int] || int.toString()
+            ? L.DIGITS[int] || int.toString()
             : int.toString();
 
         // Ignore invalid values
@@ -93,10 +93,6 @@ class IntegerPicker extends Picker
             .forEach(element => element.textContent = intStr);
     }
 
-    protected onInput(ev: KeyboardEvent) : void
-    {
-        setTimeout( () => this.onChange(ev), 1 );
-    }
-
     protected onClick(_: MouseEvent)    : void { /* no-op */ }
+    protected onInput(_: KeyboardEvent) : void { /* no-op */ }
 }

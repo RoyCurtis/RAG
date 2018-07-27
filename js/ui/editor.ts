@@ -8,12 +8,11 @@ class Editor
 
     /** Reference to the currently open picker dialog, if any */
     private currentPicker? : Picker;
-
     /** Reference to the phrase element currently being edited, if any */
     // Do not DRY; needs to be passed to the picker for cleaner code
     private domEditing?    : HTMLElement;
 
-    constructor()
+    public constructor()
     {
         this.dom = DOM.require('#editor');
 
@@ -21,7 +20,7 @@ class Editor
         document.body.onkeydown = this.onInput.bind(this);
         window.onresize         = this.onResize.bind(this);
         this.dom.onscroll       = this.onScroll.bind(this);
-        this.dom.textContent    = "Please wait...";
+        this.dom.textContent    = L.EDITOR_INIT();
     }
 
     /** Replaces the editor with a root phraseset reference, and expands it into HTML */
@@ -65,17 +64,12 @@ class Editor
     /**
      * Gets a static NodeList of all phrase elements of the given query.
      *
-     * @param {string} query Query string to add onto the `span` selector
-     * @returns {NodeList} Node list of all elements matching the given span query
+     * @param query Query string to add onto the `span` selector
+     * @returns Node list of all elements matching the given span query
      */
     public getElementsByQuery(query: string) : NodeList
     {
         return this.dom.querySelectorAll(`span${query}`);
-    }
-
-    public getRect() : DOMRect
-    {
-        return this.dom.getBoundingClientRect() as DOMRect;
     }
 
     /** Gets the current phrase in the editor as text, excluding the hidden parts */
@@ -87,8 +81,8 @@ class Editor
     /**
      * Finds all phrase elements of the given type, and sets their text to given value.
      *
-     * @param {string} type Original XML name of elements to replace contents of
-     * @param {string} value New text for the found elements to set
+     * @param type Original XML name of elements to replace contents of
+     * @param value New text for the found elements to set
      */
     public setElementsText(type: string, value: string) : void
     {
@@ -156,18 +150,21 @@ class Editor
             this.openPicker(target, picker);
     }
 
+    /** Handle ESC to close picker */
     private onInput(ev: KeyboardEvent) : void
     {
         if (ev.key === 'Escape')
             return this.closeDialog();
     }
 
+    /** Re-layout the currently open picker on resize */
     private onResize(_: Event) : void
     {
         if (this.currentPicker)
             this.currentPicker.layout();
     }
 
+    /** Re-layout the currently open picker on scroll */
     private onScroll(_: Event) : void
     {
         if (!this.currentPicker)
@@ -181,6 +178,12 @@ class Editor
         this.currentPicker.layout();
     }
 
+    /**
+     * Flips the collapse state of a collapsible, and propagates the new state to other
+     * collapsibles of the same reference.
+     *
+     * @param target Collapsible element being toggled
+     */
     private toggleCollapsiable(target: HTMLElement) : void
     {
         let parent     = target.parentElement!;
@@ -188,7 +191,7 @@ class Editor
         let type       = DOM.requireData(parent, 'type');
         let collapased = parent.hasAttribute('collapsed');
 
-        // Propogate new collapse state to all collapsibles of the same ref
+        // Propagate new collapse state to all collapsibles of the same ref
         this.dom.querySelectorAll(`span[data-type=${type}][data-ref=${ref}]`)
             .forEach(_ =>
             {
@@ -206,6 +209,12 @@ class Editor
             });
     }
 
+    /**
+     * Opens a picker for the given element.
+     *
+     * @param target Editor element to open the picker for
+     * @param picker Picker to open
+     */
     private openPicker(target: HTMLElement, picker: Picker) : void
     {
         target.setAttribute('editing', 'true');

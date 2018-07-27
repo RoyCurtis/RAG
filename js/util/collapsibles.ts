@@ -6,9 +6,9 @@ class Collapsibles
     /**
      * Sets the collapse state of a collapsible element.
      *
-     * @param {HTMLElement} span The encapsulating collapsible element
-     * @param {HTMLElement} toggle The toggle child of the collapsible element
-     * @param {boolean} state True to collapse, false to open
+     * @param span The encapsulating collapsible element
+     * @param toggle The toggle child of the collapsible element
+     * @param state True to collapse, false to open
      */
     public static set(span: HTMLElement, toggle: HTMLElement, state: boolean) : void
     {
@@ -16,7 +16,7 @@ class Collapsibles
         else       span.removeAttribute('collapsed');
 
         toggle.title = state
-            ? "Click to open this optional part"
-            : "Click to close this optional part";
+            ? L.TITLE_OPT_OPEN()
+            : L.TITLE_OPT_CLOSE();
     }
 }

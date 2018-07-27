@@ -13,6 +13,6 @@ class Parse
         if (str === 'false' || str === '0')
             return false;
 
-        throw new Error("Given string does not represent a boolean");
+        throw Error( L.BAD_BOOLEAN(str) );
     }
 }

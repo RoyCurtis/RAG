@@ -14,6 +14,7 @@ class NamedPicker extends Picker
 
         this.domChooser          = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
+        this.domHeader.innerText = L.HEADER_NAMED();
 
         RAG.database.named.forEach( v => this.domChooser.add(v) );
     }
@@ -27,6 +28,7 @@ class NamedPicker extends Picker
         this.domChooser.preselect(RAG.state.named);
     }
 
+    /** Close this picker */
     public close() : void
     {
         super.close();

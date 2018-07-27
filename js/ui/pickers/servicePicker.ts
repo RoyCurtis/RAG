@@ -14,6 +14,7 @@ class ServicePicker extends Picker
 
         this.domChooser          = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
+        this.domHeader.innerText = L.HEADER_SERVICE();
 
         RAG.database.services.forEach( v => this.domChooser.add(v) );
     }
