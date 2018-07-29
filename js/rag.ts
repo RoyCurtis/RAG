@@ -7,17 +7,17 @@
 class RAG
 {
     /** Gets the configuration holder */
-    public static config      : Config;
+    public static config   : Config;
     /** Gets the database manager, which holds phrase, station and train data */
-    public static database    : Database;
+    public static database : Database;
     /** Gets the phrase manager, which generates HTML phrases from XML */
-    public static phraser     : Phraser;
-    /** Gets the speech synthesizer */
-    public static speechSynth : SpeechSynthesis;
+    public static phraser  : Phraser;
+    /** Gets the speech engine */
+    public static speech   : SpeechEngine;
     /** Gets the current train and station state */
-    public static state       : State;
+    public static state    : State;
     /** Gets the view controller, which manages UI interaction */
-    public static views       : Views;
+    public static views    : Views;
 
     /**
      * Entry point for RAG, to be called from Javascript.
@@ -26,16 +26,15 @@ class RAG
      */
     public static main(dataRefs: DataRefs) : void
     {
+        window.onerror = error => RAG.panic(error);
+
         I18n.init();
 
-        window.onerror        = error => RAG.panic(error);
-        window.onbeforeunload = () => RAG.speechSynth.cancel();
-
-        RAG.config      = new Config();
-        RAG.database    = new Database(dataRefs);
-        RAG.views       = new Views();
-        RAG.phraser     = new Phraser();
-        RAG.speechSynth = window.speechSynthesis;
+        RAG.config   = new Config();
+        RAG.database = new Database(dataRefs);
+        RAG.views    = new Views();
+        RAG.phraser  = new Phraser();
+        RAG.speech   = new SpeechEngine();
 
         // Begin
 

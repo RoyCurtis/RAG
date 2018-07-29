@@ -3,30 +3,41 @@
 /** Holds runtime configuration */
 class Config
 {
-    /** Choice of speech engine to use, as getVoices index */
-    public voxChoice : number = 0;
     /** Volume for speech to be set at */
-    public voxVolume : number = 1.0;
+    public voxVolume   : number = 1.0;
     /** Pitch for speech to be set at */
-    public voxPitch  : number = 1.0;
+    public voxPitch    : number = 1.0;
     /** Rate for speech to be set at */
-    public voxRate   : number = 1.0;
+    public voxRate     : number = 1.0;
+    /** Choice of speech voice to use, as getVoices index or -1 if unset */
+    private _voxChoice : number = -1;
 
-    public constructor()
+    /**
+     * Choice of speech voice to use, as getVoices index. Because of the async nature of
+     * getVoices, the default value will be fetched from it each time.
+     */
+    get voxChoice() : number
     {
-        let voices = window.speechSynthesis.getVoices();
+        // If there's a user-defined value, use that
+        if  (this._voxChoice !== -1)
+            return this._voxChoice;
 
         // Select English voices by default
-        for (let i = 0; i < voices.length ; i++)
+        for (let i = 0, v = RAG.speech.getVoices(); i < v.length ; i++)
         {
-            let lang = voices[i].lang;
+            let lang = v[i].lang;
 
             if (lang === 'en-GB' || lang === 'en-US')
-            {
-                this.voxChoice = i;
-                break;
-            }
+                return i;
         }
+
+        // Else, first voice on the list
+        return 0;
+    }
+
+    set voxChoice(value: number)
+    {
+        this._voxChoice = value;
     }
 
     /** Safely loads runtime configuration from localStorage, if any */

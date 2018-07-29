@@ -47,7 +47,7 @@ class Settings
         {
             // Has to execute on a delay, as speech cancel is unreliable without it
             ev.preventDefault();
-            RAG.speechSynth.cancel();
+            RAG.speech.cancel();
             this.btnVoxTest.disabled = true;
             window.setTimeout(this.handleVoxTest.bind(this), 200);
         };
@@ -72,7 +72,7 @@ class Settings
     public close() : void
     {
         this.cancelReset();
-        RAG.speechSynth.cancel();
+        RAG.speech.cancel();
         document.body.classList.remove('settingsVisible');
         DOM.blurActive(this.dom);
     }
@@ -116,7 +116,7 @@ class Settings
         }
 
         RAG.config.reset();
-        RAG.speechSynth.cancel();
+        RAG.speech.cancel();
         this.cancelReset();
         this.open();
         alert( L.ST_RESET_DONE() );
@@ -157,8 +157,8 @@ class Settings
         utterance.volume = this.rangeVoxVol.valueAsNumber;
         utterance.pitch  = this.rangeVoxPitch.valueAsNumber;
         utterance.rate   = this.rangeVoxRate.valueAsNumber;
-        utterance.voice  = RAG.speechSynth.getVoices()[this.selVoxChoice.selectedIndex];
+        utterance.voice  = RAG.speech.getVoices()[this.selVoxChoice.selectedIndex];
 
-        RAG.speechSynth.speak(utterance);
+        RAG.speech.speak(utterance);
     }
 }

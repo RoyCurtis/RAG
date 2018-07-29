@@ -38,7 +38,7 @@ class Toolbar
         {
             // Has to execute on a delay, as speech cancel is unreliable without it
             ev.preventDefault();
-            RAG.speechSynth.cancel();
+            RAG.speech.cancel();
             this.btnPlay.disabled = true;
             window.setTimeout(this.handlePlay.bind(this), 200);
         }
@@ -53,14 +53,14 @@ class Toolbar
 
         let text   = RAG.views.editor.getText();
         let parts  = text.trim().split(/\.\s/i);
-        let voices = RAG.speechSynth.getVoices();
+        let voices = RAG.speech.getVoices();
         let voice  = RAG.config.voxChoice;
 
         // Reset to default voice, if it's missing
         if (!voices[voice])
             RAG.config.voxChoice = voice = 0;
 
-        RAG.speechSynth.cancel();
+        RAG.speech.cancel();
         parts.forEach( segment =>
         {
             let utterance = new SpeechSynthesisUtterance(segment);
@@ -70,7 +70,7 @@ class Toolbar
             utterance.pitch  = RAG.config.voxPitch;
             utterance.rate   = RAG.config.voxRate;
 
-            RAG.speechSynth.speak(utterance)
+            RAG.speech.speak(utterance)
         });
 
         RAG.views.marquee.set(text);
@@ -80,7 +80,7 @@ class Toolbar
     /** Handles the stop button, stopping the marquee and any speech */
     private handleStop() : void
     {
-        RAG.speechSynth.cancel();
+        RAG.speech.cancel();
         RAG.views.marquee.stop();
     }
 
