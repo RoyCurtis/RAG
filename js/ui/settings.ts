@@ -21,8 +21,6 @@ class Settings
     private btnVoxTest    : HTMLInputElement;
     /** Reference to the timer for the "Reset" button confirmation step */
     private resetTimeout? : number;
-    /** Whether this dialog has been initialized yet */
-    private ready         : boolean = false;
 
     public constructor()
     {
@@ -58,8 +56,8 @@ class Settings
     {
         document.body.classList.add('settingsVisible');
 
-        if (!this.ready)
-            this.init();
+        // The vox list has to be populated each open, in case it changes
+        this.populateVoxList();
 
         this.selVoxChoice.selectedIndex  = RAG.config.voxChoice;
         this.rangeVoxVol.valueAsNumber   = RAG.config.voxVolume;
@@ -77,21 +75,26 @@ class Settings
         DOM.blurActive(this.dom);
     }
 
-    /** Prepares the settings dialog by populating the voice list */
-    private init() : void
+    /** Clears and populates the voice list */
+    private populateVoxList() : void
     {
-        let voices = RAG.speechSynth.getVoices();
+        this.selVoxChoice.innerHTML = '';
 
+        let voices = RAG.speech.getVoices();
+
+        // Handle empty list
         if (voices.length <= 0)
         {
-            this.ready = true;
+            let option = document.createElement('option');
+
+            option.textContent = L.ST_VOX_EMPTY();
+            option.disabled    = true;
+
+            this.selVoxChoice.appendChild(option);
             return;
         }
 
-        this.selVoxChoice.innerHTML = '';
-
         // https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis
-        // TODO: Pick english voice by default
         for (let i = 0; i < voices.length ; i++)
         {
             let option = document.createElement('option');
@@ -100,8 +103,6 @@ class Settings
 
             this.selVoxChoice.appendChild(option);
         }
-
-        this.ready = true;
     }
 
     /** Handles the reset button, with a confirm step that cancels after 15 seconds */
