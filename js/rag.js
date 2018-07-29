@@ -1161,20 +1161,14 @@ class Marquee {
         window.cancelAnimationFrame(this.timer);
         this.domSpan.textContent = msg;
         this.offset = this.dom.clientWidth;
-        let last = 0;
         let limit = -this.domSpan.clientWidth - 100;
-        let anim = (time) => {
-            let stepPerMs = (DOM.isMobile ? 5 : 7) / (1000 / 60);
-            this.offset -= (last == 0)
-                ? (DOM.isMobile ? 5 : 7)
-                : (time - last) * stepPerMs;
+        let anim = () => {
+            this.offset -= (DOM.isMobile ? 5 : 7);
             this.domSpan.style.transform = `translateX(${this.offset}px)`;
             if (this.offset < limit)
                 this.domSpan.style.transform = '';
-            else {
-                last = time;
+            else
                 this.timer = window.requestAnimationFrame(anim);
-            }
         };
         window.requestAnimationFrame(anim);
     }
@@ -1185,7 +1179,6 @@ class Marquee {
 }
 class Settings {
     constructor() {
-        this.ready = false;
         this.dom = DOM.require('#settings');
         this.btnReset = DOM.require('#btnResetSettings');
         this.btnSave = DOM.require('#btnSaveSettings');
@@ -1198,15 +1191,14 @@ class Settings {
         this.btnVoxTest = DOM.require('#btnVoxTest');
         this.btnVoxTest.onclick = ev => {
             ev.preventDefault();
-            RAG.speechSynth.cancel();
+            RAG.speech.cancel();
             this.btnVoxTest.disabled = true;
             window.setTimeout(this.handleVoxTest.bind(this), 200);
         };
     }
     open() {
         document.body.classList.add('settingsVisible');
-        if (!this.ready)
-            this.init();
+        this.populateVoxList();
         this.selVoxChoice.selectedIndex = RAG.config.voxChoice;
         this.rangeVoxVol.valueAsNumber = RAG.config.voxVolume;
         this.rangeVoxPitch.valueAsNumber = RAG.config.voxPitch;
@@ -1215,23 +1207,25 @@ class Settings {
     }
     close() {
         this.cancelReset();
-        RAG.speechSynth.cancel();
+        RAG.speech.cancel();
         document.body.classList.remove('settingsVisible');
         DOM.blurActive(this.dom);
     }
-    init() {
-        let voices = RAG.speechSynth.getVoices();
+    populateVoxList() {
+        this.selVoxChoice.innerHTML = '';
+        let voices = RAG.speech.getVoices();
         if (voices.length <= 0) {
-            this.ready = true;
+            let option = document.createElement('option');
+            option.textContent = L.ST_VOX_EMPTY();
+            option.disabled = true;
+            this.selVoxChoice.appendChild(option);
             return;
         }
-        this.selVoxChoice.innerHTML = '';
         for (let i = 0; i < voices.length; i++) {
             let option = document.createElement('option');
             option.textContent = `${voices[i].name} (${voices[i].lang})`;
             this.selVoxChoice.appendChild(option);
         }
-        this.ready = true;
     }
     handleReset() {
         if (!this.resetTimeout) {
@@ -1241,7 +1235,7 @@ class Settings {
             return;
         }
         RAG.config.reset();
-        RAG.speechSynth.cancel();
+        RAG.speech.cancel();
         this.cancelReset();
         this.open();
         alert(L.ST_RESET_DONE());
@@ -1269,8 +1263,8 @@ class Settings {
         utterance.volume = this.rangeVoxVol.valueAsNumber;
         utterance.pitch = this.rangeVoxPitch.valueAsNumber;
         utterance.rate = this.rangeVoxRate.valueAsNumber;
-        utterance.voice = RAG.speechSynth.getVoices()[this.selVoxChoice.selectedIndex];
-        RAG.speechSynth.speak(utterance);
+        utterance.voice = RAG.speech.getVoices()[this.selVoxChoice.selectedIndex];
+        RAG.speech.speak(utterance);
     }
 }
 class Toolbar {
@@ -1289,7 +1283,7 @@ class Toolbar {
         this.btnOption.onclick = this.handleOption.bind(this);
         this.btnPlay.onclick = ev => {
             ev.preventDefault();
-            RAG.speechSynth.cancel();
+            RAG.speech.cancel();
             this.btnPlay.disabled = true;
             window.setTimeout(this.handlePlay.bind(this), 200);
         };
@@ -1297,24 +1291,24 @@ class Toolbar {
     handlePlay() {
         let text = RAG.views.editor.getText();
         let parts = text.trim().split(/\.\s/i);
-        let voices = RAG.speechSynth.getVoices();
+        let voices = RAG.speech.getVoices();
         let voice = RAG.config.voxChoice;
         if (!voices[voice])
             RAG.config.voxChoice = voice = 0;
-        RAG.speechSynth.cancel();
+        RAG.speech.cancel();
         parts.forEach(segment => {
             let utterance = new SpeechSynthesisUtterance(segment);
             utterance.voice = voices[voice];
             utterance.volume = RAG.config.voxVolume;
             utterance.pitch = RAG.config.voxPitch;
             utterance.rate = RAG.config.voxRate;
-            RAG.speechSynth.speak(utterance);
+            RAG.speech.speak(utterance);
         });
         RAG.views.marquee.set(text);
         this.btnPlay.disabled = false;
     }
     handleStop() {
-        RAG.speechSynth.cancel();
+        RAG.speech.cancel();
         RAG.views.marquee.stop();
     }
     handleSave() {
@@ -1502,20 +1496,56 @@ class Strings {
         return result;
     }
 }
+class SpeechEngine {
+    constructor() {
+        this.voices = [];
+        window.onbeforeunload =
+            window.onunload =
+                window.onpageshow =
+                    window.onpagehide = this.cancel.bind(this);
+        document.onvisibilitychange = this.onVisibilityChange.bind(this);
+        window.speechSynthesis.onvoiceschanged = this.onVoicesChanged.bind(this);
+        this.onVoicesChanged();
+    }
+    getVoices() {
+        return this.voices;
+    }
+    speak(utterance) {
+        window.speechSynthesis.speak(utterance);
+    }
+    cancel() {
+        window.speechSynthesis.cancel();
+    }
+    onVisibilityChange() {
+        let hiding = (document.visibilityState === 'hidden');
+        if (hiding)
+            window.speechSynthesis.pause();
+        else
+            window.speechSynthesis.resume();
+    }
+    onVoicesChanged() {
+        this.voices = window.speechSynthesis.getVoices();
+    }
+}
 class Config {
     constructor() {
-        this.voxChoice = 0;
         this.voxVolume = 1.0;
         this.voxPitch = 1.0;
         this.voxRate = 1.0;
-        let voices = window.speechSynthesis.getVoices();
-        for (let i = 0; i < voices.length; i++) {
-            let lang = voices[i].lang;
-            if (lang === 'en-GB' || lang === 'en-US') {
-                this.voxChoice = i;
-                break;
-            }
+        this._voxChoice = -1;
+    }
+    get voxChoice() {
+        if (this._voxChoice !== -1)
+            return this._voxChoice;
+        for (let i = 0, v = RAG.speech.getVoices(); i < v.length; i++) {
+            let lang = v[i].lang;
+            if (lang === 'en-GB' || lang === 'en-US')
+                return i;
         }
+        return 0;
+    }
+    set voxChoice(value) {
+        this._voxChoice = value;
     }
     load() {
         if (!window.localStorage['settings'])
@@ -1624,14 +1654,13 @@ class Database {
 }
 class RAG {
     static main(dataRefs) {
-        I18n.init();
         window.onerror = error => RAG.panic(error);
-        window.onbeforeunload = () => RAG.speechSynth.cancel();
+        I18n.init();
         RAG.config = new Config();
         RAG.database = new Database(dataRefs);
         RAG.views = new Views();
         RAG.phraser = new Phraser();
-        RAG.speechSynth = window.speechSynthesis;
+        RAG.speech = new SpeechEngine();
         RAG.config.load();
         RAG.views.marquee.set(L.WELCOME());
         RAG.generate();

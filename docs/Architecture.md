@@ -13,7 +13,7 @@ global click handler, registered by the editor.
 The editor needs to know if the user clicks outside the editor, or anywhere on the 
 document that happens to be outside an open picker. This is so the picker can be closed.
 
-# When getting values from inputs, why `parseInt(value)` instead of `valueAsNumber`?
+# When getting values from inputs, why `parseFloat(value)` instead of `valueAsNumber`?
 
 `valueAsNumber` has a bad API design, where it only works if the input element is of a
 specific type. Even then, [it is reportedly unreliable][1]. I try to avoid unreliable API.
