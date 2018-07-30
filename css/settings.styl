@@ -2,8 +2,8 @@
 
 #settingsScreen
   align-content flex-start
-  background    alpha($bgDarkest, 0.75)
-  display       none
+  background    $bgDarkest
+  display       flex
   flex-flow     row wrap
   overflow-x    hidden
   overflow-y    auto
@@ -67,10 +67,3 @@
     select
       justify-self right
       width        75%
-
-.settingsVisible
-  > #mainScreen, > .picker
-    filter blur(10px)
-
-  #settingsScreen
-    display flex

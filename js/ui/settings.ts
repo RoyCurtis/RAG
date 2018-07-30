@@ -54,7 +54,7 @@ class Settings
     /** Opens the settings screen */
     public open() : void
     {
-        document.body.classList.add('settingsVisible');
+        this.dom.classList.remove('hidden');
 
         // The vox list has to be populated each open, in case it changes
         this.populateVoxList();
@@ -71,7 +71,7 @@ class Settings
     {
         this.cancelReset();
         RAG.speech.cancel();
-        document.body.classList.remove('settingsVisible');
+        this.dom.classList.add('hidden');
         DOM.blurActive(this.dom);
     }
 

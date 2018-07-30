@@ -1197,7 +1197,7 @@ class Settings {
         };
     }
     open() {
-        document.body.classList.add('settingsVisible');
+        this.dom.classList.remove('hidden');
         this.populateVoxList();
         this.selVoxChoice.selectedIndex = RAG.config.voxChoice;
         this.rangeVoxVol.valueAsNumber = RAG.config.voxVolume;
@@ -1208,7 +1208,7 @@ class Settings {
     close() {
         this.cancelReset();
         RAG.speech.cancel();
-        document.body.classList.remove('settingsVisible');
+        this.dom.classList.add('hidden');
         DOM.blurActive(this.dom);
     }
     populateVoxList() {
