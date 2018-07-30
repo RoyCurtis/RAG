@@ -484,13 +484,12 @@
 }
 #settingsScreen {
   align-content: flex-start;
-  background: rgba(0,0,0,0.75);
-  display: none;
+  background: #000;
+  display: flex;
   flex-flow: row wrap;
   overflow-x: hidden;
   overflow-y: auto;
   position: absolute;
-  transform: translateZ(16px);
   z-index: 500;
   top: 0;
   left: 0;
@@ -580,13 +579,6 @@
 #settingsScreen form select {
   justify-self: right;
   width: 75%;
-}
-.settingsVisible > #mainScreen,
-.settingsVisible > .picker {
-  filter: blur(10px);
-}
-.settingsVisible #settingsScreen {
-  display: flex;
 }
 * {
   margin: 0;
@@ -784,11 +776,65 @@ iframe {
 @media (max-height: 400px) {
   #mainScreen,
   .picker,
-  .settingsVisible #settingsScreen {
+  #settingsScreen {
     display: none;
   }
   #tooSmallScreen {
     display: block;
+  }
+}
+#editor span {
+  transition: background 500ms, border 100ms;
+}
+#editor span[editing] {
+  transition: background 0s;
+}
+#editor span[data-type=phraseset] {
+  animation: 500ms creation;
+}
+#toolbar button,
+#settingsScreen button,
+.chChoicesBox dd {
+  transition: background 100ms;
+}
+#toolbar button:active,
+#settingsScreen button:active,
+.chChoicesBox dd:active,
+#toolbar button[selected],
+#settingsScreen button[selected],
+.chChoicesBox dd[selected] {
+  transition: background 0s;
+}
+@-moz-keyframes creation {
+  from {
+    background: #cc7e00;
+  }
+  to {
+    background: rgba(0,0,0,0);
+  }
+}
+@-webkit-keyframes creation {
+  from {
+    background: #cc7e00;
+  }
+  to {
+    background: rgba(0,0,0,0);
+  }
+}
+@-o-keyframes creation {
+  from {
+    background: #cc7e00;
+  }
+  to {
+    background: rgba(0,0,0,0);
+  }
+}
+@keyframes creation {
+  from {
+    background: #cc7e00;
+  }
+  to {
+    background: rgba(0,0,0,0);
   }
 }
 body.ios * {

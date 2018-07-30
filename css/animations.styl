@@ -1,0 +1,28 @@
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+
+#editor span
+  // Smoother fading of borders on hover
+  transition background 500ms, border 100ms
+
+  &[editing]
+    transition background 0s
+
+// Fade focused phrase elements from orange to transparent. Helps show the user what
+// element they had just edited
+#editor
+  span[data-type=phraseset]
+    animation 500ms creation
+
+// Smoother fading of button backgrounds on hover
+#toolbar button, #settingsScreen button, .chChoicesBox dd
+  transition background 100ms
+
+  &:active, &[selected]
+    transition background 0s
+
+@keyframes creation
+  from
+    background $fgFocus
+
+  to
+    background rgba(0, 0, 0, 0)
