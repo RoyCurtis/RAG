@@ -30,9 +30,8 @@ pressable()
   fill        whitesmoke
 
   &:active
-    color      $fgDim
+    backAndForeColor($bgDarkest, $fgDim)
     box-shadow 0 0 4px $bgDarkest inset
-    fill       $fgDim
 
   &:disabled
     background $bgDarker
@@ -74,8 +73,9 @@ unselectable()
   display none !important
 
 .warningScreen
-  flex-grow 1
-  padding   16px
+  height  100%
+  padding 16px
+  width   100%
 
   h1
     font-style italic

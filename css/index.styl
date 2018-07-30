@@ -26,8 +26,11 @@ body, html
 
 body
   backAndForeColor($bgDark, $fgBright)
-  flexbox(column)
   font-family sans-serif
+
+#mainScreen
+  flexbox(column)
+  height 100%
 
 // Hides embedded phraseset XML documents
 iframe
@@ -45,7 +48,7 @@ iframe
   @import "responsive"
 
 @media (max-height 400px)
-  #marquee, #toolbar, #editor, .picker, .settingsVisible #settings
+  #mainScreen, .picker, .settingsVisible #settingsScreen
     display none
 
   #tooSmallScreen

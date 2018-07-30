@@ -116,7 +116,7 @@ class Toolbar
             : RAG.views.marquee.set( L.STATE_SAVE_MISSING() );
     }
 
-    /** Handles the settings button, opening the settings dialog */
+    /** Handles the settings button, opening the settings screen */
     private handleOption() : void
     {
         RAG.views.settings.open();

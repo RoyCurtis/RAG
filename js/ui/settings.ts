@@ -1,9 +1,9 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/** Controller for the settings dialog */
+/** Controller for the settings screen */
 class Settings
 {
-    /** Reference to the container for the settings dialog */
+    /** Reference to the container for the settings screen */
     private dom           : HTMLElement;
     /** Reference to the "Reset settings" button */
     private btnReset      : HTMLButtonElement;
@@ -26,7 +26,7 @@ class Settings
     {
         // General settings form
 
-        this.dom      = DOM.require('#settings');
+        this.dom      = DOM.require('#settingsScreen');
         this.btnReset = DOM.require('#btnResetSettings');
         this.btnSave  = DOM.require('#btnSaveSettings');
 
@@ -51,7 +51,7 @@ class Settings
         };
     }
 
-    /** Opens the settings dialog */
+    /** Opens the settings screen */
     public open() : void
     {
         document.body.classList.add('settingsVisible');
@@ -66,7 +66,7 @@ class Settings
         this.btnSave.focus();
     }
 
-    /** Closes the settings dialog */
+    /** Closes the settings screen */
     public close() : void
     {
         this.cancelReset();

@@ -1179,7 +1179,7 @@ class Marquee {
 }
 class Settings {
     constructor() {
-        this.dom = DOM.require('#settings');
+        this.dom = DOM.require('#settingsScreen');
         this.btnReset = DOM.require('#btnResetSettings');
         this.btnSave = DOM.require('#btnSaveSettings');
         this.btnReset.onclick = this.handleReset.bind(this);

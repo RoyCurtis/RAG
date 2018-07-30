@@ -20,47 +20,52 @@
 </head>
 
 <body>
-  <!-- The electronic scrolling text board at the top -->
-  <div id="marquee">
-    Is Javascript enabled?
+  <!-- The main screen -->
+  <div id="mainScreen">
+
+    <!-- The electronic scrolling text board at the top -->
+    <div id="marquee">
+      Is Javascript enabled?
+    </div>
+
+    <!-- Toolbar of RAG operations -->
+    <menu id="toolbar">
+      <button tabindex="1" id="btnPlay" title="%TOOLBAR_PLAY%">
+        <svg class="play"><use xlink:href="css/icons/icoMoon.svg#icon-play"></use></svg>
+      </button>
+
+      <button tabindex="1" id="btnStop" title="%TOOLBAR_STOP%">
+        <svg class="stop"><use xlink:href="css/icons/icoMoon.svg#icon-stop"></use></svg>
+      </button>
+
+      <button tabindex="1" id="btnShuffle" title="%TOOLBAR_SHUFFLE%" class="throb">
+        <svg><use xlink:href="css/icons/icoMoon.svg#icon-shuffle"></use></svg>
+      </button>
+
+      <button tabindex="1" id="btnSave" title="%TOOLBAR_SAVE%">
+        <svg><use xlink:href="css/icons/icoMoon.svg#icon-save"></use></svg>
+      </button>
+
+      <button tabindex="1" id="btnLoad" title="%TOOLBAR_LOAD%">
+        <svg><use xlink:href="css/icons/icoMoon.svg#icon-recall"></use></svg>
+      </button>
+
+      <button tabindex="1" id="btnSettings" title="%TOOLBAR_SETTINGS%">
+        <svg><use xlink:href="css/icons/icoMoon.svg#icon-settings"></use></svg>
+      </button>
+    </menu>
+
+    <!-- The phrase editor -->
+    <div id="editor">
+      If you are seeing this, either JavaScript is currently disabled or Rail Announcement
+      Generator failed to start. This is a client-side app, so it relies on JavaScript.
+      No unrelated, third-party scripts (e.g. ads, analytics) are loaded or used.
+    </div>
+
   </div>
 
-  <!-- Toolbar of RAG operations -->
-  <menu id="toolbar">
-    <button tabindex="1" id="btnPlay" title="%TOOLBAR_PLAY%">
-      <svg class="play"><use xlink:href="css/icons/icoMoon.svg#icon-play"></use></svg>
-    </button>
-
-    <button tabindex="1" id="btnStop" title="%TOOLBAR_STOP%">
-      <svg class="stop"><use xlink:href="css/icons/icoMoon.svg#icon-stop"></use></svg>
-    </button>
-
-    <button tabindex="1" id="btnShuffle" title="%TOOLBAR_SHUFFLE%">
-      <svg><use xlink:href="css/icons/icoMoon.svg#icon-shuffle"></use></svg>
-    </button>
-
-    <button tabindex="1" id="btnSave" title="%TOOLBAR_SAVE%">
-      <svg><use xlink:href="css/icons/icoMoon.svg#icon-save"></use></svg>
-    </button>
-
-    <button tabindex="1" id="btnLoad" title="%TOOLBAR_LOAD%">
-      <svg><use xlink:href="css/icons/icoMoon.svg#icon-recall"></use></svg>
-    </button>
-
-    <button tabindex="1" id="btnSettings" title="%TOOLBAR_SETTINGS%">
-      <svg><use xlink:href="css/icons/icoMoon.svg#icon-settings"></use></svg>
-    </button>
-  </menu>
-
-  <!-- The phrase editor -->
-  <div id="editor">
-    If you are seeing this, either JavaScript is currently disabled, or Rail Announcement
-    Generator failed to start. This is a client-side web toy, so it relies on JavaScript.
-    No unrelated, third-party scripts (e.g. ads, analytics) are loaded or used.
-  </div>
-
-  <!-- The settings dialog -->
-  <div id="settings">
+  <!-- The settings screen -->
+  <div id="settingsScreen">
     <button tabindex="2" id="btnResetSettings" title="%ST_RESET_T%">
       %ST_RESET%
     </button>

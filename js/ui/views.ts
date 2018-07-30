@@ -7,7 +7,7 @@ class Views
     public  readonly editor   : Editor;
     /** Reference to the main marquee component */
     public  readonly marquee  : Marquee;
-    /** Reference to the main settings dialog */
+    /** Reference to the main settings screen */
     public  readonly settings : Settings;
     /** Reference to the main toolbar component */
     public  readonly toolbar  : Toolbar;

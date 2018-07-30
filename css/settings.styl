@@ -1,6 +1,6 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-#settings
+#settingsScreen
   align-content flex-start
   background    alpha($bgDarkest, 0.75)
   display       none
@@ -69,8 +69,8 @@
       width        75%
 
 .settingsVisible
-  > #marquee, > #toolbar, > #editor, > .picker
+  > #mainScreen, > .picker
     filter blur(10px)
 
-  #settings
+  #settingsScreen
     display flex
