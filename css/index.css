@@ -805,6 +805,15 @@ iframe {
 .chChoicesBox dd[selected] {
   transition: background 0s;
 }
+.throb {
+  animation: 3s infinite alternate throb;
+  transition: background 100ms;
+}
+.throb:hover {
+  animation: none;
+  background: #cc7e00 !important;
+  box-shadow: 0 0 16px #995e00 !important;
+}
 @-moz-keyframes creation {
   from {
     background: #cc7e00;
@@ -835,6 +844,46 @@ iframe {
   }
   to {
     background: rgba(0,0,0,0);
+  }
+}
+@-moz-keyframes throb {
+  from {
+    background: #cc7e00;
+    box-shadow: 0 0 16px #995e00;
+  }
+  to {
+    background: #523200;
+    box-shadow: 0 0 8px #222;
+  }
+}
+@-webkit-keyframes throb {
+  from {
+    background: #cc7e00;
+    box-shadow: 0 0 16px #995e00;
+  }
+  to {
+    background: #523200;
+    box-shadow: 0 0 8px #222;
+  }
+}
+@-o-keyframes throb {
+  from {
+    background: #cc7e00;
+    box-shadow: 0 0 16px #995e00;
+  }
+  to {
+    background: #523200;
+    box-shadow: 0 0 8px #222;
+  }
+}
+@keyframes throb {
+  from {
+    background: #cc7e00;
+    box-shadow: 0 0 16px #995e00;
+  }
+  to {
+    background: #523200;
+    box-shadow: 0 0 8px #222;
   }
 }
 body.ios * {

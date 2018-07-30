@@ -29,7 +29,7 @@ class Toolbar
         this.btnOption   = DOM.require('#btnSettings');
 
         this.btnStop.onclick     = this.handleStop.bind(this);
-        this.btnGenerate.onclick = RAG.generate;
+        this.btnGenerate.onclick = this.handleGenerate.bind(this);
         this.btnSave.onclick     = this.handleSave.bind(this);
         this.btnRecall.onclick   = this.handleLoad.bind(this);
         this.btnOption.onclick   = this.handleOption.bind(this);
@@ -41,7 +41,16 @@ class Toolbar
             RAG.speech.cancel();
             this.btnPlay.disabled = true;
             window.setTimeout(this.handlePlay.bind(this), 200);
+        };
+
+        // Add throb class if the generate button hasn't been clicked before
+        if (!RAG.config.clickedGenerate)
+        {
+            this.btnGenerate.classList.add('throb');
+            this.btnGenerate.focus();
         }
+        else
+            this.btnPlay.focus();
     }
 
     /** Handles the play button, playing the editor's current phrase with speech */
@@ -82,6 +91,15 @@ class Toolbar
     {
         RAG.speech.cancel();
         RAG.views.marquee.stop();
+    }
+
+    /** Handles the generate button, generating new random state and phrase */
+    private handleGenerate() : void
+    {
+        // Remove the call-to-action throb from initial load
+        this.btnGenerate.classList.remove('throb');
+        RAG.generate();
+        RAG.config.clickedGenerate = true;
     }
 
     /** Handles the save button, persisting the current train state to storage */

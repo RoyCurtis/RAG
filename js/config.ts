@@ -4,13 +4,15 @@
 class Config
 {
     /** Volume for speech to be set at */
-    public voxVolume   : number = 1.0;
+    public  voxVolume      : number = 1.0;
     /** Pitch for speech to be set at */
-    public voxPitch    : number = 1.0;
+    public  voxPitch       : number = 1.0;
     /** Rate for speech to be set at */
-    public voxRate     : number = 1.0;
+    public  voxRate        : number = 1.0;
     /** Choice of speech voice to use, as getVoices index or -1 if unset */
-    private _voxChoice : number = -1;
+    private _voxChoice     : number = -1;
+    /** If user has clicked shuffle at least once */
+    public clickedGenerate : boolean = false;
 
     /**
      * Choice of speech voice to use, as getVoices index. Because of the async nature of
@@ -41,9 +43,9 @@ class Config
     }
 
     /** Safely loads runtime configuration from localStorage, if any */
-    public load() : void
+    public constructor(load: boolean)
     {
-        if (!window.localStorage['settings'])
+        if (!load || !window.localStorage['settings'])
             return;
 
         try
@@ -77,7 +79,7 @@ class Config
     {
         try
         {
-            Object.assign(this, new Config());
+            Object.assign( this, new Config(false) );
             window.localStorage.removeItem('settings');
         }
         catch (e)

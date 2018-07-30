@@ -1277,7 +1277,7 @@ class Toolbar {
         this.btnRecall = DOM.require('#btnLoad');
         this.btnOption = DOM.require('#btnSettings');
         this.btnStop.onclick = this.handleStop.bind(this);
-        this.btnGenerate.onclick = RAG.generate;
+        this.btnGenerate.onclick = this.handleGenerate.bind(this);
         this.btnSave.onclick = this.handleSave.bind(this);
         this.btnRecall.onclick = this.handleLoad.bind(this);
         this.btnOption.onclick = this.handleOption.bind(this);
@@ -1287,6 +1287,12 @@ class Toolbar {
             this.btnPlay.disabled = true;
             window.setTimeout(this.handlePlay.bind(this), 200);
         };
+        if (!RAG.config.clickedGenerate) {
+            this.btnGenerate.classList.add('throb');
+            this.btnGenerate.focus();
+        }
+        else
+            this.btnPlay.focus();
     }
     handlePlay() {
         let text = RAG.views.editor.getText();
@@ -1310,6 +1316,11 @@ class Toolbar {
     handleStop() {
         RAG.speech.cancel();
         RAG.views.marquee.stop();
+    }
+    handleGenerate() {
+        this.btnGenerate.classList.remove('throb');
+        RAG.generate();
+        RAG.config.clickedGenerate = true;
     }
     handleSave() {
         try {
@@ -1528,11 +1539,22 @@ class SpeechEngine {
     }
 }
 class Config {
-    constructor() {
+    constructor(load) {
         this.voxVolume = 1.0;
         this.voxPitch = 1.0;
         this.voxRate = 1.0;
         this._voxChoice = -1;
+        this.clickedGenerate = false;
+        if (!load || !window.localStorage['settings'])
+            return;
+        try {
+            let config = JSON.parse(window.localStorage['settings']);
+            Object.assign(this, config);
+        }
+        catch (e) {
+            alert(L.CONFIG_LOAD_FAIL(e.message));
+            console.error(e);
+        }
     }
     get voxChoice() {
         if (this._voxChoice !== -1)
@@ -1547,18 +1569,6 @@ class Config {
     set voxChoice(value) {
         this._voxChoice = value;
     }
-    load() {
-        if (!window.localStorage['settings'])
-            return;
-        try {
-            let config = JSON.parse(window.localStorage['settings']);
-            Object.assign(this, config);
-        }
-        catch (e) {
-            alert(L.CONFIG_LOAD_FAIL(e.message));
-            console.error(e);
-        }
-    }
     save() {
         try {
             window.localStorage['settings'] = JSON.stringify(this);
@@ -1570,7 +1580,7 @@ class Config {
     }
     reset() {
         try {
-            Object.assign(this, new Config());
+            Object.assign(this, new Config(false));
             window.localStorage.removeItem('settings');
         }
         catch (e) {
@@ -1656,12 +1666,11 @@ class RAG {
     static main(dataRefs) {
         window.onerror = error => RAG.panic(error);
         I18n.init();
-        RAG.config = new Config();
+        RAG.config = new Config(true);
         RAG.database = new Database(dataRefs);
         RAG.views = new Views();
         RAG.phraser = new Phraser();
         RAG.speech = new SpeechEngine();
-        RAG.config.load();
         RAG.views.marquee.set(L.WELCOME());
         RAG.generate();
     }

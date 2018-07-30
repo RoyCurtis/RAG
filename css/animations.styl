@@ -20,9 +20,29 @@
   &:active, &[selected]
     transition background 0s
 
+// Throbbing call-to-action button color
+.throb
+  animation  3s infinite alternate throb
+  transition background 100ms
+
+  &:hover
+    animation  none
+    background $fgFocus !important
+    box-shadow 0 0 16px darken($fgFocus, 25%) !important
+
 @keyframes creation
   from
     background $fgFocus
 
   to
     background rgba(0, 0, 0, 0)
+
+@keyframes throb
+  from
+    background $fgFocus
+    box-shadow 0 0 16px darken($fgFocus, 25%)
+
+  to
+    background darken($fgFocus, 60%)
+    box-shadow 0 0 8px $bgDarker
+

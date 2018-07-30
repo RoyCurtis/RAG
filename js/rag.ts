@@ -30,7 +30,7 @@ class RAG
 
         I18n.init();
 
-        RAG.config   = new Config();
+        RAG.config   = new Config(true);
         RAG.database = new Database(dataRefs);
         RAG.views    = new Views();
         RAG.phraser  = new Phraser();
@@ -38,7 +38,6 @@ class RAG
 
         // Begin
 
-        RAG.config.load();
         RAG.views.marquee.set( L.WELCOME() );
         RAG.generate();
     }
