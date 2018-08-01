@@ -1189,12 +1189,7 @@ class Settings {
         this.rangeVoxPitch = DOM.require('#rangeVoxPitch');
         this.rangeVoxRate = DOM.require('#rangeVoxRate');
         this.btnVoxTest = DOM.require('#btnVoxTest');
-        this.btnVoxTest.onclick = ev => {
-            ev.preventDefault();
-            RAG.speech.cancel();
-            this.btnVoxTest.disabled = true;
-            window.setTimeout(this.handleVoxTest.bind(this), 200);
-        };
+        this.btnVoxTest.onclick = this.handleVoxTest.bind(this);
     }
     open() {
         this.dom.classList.remove('hidden');
@@ -1254,17 +1249,22 @@ class Settings {
         RAG.config.save();
         this.close();
     }
-    handleVoxTest() {
-        this.btnVoxTest.disabled = false;
-        let time = new Date();
-        let hour = time.getHours().toString().padStart(2, '0');
-        let minute = time.getMinutes().toString().padStart(2, '0');
-        let utterance = new SpeechSynthesisUtterance(`This is a test of the Rail Announcement Generator at ${hour}:${minute}.`);
-        utterance.volume = this.rangeVoxVol.valueAsNumber;
-        utterance.pitch = this.rangeVoxPitch.valueAsNumber;
-        utterance.rate = this.rangeVoxRate.valueAsNumber;
-        utterance.voice = RAG.speech.getVoices()[this.selVoxChoice.selectedIndex];
-        RAG.speech.speak(utterance);
+    handleVoxTest(ev) {
+        ev.preventDefault();
+        RAG.speech.cancel();
+        this.btnVoxTest.disabled = true;
+        window.setTimeout(() => {
+            this.btnVoxTest.disabled = false;
+            let time = new Date();
+            let hour = time.getHours().toString().padStart(2, '0');
+            let minute = time.getMinutes().toString().padStart(2, '0');
+            let utterance = new SpeechSynthesisUtterance(`This is a test of the Rail Announcement Generator at ${hour}:${minute}.`);
+            utterance.volume = this.rangeVoxVol.valueAsNumber;
+            utterance.pitch = this.rangeVoxPitch.valueAsNumber;
+            utterance.rate = this.rangeVoxRate.valueAsNumber;
+            utterance.voice = RAG.speech.getVoices()[this.selVoxChoice.selectedIndex];
+            RAG.speech.speak(utterance);
+        }, 200);
     }
 }
 class Toolbar {

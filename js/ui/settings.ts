@@ -42,14 +42,7 @@ class Settings
         this.rangeVoxRate  = DOM.require('#rangeVoxRate');
         this.btnVoxTest    = DOM.require('#btnVoxTest');
 
-        this.btnVoxTest.onclick = ev =>
-        {
-            // Has to execute on a delay, as speech cancel is unreliable without it
-            ev.preventDefault();
-            RAG.speech.cancel();
-            this.btnVoxTest.disabled = true;
-            window.setTimeout(this.handleVoxTest.bind(this), 200);
-        };
+        this.btnVoxTest.onclick = this.handleVoxTest.bind(this);
     }
 
     /** Opens the settings screen */
@@ -145,22 +138,30 @@ class Settings
     }
 
     /** Handles the speech test button, speaking a test phrase */
-    private handleVoxTest() : void
+    private handleVoxTest(ev: Event) : void
     {
-        this.btnVoxTest.disabled = false;
+        ev.preventDefault();
+        RAG.speech.cancel();
+        this.btnVoxTest.disabled = true;
 
-        let time      = new Date();
-        let hour      = time.getHours().toString().padStart(2, '0');
-        let minute    = time.getMinutes().toString().padStart(2, '0');
-        let utterance = new SpeechSynthesisUtterance(
-            `This is a test of the Rail Announcement Generator at ${hour}:${minute}.`
-        );
+        // Has to execute on a delay, as speech cancel is unreliable without it
+        window.setTimeout(() =>
+        {
+            this.btnVoxTest.disabled = false;
 
-        utterance.volume = this.rangeVoxVol.valueAsNumber;
-        utterance.pitch  = this.rangeVoxPitch.valueAsNumber;
-        utterance.rate   = this.rangeVoxRate.valueAsNumber;
-        utterance.voice  = RAG.speech.getVoices()[this.selVoxChoice.selectedIndex];
+            let time      = new Date();
+            let hour      = time.getHours().toString().padStart(2, '0');
+            let minute    = time.getMinutes().toString().padStart(2, '0');
+            let utterance = new SpeechSynthesisUtterance(
+                `This is a test of the Rail Announcement Generator at ${hour}:${minute}.`
+            );
 
-        RAG.speech.speak(utterance);
+            utterance.volume = this.rangeVoxVol.valueAsNumber;
+            utterance.pitch  = this.rangeVoxPitch.valueAsNumber;
+            utterance.rate   = this.rangeVoxRate.valueAsNumber;
+            utterance.voice  = RAG.speech.getVoices()[this.selVoxChoice.selectedIndex];
+
+            RAG.speech.speak(utterance);
+        }, 200);
     }
 }
