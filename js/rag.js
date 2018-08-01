@@ -1190,6 +1190,7 @@ class Settings {
         this.rangeVoxRate = DOM.require('#rangeVoxRate');
         this.btnVoxTest = DOM.require('#btnVoxTest');
         this.btnVoxTest.onclick = this.handleVoxTest.bind(this);
+        Linkdown.parse(DOM.require('#legalBlock'));
     }
     open() {
         this.dom.classList.remove('hidden');
@@ -1463,6 +1464,19 @@ class DOM {
         }
     }
 }
+class Linkdown {
+    static parse(block) {
+        let links = [];
+        let idx = 0;
+        let text = block.innerText.replace(this.REGEX_REF, (_, k, v) => {
+            links[parseInt(k)] = v;
+            return '';
+        });
+        block.innerHTML = text.replace(this.REGEX_LINK, (_, t) => `<a href='${links[idx++]}' target="_blank" rel="noopener">${t}</a>`);
+    }
+}
+Linkdown.REGEX_LINK = /\[(.+?)\]/gi;
+Linkdown.REGEX_REF = /\[(\d+)\]:\s+(\S+)/gi;
 class Parse {
     static boolean(str) {
         str = str.toLowerCase();

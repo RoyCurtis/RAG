@@ -43,6 +43,10 @@ class Settings
         this.btnVoxTest    = DOM.require('#btnVoxTest');
 
         this.btnVoxTest.onclick = this.handleVoxTest.bind(this);
+
+        // Legal and acknowledgements
+
+        Linkdown.parse( DOM.require('#legalBlock') );
     }
 
     /** Opens the settings screen */

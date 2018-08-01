@@ -99,22 +99,23 @@
 
     <h1>%ST_LEGAL%</h1>
 
-    <p>
-      Rail Announcement Generator was built by Roy Curtis in 2018, under the MIT license.
-      Built using TypeScript, Stylus, JetBrains WebStorm, Node, and Node Package Manager.
-      Uses the IcoMoon-Free icon pack by Keyamoon. Uses the 5by7 font by Peter Wiegel.
-      Uses the Draggable library by Shopify.
-      With thanks to: Paul Casillas for his recordings of station announcements on
-      YouTube, WhatDoTheyKnow for hosting freedom of information reqest responses that
+    <p id="legalBlock">
+      Rail Announcement Generator; built by [Roy Curtis] in 2018, under the [MIT license].
+      [Source code for this application is freely available and forkable on GitHub].
+      Built using [TypeScript], [Stylus], [JetBrains WebStorm], and [Node].
+      Uses the [IcoMoon-Free icon pack by Keyamoon]. Uses the [5by7 font by Peter Wiegel].
+      Uses the [Draggable library by Shopify].
+      With thanks to: [Paul Casillas] for his recordings of station announcements on
+      YouTube, [WhatDoTheyKnow] for hosting freedom of information reqest responses that
       contain announcement data, "Mark" for making said FOI requests, and various
       StackOverflow contributors (where attributed) for code snippets and advice.
-      Thank you also to Stitch, Spin, Tropic, Poster, Devon, Robro, Grant, Bjarke, Nik,
-      Dylan, rjlan, Fyrrian, CGDoctor8, Mikko, Griffin, Leroy, Maitre, Shilo, Pat, Kristi
-      Kates and her entire community for the love, testing, and encouragement.
+      Thank you also to [Stitch], [Spin], Tropic, Poster, Devon, [Robro], Grant, Bjarke,
+      Nik, Dylan, rjlan, Fyrrian, CGDoctor8, Mikko, Griffin, Leroy, Maitre, Shilo, Pat,
+      [Kristi Kates and her entire community] for the love, testing, and encouragement.
       No user-inputted or generated data is ever sent to a remote server, at any time.
       Local storage is used only to store and recall JSON state and application settings,
       on user's explicit and intentional request.
-      This application uses phrases, vocabulary, and station names from National Rail's
+      This application uses phrases, vocabulary, and station names from [National Rail]'s
       official station announcements, and freedom of information requests by other parties
       that are not affiliated with this application.
       This application is not affiliated with, nor endorsed by, National Rail or any of
@@ -129,7 +130,26 @@
       announcement generating systems used in any rail station or train.
       Obviously, I am not a lawyer, but I hope this text makes it clear enough that this
       is just a hobby of mine, with zero commercial intent. Please enjoy, and thanks!
+
+      [0]:  https://roycurtis.com
+      [1]:  https://github.com/RoyCurtis/RAG/blob/master/LICENSE.md
+      [2]:  https://github.com/RoyCurtis/RAG
+      [3]:  https://www.typescriptlang.org/
+      [4]:  http://stylus-lang.com/
+      [5]:  https://www.jetbrains.com/webstorm/
+      [6]:  https://nodejs.org/en/
+      [7]:  https://icomoon.io/
+      [8]:  http://www.peter-wiegel.de/5by7.html
+      [9]:  https://shopify.github.io/draggable/
+      [10]: https://www.youtube.com/channel/UC8Hokjo49qLuy3L4bDS5c8w
+      [11]: https://www.whatdotheyknow.com/request/london_overground_announcments
+      [12]: https://laken.net/
+      [13]: http://calebflatten.com/
+      [14]: https://robrotheram.com/
+      [15]: https://www.twitch.tv/kristikates
+      [16]: http://www.nationalrail.co.uk/
     </p>
+
   </div>
 
   <!-- Display size warning -->
@@ -287,6 +307,7 @@
   <script src="data/nr_named.js"    type="text/javascript"></script>
   <script src="data/nr_services.js" type="text/javascript"></script>
   <script src="data/nr_stations.js" type="text/javascript"></script>
+  <!-- TODO: Make RAG load these more intelligently -->
 
   <!-- Third-party libraries -->
   <script src="js/vendor/draggable.js" type="text/javascript"></script>

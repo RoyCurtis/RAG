@@ -556,6 +556,12 @@
   padding: 24px;
   text-align: justify;
 }
+#settingsScreen p a {
+  color: #fff;
+}
+#settingsScreen p a:visited {
+  color: #aaa;
+}
 #settingsScreen form {
   display: grid;
   flex: 1;
