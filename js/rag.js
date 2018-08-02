@@ -1074,7 +1074,6 @@ class Editor {
     constructor() {
         this.dom = DOM.require('#editor');
         document.body.onclick = this.onClick.bind(this);
-        document.body.onkeydown = this.onInput.bind(this);
         window.onresize = this.onResize.bind(this);
         this.dom.onscroll = this.onScroll.bind(this);
         this.dom.textContent = L.EDITOR_INIT();
@@ -1143,10 +1142,6 @@ class Editor {
             this.toggleCollapsiable(target);
         else if (type && picker)
             this.openPicker(target, picker);
-    }
-    onInput(ev) {
-        if (ev.key === 'Escape')
-            return this.closeDialog();
     }
     onResize(_) {
         if (this.currentPicker)
@@ -1401,11 +1396,18 @@ class Views {
             new StationListPicker(),
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);
+        document.body.onkeydown = this.onInput.bind(this);
         if (DOM.isiOS)
             document.body.classList.add('ios');
     }
     getPicker(xmlTag) {
         return this.pickers[xmlTag];
+    }
+    onInput(ev) {
+        if (ev.key !== 'Escape')
+            return;
+        this.editor.closeDialog();
+        this.settings.close();
     }
 }
 class Collapsibles {

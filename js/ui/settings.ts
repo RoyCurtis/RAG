@@ -24,7 +24,6 @@ class Settings
 
     public constructor()
     {
-        // TODO: Esc to close
         // General settings form
 
         this.dom      = DOM.require('#settingsScreen');

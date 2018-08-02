@@ -16,11 +16,10 @@ class Editor
     {
         this.dom = DOM.require('#editor');
 
-        document.body.onclick   = this.onClick.bind(this);
-        document.body.onkeydown = this.onInput.bind(this);
-        window.onresize         = this.onResize.bind(this);
-        this.dom.onscroll       = this.onScroll.bind(this);
-        this.dom.textContent    = L.EDITOR_INIT();
+        document.body.onclick = this.onClick.bind(this);
+        window.onresize       = this.onResize.bind(this);
+        this.dom.onscroll     = this.onScroll.bind(this);
+        this.dom.textContent  = L.EDITOR_INIT();
     }
 
     /** Replaces the editor with a root phraseset reference, and expands it into HTML */
@@ -148,13 +147,6 @@ class Editor
         // Find and open picker for the target element
         else if (type && picker)
             this.openPicker(target, picker);
-    }
-
-    /** Handle ESC to close picker */
-    private onInput(ev: KeyboardEvent) : void
-    {
-        if (ev.key === 'Escape')
-            return this.closeDialog();
     }
 
     /** Re-layout the currently open picker on resize */

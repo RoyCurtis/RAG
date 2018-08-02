@@ -35,6 +35,9 @@ class Views
             new TimePicker()
         ].forEach(picker => this.pickers[picker.xmlTag] = picker);
 
+        // Global hotkeys
+        document.body.onkeydown = this.onInput.bind(this);
+
         // Apply iOS-specific CSS fixes
         if (DOM.isiOS)
             document.body.classList.add('ios');
@@ -44,5 +47,15 @@ class Views
     public getPicker(xmlTag: string) : Picker
     {
         return this.pickers[xmlTag];
+    }
+
+    /** Handle ESC to close pickers or settigns */
+    private onInput(ev: KeyboardEvent) : void
+    {
+        if (ev.key !== 'Escape')
+            return;
+
+        this.editor.closeDialog();
+        this.settings.close();
     }
 }
