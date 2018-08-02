@@ -35,8 +35,8 @@ abstract class Picker
     }
 
     /**
-     * Called when data changes. The implementing picker should update all linked elements
-     * (e.g. of same type) with the new data here.
+     * Called when form fields change. The implementing picker should update all linked
+     * elements (e.g. of same type) with the new data here.
      */
     protected abstract onChange(ev: Event) : void;
 

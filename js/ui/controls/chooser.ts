@@ -123,12 +123,6 @@ class Chooser
         }
     }
 
-    /** Handles pickers' change events */
-    public onChange(_: Event) : void
-    {
-        // TODO: Currently no-op, may be removable
-    }
-
     /** Handles pickers' click events, for choosing items */
     public onClick(ev: MouseEvent) : void
     {

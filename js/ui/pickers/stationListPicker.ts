@@ -66,7 +66,6 @@ class StationListPicker extends StationPicker
     }
 
     // Forward these events to the chooser
-    protected onChange(ev: Event) : void { super.onChange(ev); }
     protected onSubmit(ev: Event) : void { super.onSubmit(ev); }
 
     /** Handles pickers' click events, for choosing items */

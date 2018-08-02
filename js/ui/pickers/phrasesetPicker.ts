@@ -62,7 +62,7 @@ class PhrasesetPicker extends Picker
     }
 
     // Forward these events to the chooser
-    protected onChange(ev: Event)        : void { this.domChooser.onChange(ev); }
+    protected onChange(_: Event)         : void { /** NO-OP */ }
     protected onClick(ev: MouseEvent)    : void { this.domChooser.onClick(ev);  }
     protected onInput(ev: KeyboardEvent) : void { this.domChooser.onInput(ev);  }
     protected onSubmit(ev: Event)        : void { this.domChooser.onSubmit(ev); }

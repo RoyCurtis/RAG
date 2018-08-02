@@ -44,7 +44,7 @@ class StationPicker extends Picker
     }
 
     // Forward these events to the station chooser
-    protected onChange(ev: Event)        : void { StationPicker.chooser.onChange(ev); }
+    protected onChange(_: Event)         : void { /** NO-OP */ }
     protected onClick(ev: MouseEvent)    : void { StationPicker.chooser.onClick(ev); }
     protected onInput(ev: KeyboardEvent) : void { StationPicker.chooser.onInput(ev); }
     protected onSubmit(ev: Event)        : void { StationPicker.chooser.onSubmit(ev); }

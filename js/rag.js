@@ -106,8 +106,6 @@ class Chooser {
             }
         }
     }
-    onChange(_) {
-    }
     onClick(ev) {
         let target = ev.target;
         if (target && target.tagName.toLowerCase() === 'dd')
@@ -397,7 +395,7 @@ class ExcusePicker extends Picker {
         super.close();
         this.domChooser.onClose();
     }
-    onChange(ev) { this.domChooser.onChange(ev); }
+    onChange(_) { }
     onClick(ev) { this.domChooser.onClick(ev); }
     onInput(ev) { this.domChooser.onInput(ev); }
     onSubmit(ev) { this.domChooser.onSubmit(ev); }
@@ -475,7 +473,7 @@ class NamedPicker extends Picker {
         super.close();
         this.domChooser.onClose();
     }
-    onChange(ev) { this.domChooser.onChange(ev); }
+    onChange(_) { }
     onClick(ev) { this.domChooser.onClick(ev); }
     onInput(ev) { this.domChooser.onInput(ev); }
     onSubmit(ev) { this.domChooser.onSubmit(ev); }
@@ -513,7 +511,7 @@ class PhrasesetPicker extends Picker {
         super.close();
         this.domChooser.onClose();
     }
-    onChange(ev) { this.domChooser.onChange(ev); }
+    onChange(_) { }
     onClick(ev) { this.domChooser.onClick(ev); }
     onInput(ev) { this.domChooser.onInput(ev); }
     onSubmit(ev) { this.domChooser.onSubmit(ev); }
@@ -569,7 +567,7 @@ class ServicePicker extends Picker {
         super.close();
         this.domChooser.onClose();
     }
-    onChange(ev) { this.domChooser.onChange(ev); }
+    onChange(_) { }
     onClick(ev) { this.domChooser.onClick(ev); }
     onInput(ev) { this.domChooser.onInput(ev); }
     onSubmit(ev) { this.domChooser.onSubmit(ev); }
@@ -598,7 +596,7 @@ class StationPicker extends Picker {
         chooser.selectOnClick = true;
         this.domHeader.innerText = L.HEADER_STATION(this.currentCtx);
     }
-    onChange(ev) { StationPicker.chooser.onChange(ev); }
+    onChange(_) { }
     onClick(ev) { StationPicker.chooser.onClick(ev); }
     onInput(ev) { StationPicker.chooser.onInput(ev); }
     onSubmit(ev) { StationPicker.chooser.onSubmit(ev); }
@@ -636,7 +634,6 @@ class StationListPicker extends StationPicker {
         entries.forEach(v => this.add(v));
         this.inputList.focus();
     }
-    onChange(ev) { super.onChange(ev); }
     onSubmit(ev) { super.onSubmit(ev); }
     onClick(ev) {
         super.onClick(ev);
@@ -1466,19 +1463,6 @@ class DOM {
         }
     }
 }
-class Linkdown {
-    static parse(block) {
-        let links = [];
-        let idx = 0;
-        let text = block.innerText.replace(this.REGEX_REF, (_, k, v) => {
-            links[parseInt(k)] = v;
-            return '';
-        });
-        block.innerHTML = text.replace(this.REGEX_LINK, (_, t) => `<a href='${links[idx++]}' target="_blank" rel="noopener">${t}</a>`);
-    }
-}
-Linkdown.REGEX_LINK = /\[(.+?)\]/gi;
-Linkdown.REGEX_REF = /\[(\d+)\]:\s+(\S+)/gi;
 class Parse {
     static boolean(str) {
         str = str.toLowerCase();
@@ -1920,4 +1904,17 @@ class State {
         }
     }
 }
+class Linkdown {
+    static parse(block) {
+        let links = [];
+        let idx = 0;
+        let text = block.innerText.replace(this.REGEX_REF, (_, k, v) => {
+            links[parseInt(k)] = v;
+            return '';
+        });
+        block.innerHTML = text.replace(this.REGEX_LINK, (_, t) => `<a href='${links[idx++]}' target="_blank" rel="noopener">${t}</a>`);
+    }
+}
+Linkdown.REGEX_LINK = /\[(.+?)\]/gi;
+Linkdown.REGEX_REF = /\[(\d+)\]:\s+(\S+)/gi;
 //# sourceMappingURL=rag.js.map
