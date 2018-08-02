@@ -46,7 +46,6 @@ class PhrasesetPicker extends Picker
             DOM.cloneInto(phraseset.children[i] as HTMLElement, phrase);
             RAG.phraser.process(phrase);
 
-            // TODO: Why isn't this excluding hidden parts?
             phrase.innerText   = DOM.getCleanedVisibleText(phrase);
             phrase.dataset.idx = i.toString();
 

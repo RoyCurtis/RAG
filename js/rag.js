@@ -1464,8 +1464,8 @@ class DOM {
             return element.textContent || '';
         else if (element.classList.contains('toggle'))
             return '';
-        let style = getComputedStyle(element);
-        if (style && style.display === 'none')
+        let parent = element.parentElement;
+        if (parent && parent.hasAttribute('collapsed'))
             return '';
         let text = '';
         for (let i = 0; i < element.childNodes.length; i++)

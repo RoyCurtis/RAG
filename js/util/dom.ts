@@ -112,6 +112,7 @@ class DOM
 
     /**
      * Gets the text content of the given element, excluding the text of hidden children.
+     * Be warned; this method uses RAG-specific code.
      *
      * @see https://stackoverflow.com/a/19986328
      * @param element Element to recursively get text content of
@@ -119,15 +120,17 @@ class DOM
      */
     public static getVisibleText(element: Element) : string
     {
-        if (element.nodeType === Node.TEXT_NODE)
+        if      (element.nodeType === Node.TEXT_NODE)
             return element.textContent || '';
-        // This next conditional is RAG-specific; be warned!
         else if ( element.classList.contains('toggle') )
             return '';
 
-        let style = getComputedStyle(element);
+        // Return blank (skip) if child of a collapsed element. Previously, this used
+        // getComputedStyle, but that doesn't work if the element is part of an orphaned
+        // phrase (as happens with the phraseset picker).
+        let parent = element.parentElement;
 
-        if (style && style.display === 'none')
+        if ( parent && parent.hasAttribute('collapsed') )
             return '';
 
         let text = '';
