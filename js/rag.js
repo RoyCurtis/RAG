@@ -224,27 +224,7 @@ class StationChooser extends Chooser {
         super(parent);
         this.domStations = {};
         this.inputChoices.tabIndex = 0;
-        Object.keys(RAG.database.stations).forEach(code => {
-            let station = RAG.database.stations[code];
-            let letter = station[0];
-            let group = this.domStations[letter];
-            if (!group) {
-                let header = document.createElement('dt');
-                header.innerText = letter.toUpperCase();
-                header.tabIndex = -1;
-                group = this.domStations[letter] = document.createElement('dl');
-                group.tabIndex = 50;
-                group.setAttribute('group', '');
-                group.appendChild(header);
-                this.inputChoices.appendChild(group);
-            }
-            let entry = document.createElement('dd');
-            entry.dataset['code'] = code;
-            entry.innerText = RAG.database.stations[code];
-            entry.title = this.itemTitle;
-            entry.tabIndex = -1;
-            group.appendChild(entry);
-        });
+        Object.keys(RAG.database.stations).forEach(this.addStation.bind(this));
     }
     attach(picker, onSelect) {
         let parent = picker.domForm;
@@ -287,6 +267,27 @@ class StationChooser extends Chooser {
     getByCode(code) {
         return this.inputChoices
             .querySelector(`dd[data-code=${code}]`);
+    }
+    addStation(code) {
+        let station = RAG.database.stations[code];
+        let letter = station[0];
+        let group = this.domStations[letter];
+        if (!group) {
+            let header = document.createElement('dt');
+            header.innerText = letter.toUpperCase();
+            header.tabIndex = -1;
+            group = this.domStations[letter] = document.createElement('dl');
+            group.tabIndex = 50;
+            group.setAttribute('group', '');
+            group.appendChild(header);
+            this.inputChoices.appendChild(group);
+        }
+        let entry = document.createElement('dd');
+        entry.dataset['code'] = code;
+        entry.innerText = RAG.database.stations[code];
+        entry.title = this.itemTitle;
+        entry.tabIndex = -1;
+        group.appendChild(entry);
     }
 }
 class StationListItem {

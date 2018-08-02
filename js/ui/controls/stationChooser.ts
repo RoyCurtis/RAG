@@ -16,38 +16,10 @@ class StationChooser extends Chooser
 
         this.inputChoices.tabIndex = 0;
 
-        // Next, populate the list of stations from the database. We do this by creating
-        // a dl element for each letter of the alphabet, creating a dt element header, and
-        // then populating the dl with station name dd children.
-        Object.keys(RAG.database.stations).forEach(code =>
-        {
-            // TODO: move this to its own method
-            let station = RAG.database.stations[code];
-            let letter  = station[0];
-            let group   = this.domStations[letter];
-
-            if (!group)
-            {
-                let header       = document.createElement('dt');
-                header.innerText = letter.toUpperCase();
-                header.tabIndex  = -1;
-
-                group = this.domStations[letter] = document.createElement('dl');
-                group.tabIndex = 50;
-
-                group.setAttribute('group', '');
-                group.appendChild(header);
-                this.inputChoices.appendChild(group);
-            }
-
-            let entry             = document.createElement('dd');
-            entry.dataset['code'] = code;
-            entry.innerText       = RAG.database.stations[code];
-            entry.title           = this.itemTitle;
-            entry.tabIndex        = -1;
-
-            group.appendChild(entry);
-        });
+        // Populates the list of stations from the database. We do this by creating a dl
+        // element for each letter of the alphabet, creating a dt element header, and then
+        // populating the dl with station name dd children.
+        Object.keys(RAG.database.stations).forEach( this.addStation.bind(this) );
     }
 
     /**
@@ -119,5 +91,35 @@ class StationChooser extends Chooser
     {
         return this.inputChoices
             .querySelector(`dd[data-code=${code}]`) as HTMLElement;
+    }
+
+    /** Populates the chooser with the given station code */
+    private addStation(code: string) : void
+    {
+        let station = RAG.database.stations[code];
+        let letter  = station[0];
+        let group   = this.domStations[letter];
+
+        if (!group)
+        {
+            let header       = document.createElement('dt');
+            header.innerText = letter.toUpperCase();
+            header.tabIndex  = -1;
+
+            group = this.domStations[letter] = document.createElement('dl');
+            group.tabIndex = 50;
+
+            group.setAttribute('group', '');
+            group.appendChild(header);
+            this.inputChoices.appendChild(group);
+        }
+
+        let entry             = document.createElement('dd');
+        entry.dataset['code'] = code;
+        entry.innerText       = RAG.database.stations[code];
+        entry.title           = this.itemTitle;
+        entry.tabIndex        = -1;
+
+        group.appendChild(entry);
     }
 }
