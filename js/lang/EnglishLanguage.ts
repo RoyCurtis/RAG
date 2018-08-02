@@ -98,6 +98,8 @@ class EnglishLanguage extends BaseLanguage
     HEADER_TIME        = ()          =>
         'Pick a time';
 
+    P_GENERIC_T      = () => 'List of choices';
+    P_GENERIC_PH     = () => 'Filter choices...';
     P_COACH_T        = () => 'Coach letter';
     P_EXCUSE_T       = () => 'List of delay or cancellation excuses';
     P_EXCUSE_PH      = () => 'Filter excuses...';

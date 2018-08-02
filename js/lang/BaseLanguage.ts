@@ -114,6 +114,8 @@ abstract class BaseLanguage
     readonly abstract HEADER_TIME        : LanguageEntry;
 
     // Tooltips/title and placeholder text for picker controls
+    readonly abstract P_GENERIC_T      : LanguageEntry;
+    readonly abstract P_GENERIC_PH     : LanguageEntry;
     readonly abstract P_COACH_T        : LanguageEntry;
     readonly abstract P_EXCUSE_T       : LanguageEntry;
     readonly abstract P_EXCUSE_PH      : LanguageEntry;

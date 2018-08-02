@@ -46,9 +46,8 @@ class Chooser
             Chooser.init();
 
         let target      = DOM.require('chooser', parent);
-        // TODO: Simplify and use translation
-        let placeholder = DOM.getAttr(target, 'placeholder', 'Filter choices...');
-        let title       = DOM.getAttr(target, 'title', 'List of choices');
+        let placeholder = DOM.getAttr( target, 'placeholder', L.P_GENERIC_PH() );
+        let title       = DOM.getAttr( target, 'title', L.P_GENERIC_T() );
         this.itemTitle  = DOM.getAttr(target, 'itemTitle', this.itemTitle);
         this.groupByABC = target.hasAttribute('groupByABC');
 

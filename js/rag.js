@@ -59,8 +59,8 @@ class Chooser {
         if (!Chooser.TEMPLATE)
             Chooser.init();
         let target = DOM.require('chooser', parent);
-        let placeholder = DOM.getAttr(target, 'placeholder', 'Filter choices...');
-        let title = DOM.getAttr(target, 'title', 'List of choices');
+        let placeholder = DOM.getAttr(target, 'placeholder', L.P_GENERIC_PH());
+        let title = DOM.getAttr(target, 'title', L.P_GENERIC_T());
         this.itemTitle = DOM.getAttr(target, 'itemTitle', this.itemTitle);
         this.groupByABC = target.hasAttribute('groupByABC');
         this.dom = Chooser.TEMPLATE.cloneNode(true);
@@ -802,6 +802,8 @@ class EnglishLanguage extends BaseLanguage {
         this.HEADER_STATION = (c) => `Pick a station for the '${c}' context`;
         this.HEADER_STATIONLIST = (c) => `Build a station list for the '${c}' context`;
         this.HEADER_TIME = () => 'Pick a time';
+        this.P_GENERIC_T = () => 'List of choices';
+        this.P_GENERIC_PH = () => 'Filter choices...';
         this.P_COACH_T = () => 'Coach letter';
         this.P_EXCUSE_T = () => 'List of delay or cancellation excuses';
         this.P_EXCUSE_PH = () => 'Filter excuses...';
