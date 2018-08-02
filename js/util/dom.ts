@@ -154,6 +154,14 @@ class DOM
             .replace(/\s([.,])/gi, '$1');
     }
 
+    /**
+     * Scans for the next focusable sibling from a given element, skipping hidden or
+     * unfocusable elements. If the end of the container is hit, the scan wraps around.
+     *
+     * @param from Element to start scanning from
+     * @param dir Direction; -1 for left (previous), 1 for right (next)
+     * @returns The next available sibling, or null if none found
+     */
     public static getNextFocusableSibling(from: HTMLElement, dir: number)
         : HTMLElement | null
     {
@@ -180,7 +188,8 @@ class DOM
                 return null;
 
             // If this element isn't hidden and is focusable, return it!
-            if ( !current.classList.contains('hidden') && current.tabIndex )
+            if ( !current.classList.contains('hidden') )
+            if ( current.hasAttribute('tabindex') )
                 return current;
         }
     }

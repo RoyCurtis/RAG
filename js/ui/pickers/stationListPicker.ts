@@ -22,7 +22,6 @@ class StationListPicker extends StationPicker
 
     public constructor()
     {
-        // TODO: Disable/remove already picked stations
         super("stationlist");
 
         this.domList      = DOM.require('.stationList', this.dom);
@@ -175,8 +174,12 @@ class StationListPicker extends StationPicker
     {
         let newEntry = new StationListItem(code);
 
+        // Add the new entry to the sortable list
         this.inputList.appendChild(newEntry.dom);
         this.domEmptyList.classList.add('hidden');
+
+        // Disable the added station in the chooser
+        StationPicker.chooser.disable(code);
 
         // Delete item on double click
         newEntry.dom.ondblclick = _ => this.remove(newEntry.dom);
@@ -193,6 +196,9 @@ class StationListPicker extends StationPicker
     {
         if ( !this.domList.contains(entry) )
             throw Error('Attempted to remove entry not on station list builder');
+
+        // Enabled the removed station in the chooser
+        StationPicker.chooser.enable(entry.dataset['code']!);
 
         entry.remove();
         this.update();

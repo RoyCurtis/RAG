@@ -86,6 +86,13 @@
         &[selected]
           background $fgFocus
 
+        &[disabled]
+          color  $fgDim
+          cursor default
+
+          &:hover
+            background none
+
 #coachPicker, #integerPicker, #platformPicker, #timePicker
   form
     flex-direction row

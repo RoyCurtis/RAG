@@ -128,8 +128,8 @@ class Chooser
     {
         let target = ev.target as HTMLElement;
 
-        if (target && target.tagName.toLowerCase() === 'dd')
-        if ( this.owns(target) )
+        if ( this.isChoice(target) )
+        if ( !target.hasAttribute('disabled') )
             this.select(target);
     }
 
@@ -167,9 +167,9 @@ class Chooser
             return this.inputFilter.focus();
 
         // Handle pressing ENTER after keyboard navigating to an item
-        if ( parent === this.inputChoices || parent.hasAttribute('group') )
+        if ( this.isChoice(focused) )
         if (key === 'Enter')
-            return this.select(focused as HTMLElement);
+            return this.select(focused);
 
         // Handle navigation when container or item is focused
         if (key === 'ArrowLeft' || key === 'ArrowRight')
@@ -310,6 +310,14 @@ class Chooser
      */
     protected owns(target: HTMLElement) : boolean
     {
-        return this.inputFilter.contains(target) || this.inputChoices.contains(target);
+        return this.dom.contains(target);
+    }
+
+    /** Whether the given element is a choosable one owned by this chooser */
+    protected isChoice(target?: HTMLElement) : boolean
+    {
+        return target !== undefined
+            && target.tagName.toLowerCase() === 'dd'
+            && this.owns(target);
     }
 }

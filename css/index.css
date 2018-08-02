@@ -272,6 +272,13 @@
 .picker .chooser .chChoicesBox dd[selected] {
   background: #cc7e00;
 }
+.picker .chooser .chChoicesBox dd[disabled] {
+  color: #aaa;
+  cursor: default;
+}
+.picker .chooser .chChoicesBox dd[disabled]:hover {
+  background: none;
+}
 #coachPicker form,
 #integerPicker form,
 #platformPicker form,

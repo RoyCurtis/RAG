@@ -21,6 +21,7 @@ class StationChooser extends Chooser
         // then populating the dl with station name dd children.
         Object.keys(RAG.database.stations).forEach(code =>
         {
+            // TODO: move this to its own method
             let station = RAG.database.stations[code];
             let letter  = station[0];
             let group   = this.domStations[letter];
@@ -60,6 +61,10 @@ class StationChooser extends Chooser
         let parent  = picker.domForm;
         let current = this.dom.parentElement;
 
+        // Re-enable all disabled elements
+        this.inputChoices.querySelectorAll(`dd[disabled]`)
+            .forEach( this.enable.bind(this) );
+
         if (!current || current !== parent)
             parent.appendChild(this.dom);
 
@@ -70,12 +75,49 @@ class StationChooser extends Chooser
     /** Pre-selects a station entry by its code */
     public preselectCode(code: string) : void
     {
-        let entry = this.inputChoices.querySelector(`dd[data-code=${code}]`) as HTMLElement;
+        let entry = this.getByCode(code);
 
-        if (entry)
-        {
-            this.visualSelect(entry);
-            entry.focus();
-        }
+        if (!entry) return;
+
+        this.visualSelect(entry);
+        entry.focus();
+    }
+
+    /** Enables the given station code or station element for selection */
+    public enable(codeOrNode: string | HTMLElement) : void
+    {
+        let entry = (typeof codeOrNode === 'string')
+            ? this.getByCode(codeOrNode)
+            : codeOrNode;
+
+        if (!entry) return;
+
+        entry.removeAttribute('disabled');
+        entry.tabIndex = -1;
+        entry.title    = this.itemTitle;
+    }
+
+    /** Disables the given station code from selection */
+    public disable(code: string) : void
+    {
+        let entry = this.getByCode(code);
+        let next  = DOM.getNextFocusableSibling(entry, 1);
+
+        if (!entry) return;
+
+        entry.setAttribute('disabled', '');
+        entry.removeAttribute('tabindex');
+        entry.title = '';
+
+        // Shift focus to next available element, for keyboard navigation
+        if (next)
+            next.focus();
+    }
+
+    /** Gets a station's choice element by its code */
+    private getByCode(code: string) : HTMLElement
+    {
+        return this.inputChoices
+            .querySelector(`dd[data-code=${code}]`) as HTMLElement;
     }
 }

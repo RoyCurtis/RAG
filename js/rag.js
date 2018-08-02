@@ -108,8 +108,8 @@ class Chooser {
     }
     onClick(ev) {
         let target = ev.target;
-        if (target && target.tagName.toLowerCase() === 'dd')
-            if (this.owns(target))
+        if (this.isChoice(target))
+            if (!target.hasAttribute('disabled'))
                 this.select(target);
     }
     onClose() {
@@ -131,7 +131,7 @@ class Chooser {
         if (focused !== this.inputFilter)
             if (key.length === 1 || key === 'Backspace')
                 return this.inputFilter.focus();
-        if (parent === this.inputChoices || parent.hasAttribute('group'))
+        if (this.isChoice(focused))
             if (key === 'Enter')
                 return this.select(focused);
         if (key === 'ArrowLeft' || key === 'ArrowRight') {
@@ -211,7 +211,12 @@ class Chooser {
         this.domSelected = undefined;
     }
     owns(target) {
-        return this.inputFilter.contains(target) || this.inputChoices.contains(target);
+        return this.dom.contains(target);
+    }
+    isChoice(target) {
+        return target !== undefined
+            && target.tagName.toLowerCase() === 'dd'
+            && this.owns(target);
     }
 }
 class StationChooser extends Chooser {
@@ -244,17 +249,44 @@ class StationChooser extends Chooser {
     attach(picker, onSelect) {
         let parent = picker.domForm;
         let current = this.dom.parentElement;
+        this.inputChoices.querySelectorAll(`dd[disabled]`)
+            .forEach(this.enable.bind(this));
         if (!current || current !== parent)
             parent.appendChild(this.dom);
         this.visualUnselect();
         this.onSelect = onSelect.bind(picker);
     }
     preselectCode(code) {
-        let entry = this.inputChoices.querySelector(`dd[data-code=${code}]`);
-        if (entry) {
-            this.visualSelect(entry);
-            entry.focus();
-        }
+        let entry = this.getByCode(code);
+        if (!entry)
+            return;
+        this.visualSelect(entry);
+        entry.focus();
+    }
+    enable(codeOrNode) {
+        let entry = (typeof codeOrNode === 'string')
+            ? this.getByCode(codeOrNode)
+            : codeOrNode;
+        if (!entry)
+            return;
+        entry.removeAttribute('disabled');
+        entry.tabIndex = -1;
+        entry.title = this.itemTitle;
+    }
+    disable(code) {
+        let entry = this.getByCode(code);
+        let next = DOM.getNextFocusableSibling(entry, 1);
+        if (!entry)
+            return;
+        entry.setAttribute('disabled', '');
+        entry.removeAttribute('tabindex');
+        entry.title = '';
+        if (next)
+            next.focus();
+    }
+    getByCode(code) {
+        return this.inputChoices
+            .querySelector(`dd[data-code=${code}]`);
     }
 }
 class StationListItem {
@@ -695,12 +727,14 @@ class StationListPicker extends StationPicker {
         let newEntry = new StationListItem(code);
         this.inputList.appendChild(newEntry.dom);
         this.domEmptyList.classList.add('hidden');
+        StationPicker.chooser.disable(code);
         newEntry.dom.ondblclick = _ => this.remove(newEntry.dom);
         return newEntry;
     }
     remove(entry) {
         if (!this.domList.contains(entry))
             throw Error('Attempted to remove entry not on station list builder');
+        StationPicker.chooser.enable(entry.dataset['code']);
         entry.remove();
         this.update();
         if (this.inputList.children.length === 0)
@@ -1458,11 +1492,25 @@ class DOM {
                 throw Error(L.BAD_DIRECTION(dir.toString()));
             if (current === from)
                 return null;
-            if (!current.classList.contains('hidden') && current.tabIndex)
-                return current;
+            if (!current.classList.contains('hidden'))
+                if (current.hasAttribute('tabindex'))
+                    return current;
         }
     }
 }
+class Linkdown {
+    static parse(block) {
+        let links = [];
+        let idx = 0;
+        let text = block.innerText.replace(this.REGEX_REF, (_, k, v) => {
+            links[parseInt(k)] = v;
+            return '';
+        });
+        block.innerHTML = text.replace(this.REGEX_LINK, (_, t) => `<a href='${links[idx++]}' target="_blank" rel="noopener">${t}</a>`);
+    }
+}
+Linkdown.REGEX_LINK = /\[(.+?)\]/gi;
+Linkdown.REGEX_REF = /\[(\d+)\]:\s+(\S+)/gi;
 class Parse {
     static boolean(str) {
         str = str.toLowerCase();
@@ -1904,17 +1952,4 @@ class State {
         }
     }
 }
-class Linkdown {
-    static parse(block) {
-        let links = [];
-        let idx = 0;
-        let text = block.innerText.replace(this.REGEX_REF, (_, k, v) => {
-            links[parseInt(k)] = v;
-            return '';
-        });
-        block.innerHTML = text.replace(this.REGEX_LINK, (_, t) => `<a href='${links[idx++]}' target="_blank" rel="noopener">${t}</a>`);
-    }
-}
-Linkdown.REGEX_LINK = /\[(.+?)\]/gi;
-Linkdown.REGEX_REF = /\[(\d+)\]:\s+(\S+)/gi;
 //# sourceMappingURL=rag.js.map
