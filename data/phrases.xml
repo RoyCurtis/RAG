@@ -92,25 +92,29 @@
 
   <!-- For debugging -->
   <phrase>
-    **DEBUG**
-    Coach: <phrase ref="debug_coaches" chance="0"/>,
-    Excuse: <excuse/>,
-    Integers: <phrase ref="debug_integers" chance="0"/>,
-    Phrase: <phrase ref="debug_phrase" chance="0"/>,
-    Phrase (chance): <phrase ref="debug_phrase" chance="15"/>,
-    Phraseset: <phraseset ref="debug_phraseset"/>,
-    Phraseset (chance): <phraseset ref="debug_phraseset" chance="50"/>,
-    Platform: <platform/>,
-    Named: <named/>,
-    Service: <service/>,
-    Stations: <phrase ref="debug_stations" chance="0"/>,
-    Station list: <phrase ref="debug_stationlists" chance="0"/>,
-    Time: <time/>
-    **DEBUG**
+    <phrase ref="debug_master"/>
   </phrase>
 </phraseset>
 
 <!-- Debug phrases -->
+
+<phrase id="debug_master">
+  **DEBUG**
+  Coach: <phrase ref="debug_coaches" chance="0"/>,
+  Excuse: <excuse/>,
+  Integers: <phrase ref="debug_integers" chance="0"/>,
+  Phrase: <phrase ref="debug_phrase" chance="0"/>,
+  Phrase (chance): <phrase ref="debug_phrase" chance="15"/>,
+  Phraseset: <phraseset ref="debug_phraseset"/>,
+  Phraseset (chance): <phraseset ref="debug_phraseset" chance="50"/>,
+  Platform: <platform/>,
+  Named: <named/>,
+  Service: <service/>,
+  Stations: <phrase ref="debug_stations" chance="0"/>,
+  Station list: <phrase ref="debug_stationlists" chance="0"/>,
+  Time: <time/>
+  **DEBUG**
+</phrase>
 
 <phrase id="debug_coaches">
   (
