@@ -150,11 +150,7 @@ class DOM
      */
     public static getCleanedVisibleText(element: Element) : string
     {
-        return DOM.getVisibleText(element)
-            .trim()
-            .replace(/[\n\r]/gi, '')
-            .replace(/\s{2,}/gi, ' ')
-            .replace(/\s([.,])/gi, '$1');
+        return Strings.clean( DOM.getVisibleText(element) );
     }
 
     /**

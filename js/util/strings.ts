@@ -37,4 +37,13 @@ class Strings
 
         return result;
     }
+
+    /** Cleans up the given text of excess whitespace and any newlines */
+    public static clean(text: string) : string
+    {
+        return text.trim()
+            .replace(/[\n\r]/gi, '')
+            .replace(/\s{2,}/gi, ' ')
+            .replace(/\s([.,])/gi, '$1');
+    }
 }
