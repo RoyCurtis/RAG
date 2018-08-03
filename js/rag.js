@@ -1473,11 +1473,7 @@ class DOM {
         return text;
     }
     static getCleanedVisibleText(element) {
-        return DOM.getVisibleText(element)
-            .trim()
-            .replace(/[\n\r]/gi, '')
-            .replace(/\s{2,}/gi, ' ')
-            .replace(/\s([.,])/gi, '$1');
+        return Strings.clean(DOM.getVisibleText(element));
     }
     static getNextFocusableSibling(from, dir) {
         let current = from;
@@ -1556,6 +1552,12 @@ class Strings {
             result += ` and ${lastStation}`;
         }
         return result;
+    }
+    static clean(text) {
+        return text.trim()
+            .replace(/[\n\r]/gi, '')
+            .replace(/\s{2,}/gi, ' ')
+            .replace(/\s([.,])/gi, '$1');
     }
 }
 class SpeechEngine {

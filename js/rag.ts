@@ -1,8 +1,5 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/// <reference path="lang/BaseLanguage.ts"/>
-/// <reference path="lang/EnglishLanguage.ts"/>
-
 /** Main class of the entire Rail Announcements Generator application */
 class RAG
 {

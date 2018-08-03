@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "alwaysStrict":                 true,
+    "declaration":                  true,
     "downlevelIteration":           true,
     "module":                       "system",
     "target":                       "es2015",
