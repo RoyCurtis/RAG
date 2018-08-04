@@ -171,8 +171,10 @@ RAG nicely, except web clips behaved poorly compared to Safari:
 
 * There is no reliable way to hard refresh a web clip, except deleting the app and
 erasing site data in "Settings > Safari"
-* Form controls do not work (e.g. keyboard not shown), unless they have
-`-webkit-user-select` set to `text`. This fix was not needed on Safari, however.
+* ~~Form controls do not work (e.g. keyboard not shown), unless they have
+`-webkit-user-select` set to `text`. This fix was not needed on Safari, however.~~
+  * This fix arbitrarily stopped working, for no reason. Going back in git history and 
+  clearing cache found no cause. Oh well, turned off the ability to be a standalone app.
 
 # The forced Webkit monopoly
 
