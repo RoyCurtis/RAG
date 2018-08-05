@@ -152,11 +152,9 @@ class Settings
         {
             this.btnVoxTest.disabled = false;
 
-            let time      = new Date();
-            let hour      = time.getHours().toString().padStart(2, '0');
-            let minute    = time.getMinutes().toString().padStart(2, '0');
+            let time      = Strings.fromTime( new Date() );
             let utterance = new SpeechSynthesisUtterance(
-                `This is a test of the Rail Announcement Generator at ${hour}:${minute}.`
+                `This is a test of the Rail Announcement Generator at ${time}.`
             );
 
             utterance.volume = this.rangeVoxVol.valueAsNumber;

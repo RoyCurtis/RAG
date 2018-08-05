@@ -178,7 +178,7 @@
       </xs:annotation>
     </xs:element>
 
-    <xs:element name="time">
+    <xs:element name="time" type="time">
       <xs:annotation>
         <xs:documentation>
           Picks a 24 hour time, with hours and minutes.
@@ -288,6 +288,17 @@
     <xs:annotation>
       <xs:documentation>
         Specifies the context to pick a station list for.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+</xs:complexType>
+
+
+<xs:complexType name="time">
+  <xs:attribute name="context" type="time_context" use="required">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the context to pick a time for.
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
@@ -514,6 +525,27 @@
       <xs:annotation>
         <xs:documentation>
           Shows the list of calling stops that are request stops. Min. 1 max. 16.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+  </xs:restriction>
+</xs:simpleType>
+
+
+<xs:simpleType name="time_context">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="main">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the time for the main train's departure or arrival.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="alternative">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the time for the alternative train's departure or arrival.
         </xs:documentation>
       </xs:annotation>
     </xs:enumeration>

@@ -66,8 +66,8 @@ class EnglishLanguage extends BaseLanguage
         `Click to change this station ('${c}')`;
     TITLE_STATIONLIST = (c: string) =>
         `Click to change this station list ('${c}')`;
-    TITLE_TIME        = ()          =>
-        "Click to change this train's time";
+    TITLE_TIME        = (c: string) =>
+        `Click to change this time ('${c}')`;
 
     EDITOR_INIT              = () => 'Please wait...';
     EDITOR_UNKNOWN_ELEMENT   = (n: string) => `(UNKNOWN XML ELEMENT: ${n})`;
@@ -95,8 +95,8 @@ class EnglishLanguage extends BaseLanguage
         `Pick a station for the '${c}' context`;
     HEADER_STATIONLIST = (c: string) =>
         `Build a station list for the '${c}' context`;
-    HEADER_TIME        = ()          =>
-        'Pick a time';
+    HEADER_TIME        = (c: string) =>
+        `Pick a time for the '${c}' context`;
 
     P_GENERIC_T      = () => 'List of choices';
     P_GENERIC_PH     = () => 'Filter choices...';
@@ -135,6 +135,7 @@ class EnglishLanguage extends BaseLanguage
     P_INT_MISSING_STATE     = () => 'onChange fired for integer picker without state';
     P_PSET_MISSING_STATE    = () => 'onSelect fired for phraseset picker without state';
     P_SERVICE_MISSING_STATE = () => 'onSelect fired for service picker without state';
+    P_TIME_MISSING_STATE    = () => 'onChange fired for time picker without state';
     P_PSET_UNKNOWN          = (r: string) => `Phraseset '${r}' doesn't exist`;
     P_SL_DRAG_MISSING       = () => 'Draggable: Missing source elements for mirror event';
 

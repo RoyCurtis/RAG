@@ -156,8 +156,12 @@ class ElementProcessors
     /** Fills in the time */
     public static time(ctx: PhraseContext)
     {
-        ctx.newElement.title       = L.TITLE_TIME();
-        ctx.newElement.textContent = RAG.state.time;
+        let context = DOM.requireAttr(ctx.xmlElement, 'context');
+
+        ctx.newElement.title       = L.TITLE_TIME(context);
+        ctx.newElement.textContent = RAG.state.getTime(context);
+
+        ctx.newElement.dataset['context'] = context;
     }
 
     /** Handles unknown elements with an inline error message */

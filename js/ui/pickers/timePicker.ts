@@ -8,12 +8,14 @@ class TimePicker extends Picker
     /** Reference to this picker's time input control */
     private readonly inputTime: HTMLInputElement;
 
+    /** Holds the context for the current time element being edited */
+    private currentCtx : string = '';
+
     public constructor()
     {
         super('time');
 
-        this.inputTime           = DOM.require('input', this.dom);
-        this.domHeader.innerText = L.HEADER_TIME();
+        this.inputTime = DOM.require('input', this.dom);
     }
 
     /** Populates the form with the current state's time */
@@ -21,16 +23,23 @@ class TimePicker extends Picker
     {
         super.open(target);
 
-        this.inputTime.value = RAG.state.time;
+        this.currentCtx          = DOM.requireData(target, 'context');
+        this.domHeader.innerText = L.HEADER_TIME(this.currentCtx);
+
+        this.inputTime.value = RAG.state.getTime(this.currentCtx);
         this.inputTime.focus();
     }
 
     /** Updates the time element and state currently being edited */
     protected onChange(_: Event) : void
     {
-        RAG.state.time = this.inputTime.value;
+        if (!this.currentCtx)
+            throw Error( L.P_TIME_MISSING_STATE() );
 
-        RAG.views.editor.setElementsText( 'time', RAG.state.time.toString() );
+        RAG.state.setTime(this.currentCtx, this.inputTime.value);
+        RAG.views.editor
+            .getElementsByQuery(`[data-type=time][data-context=${this.currentCtx}]`)
+            .forEach(element => element.textContent = this.inputTime.value);
     }
 
     protected onClick(_: MouseEvent)    : void { /* no-op */ }

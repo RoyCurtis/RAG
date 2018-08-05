@@ -17,6 +17,8 @@ class State
     private _stations     : Dictionary<string>   = {};
     /** Current station list choices. Key is context ID, value is array of codes. */
     private _stationLists : Dictionary<string[]> = {};
+    /** Current time choices. Key is context ID, value is time. */
+    private _times        : Dictionary<string>   = {};
 
     /** Currently chosen excuse */
     private _excuse?   : string;
@@ -24,8 +26,6 @@ class State
     private _platform? : Platform;
     /** Currently chosen named train */
     private _named?    : string;
-    /** Currently chosen train time */
-    private _time?     : string;
 
     /**
      * Gets the currently chosen coach letter, or randomly picks one from A to Z.
@@ -233,6 +233,31 @@ class State
             this._stationLists['calling'] = codes;
     }
 
+    /**
+     * Gets the currently chosen time
+     *
+     * @param context Context ID to get or choose the time for
+     */
+    public getTime(context: string) : string
+    {
+        if (this._times[context] !== undefined)
+            return this._times[context];
+
+        this._times[context] = Strings.fromTime( Random.int(0, 23), Random.int(0, 59) );
+        return this._times[context];
+    }
+
+    /**
+     * Sets a time.
+     *
+     * @param context Context ID to set the time for
+     * @param time Value to set
+     */
+    public setTime(context: string, time: string) : void
+    {
+        this._times[context] = time;
+    }
+
     /** Gets the chosen excuse, or randomly picks one */
     public get excuse() : string
     {
@@ -291,29 +316,6 @@ class State
     public set named(value: string)
     {
         this._named = value;
-    }
-
-    /** Gets the chosen time, or randomly picks one within 59 minutes from now */
-    public get time() : string
-    {
-        if (!this._time)
-        {
-            // https://stackoverflow.com/a/1214753
-            let offset = Random.int(0, 59);
-            let time   = new Date( new Date().getTime() + offset * 60000);
-            let hour   = time.getHours().toString().padStart(2, '0');
-            let minute = time.getMinutes().toString().padStart(2, '0');
-
-            this._time = `${hour}:${minute}`;
-        }
-
-        return this._time;
-    }
-
-    /** Sets the current time */
-    public set time(value: string)
-    {
-        this._time = value;
     }
 
     /**
@@ -417,5 +419,15 @@ class State
             this.setService( 'provider',    Random.arraySplice(services) );
             this.setService( 'alternative', Random.arraySplice(services) );
         }
+
+        // Step 5. Prepopulate times
+        // https://stackoverflow.com/a/1214753
+
+        // The alternative time is for a train that's later than the main train
+        let time    = new Date( new Date().getTime() + Random.int(0, 59) * 60000);
+        let timeAlt = new Date( time.getTime()       + Random.int(0, 30) * 60000);
+
+        this.setTime( 'main',        Strings.fromTime(time)    );
+        this.setTime( 'alternative', Strings.fromTime(timeAlt) );
     }
 }

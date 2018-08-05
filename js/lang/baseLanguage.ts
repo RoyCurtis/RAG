@@ -154,6 +154,8 @@ abstract class BaseLanguage
     readonly abstract P_PSET_MISSING_STATE    : LanguageEntry;
     /** Service picker's onSelect fired without reference */
     readonly abstract P_SERVICE_MISSING_STATE : LanguageEntry;
+    /** Service picker's onChange fired without reference */
+    readonly abstract P_TIME_MISSING_STATE    : LanguageEntry;
     /** Phraseset picker opened for unknown phraseset */
     readonly abstract P_PSET_UNKNOWN          : LanguageEntry;
     /** Drag mirror create event in station list missing state */

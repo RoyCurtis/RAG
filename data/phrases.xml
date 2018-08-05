@@ -204,7 +204,7 @@
 </phrase>
 
 <phrase id="service">
-  <phrase ref="service_named" chance="5"/> <time/>
+  <phrase ref="service_named" chance="5"/> <time context="main"/>
   <phrase ref="service_label" chance="90"/> service
 </phrase>
 
