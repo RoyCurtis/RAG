@@ -57,8 +57,10 @@
     <phrase ref="attention_please_platform" chance="25"/>
     <phraseset ref="apology_begin"/> <phrase ref="service"/> to
     <phrase ref="destination"/><phraseset ref="delayed_or_cancelled"/>
+    <phrase ref="next_fastest" chance="5"/>
   </phrase>
 
+  <!-- General service delay -->
   <phrase>
     We are sorry that services are subject to delay because of <excuse/>
     <phrase ref="delay_at_near" chance="50"/>.
@@ -297,6 +299,14 @@
     <service context="provider"/> apologises for the disruption to your journey today.
   </phrase>
 </phraseset>
+
+<!-- The destination for this train is lazily done, using destination_split. -->
+<!-- Else, ideally, there needs to be a duplicate "destination" phrase.      -->
+<phrase id="next_fastest">
+  Passengers for <station context="via"/>, your next fastest direct service is now
+  expected to be the <time context="alternative"/> to
+  <station context="destination_split"/>, departing from platform <platform/>.
+</phrase>
 
 <phrase id="nonstop_pre">
   Stand well back from the platform edge.

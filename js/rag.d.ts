@@ -141,6 +141,7 @@ declare class PlatformPicker extends Picker {
 }
 declare class ServicePicker extends Picker {
     private readonly domChooser;
+    private currentCtx;
     constructor();
     open(target: HTMLElement): void;
     close(): void;
@@ -184,6 +185,7 @@ declare class StationListPicker extends StationPicker {
 }
 declare class TimePicker extends Picker {
     private readonly inputTime;
+    private currentCtx;
     constructor();
     open(target: HTMLElement): void;
     protected onChange(_: Event): void;
@@ -280,6 +282,8 @@ declare abstract class BaseLanguage {
     readonly abstract P_COACH_MISSING_STATE: LanguageEntry;
     readonly abstract P_INT_MISSING_STATE: LanguageEntry;
     readonly abstract P_PSET_MISSING_STATE: LanguageEntry;
+    readonly abstract P_SERVICE_MISSING_STATE: LanguageEntry;
+    readonly abstract P_TIME_MISSING_STATE: LanguageEntry;
     readonly abstract P_PSET_UNKNOWN: LanguageEntry;
     readonly abstract P_SL_DRAG_MISSING: LanguageEntry;
     readonly abstract ST_RESET: LanguageEntry;
@@ -338,10 +342,10 @@ declare class EnglishLanguage extends BaseLanguage {
     TITLE_OPT_CLOSE: () => string;
     TITLE_PHRASESET: (r: string) => string;
     TITLE_PLATFORM: () => string;
-    TITLE_SERVICE: () => string;
+    TITLE_SERVICE: (c: string) => string;
     TITLE_STATION: (c: string) => string;
     TITLE_STATIONLIST: (c: string) => string;
-    TITLE_TIME: () => string;
+    TITLE_TIME: (c: string) => string;
     EDITOR_INIT: () => string;
     EDITOR_UNKNOWN_ELEMENT: (n: string) => string;
     EDITOR_UNKNOWN_PHRASE: (r: string) => string;
@@ -353,10 +357,10 @@ declare class EnglishLanguage extends BaseLanguage {
     HEADER_NAMED: () => string;
     HEADER_PHRASESET: (r: string) => string;
     HEADER_PLATFORM: () => string;
-    HEADER_SERVICE: () => string;
+    HEADER_SERVICE: (c: string) => string;
     HEADER_STATION: (c: string) => string;
     HEADER_STATIONLIST: (c: string) => string;
-    HEADER_TIME: () => string;
+    HEADER_TIME: (c: string) => string;
     P_GENERIC_T: () => string;
     P_GENERIC_PH: () => string;
     P_COACH_T: () => string;
@@ -391,6 +395,8 @@ declare class EnglishLanguage extends BaseLanguage {
     P_COACH_MISSING_STATE: () => string;
     P_INT_MISSING_STATE: () => string;
     P_PSET_MISSING_STATE: () => string;
+    P_SERVICE_MISSING_STATE: () => string;
+    P_TIME_MISSING_STATE: () => string;
     P_PSET_UNKNOWN: (r: string) => string;
     P_SL_DRAG_MISSING: () => string;
     ST_RESET: () => string;
@@ -534,12 +540,14 @@ declare class Parse {
 declare class Random {
     static int(min?: number, max?: number): number;
     static array(arr: Lengthable): any;
+    static arraySplice<T>(arr: T[]): T;
     static objectKey(obj: {}): any;
     static bool(chance?: number): boolean;
 }
 declare class Strings {
     static isNullOrEmpty(str: string | null | undefined): boolean;
     static fromStationList(codes: string[], context: string): string;
+    static fromTime(hours: number | Date, minutes?: number): string;
     static clean(text: string): string;
 }
 declare type Lengthable = Array<any> | NodeList | HTMLCollection | string;
@@ -615,13 +623,13 @@ declare class State {
     private _coaches;
     private _integers;
     private _phrasesets;
+    private _services;
     private _stations;
     private _stationLists;
+    private _times;
     private _excuse?;
     private _platform?;
     private _named?;
-    private _service?;
-    private _time?;
     getCoach(context: string): string;
     setCoach(context: string, coach: string): void;
     getCollapsed(ref: string, chance: number): boolean;
@@ -630,14 +638,19 @@ declare class State {
     setInteger(context: string, value: number): void;
     getPhrasesetIdx(ref: string): number;
     setPhrasesetIdx(ref: string, idx: number): void;
+    getService(context: string): string;
+    setService(context: string, service: string): void;
     getStation(context: string): string;
     setStation(context: string, code: string): void;
     getStationList(context: string): string[];
     setStationList(context: string, codes: string[]): void;
+    getTime(context: string): string;
+    setTime(context: string, time: string): void;
     excuse: string;
     platform: Platform;
     named: string;
-    service: string;
-    time: string;
     genDefaultState(): void;
+}
+declare class Resolver {
+    static resolve(element: HTMLElement): string | null;
 }

@@ -587,14 +587,16 @@ class PlatformPicker extends Picker {
 class ServicePicker extends Picker {
     constructor() {
         super('service');
+        this.currentCtx = '';
         this.domChooser = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
-        this.domHeader.innerText = L.HEADER_SERVICE();
         RAG.database.services.forEach(v => this.domChooser.add(v));
     }
     open(target) {
         super.open(target);
-        this.domChooser.preselect(RAG.state.service);
+        this.currentCtx = DOM.requireData(target, 'context');
+        this.domHeader.innerText = L.HEADER_SERVICE(this.currentCtx);
+        this.domChooser.preselect(RAG.state.getService(this.currentCtx));
     }
     close() {
         super.close();
@@ -605,8 +607,12 @@ class ServicePicker extends Picker {
     onInput(ev) { this.domChooser.onInput(ev); }
     onSubmit(ev) { this.domChooser.onSubmit(ev); }
     onSelect(entry) {
-        RAG.state.service = entry.innerText;
-        RAG.views.editor.setElementsText('service', RAG.state.service);
+        if (!this.currentCtx)
+            throw Error(L.P_SERVICE_MISSING_STATE());
+        RAG.state.setService(this.currentCtx, entry.innerText);
+        RAG.views.editor
+            .getElementsByQuery(`[data-type=service][data-context=${this.currentCtx}]`)
+            .forEach(element => element.textContent = entry.innerText);
     }
 }
 class StationPicker extends Picker {
@@ -661,7 +667,7 @@ class StationListPicker extends StationPicker {
         StationPicker.chooser.attach(this, this.onAddStation);
         StationPicker.chooser.selectOnClick = false;
         this.currentCtx = DOM.requireData(target, 'context');
-        let entries = RAG.state.getStationList(this.currentCtx).slice(0);
+        let entries = RAG.state.getStationList(this.currentCtx).slice();
         this.domHeader.innerText = L.HEADER_STATIONLIST(this.currentCtx);
         this.inputList.innerHTML = '';
         entries.forEach(v => this.add(v));
@@ -750,7 +756,7 @@ class StationListPicker extends StationPicker {
             let entry = children[i];
             list.push(entry.dataset['code']);
         }
-        let textList = Strings.fromStationList(list.slice(0), this.currentCtx);
+        let textList = Strings.fromStationList(list.slice(), this.currentCtx);
         let query = `[data-type=stationlist][data-context=${this.currentCtx}]`;
         RAG.state.setStationList(this.currentCtx, list);
         RAG.views.editor
@@ -761,17 +767,23 @@ class StationListPicker extends StationPicker {
 class TimePicker extends Picker {
     constructor() {
         super('time');
+        this.currentCtx = '';
         this.inputTime = DOM.require('input', this.dom);
-        this.domHeader.innerText = L.HEADER_TIME();
     }
     open(target) {
         super.open(target);
-        this.inputTime.value = RAG.state.time;
+        this.currentCtx = DOM.requireData(target, 'context');
+        this.domHeader.innerText = L.HEADER_TIME(this.currentCtx);
+        this.inputTime.value = RAG.state.getTime(this.currentCtx);
         this.inputTime.focus();
     }
     onChange(_) {
-        RAG.state.time = this.inputTime.value;
-        RAG.views.editor.setElementsText('time', RAG.state.time.toString());
+        if (!this.currentCtx)
+            throw Error(L.P_TIME_MISSING_STATE());
+        RAG.state.setTime(this.currentCtx, this.inputTime.value);
+        RAG.views.editor
+            .getElementsByQuery(`[data-type=time][data-context=${this.currentCtx}]`)
+            .forEach(element => element.textContent = this.inputTime.value);
     }
     onClick(_) { }
     onInput(_) { }
@@ -815,10 +827,10 @@ class EnglishLanguage extends BaseLanguage {
         this.TITLE_OPT_CLOSE = () => 'Click to close this optional part';
         this.TITLE_PHRASESET = (r) => `Click to change the phrase used in this section ('${r}')`;
         this.TITLE_PLATFORM = () => "Click to change this train's platform";
-        this.TITLE_SERVICE = () => "Click to change this train's network";
+        this.TITLE_SERVICE = (c) => `Click to change this service ('${c}')`;
         this.TITLE_STATION = (c) => `Click to change this station ('${c}')`;
         this.TITLE_STATIONLIST = (c) => `Click to change this station list ('${c}')`;
-        this.TITLE_TIME = () => "Click to change this train's time";
+        this.TITLE_TIME = (c) => `Click to change this time ('${c}')`;
         this.EDITOR_INIT = () => 'Please wait...';
         this.EDITOR_UNKNOWN_ELEMENT = (n) => `(UNKNOWN XML ELEMENT: ${n})`;
         this.EDITOR_UNKNOWN_PHRASE = (r) => `(UNKNOWN PHRASE: ${r})`;
@@ -830,10 +842,10 @@ class EnglishLanguage extends BaseLanguage {
         this.HEADER_NAMED = () => 'Pick a named train';
         this.HEADER_PHRASESET = (r) => `Pick a phrase for the '${r}' section`;
         this.HEADER_PLATFORM = () => 'Pick a platform';
-        this.HEADER_SERVICE = () => 'Pick a service';
+        this.HEADER_SERVICE = (c) => `Pick a service for the '${c}' context`;
         this.HEADER_STATION = (c) => `Pick a station for the '${c}' context`;
         this.HEADER_STATIONLIST = (c) => `Build a station list for the '${c}' context`;
-        this.HEADER_TIME = () => 'Pick a time';
+        this.HEADER_TIME = (c) => `Pick a time for the '${c}' context`;
         this.P_GENERIC_T = () => 'List of choices';
         this.P_GENERIC_PH = () => 'Filter choices...';
         this.P_COACH_T = () => 'Coach letter';
@@ -868,6 +880,8 @@ class EnglishLanguage extends BaseLanguage {
         this.P_COACH_MISSING_STATE = () => 'onChange fired for coach picker without state';
         this.P_INT_MISSING_STATE = () => 'onChange fired for integer picker without state';
         this.P_PSET_MISSING_STATE = () => 'onSelect fired for phraseset picker without state';
+        this.P_SERVICE_MISSING_STATE = () => 'onSelect fired for service picker without state';
+        this.P_TIME_MISSING_STATE = () => 'onChange fired for time picker without state';
         this.P_PSET_UNKNOWN = (r) => `Phraseset '${r}' doesn't exist`;
         this.P_SL_DRAG_MISSING = () => 'Draggable: Missing source elements for mirror event';
         this.ST_RESET = () => 'Reset to defaults';
@@ -971,8 +985,10 @@ class ElementProcessors {
         ctx.newElement.textContent = RAG.state.platform.join('');
     }
     static service(ctx) {
-        ctx.newElement.title = L.TITLE_SERVICE();
-        ctx.newElement.textContent = RAG.state.service;
+        let context = DOM.requireAttr(ctx.xmlElement, 'context');
+        ctx.newElement.title = L.TITLE_SERVICE(context);
+        ctx.newElement.textContent = RAG.state.getService(context);
+        ctx.newElement.dataset['context'] = context;
     }
     static station(ctx) {
         let context = DOM.requireAttr(ctx.xmlElement, 'context');
@@ -983,15 +999,17 @@ class ElementProcessors {
     }
     static stationlist(ctx) {
         let context = DOM.requireAttr(ctx.xmlElement, 'context');
-        let stations = RAG.state.getStationList(context).slice(0);
+        let stations = RAG.state.getStationList(context).slice();
         let stationList = Strings.fromStationList(stations, context);
         ctx.newElement.title = L.TITLE_STATIONLIST(context);
         ctx.newElement.textContent = stationList;
         ctx.newElement.dataset['context'] = context;
     }
     static time(ctx) {
-        ctx.newElement.title = L.TITLE_TIME();
-        ctx.newElement.textContent = RAG.state.time;
+        let context = DOM.requireAttr(ctx.xmlElement, 'context');
+        ctx.newElement.title = L.TITLE_TIME(context);
+        ctx.newElement.textContent = RAG.state.getTime(context);
+        ctx.newElement.dataset['context'] = context;
     }
     static unknown(ctx) {
         let name = ctx.xmlElement.nodeName;
@@ -1285,10 +1303,8 @@ class Settings {
         this.btnVoxTest.disabled = true;
         window.setTimeout(() => {
             this.btnVoxTest.disabled = false;
-            let time = new Date();
-            let hour = time.getHours().toString().padStart(2, '0');
-            let minute = time.getMinutes().toString().padStart(2, '0');
-            let utterance = new SpeechSynthesisUtterance(`This is a test of the Rail Announcement Generator at ${hour}:${minute}.`);
+            let time = Strings.fromTime(new Date());
+            let utterance = new SpeechSynthesisUtterance(`This is a test of the Rail Announcement Generator at ${time}.`);
             utterance.volume = this.rangeVoxVol.valueAsNumber;
             utterance.pitch = this.rangeVoxPitch.valueAsNumber;
             utterance.rate = this.rangeVoxRate.valueAsNumber;
@@ -1527,6 +1543,9 @@ class Random {
     static array(arr) {
         return arr[Random.int(0, arr.length)];
     }
+    static arraySplice(arr) {
+        return arr.splice(Random.int(0, arr.length), 1)[0];
+    }
     static objectKey(obj) {
         return Random.array(Object.keys(obj));
     }
@@ -1540,7 +1559,7 @@ class Strings {
     }
     static fromStationList(codes, context) {
         let result = '';
-        let names = codes.slice(0);
+        let names = codes.slice();
         names.forEach((c, i) => names[i] = RAG.database.getStation(c, true));
         if (names.length === 1)
             result = (context === 'calling')
@@ -1552,6 +1571,14 @@ class Strings {
             result += ` and ${lastStation}`;
         }
         return result;
+    }
+    static fromTime(hours, minutes = 0) {
+        if (hours instanceof Date) {
+            minutes = hours.getMinutes();
+            hours = hours.getHours();
+        }
+        return hours.toString().padStart(2, '0') + ':' +
+            minutes.toString().padStart(2, '0');
     }
     static clean(text) {
         return text.trim()
@@ -1752,8 +1779,10 @@ class State {
         this._coaches = {};
         this._integers = {};
         this._phrasesets = {};
+        this._services = {};
         this._stations = {};
         this._stationLists = {};
+        this._times = {};
     }
     getCoach(context) {
         if (this._coaches[context] !== undefined)
@@ -1813,6 +1842,15 @@ class State {
     setPhrasesetIdx(ref, idx) {
         this._phrasesets[ref] = idx;
     }
+    getService(context) {
+        if (this._services[context] !== undefined)
+            return this._services[context];
+        this._services[context] = RAG.database.pickService();
+        return this._services[context];
+    }
+    setService(context, service) {
+        this._services[context] = service;
+    }
     getStation(context) {
         if (this._stations[context] !== undefined)
             return this._stations[context];
@@ -1850,6 +1888,15 @@ class State {
         if (context === 'calling_first')
             this._stationLists['calling'] = codes;
     }
+    getTime(context) {
+        if (this._times[context] !== undefined)
+            return this._times[context];
+        this._times[context] = Strings.fromTime(Random.int(0, 23), Random.int(0, 59));
+        return this._times[context];
+    }
+    setTime(context, time) {
+        this._times[context] = time;
+    }
     get excuse() {
         if (this._excuse)
             return this._excuse;
@@ -1883,28 +1930,6 @@ class State {
     }
     set named(value) {
         this._named = value;
-    }
-    get service() {
-        if (this._service)
-            return this._service;
-        this._service = RAG.database.pickService();
-        return this._service;
-    }
-    set service(value) {
-        this._service = value;
-    }
-    get time() {
-        if (!this._time) {
-            let offset = Random.int(0, 59);
-            let time = new Date(new Date().getTime() + offset * 60000);
-            let hour = time.getHours().toString().padStart(2, '0');
-            let minute = time.getMinutes().toString().padStart(2, '0');
-            this._time = `${hour}:${minute}`;
-        }
-        return this._time;
-    }
-    set time(value) {
-        this._time = value;
     }
     genDefaultState() {
         let slCalling = RAG.database.pickStationCodes(1, 16);
@@ -1949,12 +1974,25 @@ class State {
         }
         if (intCoaches >= 4) {
             let letters = L.LETTERS.slice(0, intCoaches).split('');
-            let randSplice = () => letters.splice(Random.int(0, letters.length), 1)[0];
-            this.setCoach('first', randSplice());
-            this.setCoach('shop', randSplice());
-            this.setCoach('standard1', randSplice());
-            this.setCoach('standard2', randSplice());
+            this.setCoach('first', Random.arraySplice(letters));
+            this.setCoach('shop', Random.arraySplice(letters));
+            this.setCoach('standard1', Random.arraySplice(letters));
+            this.setCoach('standard2', Random.arraySplice(letters));
         }
+        if (RAG.database.services.length > 1) {
+            let services = RAG.database.services.slice();
+            this.setService('provider', Random.arraySplice(services));
+            this.setService('alternative', Random.arraySplice(services));
+        }
+        let time = new Date(new Date().getTime() + Random.int(0, 59) * 60000);
+        let timeAlt = new Date(time.getTime() + Random.int(0, 30) * 60000);
+        this.setTime('main', Strings.fromTime(time));
+        this.setTime('alternative', Strings.fromTime(timeAlt));
+    }
+}
+class Resolver {
+    static resolve(element) {
+        return null;
     }
 }
 //# sourceMappingURL=rag.js.map
