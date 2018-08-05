@@ -32,6 +32,7 @@
     <phraseset ref="request_stop" chance="5"/>
     <phrase ref="coach_count" chance="90"/>
     <phraseset ref="catering_service" chance="5"/>
+    <phrase ref="ticket_conditions" chance="10"/>
     <phrase ref="train_full" chance="5"/>
     <phraseset ref="train_layout" chance="5"/>
     <phrase ref="platform_wait_end" chance="50" />
@@ -350,6 +351,11 @@
     refreshments.
   </phrase>
 </phraseset>
+
+<phrase id="ticket_conditions">
+  Please be aware that tickets marked "<service context="alternative"/> only" are not
+  valid on this train.
+</phrase>
 
 <phrase id="train_full">
   Please note this train is full and standing. Please allow all customers to leave the
