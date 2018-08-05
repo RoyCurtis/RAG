@@ -74,8 +74,8 @@
 
   <!-- Non-stop trains -->
   <phrase>
-    The train now approaching platform <platform/> does not stop here. Stand back from the
-    edge of platform <platform/>. The next train is not scheduled to stop.
+    <phrase ref="nonstop_pre" chance="25"/> <phraseset ref="nonstop_begin"/> platform
+    <platform/> does not stop here. <phrase ref="nonstop_end" chance="25"/>
   </phrase>
 
   <!-- Out of service trains -->
@@ -297,6 +297,24 @@
     <service context="provider"/> apologises for the disruption to your journey today.
   </phrase>
 </phraseset>
+
+<phrase id="nonstop_pre">
+  Stand well back from the platform edge.
+</phrase>
+
+<phraseset id="nonstop_begin">
+  <phrase>
+    The train now approaching
+  </phrase>
+  <phrase>
+    The next train at
+  </phrase>
+</phraseset>
+
+<phrase id="nonstop_end">
+  Stand back from the edge of platform <platform/>. The next train is not scheduled to
+  stop.
+</phrase>
 
 <phraseset id="change_at">
   <phrase>
