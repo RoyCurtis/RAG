@@ -21,6 +21,12 @@ class Random
         return arr[ Random.int(0, arr.length) ];
     }
 
+    /** Splices a random element from a given array */
+    public static arraySplice<T>(arr: T[]) : T
+    {
+        return arr.splice(Random.int(0, arr.length), 1)[0];
+    }
+
     /** Picks a random key from a given object */
     public static objectKey(obj: {}) : any
     {
