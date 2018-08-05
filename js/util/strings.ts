@@ -38,6 +38,24 @@ class Strings
         return result;
     }
 
+    /**
+     * Pretty-prints the given date or hours and minutes into a 24-hour time (e.g. 01:09).
+     *
+     * @param hours Hours, from 0 to 23, or Date object
+     * @param minutes Minutes, from 0 to 59
+     */
+    public static fromTime(hours: number | Date, minutes: number = 0) : string
+    {
+        if (hours instanceof Date)
+        {
+            minutes = hours.getMinutes();
+            hours   = hours.getHours();
+        }
+
+        return hours.toString().padStart(2, '0') + ':' +
+            minutes.toString().padStart(2, '0');
+    }
+
     /** Cleans up the given text of excess whitespace and any newlines */
     public static clean(text: string) : string
     {
