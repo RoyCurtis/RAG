@@ -60,8 +60,8 @@ class EnglishLanguage extends BaseLanguage
         `Click to change the phrase used in this section ('${r}')`;
     TITLE_PLATFORM    = ()          =>
         "Click to change this train's platform";
-    TITLE_SERVICE     = ()          =>
-        "Click to change this train's network";
+    TITLE_SERVICE     = (c: string) =>
+        `Click to change this service ('${c}')`;
     TITLE_STATION     = (c: string) =>
         `Click to change this station ('${c}')`;
     TITLE_STATIONLIST = (c: string) =>
@@ -89,8 +89,8 @@ class EnglishLanguage extends BaseLanguage
         `Pick a phrase for the '${r}' section`;
     HEADER_PLATFORM    = ()          =>
         'Pick a platform';
-    HEADER_SERVICE     = ()          =>
-        'Pick a service';
+    HEADER_SERVICE     = (c: string) =>
+        `Pick a service for the '${c}' context`;
     HEADER_STATION     = (c: string) =>
         `Pick a station for the '${c}' context`;
     HEADER_STATIONLIST = (c: string) =>
@@ -131,11 +131,12 @@ class EnglishLanguage extends BaseLanguage
         'Drag to reorder; double-click or drag into delete zone to remove';
     P_TIME_T         = () => 'Time editor';
 
-    P_COACH_MISSING_STATE = () => 'onChange fired for coach picker without state';
-    P_INT_MISSING_STATE   = () => 'onChange fired for integer picker without state';
-    P_PSET_MISSING_STATE  = () => 'onSelect fired for phraseset picker without state';
-    P_PSET_UNKNOWN        = (r: string) => `Phraseset '${r}' doesn't exist`;
-    P_SL_DRAG_MISSING     = () => 'Draggable: Missing source elements for mirror event';
+    P_COACH_MISSING_STATE   = () => 'onChange fired for coach picker without state';
+    P_INT_MISSING_STATE     = () => 'onChange fired for integer picker without state';
+    P_PSET_MISSING_STATE    = () => 'onSelect fired for phraseset picker without state';
+    P_SERVICE_MISSING_STATE = () => 'onSelect fired for service picker without state';
+    P_PSET_UNKNOWN          = (r: string) => `Phraseset '${r}' doesn't exist`;
+    P_SL_DRAG_MISSING       = () => 'Draggable: Missing source elements for mirror event';
 
     ST_RESET           = () => 'Reset to defaults';
     ST_RESET_T         = () => 'Reset settings to defaults';
@@ -160,6 +161,7 @@ class EnglishLanguage extends BaseLanguage
         'This display is too short to support RAG. Please make this window taller, or' +
         ' rotate your device from landscape to portrait.';
 
+    // TODO: These don't fit here; this should go in the data
     LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     DIGITS  = [
         'zero',     'one',     'two',     'three',     'four',     'five',    'six',

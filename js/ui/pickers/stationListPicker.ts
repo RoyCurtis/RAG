@@ -52,7 +52,7 @@ class StationListPicker extends StationPicker
         StationPicker.chooser.selectOnClick = false;
 
         this.currentCtx = DOM.requireData(target, 'context');
-        let entries     = RAG.state.getStationList(this.currentCtx).slice(0);
+        let entries     = RAG.state.getStationList(this.currentCtx).slice();
 
         this.domHeader.innerText = L.HEADER_STATIONLIST(this.currentCtx);
 
@@ -225,7 +225,7 @@ class StationListPicker extends StationPicker
             list.push(entry.dataset['code']!);
         }
 
-        let textList = Strings.fromStationList(list.slice(0), this.currentCtx);
+        let textList = Strings.fromStationList(list.slice(), this.currentCtx);
         let query    = `[data-type=stationlist][data-context=${this.currentCtx}]`;
 
         RAG.state.setStationList(this.currentCtx, list);

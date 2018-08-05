@@ -154,7 +154,7 @@
       </xs:annotation>
     </xs:element>
 
-    <xs:element name="service">
+    <xs:element name="service" type="service">
       <xs:annotation>
         <xs:documentation>
           Picks a rail network name.
@@ -258,6 +258,17 @@
   </xs:attribute>
 
   <xs:attribute name="chance" type="chance"/>
+</xs:complexType>
+
+
+<xs:complexType name="service">
+  <xs:attribute name="context" type="service_context" use="required">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the context to pick a service for.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
 </xs:complexType>
 
 
@@ -365,6 +376,26 @@
       <xs:annotation>
         <xs:documentation>
           Specifies the amount of coaches that make up the first part of this train.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="service_context">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="provider">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the service running this train, platform, or station.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
+
+    <xs:enumeration value="alternative">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the alternative service that tickets may be available for.
         </xs:documentation>
       </xs:annotation>
     </xs:enumeration>

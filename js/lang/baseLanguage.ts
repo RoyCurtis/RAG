@@ -147,15 +147,17 @@ abstract class BaseLanguage
     readonly abstract P_TIME_T         : LanguageEntry;
 
     /** Coach picker's onChange fired without context */
-    readonly abstract P_COACH_MISSING_STATE : LanguageEntry;
+    readonly abstract P_COACH_MISSING_STATE   : LanguageEntry;
     /** Integer picker's onChange fired without context */
-    readonly abstract P_INT_MISSING_STATE   : LanguageEntry;
+    readonly abstract P_INT_MISSING_STATE     : LanguageEntry;
     /** Phraseset picker's onSelect fired without reference */
-    readonly abstract P_PSET_MISSING_STATE  : LanguageEntry;
+    readonly abstract P_PSET_MISSING_STATE    : LanguageEntry;
+    /** Service picker's onSelect fired without reference */
+    readonly abstract P_SERVICE_MISSING_STATE : LanguageEntry;
     /** Phraseset picker opened for unknown phraseset */
-    readonly abstract P_PSET_UNKNOWN        : LanguageEntry;
+    readonly abstract P_PSET_UNKNOWN          : LanguageEntry;
     /** Drag mirror create event in station list missing state */
-    readonly abstract P_SL_DRAG_MISSING     : LanguageEntry;
+    readonly abstract P_SL_DRAG_MISSING       : LanguageEntry;
 
     // Settings
 

@@ -8,13 +8,15 @@ class ServicePicker extends Picker
     /** Reference to this picker's chooser control */
     private readonly domChooser : Chooser;
 
+    /** Holds the context for the current service element being edited */
+    private currentCtx : string = '';
+
     public constructor()
     {
         super('service');
 
         this.domChooser          = new Chooser(this.domForm);
         this.domChooser.onSelect = e => this.onSelect(e);
-        this.domHeader.innerText = L.HEADER_SERVICE();
 
         RAG.database.services.forEach( v => this.domChooser.add(v) );
     }
@@ -24,8 +26,11 @@ class ServicePicker extends Picker
     {
         super.open(target);
 
+        this.currentCtx          = DOM.requireData(target, 'context');
+        this.domHeader.innerText = L.HEADER_SERVICE(this.currentCtx);
+
         // Pre-select the currently used service
-        this.domChooser.preselect(RAG.state.service);
+        this.domChooser.preselect( RAG.state.getService(this.currentCtx) );
     }
 
     /** Close this picker */
@@ -44,7 +49,12 @@ class ServicePicker extends Picker
     /** Handles chooser selection by updating the service element and state */
     private onSelect(entry: HTMLElement) : void
     {
-        RAG.state.service = entry.innerText;
-        RAG.views.editor.setElementsText('service', RAG.state.service);
+        if (!this.currentCtx)
+            throw Error( L.P_SERVICE_MISSING_STATE() );
+
+        RAG.state.setService(this.currentCtx, entry.innerText);
+        RAG.views.editor
+            .getElementsByQuery(`[data-type=service][data-context=${this.currentCtx}]`)
+            .forEach(element => element.textContent = entry.innerText);
     }
 }

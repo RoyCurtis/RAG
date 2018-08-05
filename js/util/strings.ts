@@ -19,7 +19,7 @@ class Strings
     public static fromStationList(codes: string[], context: string) : string
     {
         let result = '';
-        let names  = codes.slice(0);
+        let names  = codes.slice();
 
         names.forEach( (c, i) => names[i] = RAG.database.getStation(c, true) );
 

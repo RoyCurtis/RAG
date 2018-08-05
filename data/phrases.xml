@@ -124,8 +124,8 @@
     may be removed without warning, or destroyed or damaged by the security services.
   </phrase>
   <phrase>
-    Penalty fares apply across the entire <service/> network. Please ensure that you buy
-    your ticket before you board, where facilities are available.
+    Penalty fares apply across the entire <service context="provider"/> network. Please
+    ensure that you buy your ticket before you board, where facilities are available.
   </phrase>
   <phrase>
     This is a security message. If you see something that doesn't look right, speak to
@@ -212,7 +212,7 @@
 </phrase>
 
 <phrase id="service_label">
-  <service/>
+  <service context="provider"/>
 </phrase>
 
 <phrase id="service_from">
@@ -284,7 +284,7 @@
 </phraseset>
 
 <phraseset id="service_apology_delay">
-  <phrase><service/> apologises for this delay.</phrase>
+  <phrase><service context="provider"/> apologises for this delay.</phrase>
   <phrase><phraseset ref="general_apology_delay"/></phrase>
   <phrase><phraseset ref="service_apology"/></phrase>
 </phraseset>
@@ -292,7 +292,9 @@
 <phraseset id="service_apology">
   <phrase>We apologise for the inconvenience this may cause you.</phrase>
   <phrase>We apologise for the disruption to your journey today.</phrase>
-  <phrase><service/> apologises for the disruption to your journey today.</phrase>
+  <phrase>
+    <service context="provider"/> apologises for the disruption to your journey today.
+  </phrase>
 </phraseset>
 
 <phraseset id="change_at">

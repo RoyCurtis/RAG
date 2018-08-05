@@ -11,6 +11,8 @@ class State
     private _integers     : Dictionary<number>   = {};
     /** Current phraseset phrase choices. Key is reference ID, value is index. */
     private _phrasesets   : Dictionary<number>   = {};
+    /** Current service choices. Key is context ID, value is service. */
+    private _services     : Dictionary<string>   = {};
     /** Current station choices. Key is context ID, value is station code. */
     private _stations     : Dictionary<string>   = {};
     /** Current station list choices. Key is context ID, value is array of codes. */
@@ -22,8 +24,6 @@ class State
     private _platform? : Platform;
     /** Currently chosen named train */
     private _named?    : string;
-    /** Currently chosen service/network name */
-    private _service?  : string;
     /** Currently chosen train time */
     private _time?     : string;
 
@@ -142,6 +142,31 @@ class State
     public setPhrasesetIdx(ref: string, idx: number) : void
     {
         this._phrasesets[ref] = idx;
+    }
+
+    /**
+     * Gets the currently chosen service, or randomly picks one.
+     *
+     * @param context Context ID to get or choose the service for
+     */
+    public getService(context: string) : string
+    {
+        if (this._services[context] !== undefined)
+            return this._services[context];
+
+        this._services[context] = RAG.database.pickService();
+        return this._services[context];
+    }
+
+    /**
+     * Sets a service.
+     *
+     * @param context Context ID to set the service for
+     * @param service Value to set
+     */
+    public setService(context: string, service: string) : void
+    {
+        this._services[context] = service;
     }
 
     /**
@@ -268,22 +293,6 @@ class State
         this._named = value;
     }
 
-    /** Gets the chosen service, or randomly picks one */
-    public get service() : string
-    {
-        if (this._service)
-            return this._service;
-
-        this._service = RAG.database.pickService();
-        return this._service;
-    }
-
-    /** Sets the current service */
-    public set service(value: string)
-    {
-        this._service = value;
-    }
-
     /** Gets the chosen time, or randomly picks one within 59 minutes from now */
     public get time() : string
     {
@@ -389,13 +398,24 @@ class State
         // Else, letters will be randomly picked (without making sense)
         if (intCoaches >= 4)
         {
-            let letters    = L.LETTERS.slice(0, intCoaches).split('');
-            let randSplice = () => letters.splice(Random.int(0, letters.length), 1)[0];
+            let letters = L.LETTERS.slice(0, intCoaches).split('');
 
-            this.setCoach( 'first',     randSplice() );
-            this.setCoach( 'shop',      randSplice() );
-            this.setCoach( 'standard1', randSplice() );
-            this.setCoach( 'standard2', randSplice() );
+            this.setCoach( 'first',     Random.arraySplice(letters) );
+            this.setCoach( 'shop',      Random.arraySplice(letters) );
+            this.setCoach( 'standard1', Random.arraySplice(letters) );
+            this.setCoach( 'standard2', Random.arraySplice(letters) );
+        }
+
+        // Step 4. Prepopulate services
+
+        // If there is more than one service, pick one to be the "main" and one to be the
+        // "alternate", else the one service will be used for both (without making sense).
+        if (RAG.database.services.length > 1)
+        {
+            let services = RAG.database.services.slice();
+
+            this.setService( 'provider',    Random.arraySplice(services) );
+            this.setService( 'alternative', Random.arraySplice(services) );
         }
     }
 }

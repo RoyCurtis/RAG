@@ -120,8 +120,12 @@ class ElementProcessors
     /** Fills in the rail network name */
     public static service(ctx: PhraseContext)
     {
-        ctx.newElement.title       = L.TITLE_SERVICE();
-        ctx.newElement.textContent = RAG.state.service;
+        let context = DOM.requireAttr(ctx.xmlElement, 'context');
+
+        ctx.newElement.title       = L.TITLE_SERVICE(context);
+        ctx.newElement.textContent = RAG.state.getService(context);
+
+        ctx.newElement.dataset['context'] = context;
     }
 
     /** Fills in station names */
@@ -140,7 +144,7 @@ class ElementProcessors
     public static stationlist(ctx: PhraseContext)
     {
         let context     = DOM.requireAttr(ctx.xmlElement, 'context');
-        let stations    = RAG.state.getStationList(context).slice(0);
+        let stations    = RAG.state.getStationList(context).slice();
         let stationList = Strings.fromStationList(stations, context);
 
         ctx.newElement.title       = L.TITLE_STATIONLIST(context);
