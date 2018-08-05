@@ -34,7 +34,6 @@
     <phraseset ref="catering_service" chance="5"/>
     <phrase ref="train_full" chance="5"/>
     <phraseset ref="train_layout" chance="5"/>
-    <phraseset ref="train_seating" chance="5"/>
     <phrase ref="platform_wait_end" chance="50" />
   </phrase>
 
@@ -359,6 +358,9 @@
   <!-- I was planning to use smarter phraseset tags here to avoid repeating stuff, but -->
   <!-- I got lazy. -->
   <phrase>
+    First class accommodation is available on the train.
+  </phrase>
+  <phrase>
     First class is at the <phraseset ref="front_rear"/> of the train.
   </phrase>
   <phrase>
@@ -381,15 +383,11 @@
     First class coaches can be found at the rear of the train, standard can be found at
     the front.
   </phrase>
-</phraseset>
-
-<phraseset id="train_seating">
   <phrase>
     Standard unreserved seating can be found in coaches <coach context="standard1"/> and
     <coach context="standard2"/>, with first class unreserved seating in coach
     <coach context="first"/>.
   </phrase>
-  <!-- TODO: Why is this a phraseset? Am I missing an alternative form here? -->
 </phraseset>
 
 <phrase id="bike_booking">
