@@ -225,6 +225,10 @@
 <phraseset id="calling_at">
   <phrase>Calling at <stationlist context="calling"/>.</phrase>
   <phrase>
+    Travel in the front <integer context='front_coaches' words="true"/> coaches for
+    <stationlist context="calling_split"/>.
+  </phrase>
+  <phrase>
     For <stationlist context="calling_first"/>, travel in the front
     <integer context='front_coaches' words="true"/> coaches of the train. And
     for <stationlist context="calling_split"/>, travel in the rear
