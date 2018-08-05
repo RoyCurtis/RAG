@@ -326,8 +326,7 @@
 </phraseset>
 
 <phrase id="coach_count">
-  <phraseset ref="coach_count_pre"/>
-  <integer context="coaches" singular="coach" plural="coaches" words="true"/>.
+  <phraseset ref="coach_count_pre"/><phraseset ref="coaches_carriages"/>.
 </phrase>
 
 <phraseset id="coach_count_pre">
@@ -423,6 +422,15 @@
 <phraseset id="at_near">
   <phrase>at</phrase>
   <phrase>near</phrase>
+</phraseset>
+
+<phraseset id="coaches_carriages">
+  <phrase>
+    <integer context="coaches" singular="coach" plural="coaches" words="true"/>
+  </phrase>
+  <phrase>
+    <integer context="coaches" singular="carriage" plural="carriages" words="true"/>
+  </phrase>
 </phraseset>
 
 </messages>
