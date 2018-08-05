@@ -80,6 +80,7 @@ var DATA_EXCUSES = [
   "earlier overrunning engineering work",
   "earlier reports of debris on the line",
   "earlier reports of trespassers on the line",
+  "earlier signaling problems",
   "earlier vandalism",
   "emergency engineering works",
   "emergency services attending an incident adjacent to the railway line",
