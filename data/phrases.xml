@@ -347,12 +347,17 @@
 
 <phrase id="coach_count">
   <phraseset ref="coach_count_pre"/><phraseset ref="coaches_carriages"/>.
+  <phrase ref="coach_end" chance="5"/>
 </phrase>
 
 <phraseset id="coach_count_pre">
   <phrase>This train is formed of</phrase>
   <phrase>This train has</phrase>
 </phraseset>
+
+<phrase id="coach_end">
+  Please use all available doors when boarding the train.
+</phrase>
 
 <phraseset id="catering_service">
   <phrase>
