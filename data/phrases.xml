@@ -30,9 +30,8 @@
     <phraseset ref="change_at" chance="5"/>
     <phrase ref="not_stopping" chance="5"/>
     <phraseset ref="request_stop" chance="5"/>
-    <phraseset ref="trolley_service" chance="5"/>
     <phrase ref="coach_count" chance="90"/>
-    <phraseset ref="shop_service" chance="5"/>
+    <phraseset ref="catering_service" chance="5"/>
     <phrase ref="train_full" chance="5"/>
     <phraseset ref="train_layout" chance="5"/>
     <phraseset ref="train_seating" chance="5"/>
@@ -326,15 +325,6 @@
   </phrase>
 </phraseset>
 
-<phraseset id="trolley_service">
-  <phrase>
-    A trolley service of drinks and light refreshments is available on this train.
-  </phrase>
-  <phrase>
-    An at-seat service of light refreshments is available on the train.
-  </phrase>
-</phraseset>
-
 <phrase id="coach_count">
   <phraseset ref="coach_count_pre"/>
   <integer context="coaches" singular="coach" plural="coaches" words="true"/>.
@@ -345,7 +335,16 @@
   <phrase>This train has</phrase>
 </phraseset>
 
-<phraseset id="shop_service">
+<phraseset id="catering_service">
+  <phrase>
+    A trolley service of drinks and light refreshments is available on this train.
+  </phrase>
+  <phrase>
+    An at-seat service of light refreshments is available on the train.
+  </phrase>
+  <phrase>
+    There are no catering facilities available on the train.
+  </phrase>
   <phrase>
     You can find the shop in coach <coach context="shop"/> for delicious hot and cold
     refreshments.
