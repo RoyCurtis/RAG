@@ -5,16 +5,16 @@
     "downlevelIteration":           true,
     "module":                       "system",
     "target":                       "es2015",
+    "inlineSourceMap":              true,
+    "inlineSources":                true,
     "noImplicitAny":                true,
     "noImplicitReturns":            true,
     "noImplicitThis":               true,
     "noUnusedParameters":           true,
     "pretty":                       true,
-    "removeComments":               true,
     "strictFunctionTypes":          true,
     "strictPropertyInitialization": true,
     "strictNullChecks":             true,
-    "sourceMap":                    true,
 
     "outFile": "js/rag.js"
   },

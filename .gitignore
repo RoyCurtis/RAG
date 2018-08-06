@@ -1,4 +1,4 @@
 /.idea/
-/node_modules/
 /adb.lnk
 /serve.py
+node_modules
