@@ -14,8 +14,7 @@
   "scripts": {
     "serve": "http-server -s -c-1 -r",
     "watch-tsc": "tsc -w",
-    "watch-tsc-vox": "tsc -w -p vox/",
     "watch-stylus": "stylus -m -w css/index.styl",
-    "watch": "npm-run-all --parallel watch-tsc watch-tsc-vox watch-stylus serve"
+    "watch": "npm-run-all --parallel watch-tsc watch-stylus serve"
   }
 }

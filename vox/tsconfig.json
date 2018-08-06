@@ -2,29 +2,29 @@
   "compilerOptions": {
     "alwaysStrict":                 true,
     "downlevelIteration":           true,
-    "module":                       "system",
-    "target":                       "es2015",
+    "module":                       "commonjs",
+    "inlineSourceMap":              true,
+    "inlineSources":                true,
     "noImplicitAny":                true,
     "noImplicitReturns":            true,
     "noImplicitThis":               true,
     "noUnusedParameters":           true,
     "pretty":                       true,
-    "removeComments":               true,
     "strictFunctionTypes":          true,
     "strictPropertyInitialization": true,
     "strictNullChecks":             true,
-    "sourceMap":                    true,
 
-    "outFile": "js/voxEditor.js"
+    "baseUrl": ".",
+    "outDir":  "dist",
+
+    "paths": {
+      "*": ["node_modules/*"]
+    }
   },
 
   "compileOnSave": true,
 
   "include": [
-    "js/*.ts"
-  ],
-
-  "exclude": [
-    "node_modules"
+    "src/**/*"
   ]
 }

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!-- Roy Curtis 2018, MIT license -->
+<html lang="en">
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+
+  <title>VOX Recorder & Editor</title>
+
+  <link href="css/vox.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+  <h1>Setup</h1>
+
+  <h1>Phrases</h1>
+
+  <ul id="phrasesList" class="hidden">
+
+  </ul>
+</body>
+
+<scripts>
+  <!-- RAG application logic -->
+  <script src="../../js/rag.js" type="text/javascript"></script>
+
+  <!-- VoxEditor client logic -->
+  <script type="application/javascript">
+    function init()
+    {
+      // Try as I might, "import" does not work here. So require must be used.
+      // noinspection JSUnresolvedVariable
+      let VoxEditor = require('../dist/voxEditor.js').VoxEditor;
+
+      // noinspection JSUnresolvedFunction
+      VoxEditor.electronRenderer({
+        phrasesetEmbed: '#nrPhraseset',
+        excusesData:    DATA_EXCUSES,
+        namedData:      DATA_NAMED,
+        servicesData:   DATA_SERVICES,
+        stationsData:   DATA_STATIONS
+      });
+    }
+  </script>
+
+  <script src="../../data/nr_excuses.js"  type="text/javascript"></script>
+  <script src="../../data/nr_named.js"    type="text/javascript"></script>
+  <script src="../../data/nr_services.js" type="text/javascript"></script>
+  <script src="../../data/nr_stations.js" type="text/javascript"></script>
+  <iframe id="nrPhraseset" src="../../data/phrases.xml" onload="init()"></iframe>
+</scripts>
+
+</html>
