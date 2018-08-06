@@ -152,17 +152,17 @@ class Settings
         {
             this.btnVoxTest.disabled = false;
 
-            let time      = Strings.fromTime( new Date() );
-            let utterance = new SpeechSynthesisUtterance(
-                `This is a test of the Rail Announcement Generator at ${time}.`
+            let time = Strings.fromTime( new Date() );
+
+            RAG.speech.speak(
+                `This is a test of the Rail Announcement Generator at ${time}.`,
+                {
+                    voiceIdx : this.selVoxChoice.selectedIndex,
+                    volume   : this.rangeVoxVol.valueAsNumber,
+                    pitch    : this.rangeVoxPitch.valueAsNumber,
+                    rate     : this.rangeVoxRate.valueAsNumber
+                }
             );
-
-            utterance.volume = this.rangeVoxVol.valueAsNumber;
-            utterance.pitch  = this.rangeVoxPitch.valueAsNumber;
-            utterance.rate   = this.rangeVoxRate.valueAsNumber;
-            utterance.voice  = RAG.speech.getVoices()[this.selVoxChoice.selectedIndex];
-
-            RAG.speech.speak(utterance);
         }, 200);
     }
 }

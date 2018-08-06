@@ -1,6 +1,15 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/** Manages speech synthesis and wraps around HTML5 speech API  */
+/** Type definition for speech settings objects passed to the speak method */
+interface SpeechSettings
+{
+    voiceIdx? : number;
+    volume?   : number;
+    pitch?    : number;
+    rate?     : number;
+}
+
+/** Manages speech synthesis and wraps around HTML5 speech API */
 class SpeechEngine
 {
     /** Array of browser-provided voices available */
@@ -29,10 +38,29 @@ class SpeechEngine
         return this.voices;
     }
 
-    /** Queues an utterance to speak, and immediately begins speaking */
-    public speak(utterance: SpeechSynthesisUtterance) : void
+    /** Begins speaking the given string */
+    public speak(text: string, settings: SpeechSettings = {}) : void
     {
-        window.speechSynthesis.speak(utterance);
+        let parts    = text.trim().split(/\.\s/i);
+        let voices   = RAG.speech.getVoices();
+        let voiceIdx = either(settings.voiceIdx, RAG.config.voxChoice);
+
+        // Reset to first voice, if configured choice is missing
+        if (!voices[voiceIdx])
+            voiceIdx = 0;
+
+        RAG.speech.cancel();
+        parts.forEach( segment =>
+        {
+            let utterance = new SpeechSynthesisUtterance(segment);
+
+            utterance.voice  = voices[voiceIdx];
+            utterance.volume = either(settings.volume, RAG.config.voxVolume);
+            utterance.pitch  = either(settings.pitch,  RAG.config.voxPitch);
+            utterance.rate   = either(settings.rate,   RAG.config.voxRate);
+
+            window.speechSynthesis.speak(utterance);
+        });
     }
 
     /** Stops and cancels all queued speech */

@@ -60,28 +60,9 @@ class Toolbar
         // automatically change back. However, speech's 'onend' event was found to be
         // unreliable, so I decided to keep play and stop separate.
 
-        let text   = RAG.views.editor.getText();
-        let parts  = text.trim().split(/\.\s/i);
-        let voices = RAG.speech.getVoices();
-        let voice  = RAG.config.voxChoice;
+        let text = RAG.views.editor.getText();
 
-        // Reset to default voice, if it's missing
-        if (!voices[voice])
-            RAG.config.voxChoice = voice = 0;
-
-        RAG.speech.cancel();
-        parts.forEach( segment =>
-        {
-            let utterance = new SpeechSynthesisUtterance(segment);
-
-            utterance.voice  = voices[voice];
-            utterance.volume = RAG.config.voxVolume;
-            utterance.pitch  = RAG.config.voxPitch;
-            utterance.rate   = RAG.config.voxRate;
-
-            RAG.speech.speak(utterance)
-        });
-
+        RAG.speech.speak(text);
         RAG.views.marquee.set(text);
         this.btnPlay.disabled = false;
     }
