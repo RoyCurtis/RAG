@@ -1126,6 +1126,24 @@ declare class Resolver {
     resolve(node: Node): string[];
     /** Resolve text nodes from phrases and phrasesets to ID strings */
     private resolveText(node);
+    /** Resolve ID from a given coach element and current state */
+    private resolveCoach(element);
+    /** Resolve ID from a given excuse element and current state */
+    private resolveExcuse();
+    /** Resolve IDs from a given integer element and current state */
+    private resolveInteger(element);
+    /** Resolve ID from a given named element and current state */
+    private resolveNamed();
+    /** Resolve IDs from a given platform element and current state */
+    private resolvePlatform();
+    /** Resolve IDs from a given time element and current state */
+    private resolveTime(element);
+    /** Resolve ID from a given service element and current state */
+    private resolveService(element);
+    /** Resolve ID from a given station element and current state */
+    private resolveStation(element);
+    /** Resolve IDs from a given station list element and current state */
+    private resolveStationList(element);
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Type definition for speech config overrides passed to the speak method */

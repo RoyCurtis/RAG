@@ -62,6 +62,22 @@ class Resolver
         if (node.nodeType === Node.TEXT_NODE)
             return this.resolveText(node);
 
+        let element = node as HTMLElement;
+        let type    = element.dataset['type'];
+
+        switch (type)
+        {
+            case 'coach':       return this.resolveCoach(element);
+            case 'excuse':      return this.resolveExcuse();
+            case 'integer':     return this.resolveInteger(element);
+            case 'named':       return this.resolveNamed();
+            case 'platform':    return this.resolvePlatform();
+            case 'service':     return this.resolveService(element);
+            case 'station':     return this.resolveStation(element);
+            case 'stationlist': return this.resolveStationList(element);
+            case 'time':        return this.resolveTime(element);
+        }
+
         return [];
     }
 
@@ -92,4 +108,139 @@ class Resolver
 
         return [id];
     }
+
+    /** Resolve ID from a given coach element and current state */
+    private resolveCoach(element: HTMLElement) : string[]
+    {
+        let ctx   = element.dataset['context']!;
+        let coach = RAG.state.getCoach(ctx);
+
+        return [`letter.${coach}`];
+    }
+
+    /** Resolve ID from a given excuse element and current state */
+    private resolveExcuse() : string[]
+    {
+        let excuse = RAG.state.excuse;
+        let index  = RAG.database.excuses.indexOf(excuse);
+
+        // TODO: Error handling
+        return [`excuse.${index}`];
+    }
+
+    /** Resolve IDs from a given integer element and current state */
+    private resolveInteger(element: HTMLElement) : string[]
+    {
+        let ctx      = element.dataset['context']!;
+        let singular = element.dataset['singular'];
+        let plural   = element.dataset['plural'];
+        let integer  = RAG.state.getInteger(ctx);
+        let parts    = [`number.${integer}`];
+
+        if      (singular && integer === 1)
+            parts.push(`number.suffix.${singular}`);
+        else if (plural   && integer !== 1)
+            parts.push(`number.suffix.${plural}`);
+
+        return parts;
+    }
+
+    /** Resolve ID from a given named element and current state */
+    private resolveNamed() : string[]
+    {
+        let named = RAG.state.named
+            .replace(' ', '_')
+            .toLowerCase();
+
+        return [`named.${named}`];
+    }
+
+    /** Resolve IDs from a given platform element and current state */
+    private resolvePlatform() : string[]
+    {
+        let platform = RAG.state.platform;
+        let parts    = [];
+
+        parts.push(`number.${platform[0]}`);
+
+        if (platform[1])
+            parts.push(`letter.${platform[1]}`);
+
+        return parts;
+    }
+
+    /** Resolve IDs from a given time element and current state */
+    private resolveTime(element: HTMLElement) : string[]
+    {
+        let ctx   = element.dataset['context']!;
+        let time  = RAG.state.getTime(ctx).split(':');
+        let parts = [];
+
+        if (time[0] === '00' && time[1] === '00')
+            return ['number.0000'];
+
+        // Hours
+        parts.push(`number.${time[0]}`);
+
+        if (time[1] === '00')
+            parts.push('number.hundred');
+        else
+            parts.push(`number.${time[1]}`);
+
+        return parts;
+    }
+
+    /** Resolve ID from a given service element and current state */
+    private resolveService(element: HTMLElement) : string[]
+    {
+        let ctx     = element.dataset['context']!;
+        let service = RAG.state.getService(ctx)
+            .replace(' ', '_')
+            .toLowerCase();
+
+        return [`service.${service}`];
+    }
+
+    /** Resolve ID from a given station element and current state */
+    private resolveStation(element: HTMLElement) : string[]
+    {
+        let ctx     = element.dataset['context']!;
+        let station = RAG.state.getStation(ctx);
+        // TODO: Context sensitive types
+        let type    = 'end';
+
+        return [`station.end.${station}`];
+    }
+
+    /** Resolve IDs from a given station list element and current state */
+    private resolveStationList(element: HTMLElement) : string[]
+    {
+        let ctx  = element.dataset['context']!;
+        let list = RAG.state.getStationList(ctx);
+
+        let parts : string[] = [];
+
+        list.forEach( (v, k) =>
+        {
+            // Handle end of list inflection
+            if (k === list.length - 1)
+            {
+                // Add "and" if list has more than 1 station and this is the end
+                if (list.length > 1)
+                    parts.push('station.parts.and');
+
+                parts.push(`station.end.${v}`);
+            }
+            else
+                parts.push(`station.middle.${v}`);
+        });
+
+        // Add "only" if only one station in the calling list
+        if (list.length === 1 && ctx === 'calling')
+            parts.push('station.parts.only');
+
+        return parts;
+    }
+
+
 }
