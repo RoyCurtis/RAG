@@ -1,19 +1,28 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/** Type definition for speech settings objects passed to the speak method */
+/** Type definition for speech config overrides passed to the speak method */
 interface SpeechSettings
 {
+    /** Override choice of voice */
     voiceIdx? : number;
+    /** Override volume of voice */
     volume?   : number;
+    /** Override pitch of voice */
     pitch?    : number;
+    /** Override rate of voice */
     rate?     : number;
 }
+
+/** Union type for both kinds of voices available */
+type Voice = SpeechSynthesisVoice | CustomVoice;
 
 /** Manages speech synthesis and wraps around HTML5 speech API */
 class SpeechEngine
 {
     /** Array of browser-provided voices available */
-    private voices : SpeechSynthesisVoice[] = [];
+    private browserVoices : SpeechSynthesisVoice[] = [];
+    /** Array of custom pre-recorded voices available */
+    private customVoices  : CustomVoice[]          = [];
 
     public constructor()
     {
@@ -30,37 +39,29 @@ class SpeechEngine
         // Even though 'onvoiceschanged' is used later to populate the list, Chrome does
         // not actually fire the event until this call...
         this.onVoicesChanged();
+
+        // TODO: Make this a dynamic registration and check for features
+        this.customVoices.push( new CustomVoice('Roy', 'en-GB') );
     }
 
     /** Gets all the voices currently available */
-    public getVoices() : SpeechSynthesisVoice[]
+    public getVoices() : Voice[]
     {
-        return this.voices;
+        return this.customVoices.concat(this.browserVoices);
     }
 
-    /** Begins speaking the given string */
-    public speak(text: string, settings: SpeechSettings = {}) : void
+    /** Begins speaking the given phrase components */
+    public speak(phrase: HTMLElement, settings: SpeechSettings = {}) : void
     {
-        let parts    = text.trim().split(/\.\s/i);
-        let voices   = RAG.speech.getVoices();
-        let voiceIdx = either(settings.voiceIdx, RAG.config.voxChoice);
-
         // Reset to first voice, if configured choice is missing
-        if (!voices[voiceIdx])
-            voiceIdx = 0;
+        let voices   = this.getVoices();
+        let voiceIdx = either(settings.voiceIdx, RAG.config.voxChoice);
+        let voice    = voices[voiceIdx] || voices[0];
 
-        RAG.speech.cancel();
-        parts.forEach( segment =>
-        {
-            let utterance = new SpeechSynthesisUtterance(segment);
-
-            utterance.voice  = voices[voiceIdx];
-            utterance.volume = either(settings.volume, RAG.config.voxVolume);
-            utterance.pitch  = either(settings.pitch,  RAG.config.voxPitch);
-            utterance.rate   = either(settings.rate,   RAG.config.voxRate);
-
-            window.speechSynthesis.speak(utterance);
-        });
+        if (voice instanceof CustomVoice)
+            this.speakCustom(phrase, voice);
+        else
+            this.speakBrowser(phrase, voice, settings);
     }
 
     /** Stops and cancels all queued speech */
@@ -81,6 +82,37 @@ class SpeechEngine
     /** Handles async voice list loading on some browsers, and sets default */
     private onVoicesChanged() : void
     {
-        this.voices = window.speechSynthesis.getVoices();
+        this.browserVoices = window.speechSynthesis.getVoices();
+    }
+
+    private speakCustom(phrase: HTMLElement, voice: Voice)
+    {
+
+    }
+
+    /** Converts the given phrase to text and speaks it via native browser voices */
+    private speakBrowser(phrase: HTMLElement, voice: Voice, settings: SpeechSettings)
+    {
+        // The phrase text is split into sentences, as queueing large sentences that last
+        // many seconds can break some TTS engines and browsers.
+        let text  = DOM.getCleanedVisibleText(phrase);
+        let parts = text.split(/\.\s/i);
+
+        RAG.speech.cancel();
+        parts.forEach( (segment, idx) =>
+        {
+            // Add missing full stop to each sentence except the last, which has it
+            if (idx < parts.length - 1)
+                segment += '.';
+
+            let utterance = new SpeechSynthesisUtterance(segment);
+
+            utterance.voice  = voice;
+            utterance.volume = either(settings.volume, RAG.config.voxVolume);
+            utterance.pitch  = either(settings.pitch,  RAG.config.voxPitch);
+            utterance.rate   = either(settings.rate,   RAG.config.voxRate);
+
+            window.speechSynthesis.speak(utterance);
+        });
     }
 }

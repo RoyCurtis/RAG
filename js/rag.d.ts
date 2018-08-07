@@ -751,6 +751,8 @@ declare class Editor {
      * @returns Node list of all elements matching the given span query
      */
     getElementsByQuery(query: string): NodeList;
+    /** Gets the current phrase's root DOM element */
+    getPhrase(): HTMLElement;
     /** Gets the current phrase in the editor as text, excluding the hidden parts */
     getText(): string;
     /**
@@ -899,6 +901,9 @@ declare class Collapsibles {
      */
     static set(span: HTMLElement, toggle: HTMLElement, state: boolean): void;
 }
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Sugar for choosing second value if first is undefined, instead of falsy */
+declare function either<T>(value: T | undefined, value2: T): T;
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility methods for dealing with the DOM */
 declare class DOM {
@@ -1084,26 +1089,59 @@ interface Array<T> {
     includes(searchElement: T, fromIndex?: number): boolean;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Custom voice that synthesizes speech by piecing pre-recorded files together */
+declare class CustomVoice {
+    /** Only present for consistency with SpeechSynthesisVoice */
+    readonly default: boolean;
+    /** Gets the BCP 47 tag indicating the language of this voice */
+    readonly lang: string;
+    /** Only present for consistency with SpeechSynthesisVoice */
+    readonly localService: boolean;
+    /** Gets the canonical name of this voice */
+    readonly name: string;
+    /** Gets the relative URI of this voice's files */
+    readonly voiceURI: string;
+    constructor(name: string, lang: string);
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility class for resolving a given phrase element to a vox key */
 declare class Resolver {
     static resolve(_: HTMLElement): string | null;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Manages speech synthesis and wraps around HTML5 speech API  */
+/** Type definition for speech config overrides passed to the speak method */
+interface SpeechSettings {
+    /** Override choice of voice */
+    voiceIdx?: number;
+    /** Override volume of voice */
+    volume?: number;
+    /** Override pitch of voice */
+    pitch?: number;
+    /** Override rate of voice */
+    rate?: number;
+}
+/** Union type for both kinds of voices available */
+declare type Voice = SpeechSynthesisVoice | CustomVoice;
+/** Manages speech synthesis and wraps around HTML5 speech API */
 declare class SpeechEngine {
     /** Array of browser-provided voices available */
-    private voices;
+    private browserVoices;
+    /** Array of custom pre-recorded voices available */
+    private customVoices;
     constructor();
     /** Gets all the voices currently available */
-    getVoices(): SpeechSynthesisVoice[];
-    /** Queues an utterance to speak, and immediately begins speaking */
-    speak(utterance: SpeechSynthesisUtterance): void;
+    getVoices(): Voice[];
+    /** Begins speaking the given phrase components */
+    speak(phrase: HTMLElement, settings?: SpeechSettings): void;
     /** Stops and cancels all queued speech */
     cancel(): void;
     /** Pause and unpause speech if the page is hidden or unhidden */
     private onVisibilityChange();
     /** Handles async voice list loading on some browsers, and sets default */
     private onVoicesChanged();
+    private speakCustom(phrase, voice);
+    /** Converts the given phrase to text and speaks it via native browser voices */
+    private speakBrowser(phrase, voice, settings);
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Holds runtime configuration */

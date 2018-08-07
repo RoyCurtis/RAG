@@ -71,6 +71,12 @@ class Editor
         return this.dom.querySelectorAll(`span${query}`);
     }
 
+    /** Gets the current phrase's root DOM element */
+    public getPhrase() : HTMLElement
+    {
+        return this.dom.firstElementChild as HTMLElement;
+    }
+
     /** Gets the current phrase in the editor as text, excluding the hidden parts */
     public getText() : string
     {

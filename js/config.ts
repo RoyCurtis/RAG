@@ -20,6 +20,7 @@ class Config
      */
     get voxChoice() : number
     {
+        // TODO: this is probably better off using voice names
         // If there's a user-defined value, use that
         if  (this._voxChoice !== -1)
             return this._voxChoice;

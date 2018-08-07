@@ -60,10 +60,8 @@ class Toolbar
         // automatically change back. However, speech's 'onend' event was found to be
         // unreliable, so I decided to keep play and stop separate.
 
-        let text = RAG.views.editor.getText();
-
-        RAG.speech.speak(text);
-        RAG.views.marquee.set(text);
+        RAG.speech.speak( RAG.views.editor.getPhrase() );
+        RAG.views.marquee.set( RAG.views.editor.getText() );
         this.btnPlay.disabled = false;
     }
 

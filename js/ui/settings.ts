@@ -152,10 +152,16 @@ class Settings
         {
             this.btnVoxTest.disabled = false;
 
-            let time = Strings.fromTime( new Date() );
+            let time   = Strings.fromTime( new Date() );
+            let phrase = document.createElement('span');
+
+            phrase.innerHTML = '<span data-type="phrase" data-ref="sample">' +
+                'This is a test of the Rail Announcement Generator at' +
+                '<span data-type="time">' + time + '</span>' +
+                '</span>';
 
             RAG.speech.speak(
-                `This is a test of the Rail Announcement Generator at ${time}.`,
+                phrase.firstElementChild! as HTMLElement,
                 {
                     voiceIdx : this.selVoxChoice.selectedIndex,
                     volume   : this.rangeVoxVol.valueAsNumber,
