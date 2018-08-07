@@ -2,9 +2,9 @@
 
 /// <reference path="../../js/rag.d.ts"/>
 
-import {app, BrowserWindow, webContents} from 'electron';
+import {app, BrowserWindow} from 'electron';
 import {Captioner} from "./captioner";
-import * as path from "path";
+import * as path   from "path";
 
 /** Main class of the entire vox editor application */
 export class VoxEditor
@@ -53,7 +53,7 @@ export class VoxEditor
         VoxEditor.database = new Database(dataRefs);
         VoxEditor.banker   = new Captioner();
 
-        let phrasesList = DOM.require <HTMLUListElement> ('#phrasesList');
+        let phrasesList = DOM.require <HTMLUListElement> ('#partSelector ul');
 
         for (let key in VoxEditor.banker.captionBank)
         {
@@ -61,7 +61,7 @@ export class VoxEditor
             let value   = VoxEditor.banker.captionBank[key];
 
             element.dataset['key'] = key;
-            element.innerText      = `"${value}"`;
+            element.innerHTML      = `<code>${key}</code> "${value}"`;
 
             phrasesList.appendChild(element);
         }

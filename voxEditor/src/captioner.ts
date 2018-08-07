@@ -1,5 +1,7 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+/// <reference path="../../js/rag.d.ts"/>
+
 import {VoxEditor} from "./voxEditor";
 
 /** Represents a dictionary of voice keys and their captions */
@@ -13,6 +15,9 @@ export class Captioner
 
     public constructor()
     {
+        // Note that the captioner should generate IDs the same way that the Resolver
+        // does, in RAG/vox/resolver.ts. Else, voice will not match text content.
+
         this.populateLetters();
         this.populateNumbers();
         this.populateExcuses();
@@ -20,15 +25,13 @@ export class Captioner
         this.populateNames();
         this.populateServices();
         this.populateStations();
-
-        console.log(Object.keys(this.captionBank).length);
     }
 
     /** TreeWalker filter to only accept text nodes */
     private nodeFilter(node: Node): number
     {
         // Only accept text nodes with words in them
-        if (node.textContent!.match(/[a-z0-9]/i))
+        if ( node.textContent!.match(/[a-z0-9]/i) )
             return NodeFilter.FILTER_ACCEPT;
 
         return NodeFilter.FILTER_REJECT;
@@ -100,7 +103,7 @@ export class Captioner
                 let phraseSet = parent.parentElement!;
 
                 // https://stackoverflow.com/a/9132575/3354920
-                psIndex = Array.prototype.indexOf.call(phraseSet.children, parent);
+                psIndex = DOM.indexOf(parent);
                 parent  = phraseSet;
             }
 
@@ -150,7 +153,7 @@ export class Captioner
     private populateServices() : void
     {
         for (let i = 0; i < VoxEditor.database.services.length; i++)
-            this.captionBank[`services.${i}`] = VoxEditor.database.services[i];
+            this.captionBank[`service.${i}`] = VoxEditor.database.services[i];
     }
 
     private populateStations() : void
@@ -160,12 +163,20 @@ export class Captioner
         let stations = VoxEditor.database.stations;
         let keys     = Object.keys(stations);
 
+        // For the "and" in station lists
+        this.captionBank[`station.parts.and`]  = 'and';
+
+        // For the "only" at the end of some single-station lists
+        this.captionBank[`station.parts.only`] = 'only';
+
+        // For stations to be read in the middle of lists or sentences
         keys.forEach(k =>
-            this.captionBank[`stations.middle.${k}`] = filter(stations[k])
+            this.captionBank[`station.middle.${k}`] = filter(stations[k])
         );
 
+        // For stations to be read at the end of lists or sentences
         keys.forEach(k =>
-            this.captionBank[`stations.end.${k}`] = filter(stations[k])
+            this.captionBank[`station.end.${k}`] = filter(stations[k])
         );
     }
 }

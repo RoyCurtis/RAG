@@ -19,21 +19,41 @@ body, html
 
 body
   backAndForeColor($bgDarkest, $fgBright)
+  flexbox(row)
   font-family sans-serif
 
 h1
   border-bottom 2px solid $fgFocus
   padding       16px
 
-ul
-  list-style none
-  margin     16px
 
-  li
-    background    $bgDarker
-    margin-bottom 4px
-    padding       8px
 
+#partSelector
+  flex-basis 40%
+  overflow   auto
+
+  ul
+    unselectable()
+    font-size  12px
+    list-style none
+    margin     16px
+
+    li
+      singleLine()
+      background    $bgDarker
+      cursor        pointer
+      margin-bottom 4px
+      padding       4px
+
+      &:hover
+        background $bgDark
+
+      code
+        color $fgDim
+        float right
+
+#tapeDeck
+  flex-basis 60%
 
 // Hides embedded phraseset XML documents
 iframe
