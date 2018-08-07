@@ -538,7 +538,7 @@
 #settingsScreen #btnSaveSettings {
   flex: 6;
 }
-#settingsScreen #btnVoxTest {
+#settingsScreen #btnSpeechTest {
   grid-column: 2;
 }
 #settingsScreen h1 {

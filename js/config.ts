@@ -4,13 +4,13 @@
 class Config
 {
     /** Volume for speech to be set at */
-    public  voxVolume      : number = 1.0;
+    public  speechVol      : number = 1.0;
     /** Pitch for speech to be set at */
-    public  voxPitch       : number = 1.0;
+    public  speechPitch    : number = 1.0;
     /** Rate for speech to be set at */
-    public  voxRate        : number = 1.0;
+    public  speechRate     : number = 1.0;
     /** Choice of speech voice to use, as getVoices index or -1 if unset */
-    private _voxChoice     : number = -1;
+    private _speechVoice   : number = -1;
     /** If user has clicked shuffle at least once */
     public clickedGenerate : boolean = false;
 
@@ -18,12 +18,12 @@ class Config
      * Choice of speech voice to use, as getVoices index. Because of the async nature of
      * getVoices, the default value will be fetched from it each time.
      */
-    get voxChoice() : number
+    get speechVoice() : number
     {
         // TODO: this is probably better off using voice names
         // If there's a user-defined value, use that
-        if  (this._voxChoice !== -1)
-            return this._voxChoice;
+        if  (this._speechVoice !== -1)
+            return this._speechVoice;
 
         // Select English voices by default
         for (let i = 0, v = RAG.speech.getVoices(); i < v.length ; i++)
@@ -38,9 +38,9 @@ class Config
         return 0;
     }
 
-    set voxChoice(value: number)
+    set speechVoice(value: number)
     {
-        this._voxChoice = value;
+        this._speechVoice = value;
     }
 
     /** Safely loads runtime configuration from localStorage, if any */

@@ -171,14 +171,14 @@ abstract class BaseLanguage
     readonly abstract ST_RESET_DONE      : LanguageEntry;
     readonly abstract ST_SAVE            : LanguageEntry;
     readonly abstract ST_SAVE_T          : LanguageEntry;
-    readonly abstract ST_VOX             : LanguageEntry;
-    readonly abstract ST_VOX_CHOICE      : LanguageEntry;
-    readonly abstract ST_VOX_EMPTY       : LanguageEntry;
-    readonly abstract ST_VOX_VOL         : LanguageEntry;
-    readonly abstract ST_VOX_PITCH       : LanguageEntry;
-    readonly abstract ST_VOX_RATE        : LanguageEntry;
-    readonly abstract ST_VOX_TEST        : LanguageEntry;
-    readonly abstract ST_VOX_TEST_T      : LanguageEntry;
+    readonly abstract ST_SPEECH          : LanguageEntry;
+    readonly abstract ST_SPEECH_CHOICE   : LanguageEntry;
+    readonly abstract ST_SPEECH_EMPTY    : LanguageEntry;
+    readonly abstract ST_SPEECH_VOL      : LanguageEntry;
+    readonly abstract ST_SPEECH_PITCH    : LanguageEntry;
+    readonly abstract ST_SPEECH_RATE     : LanguageEntry;
+    readonly abstract ST_SPEECH_TEST     : LanguageEntry;
+    readonly abstract ST_SPEECH_TEST_T   : LanguageEntry;
     readonly abstract ST_LEGAL           : LanguageEntry;
 
     // UI controls

@@ -539,14 +539,14 @@ declare abstract class BaseLanguage {
     readonly abstract ST_RESET_DONE: LanguageEntry;
     readonly abstract ST_SAVE: LanguageEntry;
     readonly abstract ST_SAVE_T: LanguageEntry;
-    readonly abstract ST_VOX: LanguageEntry;
-    readonly abstract ST_VOX_CHOICE: LanguageEntry;
-    readonly abstract ST_VOX_EMPTY: LanguageEntry;
-    readonly abstract ST_VOX_VOL: LanguageEntry;
-    readonly abstract ST_VOX_PITCH: LanguageEntry;
-    readonly abstract ST_VOX_RATE: LanguageEntry;
-    readonly abstract ST_VOX_TEST: LanguageEntry;
-    readonly abstract ST_VOX_TEST_T: LanguageEntry;
+    readonly abstract ST_SPEECH: LanguageEntry;
+    readonly abstract ST_SPEECH_CHOICE: LanguageEntry;
+    readonly abstract ST_SPEECH_EMPTY: LanguageEntry;
+    readonly abstract ST_SPEECH_VOL: LanguageEntry;
+    readonly abstract ST_SPEECH_PITCH: LanguageEntry;
+    readonly abstract ST_SPEECH_RATE: LanguageEntry;
+    readonly abstract ST_SPEECH_TEST: LanguageEntry;
+    readonly abstract ST_SPEECH_TEST_T: LanguageEntry;
     readonly abstract ST_LEGAL: LanguageEntry;
     /** Header for the "too small" warning */
     readonly abstract WARN_SHORT_HEADER: LanguageEntry;
@@ -657,14 +657,14 @@ declare class EnglishLanguage extends BaseLanguage {
     ST_RESET_DONE: () => string;
     ST_SAVE: () => string;
     ST_SAVE_T: () => string;
-    ST_VOX: () => string;
-    ST_VOX_CHOICE: () => string;
-    ST_VOX_EMPTY: () => string;
-    ST_VOX_VOL: () => string;
-    ST_VOX_PITCH: () => string;
-    ST_VOX_RATE: () => string;
-    ST_VOX_TEST: () => string;
-    ST_VOX_TEST_T: () => string;
+    ST_SPEECH: () => string;
+    ST_SPEECH_CHOICE: () => string;
+    ST_SPEECH_EMPTY: () => string;
+    ST_SPEECH_VOL: () => string;
+    ST_SPEECH_PITCH: () => string;
+    ST_SPEECH_RATE: () => string;
+    ST_SPEECH_TEST: () => string;
+    ST_SPEECH_TEST_T: () => string;
     ST_LEGAL: () => string;
     WARN_SHORT_HEADER: () => string;
     WARN_SHORT: () => string;
@@ -729,6 +729,105 @@ declare class Phraser {
      * @param level Current level of recursion, max. 20
      */
     process(container: HTMLElement, level?: number): void;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Custom voice that synthesizes speech by piecing pre-recorded files together */
+declare class CustomVoice {
+    /** Only present for consistency with SpeechSynthesisVoice */
+    readonly default: boolean;
+    /** Gets the BCP 47 tag indicating the language of this voice */
+    readonly lang: string;
+    /** Only present for consistency with SpeechSynthesisVoice */
+    readonly localService: boolean;
+    /** Gets the canonical name of this voice */
+    readonly name: string;
+    /** Gets the relative URI of this voice's files */
+    readonly voiceURI: string;
+    constructor(name: string, lang: string);
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Utility class for resolving a given phrase element to a vox key */
+declare class Resolver {
+    /** TreeWalker filter to reduce a walk to just the elements the resolver needs */
+    static nodeFilter(node: Node): number;
+    /** Keeps track of phrases' text node relative indexes */
+    private phraseIdxs;
+    /**
+     * Uses the type and value of the given node, to resolve it to vox file IDs.
+     *
+     * @param node Node to resolve to vox IDs
+     * @returns Array of IDs that make up one or more file IDs. Can be empty.
+     */
+    resolve(node: Node): string[];
+    /** Resolve text nodes from phrases and phrasesets to ID strings */
+    private resolveText(node);
+    /** Resolve ID from a given coach element and current state */
+    private resolveCoach(element);
+    /** Resolve ID from a given excuse element and current state */
+    private resolveExcuse();
+    /** Resolve IDs from a given integer element and current state */
+    private resolveInteger(element);
+    /** Resolve ID from a given named element and current state */
+    private resolveNamed();
+    /** Resolve IDs from a given platform element and current state */
+    private resolvePlatform();
+    /** Resolve IDs from a given time element and current state */
+    private resolveTime(element);
+    /** Resolve ID from a given service element and current state */
+    private resolveService(element);
+    /** Resolve ID from a given station element and current state */
+    private resolveStation(element);
+    /** Resolve IDs from a given station list element and current state */
+    private resolveStationList(element);
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Type definition for speech config overrides passed to the speak method */
+interface SpeechSettings {
+    /** Override choice of voice */
+    voiceIdx?: number;
+    /** Override volume of voice */
+    volume?: number;
+    /** Override pitch of voice */
+    pitch?: number;
+    /** Override rate of voice */
+    rate?: number;
+}
+/** Union type for both kinds of voices available */
+declare type Voice = SpeechSynthesisVoice | CustomVoice;
+/** Manages speech synthesis and wraps around HTML5 speech API */
+declare class Speech {
+    /** Array of browser-provided voices available */
+    private browserVoices;
+    /** Array of custom pre-recorded voices available */
+    private customVoices;
+    constructor();
+    /** Gets all the voices currently available */
+    getVoices(): Voice[];
+    /** Begins speaking the given phrase components */
+    speak(phrase: HTMLElement, settings?: SpeechSettings): void;
+    /** Stops and cancels all queued speech */
+    cancel(): void;
+    /** Pause and unpause speech if the page is hidden or unhidden */
+    private onVisibilityChange();
+    /** Handles async voice list loading on some browsers, and sets default */
+    private onVoicesChanged();
+    /**
+     * Converts the given phrase to text and speaks it via native browser voices.
+     *
+     * @param phrase Phrase elements to speak
+     * @param voice Browser voice to use
+     * @param settings Settings to use for the voice
+     */
+    private speakBrowser(phrase, voice, settings);
+    /**
+     * Synthesizes voice by walking through the given phrase elements, resolving parts to
+     * sound files by ID, and piecing together the sound files.
+     *
+     * @param phrase Phrase elements to speak
+     * @param voice Custom voice to use
+     * @param settings Settings to use for the voice
+     */
+    private speakCustom(phrase, _, __);
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the phrase editor */
@@ -812,15 +911,15 @@ declare class Settings {
     /** Reference to the "Save and close" button */
     private btnSave;
     /** Reference to the voice selection box */
-    private selVoxChoice;
+    private selSpeechVoice;
     /** Reference to the voice volume slider */
-    private rangeVoxVol;
+    private rangeSpeechVol;
     /** Reference to the voice pitch slider */
-    private rangeVoxPitch;
+    private rangeSpeechPitch;
     /** Reference to the voice rate slider */
-    private rangeVoxRate;
+    private rangeSpeechRate;
     /** Reference to the speech test button */
-    private btnVoxTest;
+    private btnSpeechTest;
     /** Reference to the timer for the "Reset" button confirmation step */
     private resetTimeout?;
     constructor();
@@ -829,7 +928,7 @@ declare class Settings {
     /** Closes the settings screen */
     close(): void;
     /** Clears and populates the voice list */
-    private populateVoxList();
+    private populateVoiceList();
     /** Handles the reset button, with a confirm step that cancels after 15 seconds */
     private handleReset();
     /** Cancel the reset timeout and restore the reset button to normal */
@@ -837,7 +936,7 @@ declare class Settings {
     /** Handles the save button, saving config to storage */
     private handleSave();
     /** Handles the speech test button, speaking a test phrase */
-    private handleVoxTest(ev);
+    private handleVoiceTest(ev);
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the top toolbar */
@@ -1096,122 +1195,23 @@ interface Array<T> {
     includes(searchElement: T, fromIndex?: number): boolean;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Custom voice that synthesizes speech by piecing pre-recorded files together */
-declare class CustomVoice {
-    /** Only present for consistency with SpeechSynthesisVoice */
-    readonly default: boolean;
-    /** Gets the BCP 47 tag indicating the language of this voice */
-    readonly lang: string;
-    /** Only present for consistency with SpeechSynthesisVoice */
-    readonly localService: boolean;
-    /** Gets the canonical name of this voice */
-    readonly name: string;
-    /** Gets the relative URI of this voice's files */
-    readonly voiceURI: string;
-    constructor(name: string, lang: string);
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Utility class for resolving a given phrase element to a vox key */
-declare class Resolver {
-    /** TreeWalker filter to reduce a walk to just the elements the resolver needs */
-    static nodeFilter(node: Node): number;
-    /** Keeps track of phrases' text node relative indexes */
-    private phraseIdxs;
-    /**
-     * Uses the type and value of the given node, to resolve it to vox file IDs.
-     *
-     * @param node Node to resolve to vox IDs
-     * @returns Array of IDs that make up one or more file IDs. Can be empty.
-     */
-    resolve(node: Node): string[];
-    /** Resolve text nodes from phrases and phrasesets to ID strings */
-    private resolveText(node);
-    /** Resolve ID from a given coach element and current state */
-    private resolveCoach(element);
-    /** Resolve ID from a given excuse element and current state */
-    private resolveExcuse();
-    /** Resolve IDs from a given integer element and current state */
-    private resolveInteger(element);
-    /** Resolve ID from a given named element and current state */
-    private resolveNamed();
-    /** Resolve IDs from a given platform element and current state */
-    private resolvePlatform();
-    /** Resolve IDs from a given time element and current state */
-    private resolveTime(element);
-    /** Resolve ID from a given service element and current state */
-    private resolveService(element);
-    /** Resolve ID from a given station element and current state */
-    private resolveStation(element);
-    /** Resolve IDs from a given station list element and current state */
-    private resolveStationList(element);
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Type definition for speech config overrides passed to the speak method */
-interface SpeechSettings {
-    /** Override choice of voice */
-    voiceIdx?: number;
-    /** Override volume of voice */
-    volume?: number;
-    /** Override pitch of voice */
-    pitch?: number;
-    /** Override rate of voice */
-    rate?: number;
-}
-/** Union type for both kinds of voices available */
-declare type Voice = SpeechSynthesisVoice | CustomVoice;
-/** Manages speech synthesis and wraps around HTML5 speech API */
-declare class SpeechEngine {
-    /** Array of browser-provided voices available */
-    private browserVoices;
-    /** Array of custom pre-recorded voices available */
-    private customVoices;
-    constructor();
-    /** Gets all the voices currently available */
-    getVoices(): Voice[];
-    /** Begins speaking the given phrase components */
-    speak(phrase: HTMLElement, settings?: SpeechSettings): void;
-    /** Stops and cancels all queued speech */
-    cancel(): void;
-    /** Pause and unpause speech if the page is hidden or unhidden */
-    private onVisibilityChange();
-    /** Handles async voice list loading on some browsers, and sets default */
-    private onVoicesChanged();
-    /**
-     * Converts the given phrase to text and speaks it via native browser voices.
-     *
-     * @param phrase Phrase elements to speak
-     * @param voice Browser voice to use
-     * @param settings Settings to use for the voice
-     */
-    private speakBrowser(phrase, voice, settings);
-    /**
-     * Synthesizes voice by walking through the given phrase elements, resolving parts to
-     * sound files by ID, and piecing together the sound files.
-     *
-     * @param phrase Phrase elements to speak
-     * @param voice Custom voice to use
-     * @param settings Settings to use for the voice
-     */
-    private speakCustom(phrase, _, __);
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Holds runtime configuration */
 declare class Config {
     /** Volume for speech to be set at */
-    voxVolume: number;
+    speechVol: number;
     /** Pitch for speech to be set at */
-    voxPitch: number;
+    speechPitch: number;
     /** Rate for speech to be set at */
-    voxRate: number;
+    speechRate: number;
     /** Choice of speech voice to use, as getVoices index or -1 if unset */
-    private _voxChoice;
+    private _speechVoice;
     /** If user has clicked shuffle at least once */
     clickedGenerate: boolean;
     /**
      * Choice of speech voice to use, as getVoices index. Because of the async nature of
      * getVoices, the default value will be fetched from it each time.
      */
-    voxChoice: number;
+    speechVoice: number;
     /** Safely loads runtime configuration from localStorage, if any */
     constructor(load: boolean);
     /** Safely saves runtime configuration to localStorage */
@@ -1288,7 +1288,7 @@ declare class RAG {
     /** Gets the phrase manager, which generates HTML phrases from XML */
     static phraser: Phraser;
     /** Gets the speech engine */
-    static speech: SpeechEngine;
+    static speech: Speech;
     /** Gets the current train and station state */
     static state: State;
     /** Gets the view controller, which manages UI interaction */

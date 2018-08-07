@@ -147,14 +147,14 @@ class EnglishLanguage extends BaseLanguage
         'Settings have been reset to their defaults, and deleted from storage.';
     ST_SAVE            = () => 'Save & close';
     ST_SAVE_T          = () => 'Save and close settings';
-    ST_VOX             = () => 'Speech';
-    ST_VOX_CHOICE      = () => 'Voice';
-    ST_VOX_EMPTY       = () => 'None available';
-    ST_VOX_VOL         = () => 'Volume';
-    ST_VOX_PITCH       = () => 'Pitch';
-    ST_VOX_RATE        = () => 'Rate';
-    ST_VOX_TEST        = () => 'Test speech';
-    ST_VOX_TEST_T      = () => 'Play a speech sample with the current settings';
+    ST_SPEECH          = () => 'Speech';
+    ST_SPEECH_CHOICE   = () => 'Voice';
+    ST_SPEECH_EMPTY    = () => 'None available';
+    ST_SPEECH_VOL      = () => 'Volume';
+    ST_SPEECH_PITCH    = () => 'Pitch';
+    ST_SPEECH_RATE     = () => 'Rate';
+    ST_SPEECH_TEST     = () => 'Test speech';
+    ST_SPEECH_TEST_T   = () => 'Play a speech sample with the current settings';
     ST_LEGAL           = () => 'Legal & Acknowledgements';
 
     WARN_SHORT_HEADER = () => '"May I have your attention please..."';

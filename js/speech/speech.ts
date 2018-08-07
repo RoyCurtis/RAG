@@ -17,7 +17,7 @@ interface SpeechSettings
 type Voice = SpeechSynthesisVoice | CustomVoice;
 
 /** Manages speech synthesis and wraps around HTML5 speech API */
-class SpeechEngine
+class Speech
 {
     /** Array of browser-provided voices available */
     private browserVoices : SpeechSynthesisVoice[] = [];
@@ -47,9 +47,7 @@ class SpeechEngine
     /** Gets all the voices currently available */
     public getVoices() : Voice[]
     {
-        // TODO: Re-enable
-        // return this.customVoices.concat(this.browserVoices);
-        return this.browserVoices;
+        return this.customVoices.concat(this.browserVoices);
     }
 
     /** Begins speaking the given phrase components */
@@ -57,7 +55,7 @@ class SpeechEngine
     {
         // Reset to first voice, if configured choice is missing
         let voices   = this.getVoices();
-        let voiceIdx = either(settings.voiceIdx, RAG.config.voxChoice);
+        let voiceIdx = either(settings.voiceIdx, RAG.config.speechVoice);
         let voice    = voices[voiceIdx] || voices[0];
         let engine   = (voice instanceof CustomVoice)
             ? this.speakCustom.bind(this)
@@ -111,9 +109,9 @@ class SpeechEngine
             let utterance = new SpeechSynthesisUtterance(segment);
 
             utterance.voice  = voice;
-            utterance.volume = either(settings.volume, RAG.config.voxVolume);
-            utterance.pitch  = either(settings.pitch,  RAG.config.voxPitch);
-            utterance.rate   = either(settings.rate,   RAG.config.voxRate);
+            utterance.volume = either(settings.volume, RAG.config.speechVol);
+            utterance.pitch  = either(settings.pitch,  RAG.config.speechPitch);
+            utterance.rate   = either(settings.rate,   RAG.config.speechRate);
 
             window.speechSynthesis.speak(utterance);
         });

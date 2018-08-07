@@ -10,7 +10,7 @@ class RAG
     /** Gets the phrase manager, which generates HTML phrases from XML */
     public static phraser  : Phraser;
     /** Gets the speech engine */
-    public static speech   : SpeechEngine;
+    public static speech   : Speech;
     /** Gets the current train and station state */
     public static state    : State;
     /** Gets the view controller, which manages UI interaction */
@@ -31,7 +31,7 @@ class RAG
         RAG.database = new Database(dataRefs);
         RAG.views    = new Views();
         RAG.phraser  = new Phraser();
-        RAG.speech   = new SpeechEngine();
+        RAG.speech   = new Speech();
 
         // Begin
 

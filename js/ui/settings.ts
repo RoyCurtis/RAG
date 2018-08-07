@@ -4,23 +4,23 @@
 class Settings
 {
     /** Reference to the container for the settings screen */
-    private dom           : HTMLElement;
+    private dom             : HTMLElement;
     /** Reference to the "Reset settings" button */
-    private btnReset      : HTMLButtonElement;
+    private btnReset        : HTMLButtonElement;
     /** Reference to the "Save and close" button */
-    private btnSave       : HTMLButtonElement;
+    private btnSave         : HTMLButtonElement;
     /** Reference to the voice selection box */
-    private selVoxChoice  : HTMLSelectElement;
+    private selSpeechVoice  : HTMLSelectElement;
     /** Reference to the voice volume slider */
-    private rangeVoxVol   : HTMLInputElement;
+    private rangeSpeechVol   : HTMLInputElement;
     /** Reference to the voice pitch slider */
-    private rangeVoxPitch : HTMLInputElement;
+    private rangeSpeechPitch : HTMLInputElement;
     /** Reference to the voice rate slider */
-    private rangeVoxRate  : HTMLInputElement;
+    private rangeSpeechRate  : HTMLInputElement;
     /** Reference to the speech test button */
-    private btnVoxTest    : HTMLInputElement;
+    private btnSpeechTest    : HTMLInputElement;
     /** Reference to the timer for the "Reset" button confirmation step */
-    private resetTimeout? : number;
+    private resetTimeout?    : number;
 
     public constructor()
     {
@@ -33,15 +33,15 @@ class Settings
         this.btnReset.onclick = this.handleReset.bind(this);
         this.btnSave.onclick  = this.handleSave.bind(this);
 
-        // Vox form
+        // Speech form
 
-        this.selVoxChoice  = DOM.require('#selVoxChoice');
-        this.rangeVoxVol   = DOM.require('#rangeVoxVol');
-        this.rangeVoxPitch = DOM.require('#rangeVoxPitch');
-        this.rangeVoxRate  = DOM.require('#rangeVoxRate');
-        this.btnVoxTest    = DOM.require('#btnVoxTest');
+        this.selSpeechVoice   = DOM.require('#selSpeechChoice');
+        this.rangeSpeechVol   = DOM.require('#rangeSpeechVol');
+        this.rangeSpeechPitch = DOM.require('#rangeSpeechPitch');
+        this.rangeSpeechRate  = DOM.require('#rangeSpeechRate');
+        this.btnSpeechTest    = DOM.require('#btnSpeechTest');
 
-        this.btnVoxTest.onclick = this.handleVoxTest.bind(this);
+        this.btnSpeechTest.onclick = this.handleVoiceTest.bind(this);
 
         // Legal and acknowledgements
 
@@ -53,13 +53,13 @@ class Settings
     {
         this.dom.classList.remove('hidden');
 
-        // The vox list has to be populated each open, in case it changes
-        this.populateVoxList();
+        // The voice list has to be populated each open, in case it changes
+        this.populateVoiceList();
 
-        this.selVoxChoice.selectedIndex  = RAG.config.voxChoice;
-        this.rangeVoxVol.valueAsNumber   = RAG.config.voxVolume;
-        this.rangeVoxPitch.valueAsNumber = RAG.config.voxPitch;
-        this.rangeVoxRate.valueAsNumber  = RAG.config.voxRate;
+        this.selSpeechVoice.selectedIndex   = RAG.config.speechVoice;
+        this.rangeSpeechVol.valueAsNumber   = RAG.config.speechVol;
+        this.rangeSpeechPitch.valueAsNumber = RAG.config.speechPitch;
+        this.rangeSpeechRate.valueAsNumber  = RAG.config.speechRate;
         this.btnSave.focus();
     }
 
@@ -73,9 +73,9 @@ class Settings
     }
 
     /** Clears and populates the voice list */
-    private populateVoxList() : void
+    private populateVoiceList() : void
     {
-        this.selVoxChoice.innerHTML = '';
+        this.selSpeechVoice.innerHTML = '';
 
         let voices = RAG.speech.getVoices();
 
@@ -84,10 +84,10 @@ class Settings
         {
             let option = document.createElement('option');
 
-            option.textContent = L.ST_VOX_EMPTY();
+            option.textContent = L.ST_SPEECH_EMPTY();
             option.disabled    = true;
 
-            this.selVoxChoice.appendChild(option);
+            this.selSpeechVoice.appendChild(option);
             return;
         }
 
@@ -98,7 +98,7 @@ class Settings
 
             option.textContent = `${voices[i].name} (${voices[i].lang})`;
 
-            this.selVoxChoice.appendChild(option);
+            this.selSpeechVoice.appendChild(option);
         }
     }
 
@@ -132,25 +132,25 @@ class Settings
     /** Handles the save button, saving config to storage */
     private handleSave() : void
     {
-        RAG.config.voxChoice = this.selVoxChoice.selectedIndex;
-        RAG.config.voxVolume = parseFloat(this.rangeVoxVol.value);
-        RAG.config.voxPitch  = parseFloat(this.rangeVoxPitch.value);
-        RAG.config.voxRate   = parseFloat(this.rangeVoxRate.value);
+        RAG.config.speechVoice  = this.selSpeechVoice.selectedIndex;
+        RAG.config.speechVol    = parseFloat(this.rangeSpeechVol.value);
+        RAG.config.speechPitch  = parseFloat(this.rangeSpeechPitch.value);
+        RAG.config.speechRate   = parseFloat(this.rangeSpeechRate.value);
         RAG.config.save();
         this.close();
     }
 
     /** Handles the speech test button, speaking a test phrase */
-    private handleVoxTest(ev: Event) : void
+    private handleVoiceTest(ev: Event) : void
     {
         ev.preventDefault();
         RAG.speech.cancel();
-        this.btnVoxTest.disabled = true;
+        this.btnSpeechTest.disabled = true;
 
         // Has to execute on a delay, as speech cancel is unreliable without it
         window.setTimeout(() =>
         {
-            this.btnVoxTest.disabled = false;
+            this.btnSpeechTest.disabled = false;
 
             let time   = Strings.fromTime( new Date() );
             let phrase = document.createElement('span');
@@ -163,10 +163,10 @@ class Settings
             RAG.speech.speak(
                 phrase.firstElementChild! as HTMLElement,
                 {
-                    voiceIdx : this.selVoxChoice.selectedIndex,
-                    volume   : this.rangeVoxVol.valueAsNumber,
-                    pitch    : this.rangeVoxPitch.valueAsNumber,
-                    rate     : this.rangeVoxRate.valueAsNumber
+                    voiceIdx : this.selSpeechVoice.selectedIndex,
+                    volume   : this.rangeSpeechVol.valueAsNumber,
+                    pitch    : this.rangeSpeechPitch.valueAsNumber,
+                    rate     : this.rangeSpeechRate.valueAsNumber
                 }
             );
         }, 200);
