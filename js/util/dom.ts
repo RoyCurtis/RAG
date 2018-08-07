@@ -192,4 +192,19 @@ class DOM
                 return current;
         }
     }
+
+    /**
+     * Gets the index of a child element, relevant to its parent.
+     *
+     * @see https://stackoverflow.com/a/9132575/3354920
+     * @param child Child element to get the index of
+     */
+    public static indexOf(child: HTMLElement) : number
+    {
+        let parent = child.parentElement;
+
+        return parent
+            ? Array.prototype.indexOf.call(parent.children, child)
+            : -1;
+    }
 }

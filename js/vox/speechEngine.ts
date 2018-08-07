@@ -57,11 +57,11 @@ class SpeechEngine
         let voices   = this.getVoices();
         let voiceIdx = either(settings.voiceIdx, RAG.config.voxChoice);
         let voice    = voices[voiceIdx] || voices[0];
+        let engine   = (voice instanceof CustomVoice)
+            ? this.speakCustom.bind(this)
+            : this.speakBrowser.bind(this);
 
-        if (voice instanceof CustomVoice)
-            this.speakCustom(phrase, voice);
-        else
-            this.speakBrowser(phrase, voice, settings);
+        engine(phrase, voice, settings);
     }
 
     /** Stops and cancels all queued speech */
@@ -85,12 +85,13 @@ class SpeechEngine
         this.browserVoices = window.speechSynthesis.getVoices();
     }
 
-    private speakCustom(phrase: HTMLElement, voice: Voice)
-    {
-
-    }
-
-    /** Converts the given phrase to text and speaks it via native browser voices */
+    /**
+     * Converts the given phrase to text and speaks it via native browser voices.
+     *
+     * @param phrase Phrase elements to speak
+     * @param voice Browser voice to use
+     * @param settings Settings to use for the voice
+     */
     private speakBrowser(phrase: HTMLElement, voice: Voice, settings: SpeechSettings)
     {
         // The phrase text is split into sentences, as queueing large sentences that last
@@ -114,5 +115,34 @@ class SpeechEngine
 
             window.speechSynthesis.speak(utterance);
         });
+    }
+
+    /**
+     * Synthesizes voice by walking through the given phrase elements, resolving parts to
+     * sound files by ID, and piecing together the sound files.
+     *
+     * @param phrase Phrase elements to speak
+     * @param voice Custom voice to use
+     * @param settings Settings to use for the voice
+     */
+    private speakCustom(phrase: HTMLElement, _: Voice, __: SpeechSettings)
+    {
+        // TODO: use volume settings
+        let clips      = [];
+        let resolver   = new Resolver();
+        let treeWalker = document.createTreeWalker(
+            phrase,
+            NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
+            { acceptNode: Resolver.nodeFilter },
+            false
+        );
+
+        while ( treeWalker.nextNode() )
+        {
+            console.log(
+                resolver.resolve(treeWalker.currentNode),
+                Strings.clean( treeWalker.currentNode.textContent! )
+            );
+        }
     }
 }

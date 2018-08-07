@@ -988,6 +988,13 @@ declare class DOM {
      * @returns The next available sibling, or null if none found
      */
     static getNextFocusableSibling(from: HTMLElement, dir: number): HTMLElement | null;
+    /**
+     * Gets the index of a child element, relevant to its parent.
+     *
+     * @see https://stackoverflow.com/a/9132575/3354920
+     * @param child Child element to get the index of
+     */
+    static indexOf(child: HTMLElement): number;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** A very, very small subset of Markdown for hyperlinking a block of text */
@@ -1106,7 +1113,19 @@ declare class CustomVoice {
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility class for resolving a given phrase element to a vox key */
 declare class Resolver {
-    static resolve(_: HTMLElement): string | null;
+    /** TreeWalker filter to reduce a walk to just the elements the resolver needs */
+    static nodeFilter(node: Node): number;
+    /** Keeps track of phrases' text node relative indexes */
+    private phraseIdxs;
+    /**
+     * Uses the type and value of the given node, to resolve it to vox file IDs.
+     *
+     * @param node Node to resolve to vox IDs
+     * @returns Array of IDs that make up one or more file IDs. Can be empty.
+     */
+    resolve(node: Node): string[];
+    /** Resolve text nodes from phrases and phrasesets to ID strings */
+    private resolveText(node);
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Type definition for speech config overrides passed to the speak method */
@@ -1139,9 +1158,23 @@ declare class SpeechEngine {
     private onVisibilityChange();
     /** Handles async voice list loading on some browsers, and sets default */
     private onVoicesChanged();
-    private speakCustom(phrase, voice);
-    /** Converts the given phrase to text and speaks it via native browser voices */
+    /**
+     * Converts the given phrase to text and speaks it via native browser voices.
+     *
+     * @param phrase Phrase elements to speak
+     * @param voice Browser voice to use
+     * @param settings Settings to use for the voice
+     */
     private speakBrowser(phrase, voice, settings);
+    /**
+     * Synthesizes voice by walking through the given phrase elements, resolving parts to
+     * sound files by ID, and piecing together the sound files.
+     *
+     * @param phrase Phrase elements to speak
+     * @param voice Custom voice to use
+     * @param settings Settings to use for the voice
+     */
+    private speakCustom(phrase, _, __);
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Holds runtime configuration */
