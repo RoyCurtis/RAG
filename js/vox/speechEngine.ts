@@ -47,7 +47,9 @@ class SpeechEngine
     /** Gets all the voices currently available */
     public getVoices() : Voice[]
     {
-        return this.customVoices.concat(this.browserVoices);
+        // TODO: Re-enable
+        // return this.customVoices.concat(this.browserVoices);
+        return this.browserVoices;
     }
 
     /** Begins speaking the given phrase components */
