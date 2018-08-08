@@ -1,24 +1,13 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/** Type definition for speech config overrides passed to the speak method */
-interface SpeechSettings
-{
-    /** Override choice of voice */
-    voiceIdx? : number;
-    /** Override volume of voice */
-    volume?   : number;
-    /** Override pitch of voice */
-    pitch?    : number;
-    /** Override rate of voice */
-    rate?     : number;
-}
-
 /** Union type for both kinds of voices available */
 type Voice = SpeechSynthesisVoice | CustomVoice;
 
-/** Manages speech synthesis and wraps around HTML5 speech API */
+/** Manages speech synthesis using both native and custom engines */
 class Speech
 {
+    /** Instance of the custom voice engine */
+    private voxEngine     : VoxEngine;
     /** Array of browser-provided voices available */
     private browserVoices : SpeechSynthesisVoice[] = [];
     /** Array of custom pre-recorded voices available */
@@ -41,7 +30,9 @@ class Speech
         this.onVoicesChanged();
 
         // TODO: Make this a dynamic registration and check for features
-        this.customVoices.push( new CustomVoice('Roy', 'en-GB') );
+        this.voxEngine = new VoxEngine();
+
+        this.customVoices.push( new CustomVoice('Test', 'en-GB') );
     }
 
     /** Gets all the voices currently available */
@@ -93,6 +84,7 @@ class Speech
      * @param settings Settings to use for the voice
      */
     private speakBrowser(phrase: HTMLElement, voice: Voice, settings: SpeechSettings)
+        : void
     {
         // The phrase text is split into sentences, as queueing large sentences that last
         // many seconds can break some TTS engines and browsers.
@@ -119,16 +111,17 @@ class Speech
 
     /**
      * Synthesizes voice by walking through the given phrase elements, resolving parts to
-     * sound files by ID, and piecing together the sound files.
+     * sound file IDs, and feeding the entire array to the vox engine.
      *
      * @param phrase Phrase elements to speak
      * @param voice Custom voice to use
      * @param settings Settings to use for the voice
      */
-    private speakCustom(phrase: HTMLElement, _: Voice, __: SpeechSettings)
+    private speakCustom(phrase: HTMLElement, voice: Voice, settings: SpeechSettings)
+        : void
     {
         // TODO: use volume settings
-        let clips      = [];
+        let ids        = [];
         let resolver   = new Resolver();
         let treeWalker = document.createTreeWalker(
             phrase,
@@ -138,11 +131,8 @@ class Speech
         );
 
         while ( treeWalker.nextNode() )
-        {
-            console.log(
-                resolver.resolve(treeWalker.currentNode),
-                Strings.clean( treeWalker.currentNode.textContent! )
-            );
-        }
+            ids.push( ...resolver.resolve(treeWalker.currentNode) );
+
+        this.voxEngine.speak(ids, voice, settings);
     }
 }

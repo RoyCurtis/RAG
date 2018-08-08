@@ -20,6 +20,6 @@ class CustomVoice
         this.localService = false;
         this.name         = `RAG-VOX ${name}`;
         this.lang         = lang;
-        this.voiceURI     = `./${name}_${lang}/`;
+        this.voiceURI     = `data/vox/${name}_${lang}`;
     }
 }

@@ -781,21 +781,12 @@ declare class Resolver {
     private resolveStationList(element);
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Type definition for speech config overrides passed to the speak method */
-interface SpeechSettings {
-    /** Override choice of voice */
-    voiceIdx?: number;
-    /** Override volume of voice */
-    volume?: number;
-    /** Override pitch of voice */
-    pitch?: number;
-    /** Override rate of voice */
-    rate?: number;
-}
 /** Union type for both kinds of voices available */
 declare type Voice = SpeechSynthesisVoice | CustomVoice;
-/** Manages speech synthesis and wraps around HTML5 speech API */
+/** Manages speech synthesis using both native and custom engines */
 declare class Speech {
+    /** Instance of the custom voice engine */
+    private voxEngine;
     /** Array of browser-provided voices available */
     private browserVoices;
     /** Array of custom pre-recorded voices available */
@@ -821,13 +812,55 @@ declare class Speech {
     private speakBrowser(phrase, voice, settings);
     /**
      * Synthesizes voice by walking through the given phrase elements, resolving parts to
-     * sound files by ID, and piecing together the sound files.
+     * sound file IDs, and feeding the entire array to the vox engine.
      *
      * @param phrase Phrase elements to speak
      * @param voice Custom voice to use
      * @param settings Settings to use for the voice
      */
-    private speakCustom(phrase, _, __);
+    private speakCustom(phrase, voice, settings);
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Type definition for speech config overrides passed to the speak method */
+interface SpeechSettings {
+    /** Override choice of voice */
+    voiceIdx?: number;
+    /** Override volume of voice */
+    volume?: number;
+    /** Override pitch of voice */
+    pitch?: number;
+    /** Override rate of voice */
+    rate?: number;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Synthesizes speech by dynamically loading and piecing together voice files */
+declare class VoxEngine {
+    /** Whether this engine is currently running and speaking */
+    isSpeaking: boolean;
+    /** Reference number for the current pump timer */
+    private pumpTimer;
+    private pendingReqs;
+    private finishedReqs;
+    /** List of vox IDs currently being run through */
+    private currentIds?;
+    /** Voice currently being used */
+    private currentVoice?;
+    /** Speech settings currently being used */
+    private currentSettings?;
+    speak(ids: string[], voice: Voice, settings: SpeechSettings): void;
+    stop(): void;
+    private pump();
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Represents a request for a vox file */
+declare class VoxRequest {
+    isDone: boolean;
+    data?: Blob;
+    private readonly path;
+    constructor(path: string);
+    cancel(): void;
+    private onFulfill(res);
+    private onError(err);
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the phrase editor */
