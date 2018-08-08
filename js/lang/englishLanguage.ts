@@ -52,10 +52,10 @@ class EnglishLanguage extends BaseLanguage
         `Click to change this number ('${c}')`;
     TITLE_NAMED       = ()          =>
         "Click to change this train's name";
-    TITLE_OPT_OPEN    = ()          =>
-        'Click to open this optional part';
-    TITLE_OPT_CLOSE   = ()          =>
-        'Click to close this optional part';
+    TITLE_OPT_OPEN    = (t: string, r: string) =>
+        `Click to open this optional ${t} ('${r}')`;
+    TITLE_OPT_CLOSE   = (t: string, r: string) =>
+        `Click to close this optional ${t} ('${r}')`;
     TITLE_PHRASESET   = (r: string) =>
         `Click to change the phrase used in this section ('${r}')`;
     TITLE_PLATFORM    = ()          =>

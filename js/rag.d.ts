@@ -589,8 +589,8 @@ declare class EnglishLanguage extends BaseLanguage {
     TITLE_EXCUSE: () => string;
     TITLE_INTEGER: (c: string) => string;
     TITLE_NAMED: () => string;
-    TITLE_OPT_OPEN: () => string;
-    TITLE_OPT_CLOSE: () => string;
+    TITLE_OPT_OPEN: (t: string, r: string) => string;
+    TITLE_OPT_CLOSE: (t: string, r: string) => string;
     TITLE_PHRASESET: (r: string) => string;
     TITLE_PLATFORM: () => string;
     TITLE_SERVICE: (c: string) => string;

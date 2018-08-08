@@ -12,11 +12,14 @@ class Collapsibles
      */
     public static set(span: HTMLElement, toggle: HTMLElement, state: boolean) : void
     {
+        let ref  = span.dataset['ref'] || '???';
+        let type = span.dataset['type']!;
+
         if (state) span.setAttribute('collapsed', '');
         else       span.removeAttribute('collapsed');
 
         toggle.title = state
-            ? L.TITLE_OPT_OPEN()
-            : L.TITLE_OPT_CLOSE();
+            ? L.TITLE_OPT_OPEN(type, ref)
+            : L.TITLE_OPT_CLOSE(type, ref);
     }
 }
