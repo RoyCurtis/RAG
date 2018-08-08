@@ -21,6 +21,14 @@
   <section id="tapeDeck">
     <h1>Setup</h1>
 
+    <form id="frmSetup">
+      <label for="selInputDevice">Input device</label>
+
+      <select id="selInputDevice">
+        <option disabled selected value="">None available</option>
+      </select>
+    </form>
+
     <h1>Recording</h1>
 
   </section>
@@ -28,7 +36,7 @@
 
 <scripts>
   <!-- RAG application logic -->
-  <script src="../../js/rag.js" type="text/javascript"></script>
+  <script src="../js/rag.js" type="text/javascript"></script>
 
   <!-- VoxEditor client logic -->
   <script type="application/javascript">
@@ -36,10 +44,10 @@
     {
       // Try as I might, "import" does not work here. So require must be used.
       // noinspection JSUnresolvedVariable
-      let VoxEditor = require('../dist/voxEditor.js').VoxEditor;
+      let VoxEditor = require('./dist/voxEditor.js').VoxEditor;
 
       // noinspection JSUnresolvedFunction
-      VoxEditor.electronRenderer({
+      VoxEditor.main({
         phrasesetEmbed: '#nrPhraseset',
         excusesData:    DATA_EXCUSES,
         namedData:      DATA_NAMED,
@@ -49,11 +57,11 @@
     }
   </script>
 
-  <script src="../../data/nr_excuses.js"  type="text/javascript"></script>
-  <script src="../../data/nr_named.js"    type="text/javascript"></script>
-  <script src="../../data/nr_services.js" type="text/javascript"></script>
-  <script src="../../data/nr_stations.js" type="text/javascript"></script>
-  <iframe id="nrPhraseset" src="../../data/phrases.xml" onload="init()"></iframe>
+  <script src="../data/nr_excuses.js" type="text/javascript"></script>
+  <script src="../data/nr_named.js" type="text/javascript"></script>
+  <script src="../data/nr_services.js" type="text/javascript"></script>
+  <script src="../data/nr_stations.js" type="text/javascript"></script>
+  <iframe id="nrPhraseset" src="../data/phrases.xml" onload="init()"></iframe>
 </scripts>
 
 </html>

@@ -4,13 +4,13 @@
 class Settings
 {
     /** Reference to the container for the settings screen */
-    private dom             : HTMLElement;
+    private dom              : HTMLElement;
     /** Reference to the "Reset settings" button */
-    private btnReset        : HTMLButtonElement;
+    private btnReset         : HTMLButtonElement;
     /** Reference to the "Save and close" button */
-    private btnSave         : HTMLButtonElement;
+    private btnSave          : HTMLButtonElement;
     /** Reference to the voice selection box */
-    private selSpeechVoice  : HTMLSelectElement;
+    private selSpeechVoice   : HTMLSelectElement;
     /** Reference to the voice volume slider */
     private rangeSpeechVol   : HTMLInputElement;
     /** Reference to the voice pitch slider */

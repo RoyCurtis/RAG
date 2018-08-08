@@ -12,9 +12,9 @@
     "typescript": "^2.8.3"
   },
   "scripts": {
-    "start": "electron ./dist/voxEditor.js --experimental-modules",
+    "start": "electron ./dist/voxEditor-init.js --experimental-modules",
     "watch-tsc": "tsc -w",
-    "watch-stylus": "stylus -m -w views/css/vox.styl",
+    "watch-stylus": "stylus -m -w css/vox.styl",
     "watch": "npm-run-all --parallel watch-tsc watch-stylus"
   }
 }

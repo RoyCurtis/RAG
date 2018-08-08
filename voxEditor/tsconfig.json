@@ -2,7 +2,6 @@
   "compilerOptions": {
     "alwaysStrict":                 true,
     "downlevelIteration":           true,
-    "module":                       "commonjs",
     "inlineSourceMap":              true,
     "inlineSources":                true,
     "noImplicitAny":                true,
@@ -15,7 +14,9 @@
     "strictNullChecks":             true,
 
     "baseUrl": ".",
+    "module":  "commonjs",
     "outDir":  "dist",
+    "target":  "es6",
 
     "paths": {
       "*": ["node_modules/*"]
@@ -25,6 +26,6 @@
   "compileOnSave": true,
 
   "include": [
-    "src/**/*"
+    "js/**/*"
   ]
 }
