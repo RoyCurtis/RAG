@@ -18,14 +18,7 @@ class CoachPicker extends Picker
         this.inputLetter = DOM.require('select', this.dom);
 
         for (let i = 0; i < 26; i++)
-        {
-            let option = document.createElement('option');
-            let letter = L.LETTERS[i];
-
-            option.text = option.value = letter;
-
-            this.inputLetter.appendChild(option);
-        }
+            DOM.addOption(this.inputLetter, L.LETTERS[i], L.LETTERS[i]);
     }
 
     /** Populates the form with the target context's coach letter */

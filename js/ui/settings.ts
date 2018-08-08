@@ -82,24 +82,12 @@ class Settings
         // Handle empty list
         if (voices.length <= 0)
         {
-            let option = document.createElement('option');
-
-            option.textContent = L.ST_SPEECH_EMPTY();
-            option.disabled    = true;
-
-            this.selSpeechVoice.appendChild(option);
-            return;
+            let option      = DOM.addOption( this.selSpeechVoice, L.ST_SPEECH_EMPTY() );
+            option.disabled = true;
         }
-
         // https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis
-        for (let i = 0; i < voices.length ; i++)
-        {
-            let option = document.createElement('option');
-
-            option.textContent = `${voices[i].name} (${voices[i].lang})`;
-
-            this.selSpeechVoice.appendChild(option);
-        }
+        else for (let i = 0; i < voices.length ; i++)
+            DOM.addOption(this.selSpeechVoice, `${voices[i].name} (${voices[i].lang})`);
     }
 
     /** Handles the reset button, with a confirm step that cancels after 15 seconds */

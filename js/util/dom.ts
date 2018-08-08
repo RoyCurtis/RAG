@@ -111,6 +111,25 @@ class DOM
     }
 
     /**
+     * Sugar for creating and adding an option element to a select element.
+     *
+     * @param select Select list element to add the option to
+     * @param text Label for the option
+     * @param value Value for the option
+     */
+    public static addOption(select: HTMLSelectElement, text: string, value: string = '')
+        : HTMLOptionElement
+    {
+        let option = document.createElement('option') as HTMLOptionElement;
+
+        option.text  = text;
+        option.value = value;
+
+        select.add(option);
+        return option;
+    }
+
+    /**
      * Gets the text content of the given element, excluding the text of hidden children.
      * Be warned; this method uses RAG-specific code.
      *
