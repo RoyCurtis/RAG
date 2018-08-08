@@ -7,7 +7,8 @@ type Voice = SpeechSynthesisVoice | CustomVoice;
 class Speech
 {
     /** Instance of the custom voice engine */
-    private voxEngine     : VoxEngine;
+    public readonly voxEngine : VoxEngine;
+
     /** Array of browser-provided voices available */
     private browserVoices : SpeechSynthesisVoice[] = [];
     /** Array of custom pre-recorded voices available */
@@ -59,6 +60,7 @@ class Speech
     public cancel() : void
     {
         window.speechSynthesis.cancel();
+        this.voxEngine.stop();
     }
 
     /** Pause and unpause speech if the page is hidden or unhidden */

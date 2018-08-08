@@ -1,16 +1,18 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/** Represents a request for a vox file */
+/** Represents a request for a vox file, immediately begun on creation */
 class VoxRequest
 {
-    public isDone : boolean = false;
-
-    public data?  : Blob;
-
-    private readonly path : string;
+    /** Relative remote path of this voice file request */
+    public readonly path : string;
+    /** Whether this request is done and ready for handling (even if failed) */
+    public isDone  : boolean = false;
+    /** Raw audio data from the loaded file, if available */
+    public buffer? : AudioBuffer;
 
     public constructor(path: string)
     {
+        console.debug('VOX REQUEST:', path);
         this.path = path;
 
         fetch(path)
@@ -20,20 +22,27 @@ class VoxRequest
 
     public cancel() : void
     {
-
+        // TODO: Cancellation controllers
     }
 
+    /** Begins decoding the loaded MP3 voice file to raw audio data */
     private onFulfill(res: Response) : void
     {
+        if (!res.ok)
+            throw Error(`VOX NOT FOUND: ${res.status} @ ${this.path}`);
 
-        if (res.status === 404)
-            return console.log('VOX NOT FOUND:', this.path);
+        res.arrayBuffer().then(buffer =>
+            RAG.speech.voxEngine.audioContext
+                .decodeAudioData(buffer)
+                .then ( this.onDecode.bind(this) )
+                .catch( this.onError.bind(this)  )
+        );
+    }
 
-        res.blob().then(b =>
-        {
-            this.data   = b;
-            this.isDone = true;
-        });
+    private onDecode(buffer: AudioBuffer) : void
+    {
+        this.buffer = buffer;
+        this.isDone = true;
     }
 
     private onError(err: any) : void
