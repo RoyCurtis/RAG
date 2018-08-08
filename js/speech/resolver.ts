@@ -149,7 +149,7 @@ class Resolver
     private resolveNamed() : string[]
     {
         let named = RAG.state.named
-            .replace(' ', '_')
+            .replace(/ /g, '_')
             .toLowerCase();
 
         return [`named.${named}`];
@@ -195,7 +195,7 @@ class Resolver
     {
         let ctx     = element.dataset['context']!;
         let service = RAG.state.getService(ctx)
-            .replace(' ', '_')
+            .replace(/ /g, '_')
             .toLowerCase();
 
         return [`service.${service}`];
