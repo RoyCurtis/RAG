@@ -101,10 +101,10 @@ class VoxEngine
         // Kill and dereference any currently playing file
         if (this.currentBufNode)
         {
+            this.currentBufNode.onended = null;
             this.currentBufNode.stop();
             this.currentBufNode.disconnect();
-            this.currentBufNode.onended = null;
-            this.currentBufNode         = undefined;
+            this.currentBufNode = undefined;
         }
 
         this.currentIds      = undefined;

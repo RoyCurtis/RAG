@@ -20,25 +20,43 @@ export class ClipEditor
         this.domTitle  = DOM.require('.title', this.dom);
         this.context   = this.domCanvas.getContext('2d')!;
 
+        window.onresize = this.redraw.bind(this);
         this.redraw();
     }
 
     public redraw() : void
     {
-        this.domCanvas.width  = this.dom.clientWidth;
-        this.domCanvas.height = this.dom.clientHeight;
+        let width  = this.domCanvas.width  = this.dom.clientWidth;
+        let height = this.domCanvas.height = this.dom.clientHeight;
 
         let buffer = VoxEditor.voices.currentClip;
         let path   = VoxEditor.voices.currentPath;
 
         if (!buffer)
-            return this.drawNone();
+        {
+            this.domTitle.innerText = 'No data loaded';
+            return;
+        }
+        else
+            this.domTitle.innerText = path!;
 
-        this.domTitle.innerText = path!;
-    }
+        let channel = buffer.getChannelData(0);
+        let step    = channel.length / width;
 
-    private drawNone() : void
-    {
-        this.domTitle.innerText = 'No data loaded';
+        // Iterate through every horizontal coordinate
+        for (let x = 0; x < width; x++)
+        {
+            let avg = 0;
+
+            // Create an average for this chunk of samples
+            for (let i = x; i < (step * x); i++)
+                avg += channel[i];
+
+            avg /= step;
+
+            this.context.fillStyle = '#CC7E00';
+            this.context.fillRect( x - 2, height / 2, 1, avg * -(height / 1.5) );
+            this.context.fillRect( x - 2, height / 2, 1, avg *  (height / 1.5) );
+        }
     }
 }
