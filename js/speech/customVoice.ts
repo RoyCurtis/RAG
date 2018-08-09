@@ -3,8 +3,8 @@
 /** Custom voice that synthesizes speech by piecing pre-recorded files together */
 class CustomVoice
 {
-    /** Base path for all custom voices. Can be changed. */
-    public static BASE_PATH : string = 'data/vox';
+    /** Changeable base path for all custom voices */
+    public static basePath : string = 'data/vox';
 
     /** Only present for consistency with SpeechSynthesisVoice */
     public readonly default      : boolean;
@@ -23,6 +23,6 @@ class CustomVoice
         this.localService = false;
         this.name         = `RAG-VOX ${name}`;
         this.lang         = lang;
-        this.voiceURI     = `${CustomVoice.BASE_PATH}/${name}_${lang}`;
+        this.voiceURI     = `${CustomVoice.basePath}/${name}_${lang}`;
     }
 }

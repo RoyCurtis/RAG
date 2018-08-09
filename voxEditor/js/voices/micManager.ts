@@ -40,13 +40,11 @@ export class MicManager
         this.micTrack         = stream.getAudioTracks()[0];
         this.micTrack.enabled = false;
 
-        console.log('Microphone GET', this.micDevice, this.micTrack);
         VoxEditor.views.tapedeck.update();
     }
 
     private onNoMicrophone() : void
     {
-        console.log('No microphones avaiable');
         this.micDevice = undefined;
         VoxEditor.views.tapedeck.update();
     }

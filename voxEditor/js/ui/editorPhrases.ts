@@ -12,6 +12,8 @@ export class EditorPhrases
     /** Reference to the phrase search box */
     private readonly inputFind      : HTMLInputElement;
 
+    /** Reference to the currently selected phrase entry */
+    public  currentEntry?     : HTMLElement;
     /** Reference to the currently highlighted phrase entry */
     private currentHighlight? : HTMLElement;
 
@@ -21,29 +23,100 @@ export class EditorPhrases
         this.btnMarkMissing = DOM.require('#btnMarkMissing');
         this.inputFind      = DOM.require('#inputFind');
 
+        this.domList.onclick        = this.onClick.bind(this);
         this.btnMarkMissing.onclick = this.onMarkMissing.bind(this);
         this.inputFind.onkeydown    = this.onFind.bind(this);
 
         this.populateList();
     }
 
+    /** Selects the given phrase entry, calling handlers elsewhere */
+    public select(item: HTMLElement) : void
+    {
+        this.visualSelect(item);
+        this.checkMissing(item);
+        VoxEditor.views.tapedeck.load( item.dataset['key']! );
+        VoxEditor.views.tapedeck.update();
+    }
+
+    /** Selects the previous phrase entry, relative to current selection */
+    public selectPrev() : void
+    {
+        if (!this.currentEntry)
+            return;
+
+        let next = this.currentEntry.previousElementSibling
+            || this.domList.lastElementChild;
+
+        this.select(next as HTMLElement);
+    }
+
+    /** Selects the next phrase entry, relative to current selection */
+    public selectNext() : void
+    {
+        if (!this.currentEntry)
+            return;
+
+        let next = this.currentEntry.nextElementSibling
+            || this.domList.firstElementChild;
+
+        this.select(next as HTMLElement);
+    }
+
+    /** Visually selects the given phrase entry */
+    public visualSelect(item: HTMLElement) : void
+    {
+        // Ignore if not a child of the list
+        if (item.parentElement !== this.domList)
+            return;
+
+        if (this.currentEntry)
+            this.currentEntry.classList.remove('selected');
+
+        this.currentEntry = item;
+        this.currentEntry.classList.add('selected');
+    }
+
+    /** Visually updates the given phrase entry to reflect whether its file exists */
+    public checkMissing(item: HTMLElement) : void
+    {
+        // Ignore if not a child of the list
+        if (item.parentElement !== this.domList)
+            return;
+
+        if ( VoxEditor.voices.hasClip(item.dataset['key']!) )
+            item.classList.remove('missing');
+        else
+            item.classList.add('missing');
+    }
+
+    /** Handles click events for all phrase entries */
+    private onClick(ev: MouseEvent) : void
+    {
+        let target = ev.target as HTMLElement;
+
+        // Ignore targetless or parent clicks
+        if (!target || target === this.domList)
+            return;
+
+        // Redirect child clicks
+        if (target.tagName === 'CODE')
+            target = target.parentElement!;
+
+        this.select(target);
+    }
+
     /** Marks all phrase entries that are missing files, in red */
     private onMarkMissing() : void
     {
         this.btnMarkMissing.disabled = true;
+        this.domList.classList.add('hidden');
 
         for (let i = 0; i < this.domList.children.length; i++)
-        {
-            let item = this.domList.children[i] as HTMLElement;
-            let key  = item.dataset['key']!;
-
-            if ( VoxEditor.voices.hasClip(key) )
-                item.classList.remove('missing');
-            else
-                item.classList.add('missing');
-        }
+            this.checkMissing(this.domList.children[i] as HTMLElement);
 
         this.btnMarkMissing.disabled = false;
+        this.domList.classList.remove('hidden');
     }
 
     /**
@@ -124,10 +197,10 @@ export class EditorPhrases
         this.clearHighlight();
         this.domList.innerText = '';
 
-        for (let key in VoxEditor.banker.captionBank)
+        for (let key in VoxEditor.captioner.captionBank)
         {
             let element = document.createElement('li');
-            let value   = VoxEditor.banker.captionBank[key];
+            let value   = VoxEditor.captioner.captionBank[key];
 
             element.dataset['key'] = key;
             element.innerHTML      = `<code>${key}</code> "${value}"`;
