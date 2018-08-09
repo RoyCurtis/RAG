@@ -733,6 +733,8 @@ declare class Phraser {
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Custom voice that synthesizes speech by piecing pre-recorded files together */
 declare class CustomVoice {
+    /** Base path for all custom voices. Can be changed. */
+    static BASE_PATH: string;
     /** Only present for consistency with SpeechSynthesisVoice */
     readonly default: boolean;
     /** Gets the BCP 47 tag indicating the language of this voice */
