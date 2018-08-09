@@ -1,10 +1,9 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/// <reference path="../../js/rag.d.ts"/>
-
 import {Captioner} from "./captioner";
 import {EditorConfig} from "./editorConfig";
 import {EditorViews} from "./ui/editorViews";
+import {VoiceManager} from "./voices/voiceManager";
 
 /** Main class of vox editor application in the renderer process */
 export class VoxEditor
@@ -17,6 +16,8 @@ export class VoxEditor
     public static database : Database;
     /** Gets the view controller, which manages UI interaction */
     public static views    : EditorViews;
+    /** Gets the voice manager */
+    public static voices   : VoiceManager;
 
     /** Entry point for VoxEditor when loading as the HTML view */
     public static main(dataRefs: DataRefs) : void
@@ -28,6 +29,7 @@ export class VoxEditor
         VoxEditor.config   = new EditorConfig(true);
         VoxEditor.database = new Database(dataRefs);
         VoxEditor.banker   = new Captioner();
+        VoxEditor.voices   = new VoiceManager();
         VoxEditor.views    = new EditorViews();
     }
 }

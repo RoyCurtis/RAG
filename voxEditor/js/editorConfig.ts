@@ -4,7 +4,9 @@
 export class EditorConfig
 {
     /** Recording device ID to use */
-    public deviceId : string = 'default';
+    public deviceId  : string = 'default';
+    /** Path of voice that was last being edited */
+    public voicePath : string = '';
 
     /** Safely loads runtime configuration from localStorage, if any */
     public constructor(load: boolean)

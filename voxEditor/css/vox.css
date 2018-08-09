@@ -43,6 +43,11 @@ h1 {
   flex-basis: 40%;
   overflow: auto;
 }
+#partSelector button {
+  margin: 16px 16px 0 16px;
+  padding: 8px;
+  width: -webkit-fill-available;
+}
 #partSelector ul {
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -69,8 +74,22 @@ h1 {
   color: #aaa;
   float: right;
 }
+#partSelector ul li.missing {
+  background: #642222;
+}
 #tapeDeck {
   flex-basis: 60%;
+}
+#tapeDeck form {
+  display: grid;
+  grid-template-columns: 20% 30% 20% 30%;
+}
+#tapeDeck form label,
+#tapeDeck form select,
+#tapeDeck form input {
+  font-size: large;
+  margin: 16px;
+  width: auto;
 }
 iframe {
   display: none;

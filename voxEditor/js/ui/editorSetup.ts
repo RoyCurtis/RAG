@@ -9,20 +9,36 @@ export class EditorSetup
 
     private readonly inputDevices : HTMLSelectElement;
 
+    private readonly inputVoices  : HTMLSelectElement;
+
     public constructor()
     {
         this.domForm      = DOM.require('#frmSetup');
         this.inputDevices = DOM.require('#selInputDevice');
+        this.inputVoices  = DOM.require('#selVoice');
 
         this.domForm.onchange = this.onFormChange.bind(this);
 
         navigator.mediaDevices.ondevicechange = this.onDevicesChanged.bind(this);
         this.onDevicesChanged();
+
+        if (VoxEditor.voices.list.length === 0)
+            DOM.addOption(this.inputVoices, 'None available').disabled = true;
+        else
+            VoxEditor.voices.list.forEach(voice =>
+            {
+                let option = DOM.addOption(this.inputVoices, voice.name, voice.voiceURI);
+
+                if (voice.voiceURI === VoxEditor.config.voicePath)
+                    option.selected = true;
+            });
     }
 
+    /** Handle form changes and input */
     private onFormChange() : void
     {
-        VoxEditor.config.deviceId = this.inputDevices.value;
+        VoxEditor.config.deviceId  = this.inputDevices.value;
+        VoxEditor.config.voicePath = this.inputVoices.value;
         VoxEditor.config.save();
     }
 
@@ -39,13 +55,11 @@ export class EditorSetup
                     if (device.kind !== 'audioinput')
                         return;
 
-                    let option = document.createElement('option') as HTMLOptionElement;
+                    DOM.addOption(this.inputDevices, device.label, device.deviceId);
+                });
 
-                    option.text  = device.label;
-                    option.value = device.deviceId;
-
-                    this.inputDevices.add(option);
-                })
+                if (this.inputDevices.children.length === 0)
+                    DOM.addOption(this.inputDevices, 'None available').disabled = true;
             });
     }
 }

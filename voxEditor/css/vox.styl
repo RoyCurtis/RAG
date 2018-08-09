@@ -26,11 +26,14 @@ h1
   border-bottom 2px solid $fgFocus
   padding       16px
 
-
-
 #partSelector
   flex-basis 40%
   overflow   auto
+
+  button
+    margin  16px 16px 0 16px
+    padding 8px
+    width   -webkit-fill-available
 
   ul
     unselectable()
@@ -52,8 +55,21 @@ h1
         color $fgDim
         float right
 
+      &.missing
+        background red($bgDarker, 100)
+
 #tapeDeck
   flex-basis 60%
+
+  form
+    display grid
+
+    grid-template-columns 20% 30% 20% 30%
+
+    label, select, input
+      font-size large
+      margin    16px
+      width     auto
 
 // Hides embedded phraseset XML documents
 iframe

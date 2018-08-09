@@ -26,6 +26,7 @@
   "compileOnSave": true,
 
   "include": [
-    "js/**/*"
+    "js/**/*",
+    "../js/rag.d.ts"
   ]
 }
