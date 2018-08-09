@@ -12,6 +12,7 @@ export class EditorPhrases
     /** Reference to the phrase search box */
     private readonly inputFind      : HTMLInputElement;
 
+    public  currentKey?       : string;
     /** Reference to the currently selected phrase entry */
     public  currentEntry?     : HTMLElement;
     /** Reference to the currently highlighted phrase entry */
@@ -35,7 +36,10 @@ export class EditorPhrases
     {
         this.visualSelect(item);
         this.checkMissing(item);
-        VoxEditor.views.tapedeck.load( item.dataset['key']! );
+
+        this.currentKey = item.dataset['key']!;
+
+        VoxEditor.views.tapedeck.load(this.currentKey);
         VoxEditor.views.tapedeck.update();
     }
 

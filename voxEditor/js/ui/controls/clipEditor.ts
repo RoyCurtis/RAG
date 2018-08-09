@@ -55,8 +55,8 @@ export class ClipEditor
             avg /= step;
 
             this.context.fillStyle = '#CC7E00';
-            this.context.fillRect( x - 2, height / 2, 1, avg * -(height / 1.5) );
-            this.context.fillRect( x - 2, height / 2, 1, avg *  (height / 1.5) );
+            this.context.fillRect( x, height / 2, 1, avg * -(height / 1.5) );
+            this.context.fillRect( x, height / 2, 1, avg *  (height / 1.5) );
         }
     }
 }

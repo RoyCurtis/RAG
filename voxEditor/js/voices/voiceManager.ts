@@ -64,7 +64,13 @@ export class VoiceManager
         return fs.existsSync(clipPath) && fs.lstatSync(clipPath).isFile();
     }
 
-    public async loadClip(key: string) : Promise<undefined>
+    public loadFromBuffer(key: string, buffer: AudioBuffer) : void
+    {
+        this.currentClip = buffer;
+        this.currentPath = this.keyToPath(key);
+    }
+
+    public async loadFromDisk(key: string) : Promise<undefined>
     {
         if ( !this.hasClip(key) )
         {
@@ -83,7 +89,7 @@ export class VoiceManager
             // the mp3 files exported from Audacity.
 
             let path         = this.keyToPath(key);
-            let buffer       = fs.readFileSync( this.keyToPath(key) );
+            let buffer       = fs.readFileSync(path);
             let arrayBuffer  = buffer.buffer.slice(0);
             this.currentClip = await this.audioContext.decodeAudioData(arrayBuffer);
             this.currentPath = path;

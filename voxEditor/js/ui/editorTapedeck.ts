@@ -43,6 +43,7 @@ export class EditorTapedeck
         this.btnPrev.onclick  = this.onPrev.bind(this);
         this.btnPlay.onclick  = this.onPlay.bind(this);
         this.btnStop.onclick  = this.onStop.bind(this);
+        this.btnRec.onclick   = this.onRec.bind(this);
         this.btnNext.onclick  = this.onNext.bind(this);
     }
 
@@ -53,7 +54,7 @@ export class EditorTapedeck
         this.lblId.innerText      = `Loading '${key}'...`;
         this.lblCaption.innerText = `Loading from: ${path}`;
 
-        VoxEditor.voices.loadClip(key)
+        VoxEditor.voices.loadFromDisk(key)
             .then ( this.onLoadSuccess.bind(this) )
             .catch( this.update.bind(this)        );
     }
@@ -75,7 +76,7 @@ export class EditorTapedeck
         if (!currentTrack)
             return;
 
-        let key = currentTrack.dataset['key']!;
+        let key = VoxEditor.views.phrases.currentKey!;
 
         this.lblId.innerText      = key;
         this.lblCaption.innerText = VoxEditor.captioner.captionBank[key];
@@ -84,8 +85,10 @@ export class EditorTapedeck
         this.btnNext.disabled = false;
 
         // Check if we can record
-        if (VoxEditor.mics.micTrack)
+        if (VoxEditor.mics.micDevice)
             this.btnRec.disabled = false;
+        else
+            this.btnRec.classList.remove('recording');
 
         if (VoxEditor.voices.currentClip)
         {
@@ -108,6 +111,19 @@ export class EditorTapedeck
     private onStop() : void
     {
         VoxEditor.voices.stopClip();
+    }
+
+    private onRec() : void
+    {
+        let recording = this.btnRec.classList.toggle('recording');
+
+        if (recording)
+            VoxEditor.mics.startRecording();
+        else
+        {
+            VoxEditor.mics.stopRecording();
+            this.update();
+        }
     }
 
     private onNext() : void
