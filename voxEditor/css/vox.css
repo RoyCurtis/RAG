@@ -167,11 +167,24 @@ h1 {
   font-size: x-large;
   height: 100px;
 }
-#tapeDeck #frmTapedeck .peaks {
+.clipEditor {
   align-self: stretch;
   justify-self: flex-end;
-  background: #aaa;
   height: 300px;
+  position: relative;
+}
+.clipEditor > * {
+  position: absolute;
+}
+.clipEditor .title {
+  font-size: large;
+  font-family: monospace;
+  margin-top: 8px;
+  text-align: center;
+  width: 100%;
+}
+.clipEditor canvas {
+  background: #222;
 }
 iframe {
   display: none;

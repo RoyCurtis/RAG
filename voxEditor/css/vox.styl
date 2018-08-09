@@ -116,11 +116,24 @@ h1
       font-size x-large
       height    100px
 
-    .peaks
-      align-self stretch
-      justify-self flex-end
-      background $fgDim
-      height     300px
+.clipEditor
+  align-self   stretch
+  justify-self flex-end
+  height       300px
+  position     relative
+
+  > *
+    position absolute
+
+  .title
+    font-size   large
+    font-family monospace
+    margin-top  8px
+    text-align  center
+    width       100%
+
+  canvas
+    background $bgDarker
 
 
 // Hides embedded phraseset XML documents

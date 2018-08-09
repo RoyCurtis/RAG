@@ -18,6 +18,8 @@ export class VoiceManager
 
     public currentClip? : AudioBuffer;
 
+    public currentPath? : string;
+
     public constructor()
     {
         this.list         = [];
@@ -58,7 +60,10 @@ export class VoiceManager
     public async loadClip(key: string) : Promise<undefined>
     {
         if ( !this.hasClip(key) )
+        {
             this.currentClip = undefined;
+            this.currentPath = undefined;
+        }
         else
         {
             // For some reason, we have to copy the given buffer using slice. Else, repeat
@@ -66,9 +71,11 @@ export class VoiceManager
             // possible because decodeAudioData holds a copy of the given buffer,
             // preventing the release of resources held by readFileSync.
 
+            let path         = this.keyToPath(key);
             let buffer       = fs.readFileSync( this.keyToPath(key) );
             let arrayBuffer  = buffer.buffer.slice(0);
             this.currentClip = await this.audioContext.decodeAudioData(arrayBuffer);
+            this.currentPath = path;
         }
 
         return;

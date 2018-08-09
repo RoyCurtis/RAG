@@ -1,15 +1,14 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 import {VoxEditor} from "../voxEditor";
+import {ClipEditor} from "./controls/clipEditor";
 
-/** Controller for the tapedeck part of the editor */
+/** Controller for the tape deck part of the editor */
 export class EditorTapedeck
 {
+    private readonly clipEditor   : ClipEditor;
+
     private readonly domForm      : HTMLFormElement;
-
-    private readonly domAudio     : HTMLAudioElement;
-
-    private readonly domPeaks     : HTMLDivElement;
 
     private readonly btnPrev      : HTMLButtonElement;
 
@@ -27,22 +26,18 @@ export class EditorTapedeck
 
     private readonly lblCaption   : HTMLParagraphElement;
 
-    private peaks?     : peaks;
-
-
     public constructor()
     {
-        this.domForm      = DOM.require('#frmTapedeck');
-        this.domAudio     = DOM.require('.peaksAudio', this.domForm);
-        this.domPeaks     = DOM.require('.peaks',      this.domForm);
-        this.btnPrev      = DOM.require('#btnPrev',    this.domForm);
-        this.btnPlay      = DOM.require('#btnPlay',    this.domForm);
-        this.btnStop      = DOM.require('#btnStop',    this.domForm);
-        this.btnRec       = DOM.require('#btnRec',     this.domForm);
-        this.btnSave      = DOM.require('#btnSave',    this.domForm);
-        this.btnNext      = DOM.require('#btnNext',    this.domForm);
-        this.lblId        = DOM.require('.id',         this.domForm);
-        this.lblCaption   = DOM.require('.caption',    this.domForm);
+        this.clipEditor = new ClipEditor('.clipEditor');
+        this.domForm    = DOM.require('#frmTapedeck');
+        this.btnPrev    = DOM.require('#btnPrev',    this.domForm);
+        this.btnPlay    = DOM.require('#btnPlay',    this.domForm);
+        this.btnStop    = DOM.require('#btnStop',    this.domForm);
+        this.btnRec     = DOM.require('#btnRec',     this.domForm);
+        this.btnSave    = DOM.require('#btnSave',    this.domForm);
+        this.btnNext    = DOM.require('#btnNext',    this.domForm);
+        this.lblId      = DOM.require('.id',         this.domForm);
+        this.lblCaption = DOM.require('.caption',    this.domForm);
 
         this.domForm.onsubmit = ev => ev.preventDefault();
         this.btnPrev.onclick  = this.onPrev.bind(this);
@@ -71,28 +66,30 @@ export class EditorTapedeck
         this.btnSave.disabled = true;
         this.btnNext.disabled = true;
 
+        this.clipEditor.redraw();
+
         // Check if a track has actually been selected
         let currentTrack = VoxEditor.views.phrases.currentEntry;
-        if (currentTrack)
+        if (!currentTrack)
+            return;
+
+        let key = currentTrack.dataset['key']!;
+
+        this.lblId.innerText      = key;
+        this.lblCaption.innerText = VoxEditor.captioner.captionBank[key];
+
+        this.btnPrev.disabled = false;
+        this.btnNext.disabled = false;
+
+        // Check if we can record
+        if (VoxEditor.mics.micTrack)
+            this.btnRec.disabled = false;
+
+        if (VoxEditor.voices.currentClip)
         {
-            let key = currentTrack.dataset['key']!;
-
-            this.lblId.innerText      = key;
-            this.lblCaption.innerText = VoxEditor.captioner.captionBank[key];
-
-            this.btnPrev.disabled = false;
-            this.btnNext.disabled = false;
-
-            // Check if we can record
-            if (VoxEditor.mics.micTrack)
-                this.btnRec.disabled = false;
-
-            if (VoxEditor.voices.currentClip)
-            {
-                this.btnPlay.disabled = false;
-                this.btnStop.disabled = false;
-                this.btnSave.disabled = false;
-            }
+            this.btnPlay.disabled = false;
+            this.btnStop.disabled = false;
+            this.btnSave.disabled = false;
         }
     }
 
