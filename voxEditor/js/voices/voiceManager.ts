@@ -16,9 +16,11 @@ export class VoiceManager
 
     public readonly audioContext : AudioContext;
 
-    public currentClip? : AudioBuffer;
+    public  currentClip?    : AudioBuffer;
 
-    public currentPath? : string;
+    public  currentPath?    : string;
+    /** Audio buffer node holding and playing the current voice clip */
+    private currentBufNode? : AudioBufferSourceNode;
 
     public constructor()
     {
@@ -46,6 +48,11 @@ export class VoiceManager
             });
     }
 
+    public keyToPath(key: string) : string
+    {
+        return path.join(VoxEditor.config.voicePath, `${key}.mp3`);
+    }
+
     public hasClip(key: string) : boolean
     {
         // If no voice path available, skip
@@ -71,6 +78,10 @@ export class VoiceManager
             // possible because decodeAudioData holds a copy of the given buffer,
             // preventing the release of resources held by readFileSync.
 
+            // TODO: BUG: There appears to be a Chromium bug, where some clips repeat
+            // themselves after being loaded multiple times. It may just be an issue with
+            // the mp3 files exported from Audacity.
+
             let path         = this.keyToPath(key);
             let buffer       = fs.readFileSync( this.keyToPath(key) );
             let arrayBuffer  = buffer.buffer.slice(0);
@@ -81,8 +92,30 @@ export class VoiceManager
         return;
     }
 
-    public keyToPath(key: string) : string
+    public playClip() : void
     {
-        return path.join(VoxEditor.config.voicePath, `${key}.mp3`);
+        if (!this.currentClip)
+            return;
+
+        this.stopClip();
+        this.currentBufNode        = this.audioContext.createBufferSource();
+        this.currentBufNode.buffer = this.currentClip;
+
+        // Only connect to reverb if it's available
+        this.currentBufNode.connect(this.audioContext.destination);
+        this.currentBufNode.start();
+
+        this.currentBufNode.onended = _ => { this.currentBufNode = undefined; };
+    }
+
+    public stopClip() : void
+    {
+        if (!this.currentBufNode)
+            return;
+
+        this.currentBufNode.onended = null;
+        this.currentBufNode.stop();
+        this.currentBufNode.disconnect();
+        this.currentBufNode = undefined;
     }
 }

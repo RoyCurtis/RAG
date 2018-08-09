@@ -41,6 +41,8 @@ export class EditorTapedeck
 
         this.domForm.onsubmit = ev => ev.preventDefault();
         this.btnPrev.onclick  = this.onPrev.bind(this);
+        this.btnPlay.onclick  = this.onPlay.bind(this);
+        this.btnStop.onclick  = this.onStop.bind(this);
         this.btnNext.onclick  = this.onNext.bind(this);
     }
 
@@ -96,6 +98,16 @@ export class EditorTapedeck
     private onPrev() : void
     {
         VoxEditor.views.phrases.selectPrev();
+    }
+
+    private onPlay() : void
+    {
+        VoxEditor.voices.playClip();
+    }
+
+    private onStop() : void
+    {
+        VoxEditor.voices.stopClip();
     }
 
     private onNext() : void
