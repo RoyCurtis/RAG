@@ -1,6 +1,6 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-import {Captioner} from "./captioner";
+import {Captioner} from "./voices/captioner";
 import {EditorConfig} from "./editorConfig";
 import {EditorViews} from "./ui/editorViews";
 import {VoiceManager} from "./voices/voiceManager";
@@ -9,7 +9,7 @@ import {VoiceManager} from "./voices/voiceManager";
 export class VoxEditor
 {
     /** Gets the voice bank generator, which turns phrase data into a set of IDs */
-    public static banker   : Captioner;
+    public static captioner : Captioner;
     /** Gets the configuration holder */
     public static config   : EditorConfig;
     /** Gets the database manager, which holds phrase, station and train data */
@@ -28,8 +28,8 @@ export class VoxEditor
 
         VoxEditor.config   = new EditorConfig(true);
         VoxEditor.database = new Database(dataRefs);
-        VoxEditor.banker   = new Captioner();
         VoxEditor.voices   = new VoiceManager();
         VoxEditor.views    = new EditorViews();
+        VoxEditor.captioner = new Captioner();
     }
 }

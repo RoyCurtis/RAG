@@ -1,8 +1,8 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/// <reference path="../../js/rag.d.ts"/>
+/// <reference path="../../../js/rag.d.ts"/>
 
-import {VoxEditor} from "./voxEditor";
+import {VoxEditor} from "../voxEditor";
 
 /** Represents a dictionary of voice keys and their captions */
 export type PhraseCaptions = {[id: string] : string};
