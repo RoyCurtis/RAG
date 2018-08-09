@@ -40,6 +40,7 @@ export class EditorSetup
         VoxEditor.config.deviceId  = this.inputDevices.value;
         VoxEditor.config.voicePath = this.inputVoices.value;
         VoxEditor.config.save();
+        VoxEditor.mics.load();
     }
 
     /** Handles changes to input devices */
@@ -60,6 +61,8 @@ export class EditorSetup
 
                 if (this.inputDevices.children.length === 0)
                     DOM.addOption(this.inputDevices, 'None available').disabled = true;
+
+                VoxEditor.mics.load();
             });
     }
 }
