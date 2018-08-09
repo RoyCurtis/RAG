@@ -3,5 +3,10 @@
 /** UI component for interacting with audio waveforms */
 declare class peaks
 {
-    static init() : peaks;
+    static init(options: peaksOptions) : peaks;
+}
+
+declare interface peaksOptions
+{
+
 }
