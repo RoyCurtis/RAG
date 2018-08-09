@@ -95,8 +95,11 @@ h1 {
 #partSelector ul li.highlight {
   background: #444;
 }
-#partSelector ul li.selected {
+#partSelector ul li.selected,
+#partSelector ul li.selected code {
   background: #cc7e00;
+  color: #fff;
+  fill: #fff;
 }
 #tapeDeck {
   flex-basis: 60%;
@@ -122,9 +125,38 @@ h1 {
   margin: 16px 16px 0 16px;
 }
 #tapeDeck #frmTapedeck menu button {
+  background: #222;
+  border: none;
+  box-shadow: 0 0 8px #222;
+  color: #f5f5f5;
+  cursor: pointer;
+  fill: #f5f5f5;
   font-size: large;
+  height: 48px;
   margin: 8px;
   padding: 8px;
+}
+#tapeDeck #frmTapedeck menu button:hover {
+  background: #444;
+}
+#tapeDeck #frmTapedeck menu button:active {
+  background: #000;
+  color: #aaa;
+  fill: #aaa;
+  box-shadow: 0 0 4px #000 inset;
+}
+#tapeDeck #frmTapedeck menu button:disabled {
+  background: #222;
+  color: #444;
+  cursor: default;
+  fill: #444;
+}
+#tapeDeck #frmTapedeck menu button:disabled:active {
+  background: #222;
+}
+#tapeDeck #frmTapedeck menu button svg {
+  width: 32px;
+  height: 32px;
 }
 #tapeDeck #frmTapedeck .id {
   color: #aaa;

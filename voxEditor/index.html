@@ -41,17 +41,35 @@
 
     <form id="frmTapedeck">
       <menu>
-        <button>Prev. clip</button>
-        <button>Play</button>
-        <button>Record</button>
-        <button>Next clip</button>
+        <button disabled id="btnPrev" title="Previous track (LEFT ARROW)">
+          <svg><use xlink:href="../css/icons/icoMoon.svg#icon-prev"></use></svg>
+        </button>
+        <button disabled id="btnPlay" title="Play (SPACE)">
+          <svg><use xlink:href="../css/icons/icoMoon.svg#icon-play"></use></svg>
+        </button>
+        <button disabled id="btnStop" title="Stop (SPACE)">
+          <svg><use xlink:href="../css/icons/icoMoon.svg#icon-stop"></use></svg>
+        </button>
+        <button disabled id="btnRec" title="Record (R)">
+          <svg><use xlink:href="../css/icons/icoMoon.svg#icon-mic"></use></svg>
+        </button>
+        <button disabled id="btnSave" title="Save (S)">
+          <svg><use xlink:href="../css/icons/icoMoon.svg#icon-save"></use></svg>
+        </button>
+        <button disabled id="btnNext" title="Next track (RIGHT ARROW)">
+          <svg><use xlink:href="../css/icons/icoMoon.svg#icon-next"></use></svg>
+        </button>
       </menu>
 
-      <p class="id">id goes here</p>
+      <p class="id">Select a phrase</p>
 
-      <p class="caption">caption goes here</p>
+      <p class="caption">
+        Select a phrase on the left list, to record or edit it.
+      </p>
 
       <div class="peaks"></div>
+
+      <audio class="peaksAudio"></audio>
     </form>
 
   </section>

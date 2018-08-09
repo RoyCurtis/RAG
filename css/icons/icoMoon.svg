@@ -27,5 +27,14 @@
 <symbol id="icon-arrow-down" viewBox="0 0 32 32">
 <path d="M16 31l15-15h-9v-16h-12v16h-9z"></path>
 </symbol>
+<symbol id="icon-mic" viewBox="0 0 32 32">
+<path d="M15 22c2.761 0 5-2.239 5-5v-12c0-2.761-2.239-5-5-5s-5 2.239-5 5v12c0 2.761 2.239 5 5 5zM22 14v3c0 3.866-3.134 7-7 7s-7-3.134-7-7v-3h-2v3c0 4.632 3.5 8.447 8 8.944v4.056h-4v2h10v-2h-4v-4.056c4.5-0.497 8-4.312 8-8.944v-3h-2z"></path>
+</symbol>
+<symbol id="icon-prev" viewBox="0 0 32 32">
+<path d="M4 28v-24h4v11l10-10v10l10-10v22l-10-10v10l-10-10v11z"></path>
+</symbol>
+<symbol id="icon-next" viewBox="0 0 32 32">
+<path d="M28 4v24h-4v-11l-10 10v-10l-10 10v-22l10 10v-10l10 10v-11z"></path>
+</symbol>
 </defs>
 </svg>

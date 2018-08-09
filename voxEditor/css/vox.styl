@@ -73,8 +73,8 @@ h1
       &.highlight
         background $bgDark
 
-      &.selected
-        background $fgFocus
+      &.selected, &.selected code
+        backAndForeColor($fgFocus, $fgBrightest)
 
 #tapeDeck
   flex-basis 60%
@@ -97,9 +97,15 @@ h1
       margin 16px 16px 0 16px
 
     menu button
+      pressable()
       font-size large
+      height    48px
       margin    8px
       padding   8px
+
+      svg
+        width  32px
+        height 32px
 
     .id
       color       $fgDim
