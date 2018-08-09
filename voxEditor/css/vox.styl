@@ -30,10 +30,22 @@ h1
   flex-basis 40%
   overflow   auto
 
-  button
-    margin  16px 16px 0 16px
-    padding 8px
-    width   -webkit-fill-available
+  menu
+    flexbox()
+    padding  16px 16px 0 16px
+    position sticky
+    top      0
+
+    input, button
+      font-size large
+      padding   8px
+
+    input
+      border    none
+      flex-grow 1
+
+      &.noMatches
+        background lightness($bgPanic, 80%)
 
   ul
     unselectable()
@@ -58,6 +70,12 @@ h1
       &.missing
         background red($bgDarker, 100)
 
+      &.highlight
+        background $bgDark
+
+      &.selected
+        background $fgFocus
+
 #tapeDeck
   flex-basis 60%
 
@@ -75,6 +93,9 @@ h1
     flexbox(column)
     align-items center
 
+    > *
+      margin 16px 16px 0 16px
+
     menu button
       font-size large
       margin    8px
@@ -87,9 +108,14 @@ h1
 
     .caption
       font-size x-large
+      height    100px
 
-    > *
-      margin 16px 16px 0 16px
+    .peaks
+      align-self stretch
+      justify-self flex-end
+      background $fgDim
+      height     300px
+
 
 // Hides embedded phraseset XML documents
 iframe

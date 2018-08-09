@@ -43,10 +43,25 @@ h1 {
   flex-basis: 40%;
   overflow: auto;
 }
-#partSelector button {
-  margin: 16px 16px 0 16px;
+#partSelector menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 16px 16px 0 16px;
+  position: sticky;
+  top: 0;
+}
+#partSelector menu input,
+#partSelector menu button {
+  font-size: large;
   padding: 8px;
-  width: -webkit-fill-available;
+}
+#partSelector menu input {
+  border: none;
+  flex-grow: 1;
+}
+#partSelector menu input.noMatches {
+  background: #f2a6a6;
 }
 #partSelector ul {
   -webkit-user-select: none;
@@ -77,6 +92,12 @@ h1 {
 #partSelector ul li.missing {
   background: #642222;
 }
+#partSelector ul li.highlight {
+  background: #444;
+}
+#partSelector ul li.selected {
+  background: #cc7e00;
+}
 #tapeDeck {
   flex-basis: 60%;
 }
@@ -97,6 +118,9 @@ h1 {
   justify-content: flex-start;
   align-items: center;
 }
+#tapeDeck #frmTapedeck > * {
+  margin: 16px 16px 0 16px;
+}
 #tapeDeck #frmTapedeck menu button {
   font-size: large;
   margin: 8px;
@@ -109,9 +133,13 @@ h1 {
 }
 #tapeDeck #frmTapedeck .caption {
   font-size: x-large;
+  height: 100px;
 }
-#tapeDeck #frmTapedeck > * {
-  margin: 16px 16px 0 16px;
+#tapeDeck #frmTapedeck .peaks {
+  align-self: stretch;
+  justify-self: flex-end;
+  background: #aaa;
+  height: 300px;
 }
 iframe {
   display: none;
