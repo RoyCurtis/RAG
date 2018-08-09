@@ -2,18 +2,22 @@
 
 import {EditorPhrases} from "./editorPhrases";
 import {EditorSetup} from "./editorSetup";
+import {EditorTapedeck} from "./editorTapedeck";
 
 /** Manages vox editor UI elements and their logic */
 export class EditorViews
 {
-    /** Reference to the main marquee component */
-    public readonly phrases : EditorPhrases;
-    /** Reference to the main editor component */
-    public readonly setup   : EditorSetup;
+    /** Reference to the phrase list component */
+    public readonly phrases  : EditorPhrases;
+    /** Reference to the setup component*/
+    public readonly setup    : EditorSetup;
+    /** Reference to the tapedeck component */
+    public readonly tapedeck : EditorTapedeck;
 
     public constructor()
     {
-        this.setup   = new EditorSetup();
-        this.phrases = new EditorPhrases();
+        this.phrases  = new EditorPhrases();
+        this.setup    = new EditorSetup();
+        this.tapedeck = new EditorTapedeck();
     }
 }

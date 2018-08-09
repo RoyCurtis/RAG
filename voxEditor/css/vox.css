@@ -80,16 +80,38 @@ h1 {
 #tapeDeck {
   flex-basis: 60%;
 }
-#tapeDeck form {
+#tapeDeck #frmSetup {
   display: grid;
   grid-template-columns: 20% 30% 20% 30%;
 }
-#tapeDeck form label,
-#tapeDeck form select,
-#tapeDeck form input {
+#tapeDeck #frmSetup label,
+#tapeDeck #frmSetup select,
+#tapeDeck #frmSetup input {
   font-size: large;
   margin: 16px;
   width: auto;
+}
+#tapeDeck #frmTapedeck {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+#tapeDeck #frmTapedeck menu button {
+  font-size: large;
+  margin: 8px;
+  padding: 8px;
+}
+#tapeDeck #frmTapedeck .id {
+  color: #aaa;
+  font-size: large;
+  font-family: monospace;
+}
+#tapeDeck #frmTapedeck .caption {
+  font-size: x-large;
+}
+#tapeDeck #frmTapedeck > * {
+  margin: 16px 16px 0 16px;
 }
 iframe {
   display: none;

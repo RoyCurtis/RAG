@@ -61,7 +61,7 @@ h1
 #tapeDeck
   flex-basis 60%
 
-  form
+  #frmSetup
     display grid
 
     grid-template-columns 20% 30% 20% 30%
@@ -70,6 +70,26 @@ h1
       font-size large
       margin    16px
       width     auto
+
+  #frmTapedeck
+    flexbox(column)
+    align-items center
+
+    menu button
+      font-size large
+      margin    8px
+      padding   8px
+
+    .id
+      color       $fgDim
+      font-size   large
+      font-family monospace
+
+    .caption
+      font-size x-large
+
+    > *
+      margin 16px 16px 0 16px
 
 // Hides embedded phraseset XML documents
 iframe
