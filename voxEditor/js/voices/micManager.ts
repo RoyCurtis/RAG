@@ -2,18 +2,11 @@
 
 import {VoxEditor} from "../voxEditor";
 import {MicWorkletNode} from "./micWorkletNode";
-import {Normalizer} from "../util/normalizer";
 
 /** Manages available microphones and input streams */
 export class MicManager
 {
     private readonly audioContext : AudioContext;
-
-    private readonly compressor   : DynamicsCompressorNode;
-
-    private readonly trebleBoost  : BiquadFilterNode;
-
-    private readonly hardLimiter  : DynamicsCompressorNode;
 
     public  micDevice? : MediaStream;
 
@@ -31,30 +24,7 @@ export class MicManager
 
     public constructor()
     {
-        // Chain:
-        // mediaSource > compressor > bass > treble > worklet > audiocontext
-
         this.audioContext = new AudioContext();
-        this.compressor   = this.audioContext.createDynamicsCompressor();
-        this.trebleBoost  = this.audioContext.createBiquadFilter();
-        this.hardLimiter  = this.audioContext.createDynamicsCompressor();
-
-        // https://www.instructables.com/id/How-to-Improve-Vocal-Quality-in-Audacity/
-        // https://stackoverflow.com/questions/29110380/web-audio-api-setting-treble-and-bass
-        this.compressor.threshold.value = -18;
-        this.compressor.ratio.value     = 2.5;
-        this.compressor.release.value   = 1;
-
-        this.trebleBoost.type            = 'highshelf';
-        this.trebleBoost.frequency.value = 5000;
-        this.trebleBoost.gain.value      = 9;
-
-        // https://codepen.io/andremichelle/pen/WbqrYN
-        this.hardLimiter.threshold.value = 0;
-        this.hardLimiter.knee.value      = 0;
-        this.hardLimiter.ratio.value     = 20;
-        this.hardLimiter.attack.value    = 0.005;
-        this.hardLimiter.release.value   = 0.050;
 
         fetch('dist/voices/micWorklet.js')
             .then( req => req.text() )
@@ -70,9 +40,6 @@ export class MicManager
             {
                 this.workletNode = new MicWorkletNode(this.audioContext);
                 this.workletNode.connect(this.audioContext.destination);
-                this.compressor.connect(this.trebleBoost);
-                this.trebleBoost.connect(this.hardLimiter);
-                this.hardLimiter.connect(this.workletNode);
                 VoxEditor.views.tapedeck.update();
             })
             .catch(console.error);
@@ -131,7 +98,7 @@ export class MicManager
         this.micDevice!.getTracks().forEach(t => t.enabled = true);
 
         this.streamNode = this.audioContext.createMediaStreamSource(this.micDevice!);
-        this.streamNode.connect(this.compressor);
+        this.streamNode.connect(this.workletNode!);
 
         this.buffers = [];
 
@@ -190,7 +157,6 @@ export class MicManager
         }
 
         this.buffers = undefined;
-        Normalizer.process(buffer);
         VoxEditor.voices.loadFromBuffer(key, buffer);
         VoxEditor.views.tapedeck.onPlay();
     }

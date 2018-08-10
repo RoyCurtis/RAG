@@ -34,6 +34,7 @@ class Speech
         this.voxEngine = new VoxEngine();
 
         this.customVoices.push( new CustomVoice('Test', 'en-GB') );
+        this.customVoices.push( new CustomVoice('Roy',  'en-GB') );
     }
 
     /** Gets all the voices currently available */
