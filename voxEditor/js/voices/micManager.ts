@@ -16,10 +16,7 @@ export class MicManager
     public constructor()
     {
         this.sampleRate   = 0;
-        this.audioContext = new AudioContext({
-            sampleRate  : 16000,
-            latencyHint : 'playback'
-        });
+        this.audioContext = new AudioContext();
     }
 
     public load() : void

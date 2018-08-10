@@ -46,12 +46,14 @@ class Config
     /** Safely loads runtime configuration from localStorage, if any */
     public constructor(load: boolean)
     {
-        if (!load || !window.localStorage['settings'])
+        let settings = window.localStorage.getItem('settings');
+
+        if (!load || !settings)
             return;
 
         try
         {
-            let config = JSON.parse(window.localStorage['settings']);
+            let config = JSON.parse(settings);
             Object.assign(this, config);
         }
         catch (e)
@@ -66,7 +68,7 @@ class Config
     {
         try
         {
-            window.localStorage['settings'] = JSON.stringify(this);
+            window.localStorage.setItem( 'settings', JSON.stringify(this) );
         }
         catch (e)
         {

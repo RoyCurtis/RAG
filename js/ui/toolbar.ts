@@ -88,7 +88,7 @@ class Toolbar
         {
             let css = 'font-size: large; font-weight: bold;';
             let raw = JSON.stringify(RAG.state);
-            window.localStorage['state'] = raw;
+            window.localStorage.setItem('state', raw);
 
             console.log(L.STATE_COPY_PASTE(), css);
             console.log("RAG.load('", raw.replace("'", "\\'"), "')");
@@ -106,7 +106,7 @@ class Toolbar
     /** Handles the load button, loading train state from storage, if it exists */
     private handleLoad() : void
     {
-        let data = window.localStorage['state'];
+        let data = window.localStorage.getItem('state');
 
         return data
             ? RAG.load(data)

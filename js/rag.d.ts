@@ -16,15 +16,15 @@ declare class I18n {
      *
      * @see https://stackoverflow.com/a/10730777/3354920
      */
-    private static applyToDom();
+    private static applyToDom;
     /** Filters the tree walker to exclude script and style tags */
-    private static nodeFilter(node);
+    private static nodeFilter;
     /** Expands any translation keys in the given attribute */
-    private static expandAttribute(attr);
+    private static expandAttribute;
     /** Expands any translation keys in the given text node */
-    private static expandTextNode(node);
+    private static expandTextNode;
     /** Replaces key with value if it exists, else keeps the key */
-    private static replace(match);
+    private static replace;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Delegate type for chooser select event handlers */
@@ -34,7 +34,7 @@ declare class Chooser {
     /** Reference to the DOM template to clone, for each chooser created */
     private static TEMPLATE;
     /** Creates and detaches the template on first create */
-    private static init();
+    private static init;
     /** Reference to this chooser's container */
     protected readonly dom: HTMLElement;
     /** Reference to this chooser's filter input box */
@@ -126,9 +126,9 @@ declare class StationChooser extends Chooser {
     /** Disables the given station code from selection */
     disable(code: string): void;
     /** Gets a station's choice element by its code */
-    private getByCode(code);
+    private getByCode;
     /** Populates the chooser with the given station code */
-    private addStation(code);
+    private addStation;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Station list item that can be dragged and dropped */
@@ -136,7 +136,7 @@ declare class StationListItem {
     /** Reference to the DOM template to clone, for each item created */
     private static TEMPLATE;
     /** Creates and detaches the template on first create */
-    private static init();
+    private static init;
     /** Reference to this item's element */
     readonly dom: HTMLElement;
     /**
@@ -223,7 +223,7 @@ declare class ExcusePicker extends Picker {
     protected onInput(ev: KeyboardEvent): void;
     protected onSubmit(ev: Event): void;
     /** Handles chooser selection by updating the excuse element and state */
-    private onSelect(entry);
+    private onSelect;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the integer picker dialog */
@@ -263,7 +263,7 @@ declare class NamedPicker extends Picker {
     protected onInput(ev: KeyboardEvent): void;
     protected onSubmit(ev: Event): void;
     /** Handles chooser selection by updating the named element and state */
-    private onSelect(entry);
+    private onSelect;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the phraseset picker dialog */
@@ -282,7 +282,7 @@ declare class PhrasesetPicker extends Picker {
     protected onInput(ev: KeyboardEvent): void;
     protected onSubmit(ev: Event): void;
     /** Handles chooser selection by updating the phraseset element and state */
-    private onSelect(entry);
+    private onSelect;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the platform picker dialog */
@@ -316,7 +316,7 @@ declare class ServicePicker extends Picker {
     protected onInput(ev: KeyboardEvent): void;
     protected onSubmit(ev: Event): void;
     /** Handles chooser selection by updating the service element and state */
-    private onSelect(entry);
+    private onSelect;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the station picker dialog */
@@ -337,7 +337,7 @@ declare class StationPicker extends Picker {
     protected onInput(ev: KeyboardEvent): void;
     protected onSubmit(ev: Event): void;
     /** Handles chooser selection by updating the station element and state */
-    private onSelectStation(entry);
+    private onSelectStation;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the station list picker dialog */
@@ -369,25 +369,25 @@ declare class StationListPicker extends StationPicker {
     /** Handles keyboard navigation for the station list builder */
     protected onInput(ev: KeyboardEvent): void;
     /** Handler for when a station is chosen */
-    private onAddStation(entry);
+    private onAddStation;
     /** Fixes mirrors not having correct width of the source element, on create */
-    private onDragMirrorCreate(ev);
+    private onDragMirrorCreate;
     /** Handles draggable station name being dropped */
-    private onDragStop(ev);
+    private onDragStop;
     /**
      * Creates and adds a new entry for the builder list.
      *
      * @param code Three-letter station code to create an item for
      */
-    private add(code);
+    private add;
     /**
      * Removes the given station entry element from the builder.
      *
      * @param entry Element of the station entry to remove
      */
-    private remove(entry);
+    private remove;
     /** Updates the station list element and state currently being edited */
-    private update();
+    private update;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the time picker dialog */
@@ -706,7 +706,7 @@ declare class ElementProcessors {
      * Clones the children of the given element into a new inner span tag, so that they
      * can be made collapsible. Appends it to the new element being processed.
      */
-    private static makeCollapsible(ctx, source, ref);
+    private static makeCollapsible;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Represents context data for a phrase, to be passed to an element processor */
@@ -762,25 +762,25 @@ declare class Resolver {
      */
     resolve(node: Node): string[];
     /** Resolve text nodes from phrases and phrasesets to ID strings */
-    private resolveText(node);
+    private resolveText;
     /** Resolve ID from a given coach element and current state */
-    private resolveCoach(element);
+    private resolveCoach;
     /** Resolve ID from a given excuse element and current state */
-    private resolveExcuse();
+    private resolveExcuse;
     /** Resolve IDs from a given integer element and current state */
-    private resolveInteger(element);
+    private resolveInteger;
     /** Resolve ID from a given named element and current state */
-    private resolveNamed();
+    private resolveNamed;
     /** Resolve IDs from a given platform element and current state */
-    private resolvePlatform();
+    private resolvePlatform;
     /** Resolve IDs from a given time element and current state */
-    private resolveTime(element);
+    private resolveTime;
     /** Resolve ID from a given service element and current state */
-    private resolveService(element);
+    private resolveService;
     /** Resolve ID from a given station element and current state */
-    private resolveStation(element);
+    private resolveStation;
     /** Resolve IDs from a given station list element and current state */
-    private resolveStationList(element);
+    private resolveStationList;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Union type for both kinds of voices available */
@@ -801,9 +801,9 @@ declare class Speech {
     /** Stops and cancels all queued speech */
     cancel(): void;
     /** Pause and unpause speech if the page is hidden or unhidden */
-    private onVisibilityChange();
+    private onVisibilityChange;
     /** Handles async voice list loading on some browsers, and sets default */
-    private onVoicesChanged();
+    private onVoicesChanged;
     /**
      * Converts the given phrase to text and speaks it via native browser voices.
      *
@@ -811,7 +811,7 @@ declare class Speech {
      * @param voice Browser voice to use
      * @param settings Settings to use for the voice
      */
-    private speakBrowser(phrase, voice, settings);
+    private speakBrowser;
     /**
      * Synthesizes voice by walking through the given phrase elements, resolving parts to
      * sound file IDs, and feeding the entire array to the vox engine.
@@ -820,7 +820,7 @@ declare class Speech {
      * @param voice Custom voice to use
      * @param settings Settings to use for the voice
      */
-    private speakCustom(phrase, voice, settings);
+    private speakCustom;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Type definition for speech config overrides passed to the speak method */
@@ -872,13 +872,13 @@ declare class VoxEngine {
      * Pumps the speech queue, by keeping up to 10 fetch requests for voice files going,
      * and then feeding their data (in enforced order) to the audio chain, one at a time.
      */
-    private pump();
+    private pump;
     /**
      * If there's a pending request and it's ready, and a buffer node is not currently
      * playing, then that next pending request is played. The buffer node created by this
      * method, automatically calls this method when playing is done.
      */
-    private playNext();
+    private playNext;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Represents a request for a vox file, immediately begun on creation */
@@ -892,9 +892,9 @@ declare class VoxRequest {
     constructor(path: string);
     cancel(): void;
     /** Begins decoding the loaded MP3 voice file to raw audio data */
-    private onFulfill(res);
-    private onDecode(buffer);
-    private onError(err);
+    private onFulfill;
+    private onDecode;
+    private onError;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the phrase editor */
@@ -931,25 +931,25 @@ declare class Editor {
     /** Closes any currently open editor dialogs */
     closeDialog(): void;
     /** Handles a click anywhere in the window depending on the context */
-    private onClick(ev);
+    private onClick;
     /** Re-layout the currently open picker on resize */
-    private onResize(_);
+    private onResize;
     /** Re-layout the currently open picker on scroll */
-    private onScroll(_);
+    private onScroll;
     /**
      * Flips the collapse state of a collapsible, and propagates the new state to other
      * collapsibles of the same reference.
      *
      * @param target Collapsible element being toggled
      */
-    private toggleCollapsiable(target);
+    private toggleCollapsiable;
     /**
      * Opens a picker for the given element.
      *
      * @param target Editor element to open the picker for
      * @param picker Picker to open
      */
-    private openPicker(target, picker);
+    private openPicker;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the scrolling marquee */
@@ -995,15 +995,15 @@ declare class Settings {
     /** Closes the settings screen */
     close(): void;
     /** Clears and populates the voice list */
-    private populateVoiceList();
+    private populateVoiceList;
     /** Handles the reset button, with a confirm step that cancels after 15 seconds */
-    private handleReset();
+    private handleReset;
     /** Cancel the reset timeout and restore the reset button to normal */
-    private cancelReset();
+    private cancelReset;
     /** Handles the save button, saving config to storage */
-    private handleSave();
+    private handleSave;
     /** Handles the speech test button, speaking a test phrase */
-    private handleVoiceTest(ev);
+    private handleVoiceTest;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the top toolbar */
@@ -1024,17 +1024,17 @@ declare class Toolbar {
     private btnOption;
     constructor();
     /** Handles the play button, playing the editor's current phrase with speech */
-    private handlePlay();
+    private handlePlay;
     /** Handles the stop button, stopping the marquee and any speech */
-    private handleStop();
+    private handleStop;
     /** Handles the generate button, generating new random state and phrase */
-    private handleGenerate();
+    private handleGenerate;
     /** Handles the save button, persisting the current train state to storage */
-    private handleSave();
+    private handleSave;
     /** Handles the load button, loading train state from storage, if it exists */
-    private handleLoad();
+    private handleLoad;
     /** Handles the settings button, opening the settings screen */
-    private handleOption();
+    private handleOption;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Manages UI elements and their logic */
@@ -1053,7 +1053,7 @@ declare class Views {
     /** Gets the picker that handles a given tag, if any */
     getPicker(xmlTag: string): Picker;
     /** Handle ESC to close pickers or settigns */
-    private onInput(ev);
+    private onInput;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility methods for dealing with collapsible elements */
@@ -1260,16 +1260,14 @@ interface DataRefs {
     /** Raw dictionary of station codes and names to use */
     stationsData: Dictionary<string>;
 }
-/** Fill in for ES2017 string padding methods */
+/** Fill ins for various missing definitions of modern Javascript features */
 interface String {
     padStart(targetLength: number, padString?: string): string;
     padEnd(targetLength: number, padString?: string): string;
 }
-/** Fill in for ES2017 array methods */
 interface Array<T> {
     includes(searchElement: T, fromIndex?: number): boolean;
 }
-/** Fill in for ES2017 MediaRecorder */
 declare class MediaRecorder {
     constructor(stream: MediaStream, options?: MediaRecorderOptions);
     start(timeslice?: number): void;
@@ -1287,6 +1285,30 @@ declare class BlobEvent extends Event {
     readonly data: Blob;
     readonly timecode: number;
 }
+interface AudioContextBase {
+    audioWorklet: AudioWorklet;
+}
+declare type SampleChannels = Float32Array[][];
+declare class AudioWorkletProcessor {
+    static parameterDescriptors: AudioParamDescriptor[];
+    protected constructor(options?: AudioWorkletNodeOptions);
+    readonly port?: MessagePort;
+    process(inputs: SampleChannels, outputs: SampleChannels, parameters: Dictionary<Float32Array>): boolean;
+}
+interface AudioWorkletNodeOptions extends AudioNodeOptions {
+    numberOfInputs?: number;
+    numberOfOutputs?: number;
+    outputChannelCount?: number[];
+    parameterData?: {
+        [index: string]: number;
+    };
+    processorOptions?: any;
+}
+interface MediaTrackConstraintSet {
+    autoGainControl?: boolean | ConstrainBooleanParameters;
+    noiseSuppression?: boolean | ConstrainBooleanParameters;
+}
+declare function registerProcessor(name: string, ctor: AudioWorkletProcessor): void;
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Holds runtime configuration */
 declare class Config {
@@ -1397,7 +1419,7 @@ declare class RAG {
     /** Loads state from given JSON */
     static load(json: string): void;
     /** Global error handler; throws up a big red panic screen on uncaught error */
-    private static panic(error?);
+    private static panic;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Disposable class that holds state for the current schedule, train, etc. */
