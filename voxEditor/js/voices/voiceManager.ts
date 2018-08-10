@@ -70,7 +70,7 @@ export class VoiceManager
         this.currentPath = this.keyToPath(key);
     }
 
-    public async loadFromDisk(key: string) : Promise<undefined>
+    public async loadFromDisk(key: string) : Promise<void>
     {
         if ( !this.hasClip(key) )
         {

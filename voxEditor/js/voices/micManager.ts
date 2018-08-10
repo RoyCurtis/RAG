@@ -1,6 +1,7 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 import {VoxEditor} from "../voxEditor";
+import {MicWorkletNode} from "./micWorkletNode";
 
 /** Manages available microphones and input streams */
 export class MicManager
@@ -9,14 +10,38 @@ export class MicManager
 
     private audioContext : AudioContext;
 
-    private sampleRate : number;
+    private workletNode? : MicWorkletNode;
 
-    private recorder? : MediaRecorder;
+    private streamNode?  : MediaStreamAudioSourceNode;
+
+    private buffers? : Float32Array[];
+
+    public get canRecord() : boolean
+    {
+        return this.micDevice   !== undefined
+            && this.workletNode !== undefined;
+    }
 
     public constructor()
     {
-        this.sampleRate   = 0;
         this.audioContext = new AudioContext();
+
+        fetch('dist/voices/micWorklet.js')
+            .then( req => req.text() )
+            .then( src =>
+            {
+                // Workaround for Chromium bug with loading audio worklet scripts
+                // https://bugs.chromium.org/p/chromium/issues/detail?id=807160
+                let module = `data:text/javascript;utf8,\n${src}`;
+
+                return this.audioContext.audioWorklet.addModule(module);
+            })
+            .then(_ =>
+            {
+                this.workletNode = new MicWorkletNode(this.audioContext);
+                VoxEditor.views.tapedeck.update();
+            })
+            .catch(console.error);
     }
 
     public load() : void
@@ -48,67 +73,6 @@ export class MicManager
             .catch( this.onNoMicrophone.bind(this)  );
     }
 
-    public startRecording()
-    {
-        this.stopRecording();
-
-        if (!this.micDevice)
-            return;
-
-        this.micDevice.getTracks().forEach(t => t.enabled = true);
-
-        this.recorder = new MediaRecorder(this.micDevice,
-        {
-            mimeType      : 'audio/webm;codecs=opus',
-            bitsPerSecond : 64 * 1000
-        });
-
-        this.recorder.start();
-    }
-
-    public stopRecording()
-    {
-        if (!this.recorder || !this.micDevice)
-            return;
-
-        this.recorder.ondataavailable = this.onGetMediaData.bind(this);
-
-        this.recorder.onstop = _ =>
-        {
-            this.recorder!.ondataavailable = null;
-            this.recorder                  = undefined;
-        };
-
-        this.recorder.stop();
-        this.micDevice.getTracks().forEach(t => t.enabled = false);
-        return;
-    }
-
-    private onGetMediaData(ev: BlobEvent) : void
-    {
-        let reader = new FileReader();
-
-        reader.readAsArrayBuffer(ev.data);
-
-        reader.onloadend = _ =>
-        {
-            let result       = reader.result as ArrayBuffer;
-            reader.onloadend = null;
-
-            this.audioContext.decodeAudioData( result.slice(0) )
-                .then ( this.onDecodeMediaData.bind(this) )
-                .catch( console.error );
-        };
-    }
-
-    private onDecodeMediaData(buffer: AudioBuffer) : void
-    {
-        let key = VoxEditor.views.phrases.currentKey!;
-
-        VoxEditor.voices.loadFromBuffer(key, buffer);
-        VoxEditor.views.tapedeck.update();
-    }
-
     private onGetMicrophone(stream: MediaStream) : void
     {
         this.micDevice = stream;
@@ -120,6 +84,81 @@ export class MicManager
     private onNoMicrophone() : void
     {
         this.micDevice = undefined;
+        VoxEditor.views.tapedeck.update();
+    }
+
+    public startRecording()
+    {
+        this.stopRecording();
+
+        if (!this.canRecord)
+            return;
+
+        this.micDevice!.getTracks().forEach(t => t.enabled = true);
+
+        this.streamNode = this.audioContext.createMediaStreamSource(this.micDevice!);
+        this.streamNode.connect(this.workletNode!);
+
+        this.buffers = [];
+
+        this.workletNode!.port!.onmessage = msg =>
+        {
+            let data = msg.data as ArrayBuffer;
+
+            this.buffers!.push( new Float32Array(data) );
+        };
+
+        this.workletNode!.connect(this.audioContext.destination);
+    }
+
+    public stopRecording()
+    {
+        if (!this.canRecord)
+            return;
+
+        if (this.streamNode)
+        {
+            this.streamNode.disconnect();
+            this.streamNode = undefined;
+        }
+
+        this.workletNode!.port!.onmessage = null;
+        this.workletNode!.disconnect();
+        this.micDevice!.getTracks().forEach(t => t.enabled = false);
+        this.processRecording();
+        return;
+    }
+
+    private processRecording() : void
+    {
+        if (!this.buffers)
+            return;
+
+        let key    = VoxEditor.views.phrases.currentKey!;
+        let length = 128 * this.buffers.length;
+        let buffer = new AudioBuffer(
+            {
+                length:           length,
+                numberOfChannels: 1,
+                sampleRate:       this.audioContext.sampleRate
+            });
+
+        let channel = buffer.getChannelData(0);
+
+        this.buffers.forEach( (buf, idx) => channel.set(buf, 128 * idx) );
+
+        // Soften the beginning and end with fades
+        if  (length > 1024)
+            for (let i = 0; i < 1024; i++)
+            {
+                let factor = (1 / 1024) * i;
+
+                channel[i]          *= factor;
+                channel[length - i] *= factor;
+            }
+
+        this.buffers = undefined;
+        VoxEditor.voices.loadFromBuffer(key, buffer);
         VoxEditor.views.tapedeck.update();
     }
 }

@@ -48,6 +48,7 @@ export class ClipEditor
         this.context.fillStyle = 'orange';
         this.context.fillRect(0, midHeight - 1, width, 3);
 
+        // Draw the summarized data
         this.context.fillStyle = '#CC7E00';
         for (let x = 0; x < width; x++)
         {

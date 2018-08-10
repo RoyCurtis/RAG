@@ -85,7 +85,7 @@ export class EditorTapedeck
         this.btnNext.disabled = false;
 
         // Check if we can record
-        if (VoxEditor.mics.micDevice)
+        if (VoxEditor.mics.canRecord)
             this.btnRec.disabled = false;
         else
             this.btnRec.classList.remove('recording');

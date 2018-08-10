@@ -24,20 +24,19 @@ interface DataRefs
     stationsData   : Dictionary<string>;
 }
 
-/** Fill in for ES2017 string padding methods */
+/** Fill ins for various missing definitions of modern Javascript features */
+
 interface String
 {
     padStart(targetLength: number, padString?: string) : string;
     padEnd(targetLength: number, padString?: string) : string;
 }
 
-/** Fill in for ES2017 array methods */
 interface Array<T>
 {
     includes(searchElement: T, fromIndex?: number) : boolean;
 }
 
-/** Fill in for ES2017 MediaRecorder */
 declare class MediaRecorder
 {
     constructor(stream: MediaStream, options?: MediaRecorderOptions);
@@ -60,3 +59,41 @@ declare class BlobEvent extends Event
     readonly data     : Blob;
     readonly timecode : number;
 }
+
+interface AudioContextBase
+{
+    audioWorklet : AudioWorklet;
+}
+
+type SampleChannels = Float32Array[][];
+
+declare class AudioWorkletProcessor
+{
+    static parameterDescriptors : AudioParamDescriptor[];
+
+    protected constructor(options?: AudioWorkletNodeOptions);
+    readonly port?: MessagePort;
+
+    process(
+        inputs: SampleChannels,
+        outputs: SampleChannels,
+        parameters: Dictionary<Float32Array>
+    ) : boolean;
+}
+
+interface AudioWorkletNodeOptions extends AudioNodeOptions
+{
+    numberOfInputs? : number;
+    numberOfOutputs? : number;
+    outputChannelCount? : number[];
+    parameterData? : {[index: string] : number};
+    processorOptions? : any;
+}
+
+interface MediaTrackConstraintSet
+{
+    autoGainControl?: boolean | ConstrainBooleanParameters;
+    noiseSuppression?: boolean | ConstrainBooleanParameters;
+}
+
+declare function registerProcessor(name: string, ctor: AudioWorkletProcessor) : void;
