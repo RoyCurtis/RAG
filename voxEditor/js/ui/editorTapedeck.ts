@@ -44,6 +44,7 @@ export class EditorTapedeck
         this.btnPlay.onclick  = this.onPlay.bind(this);
         this.btnStop.onclick  = this.onStop.bind(this);
         this.btnRec.onclick   = this.onRec.bind(this);
+        this.btnSave.onclick  = this.onSave.bind(this);
         this.btnNext.onclick  = this.onNext.bind(this);
     }
 
@@ -124,6 +125,11 @@ export class EditorTapedeck
             VoxEditor.mics.stopRecording();
             this.update();
         }
+    }
+
+    private onSave() : void
+    {
+        VoxEditor.voices.saveClip(VoxEditor.views.phrases.currentKey!);
     }
 
     private onNext() : void

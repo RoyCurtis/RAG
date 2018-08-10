@@ -192,7 +192,6 @@ export class MicManager
         this.buffers = undefined;
         Normalizer.process(buffer);
         VoxEditor.voices.loadFromBuffer(key, buffer);
-        VoxEditor.views.tapedeck.update();
         VoxEditor.views.tapedeck.onPlay();
     }
 }
