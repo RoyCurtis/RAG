@@ -89,10 +89,10 @@
     {
       // Try as I might, "import" does not work here. So require must be used.
       // noinspection JSUnresolvedVariable
-      let VoxEditor = require('./dist/voxEditor.js').VoxEditor;
+      window.VoxEditor = require('./dist/voxEditor.js').VoxEditor;
 
       // noinspection JSUnresolvedFunction
-      VoxEditor.main({
+      window.VoxEditor.main({
         phrasesetEmbed: '#nrPhraseset',
         excusesData:    DATA_EXCUSES,
         namedData:      DATA_NAMED,

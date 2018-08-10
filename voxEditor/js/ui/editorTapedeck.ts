@@ -103,7 +103,7 @@ export class EditorTapedeck
         VoxEditor.views.phrases.selectPrev();
     }
 
-    private onPlay() : void
+    public onPlay() : void
     {
         VoxEditor.voices.playClip();
     }
