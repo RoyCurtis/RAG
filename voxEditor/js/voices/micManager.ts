@@ -11,17 +11,13 @@ export class MicManager
 
     private sampleRate : number;
 
-    private micNode? : MediaStreamAudioSourceNode;
-
-    private bufNode? : ScriptProcessorNode;
-
-    private buffers? : Float32Array[];
+    private recorder? : MediaRecorder;
 
     public constructor()
     {
         this.sampleRate   = 0;
         this.audioContext = new AudioContext({
-            sampleRate  : 44100,
+            sampleRate  : 16000,
             latencyHint : 'playback'
         });
     }
@@ -39,10 +35,10 @@ export class MicManager
         navigator.mediaDevices.getUserMedia(
         {
             audio : {
-                deviceId : VoxEditor.config.deviceId,
-                // This changes mic volume on the OS level, so don't use it
+                deviceId         : VoxEditor.config.deviceId,
+                // These change mic volume on the OS level, so don't use them
                 autoGainControl  : false,
-                echoCancellation : true,
+                echoCancellation : false,
                 noiseSuppression : true,
                 sampleRate       : 44100,
                 sampleSize       : 16,
@@ -64,55 +60,56 @@ export class MicManager
 
         this.micDevice.getTracks().forEach(t => t.enabled = true);
 
-        this.buffers = [];
-        this.bufNode = this.audioContext.createScriptProcessor(0, 1, 1);
-        this.micNode = this.audioContext.createMediaStreamSource(this.micDevice);
-
-        this.bufNode.onaudioprocess = ev =>
+        this.recorder = new MediaRecorder(this.micDevice,
         {
-            if (!this.buffers)
-                return;
+            mimeType      : 'audio/webm;codecs=opus',
+            bitsPerSecond : 64 * 1000
+        });
 
-            this.buffers.push( ev.inputBuffer.getChannelData(0).slice() );
-            this.sampleRate = ev.inputBuffer.sampleRate;
-        };
-
-        this.micNode.connect(this.bufNode);
-        this.bufNode.connect(this.audioContext.destination);
+        this.recorder.start();
     }
 
     public stopRecording()
     {
-        if (!this.micNode || !this.bufNode || !this.micDevice)
+        if (!this.recorder || !this.micDevice)
             return;
 
-        this.bufNode.disconnect();
-        this.micNode.disconnect();
+        this.recorder.ondataavailable = this.onGetMediaData.bind(this);
+
+        this.recorder.onstop = _ =>
+        {
+            this.recorder!.ondataavailable = null;
+            this.recorder                  = undefined;
+        };
+
+        this.recorder.stop();
         this.micDevice.getTracks().forEach(t => t.enabled = false);
+        return;
+    }
 
-        let amount  = this.buffers!.length;
-        let size    = this.buffers![0].length;
-        let samples = size * amount;
-        let buffer  = this.audioContext.createBuffer(1, samples, this.sampleRate);
-        let key     = VoxEditor.views.phrases.currentKey!;
+    private onGetMediaData(ev: BlobEvent) : void
+    {
+        let reader = new FileReader();
 
-        // Apply a fade-out to the final buffer
-        let lastBuf = this.buffers![amount - 1];
-        for (let i = 0; i < size; i++)
-            lastBuf[i] *= 1 - ((1 / size) * i);
+        reader.readAsArrayBuffer(ev.data);
 
-        // Copy all buffers to the final buffer
-        this.buffers!.forEach( (buf, i) =>
-            buffer.getChannelData(0).set(buf, i * size)
-        );
+        reader.onloadend = _ =>
+        {
+            let result       = reader.result as ArrayBuffer;
+            reader.onloadend = null;
+
+            this.audioContext.decodeAudioData( result.slice(0) )
+                .then ( this.onDecodeMediaData.bind(this) )
+                .catch( console.error );
+        };
+    }
+
+    private onDecodeMediaData(buffer: AudioBuffer) : void
+    {
+        let key = VoxEditor.views.phrases.currentKey!;
 
         VoxEditor.voices.loadFromBuffer(key, buffer);
-
-        this.bufNode.onaudioprocess = null;
-        this.micNode                = undefined;
-        this.bufNode                = undefined;
-        this.buffers                = [];
-        return;
+        VoxEditor.views.tapedeck.update();
     }
 
     private onGetMicrophone(stream: MediaStream) : void

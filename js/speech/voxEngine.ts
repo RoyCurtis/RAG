@@ -32,11 +32,7 @@ class VoxEngine
         // @ts-ignore
         let AudioContext = window.AudioContext || window.webkitAudioContext;
 
-        this.audioContext = new AudioContext({
-            latencyHint : "playback",
-            // BUG: Not supported by browsers yet
-            sampleRate  : 16000
-        });
+        this.audioContext = new AudioContext({ latencyHint : 'playback' });
 
         // Setup tannoy filter
 

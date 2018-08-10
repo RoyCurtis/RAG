@@ -176,6 +176,22 @@ erasing site data in "Settings > Safari"
   * This fix arbitrarily stopped working, for no reason. Going back in git history and 
   clearing cache found no cause. Oh well, turned off the ability to be a standalone app.
 
+# Poor Web Audio API and format support
+
+I have had to use the MP3 file format for the vox engine, as it is the most supported
+format for decoding across all browsers. The problem is, it would have been much easier
+to use the Opus format, because:
+
+* It's *open*
+* It's *designed for speech*
+* Electron (Chromium) can use `MediaRecorder` to save microphone recordings as Opus
+
+Except, of course, iOS and Safari are the sole browsers to not support decoding the Opus
+format. So, I have to use a javascript library (LAME.js) to encode recorded audio into
+MP3 files. The vox editor's recording code is much more convoluted because of this.
+
+You can test this out for yourself in the `decodeAudioData-test` folder.
+
 # The forced Webkit monopoly
 
 I have left this point for last; it is more an issue of principle. Apple abuses its

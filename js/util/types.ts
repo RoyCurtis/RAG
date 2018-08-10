@@ -36,3 +36,27 @@ interface Array<T>
 {
     includes(searchElement: T, fromIndex?: number) : boolean;
 }
+
+/** Fill in for ES2017 MediaRecorder */
+declare class MediaRecorder
+{
+    constructor(stream: MediaStream, options?: MediaRecorderOptions);
+    start(timeslice?: number) : void;
+    stop() : void;
+    ondataavailable : ((this: MediaRecorder, ev: BlobEvent) => any) | null;
+    onstop : ((this: MediaRecorder, ev: Event) => any) | null;
+}
+
+interface MediaRecorderOptions
+{
+    mimeType? : string;
+    audioBitsPerSecond? : number;
+    videoBitsPerSecond? : number;
+    bitsPerSecond? : number;
+}
+
+declare class BlobEvent extends Event
+{
+    readonly data     : Blob;
+    readonly timecode : number;
+}
