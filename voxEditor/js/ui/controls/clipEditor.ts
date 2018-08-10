@@ -26,8 +26,9 @@ export class ClipEditor
 
     public redraw() : void
     {
-        let width  = this.domCanvas.width  = this.dom.clientWidth;
-        let height = this.domCanvas.height = this.dom.clientHeight;
+        let width     = this.domCanvas.width  = this.dom.clientWidth  * 2;
+        let height    = this.domCanvas.height = this.dom.clientHeight * 2;
+        let midHeight = height / 2;
 
         let buffer = VoxEditor.voices.currentClip;
         let path   = VoxEditor.voices.currentPath;
@@ -41,22 +42,54 @@ export class ClipEditor
             this.domTitle.innerText = path!;
 
         let channel = buffer.getChannelData(0);
-        let step    = channel.length / width;
+        let sums    = this.summarize(channel, width);
 
-        // Iterate through every horizontal coordinate
+        // Draw middle line
+        this.context.fillStyle = 'orange';
+        this.context.fillRect(0, midHeight - 1, width, 3);
+
+        this.context.fillStyle = '#CC7E00';
         for (let x = 0; x < width; x++)
         {
-            let avg = 0;
-
-            // Create an average for this chunk of samples
-            for (let i = x; i < (step * x); i++)
-                avg += channel[i];
-
-            avg /= step;
-
-            this.context.fillStyle = '#CC7E00';
-            this.context.fillRect( x, height / 2, 1, avg * -(height / 1.5) );
-            this.context.fillRect( x, height / 2, 1, avg *  (height / 1.5) );
+            this.context.fillRect(x, midHeight - 1, 1, sums[x][0] * height);
+            this.context.fillRect(x, midHeight + 1, 1, sums[x][1] * height);
         }
+    }
+
+    /**
+     *
+     * @see http://joesul.li/van/2014/03/drawing-waveforms/
+     * @param data
+     * @param width
+     */
+    private summarize(data: Float32Array, width: number) : [number, number][]
+    {
+        let values : [number, number][] = [];
+
+        // Define a minimum sample size per pixel
+        let pixelLength = Math.round(data.length / width);
+        let sampleSize  = Math.min(pixelLength, 512);
+
+        // For each pixel we display
+        for (let i = 0; i < width; i++)
+        {
+            let posSum = 0,
+                negSum = 0;
+
+            // Cycle through the data-points relevant to the pixel
+            // Don't cycle through more than sampleSize frames per pixel.
+            for (let j = 0; j < sampleSize; j++)
+            {
+                let val = data[i * pixelLength + j];
+
+                // Keep track of positive and negative values separately
+                if (val > 0) posSum += val;
+                else         negSum += val;
+            }
+
+            values.push( [negSum / sampleSize, posSum / sampleSize] );
+        }
+
+        return values;
     }
 }
