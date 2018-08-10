@@ -52,8 +52,8 @@ export class ClipEditor
         this.context.fillStyle = '#CC7E00';
         for (let x = 0; x < width; x++)
         {
-            this.context.fillRect(x, midHeight - 1, 1, sums[x][0] * midHeight);
-            this.context.fillRect(x, midHeight + 1, 1, sums[x][1] * midHeight);
+            this.context.fillRect(x, midHeight - 1, 1, (sums[x][0] * height) * 0.75);
+            this.context.fillRect(x, midHeight + 1, 1, (sums[x][1] * height) * 0.75);
         }
     }
 

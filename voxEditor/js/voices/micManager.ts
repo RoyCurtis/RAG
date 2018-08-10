@@ -105,8 +105,10 @@ export class MicManager
         this.workletNode!.port!.onmessage = msg =>
         {
             let data = msg.data as ArrayBuffer;
+            let buf  = new Float32Array(data);
 
-            this.buffers!.push( new Float32Array(data) );
+            this.buffers!.push(buf);
+            VoxEditor.views.tapedeck.voiceMeter.draw(buf);
         };
     }
 
@@ -158,6 +160,7 @@ export class MicManager
 
         this.buffers = undefined;
         VoxEditor.voices.loadFromBuffer(key, buffer);
+        VoxEditor.views.tapedeck.voiceMeter.reshape();
         VoxEditor.views.tapedeck.onPlay();
     }
 }

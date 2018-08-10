@@ -2,10 +2,13 @@
 
 import {VoxEditor} from "../voxEditor";
 import {ClipEditor} from "./controls/clipEditor";
+import {VoiceMeter} from "./controls/voiceMeter";
 
 /** Controller for the tape deck part of the editor */
 export class EditorTapedeck
 {
+    public  readonly voiceMeter   : VoiceMeter;
+
     private readonly clipEditor   : ClipEditor;
 
     private readonly domForm      : HTMLFormElement;
@@ -29,6 +32,7 @@ export class EditorTapedeck
     public constructor()
     {
         this.clipEditor = new ClipEditor('.clipEditor');
+        this.voiceMeter = new VoiceMeter('.voiceMeter');
         this.domForm    = DOM.require('#frmTapedeck');
         this.btnPrev    = DOM.require('#btnPrev',    this.domForm);
         this.btnPlay    = DOM.require('#btnPlay',    this.domForm);
