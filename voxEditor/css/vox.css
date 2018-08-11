@@ -43,16 +43,21 @@ h1 {
   flex-basis: 40%;
   overflow: auto;
 }
-#partSelector input {
-  border: none;
-  font-size: large;
+#partSelector > div {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
   margin: 16px 16px 0 16px;
-  padding: 8px;
   position: sticky;
-  top: 0;
-  width: -webkit-fill-available;
+  top: 16px;
 }
-#partSelector input.noMatches {
+#partSelector > div input {
+  border: none;
+  flex-grow: 1;
+  font-size: large;
+  padding: 8px;
+}
+#partSelector > div input.noMatches {
   background: #f2a6a6;
 }
 #partSelector ul {
@@ -63,13 +68,14 @@ h1 {
   user-select: none;
   font-size: 12px;
   list-style: none;
-  margin: 16px;
+  margin: 16px 12px 16px 16px;
 }
 #partSelector ul li {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   background: #222;
+  border-right: 4px solid #000;
   cursor: pointer;
   margin-bottom: 4px;
   padding: 4px;
@@ -82,7 +88,7 @@ h1 {
   float: right;
 }
 #partSelector ul li.missing {
-  background: #642222;
+  border-right-color: #c21d1d;
 }
 #partSelector ul li.highlight {
   background: #444;
