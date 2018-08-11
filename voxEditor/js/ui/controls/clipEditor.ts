@@ -128,24 +128,31 @@ export class ClipEditor
             // Clear any selections, as they will break dragging
             window.getSelection().empty();
         }
+
         // End drag operation on any mouse release
         if (ev.type === 'mouseup' || (ev.buttons & 1) === 0)
             this.stopDragging();
+
         // Discontinue if there's nothing to drag
         if (!this.clipperDrag)
             return;
 
         // Do move
-        let rect     = this.clipperDrag.getBoundingClientRect();
-        let maxWidth = (this.dom.clientWidth / 2) - 5;
-        let width    = (this.clipperDrag === this.clipperLeft)
+        let thisClipper  = this.clipperDrag;
+        let otherClipper = (thisClipper === this.clipperLeft)
+            ? this.clipperRight
+            : this.clipperLeft;
+
+        let rect     = thisClipper.getBoundingClientRect();
+        let maxWidth = (this.dom.clientWidth - otherClipper.clientWidth) - 10;
+        let width    = (thisClipper === this.clipperLeft)
             ? ev.clientX - rect.left
             : rect.right - ev.clientX;
 
         if (width < 1)        width = 1;
         if (width > maxWidth) width = maxWidth;
 
-        this.clipperDrag.style.width = `${width}px`;
+        thisClipper.style.width = `${width}px`;
     }
 
     private stopDragging() : void
