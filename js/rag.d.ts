@@ -773,14 +773,14 @@ declare class Resolver {
     private resolveNamed;
     /** Resolve IDs from a given platform element and current state */
     private resolvePlatform;
-    /** Resolve IDs from a given time element and current state */
-    private resolveTime;
     /** Resolve ID from a given service element and current state */
     private resolveService;
     /** Resolve ID from a given station element and current state */
     private resolveStation;
     /** Resolve IDs from a given station list element and current state */
     private resolveStationList;
+    /** Resolve IDs from a given time element and current state */
+    private resolveTime;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Union type for both kinds of voices available */
@@ -1237,6 +1237,8 @@ declare class Strings {
     static fromTime(hours: number | Date, minutes?: number): string;
     /** Cleans up the given text of excess whitespace and any newlines */
     static clean(text: string): string;
+    /** Formats the given string to one more filename friendly */
+    static filename(text: string): string;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Union type for iterable types with a .length property */

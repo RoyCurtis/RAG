@@ -35,7 +35,7 @@ export class ClipEditor
 
         if (!buffer)
         {
-            this.domTitle.innerText = 'No data loaded';
+            this.domTitle.innerText = 'No data available';
             return;
         }
         else

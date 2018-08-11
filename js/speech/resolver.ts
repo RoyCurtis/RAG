@@ -148,9 +148,7 @@ class Resolver
     /** Resolve ID from a given named element and current state */
     private resolveNamed() : string[]
     {
-        let named = RAG.state.named
-            .replace(/ /g, '_')
-            .toLowerCase();
+        let named = Strings.filename(RAG.state.named);
 
         return [`named.${named}`];
     }
@@ -169,34 +167,11 @@ class Resolver
         return parts;
     }
 
-    /** Resolve IDs from a given time element and current state */
-    private resolveTime(element: HTMLElement) : string[]
-    {
-        let ctx   = element.dataset['context']!;
-        let time  = RAG.state.getTime(ctx).split(':');
-        let parts = [];
-
-        if (time[0] === '00' && time[1] === '00')
-            return ['number.0000'];
-
-        // Hours
-        parts.push(`number.${time[0]}`);
-
-        if (time[1] === '00')
-            parts.push('number.hundred');
-        else
-            parts.push(`number.${time[1]}`);
-
-        return parts;
-    }
-
     /** Resolve ID from a given service element and current state */
     private resolveService(element: HTMLElement) : string[]
     {
         let ctx     = element.dataset['context']!;
-        let service = RAG.state.getService(ctx)
-            .replace(/ /g, '_')
-            .toLowerCase();
+        let service = Strings.filename( RAG.state.getService(ctx) );
 
         return [`service.${service}`];
     }
@@ -242,5 +217,24 @@ class Resolver
         return parts;
     }
 
+    /** Resolve IDs from a given time element and current state */
+    private resolveTime(element: HTMLElement) : string[]
+    {
+        let ctx   = element.dataset['context']!;
+        let time  = RAG.state.getTime(ctx).split(':');
+        let parts = [];
 
+        if (time[0] === '00' && time[1] === '00')
+            return ['number.0000'];
+
+        // Hours
+        parts.push(`number.${time[0]}`);
+
+        if (time[1] === '00')
+            parts.push('number.hundred');
+        else
+            parts.push(`number.${time[1]}`);
+
+        return parts;
+    }
 }

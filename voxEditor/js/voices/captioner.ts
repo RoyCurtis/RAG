@@ -146,14 +146,20 @@ export class Captioner
 
     private populateNames() : void
     {
-        for (let i = 0; i < VoxEditor.database.named.length; i++)
-            this.captionBank[`named.${i}`] = VoxEditor.database.named[i];
+        VoxEditor.database.named.forEach(name =>
+        {
+            let key = Strings.filename(name);
+            this.captionBank[`service.${key}`] = name;
+        });
     }
 
     private populateServices() : void
     {
-        for (let i = 0; i < VoxEditor.database.services.length; i++)
-            this.captionBank[`service.${i}`] = VoxEditor.database.services[i];
+        VoxEditor.database.services.forEach(service =>
+        {
+            let key = Strings.filename(service);
+            this.captionBank[`service.${key}`] = service;
+        });
     }
 
     private populateStations() : void

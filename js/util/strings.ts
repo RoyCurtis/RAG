@@ -60,8 +60,17 @@ class Strings
     public static clean(text: string) : string
     {
         return text.trim()
-            .replace(/[\n\r]/gi, '')
-            .replace(/\s{2,}/gi, ' ')
+            .replace(/[\n\r]/gi,   ''  )
+            .replace(/\s{2,}/gi,   ' ' )
             .replace(/\s([.,])/gi, '$1');
+    }
+
+    /** Formats the given string to one more filename friendly */
+    public static filename(text: string) : string
+    {
+        return text
+            .toLowerCase()
+            .replace(/\s/g,         '_')
+            .replace(/[^a-z0-9_]/g, '' );
     }
 }
