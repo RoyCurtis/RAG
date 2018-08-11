@@ -19,9 +19,11 @@ export class ClipEditor
 
     private readonly context      : CanvasRenderingContext2D;
 
+    public  onchange?    : () => void;
+
     private clipperDrag? : HTMLElement;
 
-    private needleTimer : number = 0;
+    private needleTimer  : number = 0;
 
     public constructor(query: string)
     {
@@ -232,6 +234,9 @@ export class ClipEditor
         if (width > maxWidth) width = maxWidth;
 
         which.style.width = `${width}px`;
+
+        if (this.onchange)
+            this.onchange();
     }
 
     private stopDragging() : void

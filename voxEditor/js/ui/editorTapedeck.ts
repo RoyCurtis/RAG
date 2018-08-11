@@ -9,29 +9,44 @@ import {fail} from "assert";
 /** Controller for the tape deck part of the editor */
 export class EditorTapedeck
 {
-    public  readonly btnPrev      : HTMLButtonElement;
+    public  readonly btnPrev    : HTMLButtonElement;
 
-    public  readonly btnPlay      : HTMLButtonElement;
+    public  readonly btnPlay    : HTMLButtonElement;
 
-    public  readonly btnStop      : HTMLButtonElement;
+    public  readonly btnStop    : HTMLButtonElement;
 
-    public  readonly btnRec       : HTMLButtonElement;
+    public  readonly btnRec     : HTMLButtonElement;
 
-    public  readonly btnSave      : HTMLButtonElement;
+    public  readonly btnSave    : HTMLButtonElement;
 
-    public  readonly btnLoad      : HTMLButtonElement;
+    public  readonly btnLoad    : HTMLButtonElement;
 
-    public  readonly btnNext      : HTMLButtonElement;
+    public  readonly btnNext    : HTMLButtonElement;
 
-    private readonly clipEditor   : ClipEditor;
+    private readonly clipEditor : ClipEditor;
 
-    private readonly voiceMeter   : VoiceMeter;
+    private readonly voiceMeter : VoiceMeter;
 
-    private readonly domForm      : HTMLFormElement;
+    private readonly domForm    : HTMLFormElement;
 
-    private readonly lblId        : HTMLParagraphElement;
+    private readonly lblId      : HTMLParagraphElement;
 
-    private readonly lblCaption   : HTMLParagraphElement;
+    private readonly lblCaption : HTMLParagraphElement;
+
+    private _dirty : boolean = false;
+
+    public get dirty(): boolean
+    {
+        return this._dirty;
+    }
+
+    public set dirty(value: boolean)
+    {
+        if (value) this.btnSave.classList.add('savePending');
+        else       this.btnSave.classList.remove('savePending');
+
+        this._dirty = value;
+    }
 
     public constructor()
     {
@@ -61,6 +76,10 @@ export class EditorTapedeck
         this.btnSave.onclick  = this.onSave.bind(this);
         this.btnLoad.onclick  = this.onLoad.bind(this);
         this.btnNext.onclick  = this.onNext.bind(this);
+
+        // Mark dirty from bounds change only if clip is loaded
+        this.clipEditor.onchange = () =>
+            this.dirty = VoxEditor.voices.currentClip !== undefined;
     }
 
     public handleMicChange() : void
@@ -76,7 +95,7 @@ export class EditorTapedeck
     {
         let path = VoxEditor.voices.keyToPath(key);
 
-        this.btnNext.disabled     = false;
+        this.btnNext.disabled     =
         this.btnPrev.disabled     = false;
         this.lblId.innerText      = `Loading '${key}'...`;
         this.lblCaption.innerText = `Loading from: ${path}`;
@@ -113,11 +132,12 @@ export class EditorTapedeck
 
     public handleClipUnload() : void
     {
-        this.btnPlay.disabled = true;
-        this.btnStop.disabled = true;
-        this.btnRec.disabled  = true;
-        this.btnSave.disabled = true;
+        this.btnPlay.disabled =
+        this.btnStop.disabled =
+        this.btnRec.disabled  =
+        this.btnSave.disabled =
         this.btnLoad.disabled = true;
+        this.dirty            = false;
         this.clipEditor.redraw();
     }
 
@@ -147,7 +167,7 @@ export class EditorTapedeck
         VoxEditor.views.tapedeck.onPlay();
     }
 
-    private onKeyDown(ev: KeyboardEvent) : void
+    private onKeyDown(_: KeyboardEvent) : void
     {
 
     }
@@ -191,6 +211,7 @@ export class EditorTapedeck
         if (magRight > -0.18 && magRight < 0.1) magRight = 0;
         if (magLeft + magRight === 0)          return;
 
+        this.dirty = true;
         this.clipEditor.shiftBounds(
             (magLeft * 8) + (magRight * 2),
             ev.button === XBOX.RT
@@ -205,6 +226,10 @@ export class EditorTapedeck
 
     private onPrev() : void
     {
+        // TODO: Make this a toggle
+        if (this.dirty)
+            VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
+        
         VoxEditor.views.phrases.selectPrev();
     }
 
@@ -242,11 +267,13 @@ export class EditorTapedeck
             this.btnSave.disabled =
             this.btnLoad.disabled =
             this.btnNext.disabled = false;
+            this.dirty            = true;
         }
     }
 
     private onSave() : void
     {
+        this.dirty = false;
         VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
         VoxEditor.voices.loadFromDisk();
     }
@@ -258,6 +285,10 @@ export class EditorTapedeck
 
     private onNext() : void
     {
+        // TODO: Make this a toggle
+        if (this.dirty)
+            VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
+
         VoxEditor.views.phrases.selectNext();
     }
 }

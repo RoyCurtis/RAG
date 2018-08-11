@@ -168,7 +168,7 @@ export class VoiceManager
     /** Saves the current clip to disk as an MP3 */
     public saveClip(bounds?: [number, number]) : void
     {
-        if ( !this.currentClip || !this.currentPath )
+        if (!this.currentClip || !this.currentPath)
             throw Error('Attempted to save without state nor path');
 
         // https://github.com/zhuker/lamejs/issues/10#issuecomment-141720630
