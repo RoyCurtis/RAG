@@ -43,24 +43,16 @@ h1 {
   flex-basis: 40%;
   overflow: auto;
 }
-#partSelector menu {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  padding: 16px 16px 0 16px;
+#partSelector input {
+  border: none;
+  font-size: large;
+  margin: 16px 16px 0 16px;
+  padding: 8px;
   position: sticky;
   top: 0;
+  width: -webkit-fill-available;
 }
-#partSelector menu input,
-#partSelector menu button {
-  font-size: large;
-  padding: 8px;
-}
-#partSelector menu input {
-  border: none;
-  flex-grow: 1;
-}
-#partSelector menu input.noMatches {
+#partSelector input.noMatches {
   background: #f2a6a6;
 }
 #partSelector ul {

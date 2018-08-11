@@ -6,11 +6,9 @@ import {VoxEditor} from "../voxEditor";
 export class EditorPhrases
 {
     /** Reference to the list of clickable phrase IDs */
-    private readonly domList        : HTMLUListElement;
-    /** Reference to the "mark missing" button */
-    private readonly btnMarkMissing : HTMLButtonElement;
+    private readonly domList   : HTMLUListElement;
     /** Reference to the phrase search box */
-    private readonly inputFind      : HTMLInputElement;
+    private readonly inputFind : HTMLInputElement;
 
     public  currentKey?       : string;
     /** Reference to the currently selected phrase entry */
@@ -20,13 +18,11 @@ export class EditorPhrases
 
     public constructor()
     {
-        this.domList        = DOM.require('#partSelector ul');
-        this.btnMarkMissing = DOM.require('#btnMarkMissing');
-        this.inputFind      = DOM.require('#inputFind');
+        this.domList   = DOM.require('#partSelector ul');
+        this.inputFind = DOM.require('#inputFind');
 
-        this.domList.onclick        = this.onClick.bind(this);
-        this.btnMarkMissing.onclick = this.onMarkMissing.bind(this);
-        this.inputFind.onkeydown    = this.onFind.bind(this);
+        this.domList.onclick     = this.onClick.bind(this);
+        this.inputFind.onkeydown = this.onFind.bind(this);
 
         this.populateList();
     }
@@ -94,6 +90,17 @@ export class EditorPhrases
             item.classList.add('missing');
     }
 
+    /** Called when the choice of voice changes, by marking all missing entries */
+    public onVoiceChange() : void
+    {
+        this.domList.classList.add('hidden');
+
+        for (let i = 0; i < this.domList.children.length; i++)
+            this.checkMissing(this.domList.children[i] as HTMLElement);
+
+        this.domList.classList.remove('hidden');
+    }
+
     /** Handles click events for all phrase entries */
     private onClick(ev: MouseEvent) : void
     {
@@ -110,25 +117,13 @@ export class EditorPhrases
         this.select(target);
     }
 
-    /** Marks all phrase entries that are missing files, in red */
-    private onMarkMissing() : void
-    {
-        this.btnMarkMissing.disabled = true;
-        this.domList.classList.add('hidden');
-
-        for (let i = 0; i < this.domList.children.length; i++)
-            this.checkMissing(this.domList.children[i] as HTMLElement);
-
-        this.btnMarkMissing.disabled = false;
-        this.domList.classList.remove('hidden');
-    }
-
     /**
      * Scans the phrase list for those whose ID or caption matches the query value.
      * Case-insensitive, supports wrap-around and SHIFT for reverse search.
      */
     private onFind(ev: KeyboardEvent) : void
     {
+        // Clear no-match class on typing anything
         this.inputFind.classList.remove('noMatches');
 
         // Only handle ENTER to find
@@ -210,6 +205,7 @@ export class EditorPhrases
             element.innerHTML      = `<code>${key}</code> "${value}"`;
 
             this.domList.appendChild(element);
+            this.checkMissing(element);
         }
 
         this.inputFind.disabled = (this.domList.children.length === 0);

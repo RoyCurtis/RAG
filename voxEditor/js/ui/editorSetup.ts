@@ -35,12 +35,22 @@ export class EditorSetup
     }
 
     /** Handle form changes and input */
-    private onFormChange() : void
+    private onFormChange(ev: Event) : void
     {
+        let target = ev.target;
+
+        if (!target)
+            return;
+
         VoxEditor.config.deviceId  = this.inputDevices.value;
         VoxEditor.config.voicePath = this.inputVoices.value;
         VoxEditor.config.save();
-        VoxEditor.mics.load();
+
+        if (target === this.inputDevices)
+            VoxEditor.mics.load();
+
+        if (target === this.inputVoices)
+            VoxEditor.views.phrases.onVoiceChange();
     }
 
     /** Handles changes to input devices */

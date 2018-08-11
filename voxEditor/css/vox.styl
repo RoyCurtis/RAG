@@ -30,22 +30,17 @@ h1
   flex-basis 40%
   overflow   auto
 
-  menu
-    flexbox()
-    padding  16px 16px 0 16px
-    position sticky
-    top      0
+  input
+    border    none
+    font-size large
+    margin    16px 16px 0 16px
+    padding   8px
+    position  sticky
+    top       0
+    width     -webkit-fill-available
 
-    input, button
-      font-size large
-      padding   8px
-
-    input
-      border    none
-      flex-grow 1
-
-      &.noMatches
-        background lightness($bgPanic, 80%)
+    &.noMatches
+      background lightness($bgPanic, 80%)
 
   ul
     unselectable()
