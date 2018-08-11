@@ -229,7 +229,7 @@ export class EditorTapedeck
         // TODO: Make this a toggle
         if (this.dirty)
             VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
-        
+
         VoxEditor.views.phrases.selectPrev();
     }
 

@@ -11,11 +11,13 @@ export class VoiceMeter
     private readonly context   : CanvasRenderingContext2D;
 
     /** Currently queued animation frame reference number */
-    private frame  : number = 0;
+    private frame   : number = 0;
     /** How many frames remaining to draw a grid line */
-    private grid   : number = 0;
+    private grid    : number = 0;
     /** How many frames remaining to show "peaked" status in the given data */
-    private peaked : number = 0;
+    private peaked  : number = 0;
+    /** How many seconds have passed since recording began; inaccurate */
+    private seconds : number = 0;
 
     public constructor(query: string)
     {
@@ -31,9 +33,10 @@ export class VoiceMeter
     {
         // Stop any queued draw
         cancelAnimationFrame(this.frame);
-        this.frame  = 0;
-        this.grid   = 0;
-        this.peaked = 0;
+        this.frame   = 0;
+        this.grid    = 0;
+        this.peaked  = 0;
+        this.seconds = 0;
 
         // Set the correct dimensions (and incidentally clears)
         let width  = this.domCanvas.width  = this.dom.clientWidth  * 2;
@@ -42,6 +45,9 @@ export class VoiceMeter
         // Draw middle line
         this.context.fillStyle = '#AAAAAA';
         this.context.fillRect(0, (height / 2) - 1, width, 3);
+
+        // Setup font
+        this.context.font = '16px monospace';
     }
 
     /** Draws the given buffer onto the meter, limited to 60 FPS */
@@ -66,9 +72,9 @@ export class VoiceMeter
         let midHeight = height / 2;
         let ctx       = this.context;
 
-        // Shift the existing image data to the right by 1 pixel
-        ctx.putImageData(ctx.getImageData(0, 0, width, height), 1, 0);
-        ctx.clearRect(0, 0, 1, height);
+        // Shift the existing image data to the right by 2 pixels
+        ctx.putImageData(ctx.getImageData(0, 0, width, height), 2, 0);
+        ctx.clearRect(0, 0, 2, height);
 
         // Summarize the given buffer
         let posSum = 0,
@@ -89,19 +95,24 @@ export class VoiceMeter
             this.peaked -= (this.peaked) ? 1 : 0;
 
         // Draw grid lines
-        this.grid++;
+        this.grid--;
 
-        if (this.grid > 50)
+        if (this.grid <= 0)
         {
-            this.grid              = 0;
             this.context.fillStyle = '#444444';
             this.context.fillRect(0, 0, 2, height);
+
+            this.context.fillStyle = '#AAAAAA';
+            ctx.fillText(`${this.seconds}`, 4, height - 8);
+
+            this.grid     = 30;
+            this.seconds += 0.5;
         }
 
         // Draw middle line and peak
         this.context.fillStyle = this.peaked ? '#CC0B00' : '#CC7E00';
         this.context.fillRect(0, midHeight - 1, width, 3);
-        this.context.fillRect(0, midHeight - 1, 1, negSum);
-        this.context.fillRect(0, midHeight + 1, 1, posSum);
+        this.context.fillRect(0, midHeight - 1, 2, negSum);
+        this.context.fillRect(0, midHeight + 1, 2, posSum);
     }
 }
