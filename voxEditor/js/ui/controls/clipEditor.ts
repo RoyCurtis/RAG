@@ -37,6 +37,15 @@ export class ClipEditor
         this.redraw();
     }
 
+    public getBounds() : [number, number]
+    {
+        let width = this.dom.clientWidth;
+        let left  = this.clipperLeft.clientWidth;
+        let right = width - this.clipperRight.clientWidth;
+
+        return [left / width, right / width];
+    }
+
     public redraw() : void
     {
         let width     = this.domCanvas.width  = this.dom.clientWidth  * 2;

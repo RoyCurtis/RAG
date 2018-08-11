@@ -7,6 +7,7 @@ import {VoxEditor} from "../voxEditor";
 import Mp3Encoder = lamejs.Mp3Encoder;
 
 /** Manages available voices and clips */
+// TODO: Rename clip manager?
 export class VoiceManager
 {
     private static readonly VOX_DIR   : string = '../data/vox';
@@ -126,7 +127,7 @@ export class VoiceManager
         this.currentBufNode = undefined;
     }
 
-    public saveClip(key: string) : void
+    public saveClip(key: string, bounds?: [number, number]) : void
     {
         if ( !this.currentClip || Strings.isNullOrEmpty(key) )
             return;
@@ -134,14 +135,28 @@ export class VoiceManager
         // https://github.com/zhuker/lamejs/issues/10#issuecomment-141720630
         let blocks : Int8Array[] = [];
 
+        let intChannel : Int16Array;
         let encoder    = new Mp3Encoder(1, this.currentClip.sampleRate, 128);
         let channel    = this.currentClip.getChannelData(0);
         let blockSize  = 1152;
         let length     = channel.length;
-        let intChannel = new Int16Array(length);
         let totalSize  = 0;
 
-        // First, convert the clip data from -1..1 floats to -32768..32767 integers
+        // First, get a clipped copy of the data if given bounds
+        // TODO: Soften like on mic recordings
+
+        if (bounds && bounds[0] > 0 && bounds[1] > 0)
+        {
+            let left  = length * bounds[0];
+            let right = length * bounds[1];
+
+            channel = channel.slice(left, right);
+            length  = channel.length;
+        }
+
+        intChannel = new Int16Array(length);
+
+        // Then, convert the clip data from -1..1 floats to -32768..32767 integers
 
         for (let i = 0; i < length; i++)
         {

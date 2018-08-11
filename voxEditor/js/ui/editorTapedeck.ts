@@ -152,7 +152,9 @@ export class EditorTapedeck
 
     private onSave() : void
     {
-        VoxEditor.voices.saveClip(VoxEditor.views.phrases.currentKey!);
+        VoxEditor.voices.saveClip(
+            VoxEditor.views.phrases.currentKey!, this.clipEditor.getBounds()
+        );
     }
 
     private onNext() : void
