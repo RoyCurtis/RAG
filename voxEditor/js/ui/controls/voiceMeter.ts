@@ -13,6 +13,8 @@ export class VoiceMeter
 
     private peaked : number = 0;
 
+    private grid   : number = 0;
+
     public constructor(query: string)
     {
         this.dom       = DOM.require(query);
@@ -29,7 +31,7 @@ export class VoiceMeter
         let height = this.domCanvas.height = this.dom.clientHeight * 2;
 
         // Draw middle line
-        this.context.fillStyle = '#CC7E00';
+        this.context.fillStyle = '#AAAAAA';
         this.context.fillRect(0, (height / 2) - 1, width, 3);
     }
 
@@ -59,6 +61,16 @@ export class VoiceMeter
             this.peaked = 100;
         else
             this.peaked -= (this.peaked) ? 1 : 0;
+
+        // Draw grid lines
+        this.grid++;
+
+        if (this.grid > 50)
+        {
+            this.grid              = 0;
+            this.context.fillStyle = '#444444';
+            this.context.fillRect(0, 0, 2, height);
+        }
 
         // Draw middle line and peak
         this.context.fillStyle = this.peaked ? '#CC0B00' : '#CC7E00';
