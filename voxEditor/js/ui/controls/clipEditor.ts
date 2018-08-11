@@ -5,20 +5,34 @@ import {VoxEditor} from "../../voxEditor";
 /** UI control for visualizing and editing waveform data */
 export class ClipEditor
 {
-    private readonly dom       : HTMLElement;
+    private readonly dom          : HTMLElement;
 
-    private readonly domCanvas : HTMLCanvasElement;
+    private readonly domCanvas    : HTMLCanvasElement;
 
-    private readonly domTitle  : HTMLSpanElement;
+    private readonly domTitle     : HTMLSpanElement;
 
-    private readonly context   : CanvasRenderingContext2D;
+    private readonly clipperLeft  : HTMLElement;
+
+    private readonly clipperRight : HTMLElement;
+
+    private readonly context      : CanvasRenderingContext2D;
+
+    private clipperDrag? : HTMLElement;
 
     public constructor(query: string)
     {
-        this.dom       = DOM.require(query);
-        this.domCanvas = DOM.require('canvas', this.dom);
-        this.domTitle  = DOM.require('.title', this.dom);
-        this.context   = this.domCanvas.getContext('2d')!;
+        this.dom          = DOM.require(query);
+        this.domCanvas    = DOM.require('canvas',         this.dom);
+        this.domTitle     = DOM.require('.title',         this.dom);
+        this.domTitle     = DOM.require('.title',         this.dom);
+        this.clipperLeft  = DOM.require('.clipper.left',  this.dom);
+        this.clipperRight = DOM.require('.clipper.right', this.dom);
+        this.context      = this.domCanvas.getContext('2d')!;
+
+        this.dom.onmousedown =
+        this.dom.onmousemove =
+        this.dom.onmouseout  =
+        this.dom.onmouseup   = this.onClipperInteract.bind(this);
 
         window.onresize = this.redraw.bind(this);
         this.redraw();
@@ -92,5 +106,43 @@ export class ClipEditor
         }
 
         return values;
+    }
+
+    private onClipperInteract(ev: MouseEvent) : void
+    {
+        let target    = ev.target as HTMLElement;
+        let isClipper = target.classList.contains('clipper');
+
+        if (!target) return;
+
+        // Begin drag operation
+        if (ev.type === 'mousedown' && isClipper && !this.clipperDrag)
+        {
+            this.clipperDrag = target;
+            this.clipperDrag.classList.add('dragging');
+        }
+        // End drag operation on any mouse release
+        if (ev.type === 'mouseup' || (ev.buttons & 1) === 0)
+            if (this.clipperDrag)
+            {
+                this.clipperDrag.classList.remove('dragging');
+                return this.clipperDrag = undefined;
+            }
+        // Discontinue if there's nothing to drag
+        if (!this.clipperDrag)
+            return;
+
+        // Do move
+        let maxWidth = (this.dom.clientWidth / 2) - 5;
+        let rect     = this.clipperDrag.getBoundingClientRect();
+
+        let width = (this.clipperDrag === this.clipperLeft)
+            ? ev.clientX - rect.left
+            : rect.right - ev.clientX;
+
+        if (width < 1)        width = 1;
+        if (width > maxWidth) width = maxWidth;
+
+        this.clipperDrag.style.width = `${width}px`;
     }
 }

@@ -143,6 +143,43 @@ h1
     width      100%
     height     100%
 
+  .clipper
+    unselectable()
+    background alpha($bgDarkest, 0.9)
+    cursor     ew-resize
+    width      1px
+    height     100%
+
+    &::after
+      background $bgDarkest
+      border     1px solid $fgDim
+      content    ' '
+      position   absolute
+      top        83px
+      width      8px
+      height     29px
+
+    &.left
+      border-right 1px solid $fgDim
+      left         0px
+
+      &::after
+        right -5px
+
+    &.right
+      border-left 1px solid $fgDim
+      right       0px
+
+      &::after
+        left -5px
+
+    &:hover, &.dragging
+      border-color $fgMarquee
+
+      &::after
+        background   $fgFocus
+        border-color $fgMarquee
+
 .voiceMeter
   align-self stretch
   height     50px
