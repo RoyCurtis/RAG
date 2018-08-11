@@ -50,7 +50,7 @@ export class EditorSetup
             VoxEditor.mics.load();
 
         if (target === this.inputVoices)
-            VoxEditor.views.phrases.onVoiceChange();
+            VoxEditor.views.phrases.handleVoiceChange();
     }
 
     /** Handles changes to input devices */

@@ -100,7 +100,7 @@ export class MicManager
         this.streamNode = this.audioContext.createMediaStreamSource(this.micDevice!);
         this.streamNode.connect(this.workletNode!);
 
-        this.buffers = [];
+        this.buffers  = [];
 
         this.workletNode!.port!.onmessage = msg =>
         {
@@ -108,7 +108,7 @@ export class MicManager
             let buf  = new Float32Array(data);
 
             this.buffers!.push(buf);
-            VoxEditor.views.tapedeck.voiceMeter.draw(buf);
+            VoxEditor.views.tapedeck.handleMicData(buf);
         };
     }
 
@@ -160,7 +160,6 @@ export class MicManager
 
         this.buffers = undefined;
         VoxEditor.voices.loadFromBuffer(key, buffer);
-        VoxEditor.views.tapedeck.voiceMeter.reshape();
-        VoxEditor.views.tapedeck.onPlay();
+        VoxEditor.views.tapedeck.handleMicDone();
     }
 }

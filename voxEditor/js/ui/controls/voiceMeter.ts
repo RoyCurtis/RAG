@@ -1,19 +1,21 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-import {VoxEditor} from "../../voxEditor";
-
 /** UI control for visualizing the live input stream*/
 export class VoiceMeter
 {
+    /** Reference to the container for this meter */
     private readonly dom       : HTMLElement;
-
+    /** Reference to the canvas element for this meter */
     private readonly domCanvas : HTMLCanvasElement;
-
+    /** Reference to the 2D drawing state for this meter */
     private readonly context   : CanvasRenderingContext2D;
 
-    private peaked : number = 0;
-
+    /** Currently queued animation frame reference number */
+    private frame  : number = 0;
+    /** How many frames remaining to draw a grid line */
     private grid   : number = 0;
+    /** How many frames remaining to show "peaked" status in the given data */
+    private peaked : number = 0;
 
     public constructor(query: string)
     {
@@ -21,12 +23,19 @@ export class VoiceMeter
         this.domCanvas = DOM.require('canvas', this.dom);
         this.context   = this.domCanvas.getContext('2d')!;
 
-        window.onresize = this.reshape.bind(this);
-        this.reshape();
+        this.redraw();
     }
 
-    public reshape() : void
+    /** Resizes the canvas to the current container size and resets state */
+    public redraw() : void
     {
+        // Stop any queued draw
+        cancelAnimationFrame(this.frame);
+        this.frame  = 0;
+        this.grid   = 0;
+        this.peaked = 0;
+
+        // Set the correct dimensions (and incidentally clears)
         let width  = this.domCanvas.width  = this.dom.clientWidth  * 2;
         let height = this.domCanvas.height = this.dom.clientHeight * 2;
 
@@ -35,16 +44,33 @@ export class VoiceMeter
         this.context.fillRect(0, (height / 2) - 1, width, 3);
     }
 
-    public draw(buf: Float32Array)
+    /** Draws the given buffer onto the meter, limited to 60 FPS */
+    public draw(buf: Float32Array) : void
+    {
+        if (this.frame)
+            return;
+
+        // Enforce 60 FPS limit for drawing the voice meter
+        this.frame = requestAnimationFrame(_ =>
+        {
+            this.drawFrame(buf);
+            this.frame = 0;
+        });
+    }
+
+    /** Draws the given buffer for one frame */
+    private drawFrame(buf: Float32Array) : void
     {
         let width     = this.domCanvas.width;
         let height    = this.domCanvas.height;
         let midHeight = height / 2;
         let ctx       = this.context;
 
+        // Shift the existing image data to the right by 1 pixel
         ctx.putImageData(ctx.getImageData(0, 0, width, height), 1, 0);
         ctx.clearRect(0, 0, 1, height);
 
+        // Summarize the given buffer
         let posSum = 0,
             negSum = 0;
 
@@ -58,7 +84,7 @@ export class VoiceMeter
         negSum = (negSum / buf.length) * height;
 
         if (posSum > height * 0.25 || negSum < -height * 0.25)
-            this.peaked = 100;
+            this.peaked  = 30;
         else
             this.peaked -= (this.peaked) ? 1 : 0;
 

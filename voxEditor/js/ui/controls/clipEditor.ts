@@ -34,7 +34,6 @@ export class ClipEditor
         this.dom.onmouseout  =
         this.dom.onmouseup   = this.onClipperInteract.bind(this);
 
-        window.onresize = this.redraw.bind(this);
         this.redraw();
     }
 
@@ -43,10 +42,15 @@ export class ClipEditor
         let width     = this.domCanvas.width  = this.dom.clientWidth  * 2;
         let height    = this.domCanvas.height = this.dom.clientHeight * 2;
         let midHeight = height / 2;
+        let buffer    = VoxEditor.voices.currentClip;
+        let path      = VoxEditor.voices.currentPath;
 
-        let buffer = VoxEditor.voices.currentClip;
-        let path   = VoxEditor.voices.currentPath;
+        // Reset clippers
+        this.stopDragging();
+        this.clipperLeft.style.width  =
+        this.clipperRight.style.width = '1px';
 
+        // Handle metadata
         if (!buffer)
         {
             this.domTitle.innerText = 'No data available';
@@ -120,23 +124,21 @@ export class ClipEditor
         {
             this.clipperDrag = target;
             this.clipperDrag.classList.add('dragging');
+
+            // Clear any selections, as they will break dragging
+            window.getSelection().empty();
         }
         // End drag operation on any mouse release
         if (ev.type === 'mouseup' || (ev.buttons & 1) === 0)
-            if (this.clipperDrag)
-            {
-                this.clipperDrag.classList.remove('dragging');
-                return this.clipperDrag = undefined;
-            }
+            this.stopDragging();
         // Discontinue if there's nothing to drag
         if (!this.clipperDrag)
             return;
 
         // Do move
-        let maxWidth = (this.dom.clientWidth / 2) - 5;
         let rect     = this.clipperDrag.getBoundingClientRect();
-
-        let width = (this.clipperDrag === this.clipperLeft)
+        let maxWidth = (this.dom.clientWidth / 2) - 5;
+        let width    = (this.clipperDrag === this.clipperLeft)
             ? ev.clientX - rect.left
             : rect.right - ev.clientX;
 
@@ -144,5 +146,14 @@ export class ClipEditor
         if (width > maxWidth) width = maxWidth;
 
         this.clipperDrag.style.width = `${width}px`;
+    }
+
+    private stopDragging() : void
+    {
+        if (!this.clipperDrag)
+            return;
+
+        this.clipperDrag.classList.remove('dragging');
+        return this.clipperDrag = undefined;
     }
 }

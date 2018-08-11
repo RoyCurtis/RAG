@@ -91,7 +91,7 @@ export class EditorPhrases
     }
 
     /** Called when the choice of voice changes, by marking all missing entries */
-    public onVoiceChange() : void
+    public handleVoiceChange() : void
     {
         this.domList.classList.add('hidden');
 

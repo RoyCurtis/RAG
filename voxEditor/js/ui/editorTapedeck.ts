@@ -7,9 +7,9 @@ import {VoiceMeter} from "./controls/voiceMeter";
 /** Controller for the tape deck part of the editor */
 export class EditorTapedeck
 {
-    public  readonly voiceMeter   : VoiceMeter;
-
     private readonly clipEditor   : ClipEditor;
+
+    private readonly voiceMeter   : VoiceMeter;
 
     private readonly domForm      : HTMLFormElement;
 
@@ -43,6 +43,7 @@ export class EditorTapedeck
         this.lblId      = DOM.require('.id',         this.domForm);
         this.lblCaption = DOM.require('.caption',    this.domForm);
 
+        window.onresize       = this.onResize.bind(this);
         this.domForm.onsubmit = ev => ev.preventDefault();
         this.btnPrev.onclick  = this.onPrev.bind(this);
         this.btnPlay.onclick  = this.onPlay.bind(this);
@@ -101,6 +102,24 @@ export class EditorTapedeck
             this.btnStop.disabled = false;
             this.btnSave.disabled = false;
         }
+    }
+
+    /** Called when raw data from recording is available */
+    public handleMicData(buf: Float32Array) : void
+    {
+        this.voiceMeter.draw(buf);
+    }
+
+    public handleMicDone() : void
+    {
+        this.voiceMeter.redraw();
+        VoxEditor.views.tapedeck.onPlay();
+    }
+
+    private onResize() : void
+    {
+        this.clipEditor.redraw();
+        this.voiceMeter.redraw();
     }
 
     private onPrev() : void
