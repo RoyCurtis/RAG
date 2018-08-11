@@ -106,24 +106,24 @@ export class VoiceManager
             return;
 
         this.stopClip();
-        this.currentBufNode        = this.audioContext.createBufferSource();
-        this.currentBufNode.buffer = this.currentClip;
+        this.currentBufNode         = this.audioContext.createBufferSource();
+        this.currentBufNode.buffer  = this.currentClip;
+        this.currentBufNode.onended = _ => { this.stopClip(); };
 
         this.currentBufNode.connect(this.audioContext.destination);
+        VoxEditor.views.tapedeck.handleBeginPlay();
 
+        // If given bounds, only play within those bounds
         if ( bounds && (bounds[0] > 0 || bounds[1] < 1) )
         {
             let duration = this.currentClip.duration;
             let begin    = duration * bounds[0];
             let end      = (duration * bounds[1]) - begin;
 
-            console.log(duration, begin, end);
             this.currentBufNode.start(0, begin, end);
         }
         else
             this.currentBufNode.start();
-
-        this.currentBufNode.onended = _ => { this.currentBufNode = undefined; };
     }
 
     public stopClip() : void
@@ -135,6 +135,8 @@ export class VoiceManager
         this.currentBufNode.stop();
         this.currentBufNode.disconnect();
         this.currentBufNode = undefined;
+
+        VoxEditor.views.tapedeck.handleEndPlay();
     }
 
     public saveClip(key: string, bounds?: [number, number]) : void

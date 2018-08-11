@@ -11,6 +11,8 @@ export class ClipEditor
 
     private readonly domTitle     : HTMLSpanElement;
 
+    private readonly domNeedle    : HTMLElement;
+
     private readonly clipperLeft  : HTMLElement;
 
     private readonly clipperRight : HTMLElement;
@@ -19,12 +21,14 @@ export class ClipEditor
 
     private clipperDrag? : HTMLElement;
 
+    private needleTimer : number = 0;
+
     public constructor(query: string)
     {
         this.dom          = DOM.require(query);
         this.domCanvas    = DOM.require('canvas',         this.dom);
         this.domTitle     = DOM.require('.title',         this.dom);
-        this.domTitle     = DOM.require('.title',         this.dom);
+        this.domNeedle    = DOM.require('.needle',        this.dom);
         this.clipperLeft  = DOM.require('.clipper.left',  this.dom);
         this.clipperRight = DOM.require('.clipper.right', this.dom);
         this.context      = this.domCanvas.getContext('2d')!;
@@ -35,6 +39,45 @@ export class ClipEditor
         this.dom.onmouseup   = this.onClipperInteract.bind(this);
 
         this.redraw();
+    }
+
+    /** Shows and begins animating the needle from left to right bound */
+    public beginNeedle() : void
+    {
+        this.domNeedle.classList.remove('hidden');
+
+        let clip = VoxEditor.voices.currentClip;
+
+        if (!clip)
+            return;
+
+        // This is not 100% accurate as it has no way to sync with playing audio, but
+        // it's better than the more complicated setup of using an analyser node.
+
+        let step = (this.dom.clientWidth / clip.duration) / 1000;
+        let last = performance.now();
+        let left = this.clipperLeft.clientWidth;
+        let loop = (time : number) =>
+        {
+            left += step * (time - last);
+            last  = time;
+
+            // Sanity check; if we go off canvas, stop animating
+            if (left > this.dom.clientWidth)
+                this.endNeedle();
+
+            this.domNeedle.style.left = `${left}px`;
+            this.needleTimer          = requestAnimationFrame(loop);
+        };
+
+        loop(last);
+    }
+
+    /** Stops animating the needle and hides it */
+    public endNeedle() : void
+    {
+        cancelAnimationFrame(this.needleTimer);
+        this.domNeedle.classList.add('hidden');
     }
 
     public getBounds() : [number, number]

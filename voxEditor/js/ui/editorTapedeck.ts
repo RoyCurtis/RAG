@@ -104,13 +104,26 @@ export class EditorTapedeck
         }
     }
 
+    /** Called when a clip has begun playing */
+    public handleBeginPlay() : void
+    {
+        this.clipEditor.beginNeedle();
+    }
+
+    /** Called when a clip has finished or stopped playing */
+    public handleEndPlay() : void
+    {
+        this.clipEditor.endNeedle();
+    }
+
     /** Called when raw data from recording is available */
     public handleMicData(buf: Float32Array) : void
     {
         this.voiceMeter.draw(buf);
     }
 
-    public handleMicDone() : void
+    /** Called when recording from the microphone is finished */
+    public handleRecDone() : void
     {
         this.voiceMeter.redraw();
         VoxEditor.views.tapedeck.onPlay();

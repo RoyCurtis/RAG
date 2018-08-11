@@ -160,6 +160,6 @@ export class MicManager
 
         this.buffers = undefined;
         VoxEditor.voices.loadFromBuffer(key, buffer);
-        VoxEditor.views.tapedeck.handleMicDone();
+        VoxEditor.views.tapedeck.handleRecDone();
     }
 }
