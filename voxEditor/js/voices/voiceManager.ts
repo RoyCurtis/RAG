@@ -7,99 +7,124 @@ import {VoxEditor} from "../voxEditor";
 import Mp3Encoder = lamejs.Mp3Encoder;
 
 /** Manages available voices and clips */
-// TODO: Rename clip manager?
 export class VoiceManager
 {
+    /** Relative path to find voices in */
     private static readonly VOX_DIR   : string = '../data/vox';
-
+    /** Pattern to match voice folder names */
     private static readonly VOX_REGEX : RegExp = /(.+)_([a-z]{2}-[A-Z]{2})/;
 
-    public readonly list         : CustomVoice[];
+    /** List of discovered and available voices */
+    public  readonly list         : CustomVoice[];
+    /** Audio output through which clips are played */
+    private readonly audioContext : AudioContext;
 
-    public readonly audioContext : AudioContext;
-
+    /** Current clip's audio buffer */
     public  currentClip?    : AudioBuffer;
-
+    /** Current clip's file path */
     public  currentPath?    : string;
     /** Audio buffer node holding and playing the current voice clip */
     private currentBufNode? : AudioBufferSourceNode;
 
     public constructor()
     {
-        this.list         = [];
-        this.audioContext = new AudioContext();
-
+        this.list            = [];
+        this.audioContext    = new AudioContext();
         CustomVoice.basePath = VoiceManager.VOX_DIR;
 
-        fs.readdirSync(VoiceManager.VOX_DIR)
-            .map( name => path.join(VoiceManager.VOX_DIR, name) )
-            .filter(Files.isDir)
-            .forEach(dir =>
-            {
-                let name  = path.basename(dir);
-                let parts = name.match(VoiceManager.VOX_REGEX);
+        // Discover valid voice folders
+        this.discoverVoices();
 
-                // Skip voices that do not match the format
-                if (!parts)
-                    return;
-
-                this.list.push( new CustomVoice(parts[1], parts[2]) );
-
-                if (VoxEditor.config.voicePath === '')
-                    VoxEditor.config.voicePath = dir;
-            });
+        // Create new voice if none found
+        if (VoxEditor.config.voicePath === '')
+            this.createNewVoice();
     }
 
+    /** Makes a relative path out of the given key */
     public keyToPath(key: string) : string
     {
+        if (VoxEditor.config.voicePath === '')
+            throw Error('Attempted to get path of key with no voice set');
+
         return path.join(VoxEditor.config.voicePath, `${key}.mp3`);
     }
 
+    /** Checks whether a clip for the given key exists on disk */
     public hasClip(key: string) : boolean
     {
-        // If no voice path available, skip
-        if (VoxEditor.config.voicePath === '')
-            return false;
-
         let clipPath = this.keyToPath(key);
+
+        // If no voice path is set, skip
+        if (!clipPath)
+            return false;
 
         return fs.existsSync(clipPath) && fs.lstatSync(clipPath).isFile();
     }
 
-    public loadFromBuffer(key: string, buffer: AudioBuffer) : void
+    /** Loads the given audio buffer as a clip for the current key */
+    public loadFromBuffer(buffer: AudioBuffer) : void
     {
+        let key = VoxEditor.views.phrases.currentKey;
+
+        if ( Strings.isNullOrEmpty(key) )
+            throw Error('Attempted to load with no key selected');
+
         this.currentClip = buffer;
-        this.currentPath = this.keyToPath(key);
+        this.currentPath = this.keyToPath(key!);
     }
 
-    public async loadFromDisk(key: string) : Promise<void>
+    /** Attempts to load the current key's voice clip from disk, if it exists */
+    public loadFromDisk() : void
     {
-        if ( !this.hasClip(key) )
-        {
-            this.currentClip = undefined;
-            this.currentPath = undefined;
-        }
+        this.unload();
+
+        let key = VoxEditor.views.phrases.currentKey;
+
+        if ( Strings.isNullOrEmpty(key) )
+            throw Error('Attempted to load with no key selected');
+
+        this.currentPath = this.keyToPath(key!);
+
+        if ( !this.currentPath || !this.hasClip(key!) )
+            return VoxEditor.views.tapedeck.handleClipLoad(key!);
         else
-        {
-            // For some reason, we have to copy the given buffer using slice. Else, repeat
-            // calls to this method for the same clip will silently fail, or hang. It's
-            // possible because decodeAudioData holds a copy of the given buffer,
-            // preventing the release of resources held by readFileSync.
+            VoxEditor.views.tapedeck.handleClipLoading(key!);
 
-            // TODO: BUG: There appears to be a Chromium bug, where some clips repeat
-            // themselves after being loaded multiple times. It may just be an issue with
-            // the mp3 files exported from Audacity.
+        // For some reason, we have to copy the given buffer using slice. Else, repeat
+        // calls to this method for the same clip will silently fail, or hang. It's
+        // possible because decodeAudioData holds a copy of the given buffer, preventing
+        // the release of resources held by readFileSync.
 
-            let path         = this.keyToPath(key);
-            let buffer       = fs.readFileSync(path);
-            let arrayBuffer  = buffer.buffer.slice(0);
-            this.currentClip = await this.audioContext.decodeAudioData(arrayBuffer);
-            this.currentPath = path;
-        }
+        // TODO: BUG: There appears to be a Chromium bug, where some clips repeat
+        // themselves after being loaded multiple times. It may just be an issue with
+        // the mp3 files exported from Audacity.
 
-        return;
+        let buffer       = fs.readFileSync(this.currentPath);
+        let arrayBuffer  = buffer.buffer.slice(0);
+        this.audioContext.decodeAudioData(arrayBuffer)
+            .then(audio =>
+            {
+                this.currentClip = audio;
+                VoxEditor.views.tapedeck.handleClipLoad(key!);
+            })
+            .catch( err => VoxEditor.views.tapedeck.handleClipFail(key!, err) );
     }
 
+    /** Unloads the current clip from memory */
+    public unload() : void
+    {
+        if (!this.currentClip)
+            return;
+
+        this.stopClip();
+
+        this.currentClip = undefined;
+        this.currentPath = undefined;
+
+        VoxEditor.views.tapedeck.handleClipUnload();
+    }
+
+    /** Plays the currently loaded clip, if any */
     public playClip(bounds?: [number, number]) : void
     {
         if (!this.currentClip)
@@ -126,6 +151,7 @@ export class VoiceManager
             this.currentBufNode.start();
     }
 
+    /** Stops playing the current clip, if any */
     public stopClip() : void
     {
         if (!this.currentBufNode)
@@ -139,10 +165,11 @@ export class VoiceManager
         VoxEditor.views.tapedeck.handleEndPlay();
     }
 
-    public saveClip(key: string, bounds?: [number, number]) : void
+    /** Saves the current clip to disk as an MP3 */
+    public saveClip(bounds?: [number, number]) : void
     {
-        if ( !this.currentClip || Strings.isNullOrEmpty(key) )
-            return;
+        if ( !this.currentClip || !this.currentPath )
+            throw Error('Attempted to save without state nor path');
 
         // https://github.com/zhuker/lamejs/issues/10#issuecomment-141720630
         let blocks : Int8Array[] = [];
@@ -215,6 +242,43 @@ export class VoiceManager
             offset += block.length;
         });
 
-        fs.writeFileSync(this.keyToPath(key), bytes, { encoding : null });
+        fs.writeFileSync(this.currentPath, bytes, { encoding : null });
+        VoxEditor.views.phrases.handleSave();
+    }
+
+    /** Looks for and keeps track of any voices available on disk */
+    private discoverVoices() : void
+    {
+        fs.readdirSync(VoiceManager.VOX_DIR)
+            .map( name => path.join(VoiceManager.VOX_DIR, name) )
+            .filter(Files.isDir)
+            .forEach(dir =>
+            {
+                let name  = path.basename(dir);
+                let parts = name.match(VoiceManager.VOX_REGEX);
+
+                // Skip voices that do not match the format
+                if (!parts)
+                    return;
+
+                this.list.push( new CustomVoice(parts[1], parts[2]) );
+
+                // If no voice configured yet, choose the first one found
+                if (VoxEditor.config.voicePath === '')
+                    VoxEditor.config.voicePath = dir;
+            });
+    }
+
+    /** Creates a new voice directory on disk */
+    private createNewVoice() : void
+    {
+        let newName  = 'NuVoice';
+        let newVoice = path.join(VoiceManager.VOX_DIR, newName);
+
+        fs.mkdirSync(newVoice);
+        VoxEditor.config.voicePath = newVoice;
+        this.list.push( new CustomVoice(newName, 'en-GB') );
+
+        alert(`No voices were found, so a new one was made at '${newVoice}'`);
     }
 }

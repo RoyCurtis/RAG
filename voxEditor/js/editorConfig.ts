@@ -1,12 +1,35 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+import * as fs from "fs";
+
 /** Holds vox editor runtime configuration */
 export class EditorConfig
 {
     /** Recording device ID to use */
-    public deviceId  : string = 'default';
+    public  deviceId   : string = 'default';
     /** Path of voice that was last being edited */
-    public voicePath : string = '';
+    private _voicePath : string = '';
+
+    /**
+     * Path of voice that was last being edited. If it no longer exists, it's reset to
+     * the default blank string upon get.
+     */
+    get voicePath(): string
+    {
+        let path = this._voicePath;
+
+        // Reset paths that no longer exist
+        if ( !fs.existsSync(path) || !fs.lstatSync(path).isDirectory() )
+            this._voicePath = '';
+
+        return this._voicePath;
+    }
+
+    /** Sets the path of the voice that was last edited */
+    set voicePath(value: string)
+    {
+        this._voicePath = value;
+    }
 
     /** Safely loads runtime configuration from localStorage, if any */
     public constructor(load: boolean)

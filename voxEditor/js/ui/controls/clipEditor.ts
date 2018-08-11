@@ -95,28 +95,22 @@ export class ClipEditor
         let height    = this.domCanvas.height = this.dom.clientHeight * 2;
         let midHeight = height / 2;
         let buffer    = VoxEditor.voices.currentClip;
-        let path      = VoxEditor.voices.currentPath;
 
         // Reset clippers
         this.stopDragging();
         this.clipperLeft.style.width  =
         this.clipperRight.style.width = '1px';
 
-        // Handle metadata
+        // Draw middle line
+        this.context.fillStyle = buffer ? 'orange' : '#AAAAAA';
+        this.context.fillRect(0, midHeight - 1, width, 3);
+
+        // Don't proceed if there's no buffer to work with
         if (!buffer)
-        {
-            this.domTitle.innerText = 'No data available';
             return;
-        }
-        else
-            this.domTitle.innerText = path!;
 
         let channel = buffer.getChannelData(0);
         let sums    = this.summarize(channel, width);
-
-        // Draw middle line
-        this.context.fillStyle = 'orange';
-        this.context.fillRect(0, midHeight - 1, width, 3);
 
         // Draw the summarized data
         this.context.fillStyle = '#CC7E00';
@@ -125,6 +119,11 @@ export class ClipEditor
             this.context.fillRect(x, midHeight - 1, 1, (sums[x][0] * height) * 0.75);
             this.context.fillRect(x, midHeight + 1, 1, (sums[x][1] * height) * 0.75);
         }
+    }
+
+    public setTitle(title: string) : void
+    {
+        this.domTitle.innerText = title;
     }
 
     /**

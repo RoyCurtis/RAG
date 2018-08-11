@@ -185,6 +185,7 @@ h1 {
   font-family: monospace;
   margin-top: 8px;
   text-align: center;
+  text-shadow: 0 0 10px #000;
   width: 100%;
 }
 .clipEditor canvas {

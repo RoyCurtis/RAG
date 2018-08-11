@@ -38,6 +38,7 @@ class Config
         return 0;
     }
 
+    /** Sets the choice of speech to use, as getVoices index */
     set speechVoice(value: number)
     {
         this._speechVoice = value;

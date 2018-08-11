@@ -10,9 +10,10 @@ export class EditorPhrases
     /** Reference to the phrase search box */
     private readonly inputFind : HTMLInputElement;
 
+    /** Reference to the currently selected phrase's key */
     public  currentKey?       : string;
     /** Reference to the currently selected phrase entry */
-    public  currentEntry?     : HTMLElement;
+    private currentEntry?     : HTMLElement;
     /** Reference to the currently highlighted phrase entry */
     private currentHighlight? : HTMLElement;
 
@@ -35,8 +36,7 @@ export class EditorPhrases
 
         this.currentKey = item.dataset['key']!;
 
-        VoxEditor.views.tapedeck.load(this.currentKey);
-        VoxEditor.views.tapedeck.update();
+        VoxEditor.voices.loadFromDisk();
     }
 
     /** Selects the previous phrase entry, relative to current selection */
@@ -88,6 +88,13 @@ export class EditorPhrases
             item.classList.remove('missing');
         else
             item.classList.add('missing');
+    }
+
+    /** Called when a voice clip for the current selected phrase is saved */
+    public handleSave() : void
+    {
+        if (this.currentEntry)
+            this.checkMissing(this.currentEntry);
     }
 
     /** Called when the choice of voice changes, by marking all missing entries */

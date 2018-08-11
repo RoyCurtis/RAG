@@ -53,55 +53,59 @@ export class EditorTapedeck
         this.btnNext.onclick  = this.onNext.bind(this);
     }
 
-    public load(key: string) : void
+    public handleMicChange() : void
+    {
+        this.btnRec.disabled = true;
+
+        if (VoxEditor.mics.canRecord)
+        if (VoxEditor.voices.currentClip)
+            this.btnRec.disabled = false;
+    }
+
+    public handleClipLoading(key: string) : void
     {
         let path = VoxEditor.voices.keyToPath(key);
 
+        this.btnNext.disabled     = false;
+        this.btnPrev.disabled     = false;
         this.lblId.innerText      = `Loading '${key}'...`;
         this.lblCaption.innerText = `Loading from: ${path}`;
-
-        VoxEditor.voices.loadFromDisk(key)
-            .then ( this.onLoadSuccess.bind(this) )
-            .catch( this.update.bind(this)        );
     }
 
-    /** Updates the tapedeck UI to reflect the current state */
-    public update() : void
+    public handleClipLoad(key: string) : void
     {
-        this.btnPrev.disabled = true;
-        this.btnPlay.disabled = true;
-        this.btnStop.disabled = true;
-        this.btnRec.disabled  = true;
-        this.btnSave.disabled = true;
-        this.btnNext.disabled = true;
-
-        this.clipEditor.redraw();
-
-        // Check if a track has actually been selected
-        let currentTrack = VoxEditor.views.phrases.currentEntry;
-        if (!currentTrack)
-            return;
-
-        let key = VoxEditor.views.phrases.currentKey!;
+        let hasClip = (VoxEditor.voices.currentClip !== undefined)
+        let path    = VoxEditor.voices.currentPath!;
+        let title   = hasClip
+            ? path
+            : `New file, will be saved at: ${path}`;
 
         this.lblId.innerText      = key;
         this.lblCaption.innerText = VoxEditor.captioner.captionBank[key];
+        this.btnPlay.disabled     = !hasClip;
+        this.btnStop.disabled     = !hasClip;
+        this.btnRec.disabled      = false;
+        this.btnSave.disabled     = !hasClip;
 
-        this.btnPrev.disabled = false;
-        this.btnNext.disabled = false;
+        this.clipEditor.setTitle(title);
+        this.clipEditor.redraw();
+    }
 
-        // Check if we can record
-        if (VoxEditor.mics.canRecord)
-            this.btnRec.disabled = false;
-        else
-            this.btnRec.classList.remove('recording');
+    public handleClipFail(key: string, err: any) : void
+    {
+        this.lblId.innerText      = key;
+        this.lblCaption.innerText = VoxEditor.captioner.captionBank[key];
 
-        if (VoxEditor.voices.currentClip)
-        {
-            this.btnPlay.disabled = false;
-            this.btnStop.disabled = false;
-            this.btnSave.disabled = false;
-        }
+        this.clipEditor.setTitle(`Could not load clip: ${err}`);
+    }
+
+    public handleClipUnload() : void
+    {
+        this.btnPlay.disabled     = true;
+        this.btnStop.disabled     = true;
+        this.btnRec.disabled      = true;
+        this.btnSave.disabled     = true;
+        this.clipEditor.redraw();
     }
 
     /** Called when a clip has begun playing */
@@ -123,8 +127,9 @@ export class EditorTapedeck
     }
 
     /** Called when recording from the microphone is finished */
-    public handleRecDone() : void
+    public handleRecDone(key: string): void
     {
+        this.handleClipLoad(key);
         this.voiceMeter.redraw();
         VoxEditor.views.tapedeck.onPlay();
     }
@@ -155,29 +160,34 @@ export class EditorTapedeck
         let recording = this.btnRec.classList.toggle('recording');
 
         if (recording)
+        {
+            this.onStop();
             VoxEditor.mics.startRecording();
+            this.btnPrev.disabled = true;
+            this.btnPlay.disabled = true;
+            this.btnStop.disabled = true;
+            this.btnSave.disabled = true;
+            this.btnNext.disabled = true;
+        }
         else
         {
             VoxEditor.mics.stopRecording();
-            this.update();
+            this.btnPrev.disabled = false;
+            this.btnPlay.disabled = false;
+            this.btnStop.disabled = false;
+            this.btnSave.disabled = false;
+            this.btnNext.disabled = false;
         }
     }
 
     private onSave() : void
     {
-        VoxEditor.voices.saveClip(
-            VoxEditor.views.phrases.currentKey!,
-            this.clipEditor.getBounds()
-        );
+        VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
+        VoxEditor.voices.loadFromDisk();
     }
 
     private onNext() : void
     {
         VoxEditor.views.phrases.selectNext();
-    }
-
-    private onLoadSuccess() : void
-    {
-        this.update();
     }
 }

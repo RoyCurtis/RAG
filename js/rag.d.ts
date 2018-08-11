@@ -1328,6 +1328,7 @@ declare class Config {
      * Choice of speech voice to use, as getVoices index. Because of the async nature of
      * getVoices, the default value will be fetched from it each time.
      */
+    /** Sets the choice of speech to use, as getVoices index */
     speechVoice: number;
     /** Safely loads runtime configuration from localStorage, if any */
     constructor(load: boolean);

@@ -3,4 +3,4 @@
 /serve.py
 node_modules
 /voxEditor/dist/
-/data/vox/
+/data/vox/*/

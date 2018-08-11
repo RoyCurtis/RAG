@@ -40,7 +40,7 @@ export class MicManager
             {
                 this.workletNode = new MicWorkletNode(this.audioContext);
                 this.workletNode.connect(this.audioContext.destination);
-                VoxEditor.views.tapedeck.update();
+                VoxEditor.views.tapedeck.handleMicChange();
             })
             .catch(console.error);
     }
@@ -79,13 +79,13 @@ export class MicManager
         this.micDevice = stream;
         this.micDevice.getTracks().forEach(t => t.enabled = false);
 
-        VoxEditor.views.tapedeck.update();
+        VoxEditor.views.tapedeck.handleMicChange();
     }
 
     private onNoMicrophone() : void
     {
         this.micDevice = undefined;
-        VoxEditor.views.tapedeck.update();
+        VoxEditor.views.tapedeck.handleMicChange();
     }
 
     public startRecording()
@@ -159,7 +159,7 @@ export class MicManager
         }
 
         this.buffers = undefined;
-        VoxEditor.voices.loadFromBuffer(key, buffer);
-        VoxEditor.views.tapedeck.handleRecDone();
+        VoxEditor.voices.loadFromBuffer(buffer);
+        VoxEditor.views.tapedeck.handleRecDone(key);
     }
 }
