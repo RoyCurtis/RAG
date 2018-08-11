@@ -3,29 +3,30 @@
 import {VoxEditor} from "../voxEditor";
 import {ClipEditor} from "./controls/clipEditor";
 import {VoiceMeter} from "./controls/voiceMeter";
+import {Gamepads} from "../util/gamepads";
 
 /** Controller for the tape deck part of the editor */
 export class EditorTapedeck
 {
+    public  readonly btnPrev      : HTMLButtonElement;
+
+    public  readonly btnPlay      : HTMLButtonElement;
+
+    public  readonly btnStop      : HTMLButtonElement;
+
+    public  readonly btnRec       : HTMLButtonElement;
+
+    public  readonly btnSave      : HTMLButtonElement;
+
+    public  readonly btnLoad      : HTMLButtonElement;
+
+    public  readonly btnNext      : HTMLButtonElement;
+
     private readonly clipEditor   : ClipEditor;
 
     private readonly voiceMeter   : VoiceMeter;
 
     private readonly domForm      : HTMLFormElement;
-
-    private readonly btnPrev      : HTMLButtonElement;
-
-    private readonly btnPlay      : HTMLButtonElement;
-
-    private readonly btnStop      : HTMLButtonElement;
-
-    private readonly btnRec       : HTMLButtonElement;
-
-    private readonly btnSave      : HTMLButtonElement;
-
-    private readonly btnLoad      : HTMLButtonElement;
-
-    private readonly btnNext      : HTMLButtonElement;
 
     private readonly lblId        : HTMLParagraphElement;
 
@@ -36,17 +37,19 @@ export class EditorTapedeck
         this.clipEditor = new ClipEditor('.clipEditor');
         this.voiceMeter = new VoiceMeter('.voiceMeter');
         this.domForm    = DOM.require('#frmTapedeck');
-        this.btnPrev    = DOM.require('#btnPrev',    this.domForm);
-        this.btnPlay    = DOM.require('#btnPlay',    this.domForm);
-        this.btnStop    = DOM.require('#btnStop',    this.domForm);
-        this.btnRec     = DOM.require('#btnRec',     this.domForm);
-        this.btnSave    = DOM.require('#btnSave',    this.domForm);
-        this.btnLoad    = DOM.require('#btnLoad',    this.domForm);
-        this.btnNext    = DOM.require('#btnNext',    this.domForm);
-        this.lblId      = DOM.require('.id',         this.domForm);
-        this.lblCaption = DOM.require('.caption',    this.domForm);
+        this.btnPrev    = DOM.require('#btnPrev', this.domForm);
+        this.btnPlay    = DOM.require('#btnPlay', this.domForm);
+        this.btnStop    = DOM.require('#btnStop', this.domForm);
+        this.btnRec     = DOM.require('#btnRec',  this.domForm);
+        this.btnSave    = DOM.require('#btnSave', this.domForm);
+        this.btnLoad    = DOM.require('#btnLoad', this.domForm);
+        this.btnNext    = DOM.require('#btnNext', this.domForm);
+        this.lblId      = DOM.require('.id',      this.domForm);
+        this.lblCaption = DOM.require('.caption', this.domForm);
 
         window.onresize       = this.onResize.bind(this);
+        window.onkeydown      = this.onKeyDown.bind(this);
+        Gamepads.onbuttondown = this.onPadDown.bind(this);
         this.domForm.onsubmit = ev => ev.preventDefault();
         this.btnPrev.onclick  = this.onPrev.bind(this);
         this.btnPlay.onclick  = this.onPlay.bind(this);
@@ -139,6 +142,16 @@ export class EditorTapedeck
         this.handleClipLoad(key);
         this.voiceMeter.redraw();
         VoxEditor.views.tapedeck.onPlay();
+    }
+
+    private onKeyDown(ev: KeyboardEvent) : void
+    {
+
+    }
+
+    private onPadDown(ev: GamepadEvent) : void
+    {
+        console.log(ev);
     }
 
     private onResize() : void

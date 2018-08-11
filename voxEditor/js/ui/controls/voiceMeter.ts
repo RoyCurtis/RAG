@@ -1,6 +1,6 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/** UI control for visualizing the live input stream*/
+/** UI control for visualizing the live input stream */
 export class VoiceMeter
 {
     /** Reference to the container for this meter */

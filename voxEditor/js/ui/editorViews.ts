@@ -3,8 +3,9 @@
 import {EditorPhrases} from "./editorPhrases";
 import {EditorSetup} from "./editorSetup";
 import {EditorTapedeck} from "./editorTapedeck";
+import {Gamepads} from "../util/gamepads";
 
-/** Manages vox editor UI elements and their logic */
+/** Manages vox editor UI elements, their logic, and input */
 export class EditorViews
 {
     /** Reference to the phrase list component */
@@ -19,5 +20,7 @@ export class EditorViews
         this.phrases  = new EditorPhrases();
         this.setup    = new EditorSetup();
         this.tapedeck = new EditorTapedeck();
+
+        Gamepads.init();
     }
 }
