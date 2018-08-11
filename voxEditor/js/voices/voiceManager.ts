@@ -193,9 +193,19 @@ export class VoiceManager
             length  = channel.length;
         }
 
-        intChannel = new Int16Array(length);
+        // Then, soften the beginning and end of the data with fades
+        if  (length > 1024)
+        for (let i = 0; i < 1024; i++)
+        {
+            let factor = (1 / 1024) * i;
+
+            channel[i]          *= factor;
+            channel[length - i] *= factor;
+        }
 
         // Then, convert the clip data from -1..1 floats to -32768..32767 integers
+
+        intChannel = new Int16Array(length);
 
         for (let i = 0; i < length; i++)
         {

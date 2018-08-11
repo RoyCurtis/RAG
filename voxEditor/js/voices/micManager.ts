@@ -148,16 +148,6 @@ export class MicManager
         // Write all the smaller buffers into the final buffer
         this.buffers.forEach( (buf, idx) => channel.set(buf, 128 * idx) );
 
-        // Soften the beginning and end with fades
-        if  (length > 1024)
-        for (let i = 0; i < 1024; i++)
-        {
-            let factor = (1 / 1024) * i;
-
-            channel[i]          *= factor;
-            channel[length - i] *= factor;
-        }
-
         this.buffers = undefined;
         VoxEditor.voices.loadFromBuffer(buffer);
         VoxEditor.views.tapedeck.handleRecDone(key);
