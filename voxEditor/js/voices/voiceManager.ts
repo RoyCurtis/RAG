@@ -100,7 +100,7 @@ export class VoiceManager
         return;
     }
 
-    public playClip() : void
+    public playClip(bounds?: [number, number]) : void
     {
         if (!this.currentClip)
             return;
@@ -109,9 +109,19 @@ export class VoiceManager
         this.currentBufNode        = this.audioContext.createBufferSource();
         this.currentBufNode.buffer = this.currentClip;
 
-        // Only connect to reverb if it's available
         this.currentBufNode.connect(this.audioContext.destination);
-        this.currentBufNode.start();
+
+        if ( bounds && (bounds[0] > 0 || bounds[1] < 1) )
+        {
+            let duration = this.currentClip.duration;
+            let begin    = duration * bounds[0];
+            let end      = (duration * bounds[1]) - begin;
+
+            console.log(duration, begin, end);
+            this.currentBufNode.start(0, begin, end);
+        }
+        else
+            this.currentBufNode.start();
 
         this.currentBufNode.onended = _ => { this.currentBufNode = undefined; };
     }
@@ -145,7 +155,7 @@ export class VoiceManager
         // First, get a clipped copy of the data if given bounds
         // TODO: Soften like on mic recordings
 
-        if (bounds && bounds[0] > 0 && bounds[1] > 0)
+        if ( bounds && (bounds[0] > 0 || bounds[1] < 1) )
         {
             let left  = length * bounds[0];
             let right = length * bounds[1];

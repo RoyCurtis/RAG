@@ -129,7 +129,7 @@ export class EditorTapedeck
 
     public onPlay() : void
     {
-        VoxEditor.voices.playClip();
+        VoxEditor.voices.playClip( this.clipEditor.getBounds() );
     }
 
     private onStop() : void
@@ -153,7 +153,8 @@ export class EditorTapedeck
     private onSave() : void
     {
         VoxEditor.voices.saveClip(
-            VoxEditor.views.phrases.currentKey!, this.clipEditor.getBounds()
+            VoxEditor.views.phrases.currentKey!,
+            this.clipEditor.getBounds()
         );
     }
 
