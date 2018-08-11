@@ -23,6 +23,8 @@ export class EditorTapedeck
 
     private readonly btnSave      : HTMLButtonElement;
 
+    private readonly btnLoad      : HTMLButtonElement;
+
     private readonly btnNext      : HTMLButtonElement;
 
     private readonly lblId        : HTMLParagraphElement;
@@ -39,6 +41,7 @@ export class EditorTapedeck
         this.btnStop    = DOM.require('#btnStop',    this.domForm);
         this.btnRec     = DOM.require('#btnRec',     this.domForm);
         this.btnSave    = DOM.require('#btnSave',    this.domForm);
+        this.btnLoad    = DOM.require('#btnLoad',    this.domForm);
         this.btnNext    = DOM.require('#btnNext',    this.domForm);
         this.lblId      = DOM.require('.id',         this.domForm);
         this.lblCaption = DOM.require('.caption',    this.domForm);
@@ -50,6 +53,7 @@ export class EditorTapedeck
         this.btnStop.onclick  = this.onStop.bind(this);
         this.btnRec.onclick   = this.onRec.bind(this);
         this.btnSave.onclick  = this.onSave.bind(this);
+        this.btnLoad.onclick  = this.onLoad.bind(this);
         this.btnNext.onclick  = this.onNext.bind(this);
     }
 
@@ -82,10 +86,12 @@ export class EditorTapedeck
 
         this.lblId.innerText      = key;
         this.lblCaption.innerText = VoxEditor.captioner.captionBank[key];
-        this.btnPlay.disabled     = !hasClip;
-        this.btnStop.disabled     = !hasClip;
         this.btnRec.disabled      = false;
-        this.btnSave.disabled     = !hasClip;
+
+        this.btnPlay.disabled =
+        this.btnStop.disabled =
+        this.btnSave.disabled =
+        this.btnLoad.disabled = !hasClip;
 
         this.clipEditor.setTitle(title);
         this.clipEditor.redraw();
@@ -101,10 +107,11 @@ export class EditorTapedeck
 
     public handleClipUnload() : void
     {
-        this.btnPlay.disabled     = true;
-        this.btnStop.disabled     = true;
-        this.btnRec.disabled      = true;
-        this.btnSave.disabled     = true;
+        this.btnPlay.disabled = true;
+        this.btnStop.disabled = true;
+        this.btnRec.disabled  = true;
+        this.btnSave.disabled = true;
+        this.btnLoad.disabled = true;
         this.clipEditor.redraw();
     }
 
@@ -163,19 +170,21 @@ export class EditorTapedeck
         {
             this.onStop();
             VoxEditor.mics.startRecording();
-            this.btnPrev.disabled = true;
-            this.btnPlay.disabled = true;
-            this.btnStop.disabled = true;
-            this.btnSave.disabled = true;
+            this.btnPrev.disabled =
+            this.btnPlay.disabled =
+            this.btnStop.disabled =
+            this.btnSave.disabled =
+            this.btnLoad.disabled =
             this.btnNext.disabled = true;
         }
         else
         {
             VoxEditor.mics.stopRecording();
-            this.btnPrev.disabled = false;
-            this.btnPlay.disabled = false;
-            this.btnStop.disabled = false;
-            this.btnSave.disabled = false;
+            this.btnPrev.disabled =
+            this.btnPlay.disabled =
+            this.btnStop.disabled =
+            this.btnSave.disabled =
+            this.btnLoad.disabled =
             this.btnNext.disabled = false;
         }
     }
@@ -183,6 +192,11 @@ export class EditorTapedeck
     private onSave() : void
     {
         VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
+        VoxEditor.voices.loadFromDisk();
+    }
+
+    private onLoad() : void
+    {
         VoxEditor.voices.loadFromDisk();
     }
 
