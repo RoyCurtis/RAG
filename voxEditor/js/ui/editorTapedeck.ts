@@ -3,7 +3,8 @@
 import {VoxEditor} from "../voxEditor";
 import {ClipEditor} from "./controls/clipEditor";
 import {VoiceMeter} from "./controls/voiceMeter";
-import {Gamepads} from "../util/gamepads";
+import {GamepadButtonEvent, Gamepads, XBOX} from "../util/gamepads";
+import {fail} from "assert";
 
 /** Controller for the tape deck part of the editor */
 export class EditorTapedeck
@@ -50,6 +51,8 @@ export class EditorTapedeck
         window.onresize       = this.onResize.bind(this);
         window.onkeydown      = this.onKeyDown.bind(this);
         Gamepads.onbuttondown = this.onPadDown.bind(this);
+        Gamepads.onbuttonup   = this.onPadUp.bind(this);
+        Gamepads.onbuttonhold = this.onPadHold.bind(this);
         this.domForm.onsubmit = ev => ev.preventDefault();
         this.btnPrev.onclick  = this.onPrev.bind(this);
         this.btnPlay.onclick  = this.onPlay.bind(this);
@@ -149,9 +152,49 @@ export class EditorTapedeck
 
     }
 
-    private onPadDown(ev: GamepadEvent) : void
+    private onPadDown(ev: GamepadButtonEvent) : void
     {
-        console.log(ev);
+        switch(ev.button)
+        {
+            case XBOX.LT:    return this.clipEditor.glowLeftBound(true);
+            case XBOX.RT:    return this.clipEditor.glowRightBound(true);
+            case XBOX.A:     return this.btnPlay.click();
+            case XBOX.B:     return this.btnStop.click();
+            case XBOX.Y:     return this.btnRec.click();
+            case XBOX.LB:    return this.btnPrev.click();
+            case XBOX.RB:    return this.btnNext.click();
+            case XBOX.Start: return this.btnSave.click();
+            case XBOX.Back:  return this.btnLoad.click();
+        }
+    }
+
+    private onPadUp(ev: GamepadButtonEvent) : void
+    {
+        switch(ev.button)
+        {
+            case XBOX.LT: return this.clipEditor.glowLeftBound(false);
+            case XBOX.RT: return this.clipEditor.glowRightBound(false);
+        }
+    }
+
+    private onPadHold(ev: GamepadButtonEvent) : void
+    {
+        if (ev.button !== XBOX.LT && ev.button !== XBOX.RT)
+            return;
+
+        // Left stick for large shifts, right stick for finer shifts
+        let magLeft  = ev.gamepad.axes[0];
+        let magRight = ev.gamepad.axes[2];
+
+        // Filter out dead zone (sticks are prone to left-drift)
+        if (magLeft  > -0.18 && magLeft  < 0.1) magLeft  = 0;
+        if (magRight > -0.18 && magRight < 0.1) magRight = 0;
+        if (magLeft + magRight === 0)          return;
+
+        this.clipEditor.shiftBounds(
+            (magLeft * 8) + (magRight * 2),
+            ev.button === XBOX.RT
+        );
     }
 
     private onResize() : void

@@ -89,6 +89,28 @@ export class ClipEditor
         return [left / width, right / width];
     }
 
+    public shiftBounds(amount: number, right: boolean) : void
+    {
+        let target = right ? this.clipperRight : this.clipperLeft;
+        let width  = right
+            ? target.offsetWidth - amount
+            : target.offsetWidth + amount;
+
+        this.resizeClipper(target, width);
+    }
+
+    public glowLeftBound(state: boolean) : void
+    {
+        if (state) this.clipperLeft.classList.add('dragging');
+        else       this.clipperLeft.classList.remove('dragging');
+    }
+
+    public glowRightBound(state: boolean) : void
+    {
+        if (state) this.clipperRight.classList.add('dragging');
+        else       this.clipperRight.classList.remove('dragging');
+    }
+
     public redraw() : void
     {
         let width     = this.domCanvas.width  = this.dom.clientWidth  * 2;
@@ -189,21 +211,26 @@ export class ClipEditor
             return;
 
         // Do move
-        let thisClipper  = this.clipperDrag;
-        let otherClipper = (thisClipper === this.clipperLeft)
+        let rect  = this.clipperDrag.getBoundingClientRect();
+        let width = (this.clipperDrag === this.clipperLeft)
+            ? ev.clientX - rect.left
+            : rect.right - ev.clientX;
+
+        this.resizeClipper(this.clipperDrag, width);
+    }
+
+    private resizeClipper(which: HTMLElement, width: number) : void
+    {
+        let otherClipper = (which === this.clipperLeft)
             ? this.clipperRight
             : this.clipperLeft;
 
-        let rect     = thisClipper.getBoundingClientRect();
-        let maxWidth = (this.dom.clientWidth - otherClipper.clientWidth) - 10;
-        let width    = (thisClipper === this.clipperLeft)
-            ? ev.clientX - rect.left
-            : rect.right - ev.clientX;
+        let maxWidth = (this.dom.offsetWidth - otherClipper.offsetWidth) - 10;
 
         if (width < 1)        width = 1;
         if (width > maxWidth) width = maxWidth;
 
-        thisClipper.style.width = `${width}px`;
+        which.style.width = `${width}px`;
     }
 
     private stopDragging() : void

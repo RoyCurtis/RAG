@@ -1,9 +1,10 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 /** Delegate type for Gamepads event handlers */
-type GamepadEventHandler = (event: GamepadEvent) => void;
+type GamepadEventHandler = (event: GamepadButtonEvent) => void;
 
-interface GamepadEvent
+/** Event data container for gamepad button events */
+export interface GamepadButtonEvent
 {
     button  : string;
     index   : number;
@@ -12,18 +13,44 @@ interface GamepadEvent
     gamepad : Gamepad;
 }
 
+/** Constants class for Xbox controller mappings. Could not get enums to work. */
+export class XBOX
+{
+    public static readonly A     = 'A';
+    public static readonly B     = 'B';
+    public static readonly X     = 'X';
+    public static readonly Y     = 'Y';
+    public static readonly LB    = 'LB';
+    public static readonly RB    = 'RB';
+    public static readonly LT    = 'LT';
+    public static readonly RT    = 'RT';
+    public static readonly Back  = 'Back';
+    public static readonly Start = 'Start';
+    public static readonly LS    = 'LS';
+    public static readonly RS    = 'RS';
+    public static readonly Up    = 'Up';
+    public static readonly Down  = 'Down';
+    public static readonly Left  = 'Left';
+    public static readonly Right = 'Right';
+    public static readonly Guide = 'Guide';
+
+    /** Enum mapping button indexes to standard XBox controller names */
+    public static readonly BUTTONS : string[] = [
+        XBOX.A, XBOX.B, XBOX.X, XBOX.Y, XBOX.LB, XBOX.RB, XBOX.LT, XBOX.RT, XBOX.Back,
+        XBOX.Start, XBOX.LS, XBOX.RS, XBOX.Up, XBOX.Down, XBOX.Left, XBOX.Right,
+        XBOX.Guide
+    ];
+}
+
 /** Utility wrapper around gamepads, for better API */
 export class Gamepads
 {
-    /** Enum mapping button indexes to standard XBox controller names */
-    private static readonly XBOX_BUTTONS : string[] = [
-        'A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start',
-        'LS', 'RS', 'Up', 'Down', 'Left', 'Right', 'Guide'
-    ];
-
+    /** Registered handler for when gamepad buttons are pressed down */
     public static onbuttondown? : GamepadEventHandler;
-
+    /** Repeating registered handler for when gamepad buttons are held down */
     public static onbuttonhold? : GamepadEventHandler;
+    /** Registered handler for when gamepad buttons are released */
+    public static onbuttonup?   : GamepadEventHandler;
 
     /** Reference number for the current gamepad polling timer */
     private static timer : number = 0;
@@ -43,7 +70,7 @@ export class Gamepads
     private static onChange(_: Event) : void
     {
         // Stop any ongoing polling
-        window.clearTimeout(Gamepads.timer);
+        cancelAnimationFrame(Gamepads.timer);
 
         // Only setup a timer if at least one controller is available
         for (let i = 0, pads = navigator.getGamepads(); i < pads.length; i++)
@@ -55,8 +82,7 @@ export class Gamepads
 
     private static poll() : void
     {
-        // 50ms polling interval, don't need 60fps accuracy
-        Gamepads.timer = window.setTimeout(Gamepads.poll, 50);
+        Gamepads.timer = requestAnimationFrame(Gamepads.poll);
 
         // Do nothing if document isn't focused
         if ( !document.hasFocus() )
@@ -79,11 +105,12 @@ export class Gamepads
                 return;
             }
 
-            if (b.pressed && !oldButtons[i][0] && Gamepads.onbuttondown)
+            if      (Gamepads.onbuttondown &&  b.pressed && !oldButtons[i][0])
                 fire(Gamepads.onbuttondown, i, pad);
-
-            if (b.pressed && Gamepads.onbuttonhold)
+            else if (Gamepads.onbuttonhold &&  b.pressed)
                 fire(Gamepads.onbuttonhold, i, pad);
+            else if (Gamepads.onbuttonup   && !b.pressed &&  oldButtons[i][0])
+                fire(Gamepads.onbuttonup,   i, pad);
 
             // Update state
             oldButtons[i] = [b.pressed, b.value];
@@ -93,7 +120,7 @@ export class Gamepads
     private static fire(handler: GamepadEventHandler, i: number, pad: Gamepad) : void
     {
         handler({
-            button  : Gamepads.XBOX_BUTTONS[i],
+            button  : XBOX.BUTTONS[i],
             index   : i,
             pressed : pad.buttons[i].pressed,
             value   : pad.buttons[i].value,
