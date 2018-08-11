@@ -54,17 +54,18 @@ export class ClipEditor
         // This is not 100% accurate as it has no way to sync with playing audio, but
         // it's better than the more complicated setup of using an analyser node.
 
-        let step = (this.dom.clientWidth / clip.duration) / 1000;
-        let last = performance.now();
-        let left = this.clipperLeft.clientWidth;
-        let loop = (time : number) =>
+        let step  = (this.dom.offsetWidth / clip.duration) / 1000;
+        let last  = performance.now();
+        let left  = this.clipperLeft.offsetWidth;
+        let right = this.clipperRight.offsetLeft;
+        let loop  = (time : number) =>
         {
             left += step * (time - last);
             last  = time;
 
-            // Sanity check; if we go off canvas, stop animating
-            if (left > this.dom.clientWidth)
-                this.endNeedle();
+            // Clamp to left, kill if out of right
+            if (left < 0)     left = 0;
+            if (left > right) return this.endNeedle();
 
             this.domNeedle.style.left = `${left}px`;
             this.needleTimer          = requestAnimationFrame(loop);

@@ -206,7 +206,7 @@ h1 {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  background: rgba(0,0,0,0.9);
+  background: rgba(0,0,0,0.75);
   cursor: ew-resize;
   width: 1px;
   height: 100%;
