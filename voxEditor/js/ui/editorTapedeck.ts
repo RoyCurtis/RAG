@@ -194,6 +194,7 @@ export class EditorTapedeck
         {
             case XBOX.LT: return this.clipEditor.glowLeftBound(false);
             case XBOX.RT: return this.clipEditor.glowRightBound(false);
+            case XBOX.Y:  return this.btnRec.click();
         }
     }
 
