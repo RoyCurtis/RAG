@@ -149,7 +149,7 @@ export class Captioner
         VoxEditor.database.named.forEach(name =>
         {
             let key = Strings.filename(name);
-            this.captionBank[`service.${key}`] = name;
+            this.captionBank[`named.${key}`] = name;
         });
     }
 
