@@ -893,6 +893,7 @@ declare class VoxRequest {
     cancel(): void;
     /** Begins decoding the loaded MP3 voice file to raw audio data */
     private onFulfill;
+    private onArrayBuffer;
     private onDecode;
     private onError;
 }
@@ -1216,6 +1217,11 @@ declare class Random {
     static bool(chance?: number): boolean;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Utility class for audio functionality */
+declare class Sounds {
+    static decode(context: AudioContext, buf: ArrayBuffer): Promise<AudioBuffer>;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility methods for dealing with strings */
 declare class Strings {
     /** Checks if the given string is null, or empty (whitespace only or zero-length) */
@@ -1263,6 +1269,9 @@ interface DataRefs {
     stationsData: Dictionary<string>;
 }
 /** Fill ins for various missing definitions of modern Javascript features */
+interface Window {
+    onunhandledrejection: ErrorEventHandler;
+}
 interface String {
     padStart(targetLength: number, padString?: string): string;
     padEnd(targetLength: number, padString?: string): string;

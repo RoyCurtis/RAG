@@ -186,11 +186,9 @@ to use the Opus format, because:
 * It's *designed for speech*
 * Electron (Chromium) can use `MediaRecorder` to save microphone recordings as Opus
 
-Except, of course, iOS and Safari are the sole browsers to not support decoding the Opus
-format. So, I have to use a javascript library (LAME.js) to encode recorded audio into
-MP3 files. The vox editor's recording code is much more convoluted because of this.
-
-You can test this out for yourself in the `decodeAudioData-test` folder.
+Except, of course, Safari (desktop and iOS) is the sole browser to not support decoding
+the Opus format. So, I have to use a javascript library (LAME.js) to encode recorded audio
+into MP3 files. The vox editor's recording code is much more convoluted because of this.
 
 # The forced Webkit monopoly
 

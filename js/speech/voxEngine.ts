@@ -47,7 +47,7 @@ class VoxEngine
         // TODO: Make this user configurable and choosable
         fetch('data/vox/ir.stalbans_a_mono.wav')
             .then( res => res.arrayBuffer() )
-            .then( buf => this.audioContext.decodeAudioData(buf) )
+            .then( buf => Sounds.decode(this.audioContext, buf) )
             .then( rev =>
             {
                 this.audioReverb           = this.audioContext.createConvolver();
@@ -79,8 +79,11 @@ class VoxEngine
         this.currentVoice    = voice;
         this.currentSettings = settings;
 
-        // Begin the pump loop
-        this.pump();
+        // Begin the pump loop. On iOS, the context may have to be resumed first
+        if (this.audioContext.state === 'suspended')
+            this.audioContext.resume().then( () => this.pump() );
+        else
+            this.pump();
     }
 
     /** Stops playing any currently spoken speech and resets state */
