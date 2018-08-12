@@ -890,11 +890,15 @@ declare class VoxRequest {
     /** Raw audio data from the loaded file, if available */
     buffer?: AudioBuffer;
     constructor(path: string);
+    /** Cancels this request from proceeding any further */
     cancel(): void;
     /** Begins decoding the loaded MP3 voice file to raw audio data */
     private onFulfill;
+    /** Takes the array buffer from the fulfilled fetch and decodes it */
     private onArrayBuffer;
+    /** Called when the fetched buffer is decoded successfully */
     private onDecode;
+    /** Called if the fetch or decode stages fail */
     private onError;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
@@ -1219,7 +1223,14 @@ declare class Random {
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility class for audio functionality */
 declare class Sounds {
-    static decode(context: AudioContext, buf: ArrayBuffer): Promise<AudioBuffer>;
+    /**
+     * Decodes the given audio file into raw audio data. This is a wrapper for the older
+     * callback-based syntax, since it is the only one iOS currently supports.
+     *
+     * @param context Audio context to use for decoding
+     * @param buffer Buffer of encoded file data (e.g. mp3) to decode
+     */
+    static decode(context: AudioContext, buffer: ArrayBuffer): Promise<AudioBuffer>;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility methods for dealing with strings */

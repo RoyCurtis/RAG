@@ -23,7 +23,8 @@ class RAG
      */
     public static main(dataRefs: DataRefs) : void
     {
-        window.onerror = error => RAG.panic(error);
+        window.onerror              = error => RAG.panic(error);
+        window.onunhandledrejection = error => RAG.panic(error);
 
         I18n.init();
 

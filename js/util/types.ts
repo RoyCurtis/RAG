@@ -26,6 +26,11 @@ interface DataRefs
 
 /** Fill ins for various missing definitions of modern Javascript features */
 
+interface Window
+{
+    onunhandledrejection: ErrorEventHandler;
+}
+
 interface String
 {
     padStart(targetLength: number, padString?: string) : string;
