@@ -29,13 +29,25 @@ export class Captioner
     }
 
     /** TreeWalker filter to only accept text nodes */
-    private nodeFilter(node: Node): number
+    private filterText(node: Node): number
     {
         // Only accept text nodes with words in them
         if ( node.textContent!.match(/[a-z0-9]/i) )
             return NodeFilter.FILTER_ACCEPT;
 
         return NodeFilter.FILTER_REJECT;
+    }
+
+    /** TreeWalker filter to only accept integer nodes with suffixes */
+    private filterIntegers(node: Node): number
+    {
+        let element = node as HTMLElement;
+
+        if (element.nodeName.toLowerCase() === 'integer')
+        if ( element.hasAttribute('singular') || element.hasAttribute('plural') )
+            return NodeFilter.FILTER_ACCEPT;
+
+        return NodeFilter.FILTER_SKIP;
     }
 
     private populateLetters() : void
@@ -53,6 +65,24 @@ export class Captioner
 
     private populateNumbers() : void
     {
+        // Get all suffixes
+        let suffixes = VoxEditor.database.phrasesets.querySelectorAll(
+            'integer[singular], integer[plural]'
+        );
+
+        suffixes.forEach(element =>
+        {
+            let singular = element.getAttribute('singular');
+            let plural   = element.getAttribute('plural');
+            let clean    = Strings.filename;
+
+            if (singular)
+                this.captionBank[`number.suffix.${clean(singular)}`] = singular;
+
+            if (plural)
+                this.captionBank[`number.suffix.${clean(plural)}`] = plural;
+        });
+
         // Single digits
         for (let n = 0; n <= 60; n++)
             this.captionBank[`number.${n}`] = n.toString();
@@ -83,7 +113,7 @@ export class Captioner
         let treeWalker = document.createTreeWalker(
             VoxEditor.database.phrasesets,
             NodeFilter.SHOW_TEXT,
-            { acceptNode: this.nodeFilter },
+            { acceptNode: this.filterText },
             false
         );
 
