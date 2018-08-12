@@ -46,9 +46,10 @@ export class EditorPhrases
             return;
 
         let next = this.currentEntry.previousElementSibling
-            || this.domList.lastElementChild;
+            || this.domList.lastElementChild!;
 
         this.select(next as HTMLElement);
+        next.scrollIntoView({block : 'center'});
     }
 
     /** Selects the next phrase entry, relative to current selection */
@@ -58,9 +59,10 @@ export class EditorPhrases
             return;
 
         let next = this.currentEntry.nextElementSibling
-            || this.domList.firstElementChild;
+            || this.domList.firstElementChild!;
 
         this.select(next as HTMLElement);
+        next.scrollIntoView({block : 'center'});
     }
 
     /** Visually selects the given phrase entry */
