@@ -117,8 +117,6 @@ class VoxEngine
      */
     private pump() : void
     {
-        console.debug('VOX PUMP');
-
         // If the engine has stopped, do not proceed.
         if (!this.isSpeaking || !this.currentIds || !this.currentVoice)
             return;
@@ -136,10 +134,12 @@ class VoxEngine
         }
 
         // Stop pumping when we're out of IDs to queue and nothing is playing
-        if (this.currentIds.length <= 0 && !this.currentBufNode)
-            this.stop();
-        else
-            this.pumpTimer = setTimeout(this.pump.bind(this), 1000);
+        if (this.currentIds.length  <= 0)
+        if (this.pendingReqs.length <= 0)
+        if (!this.currentBufNode)
+            return this.stop();
+
+        this.pumpTimer = setTimeout(this.pump.bind(this), 100);
     }
 
     /**
