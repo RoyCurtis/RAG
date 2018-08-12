@@ -25,6 +25,7 @@ export class Captioner
         this.populateNames();
         this.populateServices();
         this.populateStations();
+        this.populateSpecial();
     }
 
     /** TreeWalker filter to only accept text nodes */
@@ -184,5 +185,12 @@ export class Captioner
         keys.forEach(k =>
             this.captionBank[`station.end.${k}`] = filter(stations[k])
         );
+    }
+
+    private populateSpecial() : void
+    {
+        // Testing phrase
+        this.captionBank['phrase.sample.0'] = 'This is a test of the Rail Announcement' +
+            ' Generator at <TIME>';
     }
 }
