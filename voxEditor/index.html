@@ -10,30 +10,6 @@
 </head>
 
 <body>
-  <section id="partSelector">
-    <h1>Phrases</h1>
-
-    <div class="searchBox">
-      <input disabled type="text" id="inputFind" placeholder="Find..."
-             title="Enter search query; ENTER to find next, G to focus this box"/>
-    </div>
-
-    <div id="orphanList" class="hidden">
-      <p>
-        These files were found, but do not match to any known vox key. They may be files
-        for an older or different phraseset. They can be safely deleted.
-      </p>
-
-      <ul>
-
-      </ul>
-    </div>
-
-    <ul id="phraseList" class="hidden">
-
-    </ul>
-  </section>
-
   <section id="tapeDeck">
     <h1>Setup</h1>
 
@@ -79,7 +55,7 @@
       <p class="id">Select a phrase</p>
 
       <p class="caption">
-        Select a phrase on the left list, to record or edit it.
+        Select a phrase on the right list, to record or edit it.
       </p>
 
       <div class="clipEditor">
@@ -91,6 +67,30 @@
       </div>
     </form>
 
+  </section>
+
+  <section id="partSelector">
+    <h1>Phrases</h1>
+
+    <div class="searchBox">
+      <input disabled type="text" id="inputFind" placeholder="Find..."
+             title="Enter search query; ENTER to find next, G to focus this box"/>
+    </div>
+
+    <div id="orphanList" class="hidden">
+      <p>
+        These files were found, but do not match to any known vox key. They may be files
+        for an older or different phraseset. They can be safely deleted.
+      </p>
+
+      <ul>
+
+      </ul>
+    </div>
+
+    <ul id="phraseList" class="hidden">
+
+    </ul>
   </section>
 </body>
 
