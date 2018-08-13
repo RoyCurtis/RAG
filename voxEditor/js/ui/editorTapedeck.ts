@@ -185,6 +185,8 @@ export class EditorTapedeck
             case XBOX.RB:    return this.btnNext.click();
             case XBOX.Start: return this.btnSave.click();
             case XBOX.Back:  return this.btnLoad.click();
+            case XBOX.LS:    return this.onScale(1.25);
+            case XBOX.RS:    return this.onScale(0.8);
         }
     }
 
@@ -291,5 +293,12 @@ export class EditorTapedeck
             VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
 
         VoxEditor.views.phrases.selectNext();
+    }
+
+    private onScale(scale: number) : void
+    {
+        this.dirty = true;
+        VoxEditor.voices.scaleClip(scale);
+        this.clipEditor.redraw();
     }
 }

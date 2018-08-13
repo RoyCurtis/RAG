@@ -165,6 +165,18 @@ export class VoiceManager
         VoxEditor.views.tapedeck.handleEndPlay();
     }
 
+    /** Scales the current clip's volume (gain) by given amount */
+    public scaleClip(factor: number) : void
+    {
+        if (!this.currentClip)
+            return;
+
+        let data = this.currentClip.getChannelData(0);
+
+        for (let i = 0; i < data.length; i++)
+            data[i] *= factor;
+    }
+
     /** Saves the current clip to disk as an MP3 */
     public saveClip(bounds?: [number, number]) : void
     {
