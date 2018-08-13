@@ -210,10 +210,13 @@ export class EditorPhrases
         this.clearHighlight();
         this.domList.innerText = '';
 
-        for (let key in VoxEditor.captioner.captionBank)
+        let keys = Object.keys(VoxEditor.captioner.captionBank).sort();
+
+        for (let i = 0; i < keys.length; i++)
         {
-            let element = document.createElement('li');
+            let key     = keys[i];
             let value   = VoxEditor.captioner.captionBank[key];
+            let element = document.createElement('li');
 
             element.dataset['key'] = key;
             element.innerHTML      = `<code>${key}</code> "${value}"`;
