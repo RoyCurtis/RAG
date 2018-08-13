@@ -4,3 +4,6 @@
 node_modules
 /voxEditor/dist/
 /data/vox/*/
+/data/vox/Backups.lnk
+/data/vox/batch.sh
+/data/vox/noise.profile

@@ -13,12 +13,23 @@
   <section id="partSelector">
     <h1>Phrases</h1>
 
-    <div>
+    <div class="searchBox">
       <input disabled type="text" id="inputFind" placeholder="Find..."
              title="Enter search query; ENTER to find next, G to focus this box"/>
     </div>
 
-    <ul class="hidden">
+    <div id="orphanList" class="hidden">
+      <p>
+        These files were found, but do not match to any known vox key. They may be files
+        for an older or different phraseset. They can be safely deleted.
+      </p>
+
+      <ul>
+
+      </ul>
+    </div>
+
+    <ul id="phraseList" class="hidden">
 
     </ul>
   </section>

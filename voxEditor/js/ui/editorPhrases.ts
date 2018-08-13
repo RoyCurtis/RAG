@@ -1,14 +1,17 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 import {VoxEditor} from "../voxEditor";
+import * as fs from "fs";
 
 /** Controller for the phrase list part of the editor */
 export class EditorPhrases
 {
     /** Reference to the list of clickable phrase IDs */
-    private readonly domList   : HTMLUListElement;
+    private readonly domList    : HTMLUListElement;
+    /** Reference to the list of orphan vox files */
+    private readonly domOrphans : HTMLUListElement;
     /** Reference to the phrase search box */
-    private readonly inputFind : HTMLInputElement;
+    private readonly inputFind  : HTMLInputElement;
 
     /** Reference to the currently selected phrase's key */
     public  currentKey?       : string;
@@ -19,8 +22,9 @@ export class EditorPhrases
 
     public constructor()
     {
-        this.domList   = DOM.require('#partSelector ul');
-        this.inputFind = DOM.require('#inputFind');
+        this.domList    = DOM.require('#phraseList');
+        this.domOrphans = DOM.require('#orphanList ul');
+        this.inputFind  = DOM.require('#inputFind');
 
         this.domList.onclick     = this.onClick.bind(this);
         this.inputFind.onkeydown = this.onFind.bind(this);
@@ -107,6 +111,7 @@ export class EditorPhrases
         for (let i = 0; i < this.domList.children.length; i++)
             this.checkMissing(this.domList.children[i] as HTMLElement);
 
+        this.populateOrphans();
         this.domList.classList.remove('hidden');
     }
 
@@ -219,6 +224,33 @@ export class EditorPhrases
 
         this.inputFind.disabled = (this.domList.children.length === 0);
 
+        this.populateOrphans();
         this.domList.classList.remove('hidden');
+    }
+
+    /** Clears and fills the orphans list with all orphaned voice files */
+    private populateOrphans() : void
+    {
+        this.domOrphans.innerHTML = '';
+
+        fs.readdirSync(VoxEditor.config.voicePath).forEach(file =>
+        {
+            let key = file.replace('.mp3', '');
+
+            if (key in VoxEditor.captioner.captionBank)
+                return;
+
+            // TODO: Make DOM sugar for this
+            let orphan = document.createElement('li');
+
+            orphan.innerText = file;
+
+            this.domOrphans.appendChild(orphan);
+        });
+
+        if (this.domOrphans.children.length > 0)
+            this.domOrphans.parentElement!.classList.remove('hidden');
+        else
+            this.domOrphans.parentElement!.classList.add('hidden');
     }
 }

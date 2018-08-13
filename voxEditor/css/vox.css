@@ -43,7 +43,7 @@ h1 {
   flex-basis: 40%;
   overflow: auto;
 }
-#partSelector > div {
+#partSelector .searchBox {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -52,16 +52,24 @@ h1 {
   top: 16px;
   z-index: 10;
 }
-#partSelector > div input {
+#partSelector .searchBox input {
   border: none;
   flex-grow: 1;
   font-size: large;
   padding: 8px;
 }
-#partSelector > div input.noMatches {
+#partSelector .searchBox input.noMatches {
   background: #f2a6a6;
 }
-#partSelector ul {
+#partSelector #orphanList {
+  background: #c21d1d;
+  margin: 16px 12px 16px 16px;
+  padding: 8px;
+}
+#partSelector #orphanList ul {
+  margin: 16px 0 0 16px;
+}
+#partSelector > ul {
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
@@ -72,7 +80,7 @@ h1 {
   margin: 16px 12px 16px 16px;
   transform: translate3d(0, 0, 1px);
 }
-#partSelector ul li {
+#partSelector > ul li {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -82,21 +90,21 @@ h1 {
   margin-bottom: 4px;
   padding: 4px;
 }
-#partSelector ul li:hover {
+#partSelector > ul li:hover {
   background: #444;
 }
-#partSelector ul li code {
+#partSelector > ul li code {
   color: #aaa;
   float: right;
 }
-#partSelector ul li.missing {
+#partSelector > ul li.missing {
   border-right-color: #c21d1d;
 }
-#partSelector ul li.highlight {
+#partSelector > ul li.highlight {
   background: #444;
 }
-#partSelector ul li.selected,
-#partSelector ul li.selected code {
+#partSelector > ul li.selected,
+#partSelector > ul li.selected code {
   background: #cc7e00;
   color: #fff;
   fill: #fff;
