@@ -14,16 +14,18 @@ class VoxEngine
     public  isSpeaking       : boolean      = false;
     /** Reference number for the current pump timer */
     private pumpTimer        : number       = 0;
+    /** Tracks the audio context's wall-clock time to schedule next clip */
+    private nextBegin        : number       = 0;
     /** References to currently pending requests, as a FIFO queue */
     private pendingReqs      : VoxRequest[] = [];
+    /** References to currently scheduled audio buffers */
+    private scheduledBuffers : AudioBufferSourceNode[] = [];
     /** List of vox IDs currently being run through */
     private currentIds?      : VoxKey[];
     /** Voice currently being used */
     private currentVoice?    : CustomVoice;
     /** Speech settings currently being used */
     private currentSettings? : SpeechSettings;
-    /** Audio buffer node holding and playing the current voice file */
-    private currentBufNode?  : AudioBufferSourceNode;
     /** Audio node that adds a reverb to the voice, if available */
     private audioReverb?     : ConvolverNode;
 
@@ -32,9 +34,8 @@ class VoxEngine
         // Setup the core audio context
 
         // @ts-ignore
-        let AudioContext = window.AudioContext || window.webkitAudioContext;
-
-        this.audioContext = new AudioContext({ latencyHint : 'playback' });
+        let AudioContext  = window.AudioContext || window.webkitAudioContext;
+        this.audioContext = new AudioContext();
 
         // Setup tannoy filter
 
@@ -100,18 +101,18 @@ class VoxEngine
         this.pendingReqs.forEach( r => r.cancel() );
 
         // Kill and dereference any currently playing file
-        if (this.currentBufNode)
+        this.scheduledBuffers.forEach(node =>
         {
-            this.currentBufNode.onended = null;
-            this.currentBufNode.stop();
-            this.currentBufNode.disconnect();
-            this.currentBufNode = undefined;
-        }
+            node.stop();
+            node.disconnect();
+        });
 
-        this.currentIds      = undefined;
-        this.currentVoice    = undefined;
-        this.currentSettings = undefined;
-        this.pendingReqs     = [];
+        this.nextBegin        = 0;
+        this.currentIds       = undefined;
+        this.currentVoice     = undefined;
+        this.currentSettings  = undefined;
+        this.pendingReqs      = [];
+        this.scheduledBuffers = [];
 
         console.debug('VOX STOPPED');
     }
@@ -126,8 +127,8 @@ class VoxEngine
         if (!this.isSpeaking || !this.currentIds || !this.currentVoice)
             return;
 
-        // First, feed fulfilled requests into the audio buffer, in FIFO order
-        this.playNext();
+        // First, schedule fulfilled requests into the audio buffer, in FIFO order
+        this.schedule();
 
         // Then, fill any free pending slots with new requests
         let nextDelay = 0;
@@ -151,23 +152,23 @@ class VoxEngine
         }
 
         // Stop pumping when we're out of IDs to queue and nothing is playing
-        if (this.currentIds.length  <= 0)
-        if (this.pendingReqs.length <= 0)
-        if (!this.currentBufNode)
+        if (this.currentIds.length       <= 0)
+        if (this.pendingReqs.length      <= 0)
+        if (this.scheduledBuffers.length <= 0)
             return this.stop();
 
         this.pumpTimer = setTimeout(this.pump.bind(this), 100);
     }
 
-    /**
-     * If there's a pending request and it's ready, and a buffer node is not currently
-     * playing, then that next pending request is played. The buffer node created by this
-     * method, automatically calls this method when playing is done.
-     */
-    private playNext() : void
+
+    private schedule() : void
     {
-        // Ignore if there are no pending requests
-        if (!this.pendingReqs[0] || !this.pendingReqs[0].isDone || this.currentBufNode)
+        // Stop scheduling if there are no pending requests
+        if (!this.pendingReqs[0] || !this.pendingReqs[0].isDone)
+            return;
+
+        // Don't schedule if more than 5 nodes are, as not to blow any buffers
+        if (this.scheduledBuffers.length > 5)
             return;
 
         let req = this.pendingReqs.shift()!;
@@ -177,30 +178,35 @@ class VoxEngine
         if (!req.buffer)
         {
             console.log('VOX CLIP SKIPPED:', req.path);
-            return this.playNext();
+            return this.schedule();
         }
 
-        console.log('VOX CLIP PLAYING:', req.path, req.buffer.duration);
+        // If this is the first clip being played, start from current wall-clock
+        if (this.nextBegin === 0)
+            this.nextBegin = this.audioContext.currentTime;
 
-        let delay   = this.audioContext.currentTime + (req.delay / 1000);
-        let node    = this.currentBufNode = this.audioContext.createBufferSource();
+        console.log('VOX CLIP PLAYING:', req.path, req.buffer.duration, this.nextBegin);
+
+        let node    = this.audioContext.createBufferSource();
+        let latency = this.audioContext.baseLatency + 0.1;
+        let delay   = req.delay;
         node.buffer = req.buffer;
 
-        // Only connect to reverb if it's available
         node.playbackRate.value = 0.98;
         node.connect(this.audioFilter);
-        node.start(delay);
+        node.start(this.nextBegin + delay);
 
-        // Have this buffer node automatically try to play next, when done
+        this.scheduledBuffers.push(node);
+        this.nextBegin += (node.buffer.duration + delay - latency);
+
+        // Have this buffer node remove itself from the schedule when done
         node.onended = _ =>
         {
             console.log('VOX CLIP ENDED:', req.path);
+            let idx = this.scheduledBuffers.indexOf(node);
 
-            if (!this.isSpeaking)
-                return;
-
-            this.currentBufNode = undefined;
-            this.playNext();
+            if (idx !== -1)
+                this.scheduledBuffers.splice(idx, 1);
         };
     }
 }

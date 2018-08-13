@@ -5,7 +5,7 @@ class VoxRequest
 {
     /** Relative remote path of this voice file request */
     public readonly path  : string;
-    /** Amount of milliseconds to delay the playback of this request */
+    /** Amount of seconds to delay the playback of this request */
     public readonly delay : number;
 
     /** Whether this request is done and ready for handling (even if failed) */
