@@ -139,7 +139,7 @@ class Resolver
         let singular = element.dataset['singular'];
         let plural   = element.dataset['plural'];
         let integer  = RAG.state.getInteger(ctx);
-        let parts    = [`number.${integer}`];
+        let parts    = [`number.mid.${integer}`];
 
         if      (singular && integer === 1)
             parts.push(`number.suffix.${singular}`);
@@ -163,10 +163,7 @@ class Resolver
         let platform = RAG.state.platform;
         let parts    = [];
 
-        parts.push(`number.${platform[0]}`);
-
-        if (platform[1])
-            parts.push(`letter.${platform[1]}`);
+        parts.push(`number.mid.${platform[0]}${platform[1]}`);
 
         return parts;
     }
@@ -232,12 +229,12 @@ class Resolver
             return ['number.0000'];
 
         // Hours
-        parts.push(`number.${time[0]}`);
+        parts.push(`number.mid.${time[0]}`);
 
         if (time[1] === '00')
-            parts.push('number.hundred');
+            parts.push('number.mid.hundred');
         else
-            parts.push(`number.${time[1]}`);
+            parts.push(`number.mid.${time[1]}`);
 
         return parts;
     }

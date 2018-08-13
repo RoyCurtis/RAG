@@ -71,22 +71,27 @@ export class Captioner
                 this.captionBank[`number.suffix.${clean(plural)}`] = plural;
         });
 
-        // Single digits
+        // Single digits with middle inflection (minutes)
         for (let n = 0; n <= 60; n++)
-            this.captionBank[`number.${n}`] = n.toString();
+            this.captionBank[`number.mid.${n}`] = n.toString();
+
+        // Lettered platforms
+        for (let n = 0; n <= 12; n++)
+        for (let i = 0; i <  3;  i++)
+            this.captionBank[`number.mid.${n}${'ABC'[i]}`] = n.toString() + 'ABC'[i];
 
         // 24 hour double digits
         for (let n = 1; n <= 9; n++)
-            this.captionBank[`number.0${n}`] = `Oh-${n}`;
+            this.captionBank[`number.mid.0${n}`] = `Oh-${n}`;
 
         // 00:MM
-        this.captionBank[`number.00`] = 'Oh-oh';
+        this.captionBank[`number.mid.00`] = 'Oh-oh';
 
         // 00:00
         this.captionBank[`number.0000`] = 'Oh-zero hundred';
 
         // "Hundred"
-        this.captionBank['number.hundred'] = 'Hundred';
+        this.captionBank['number.mid.hundred'] = 'Hundred';
     }
 
     private populateExcuses() : void
