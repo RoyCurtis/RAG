@@ -14,11 +14,9 @@ export class EditorPhrases
     private readonly inputFind : HTMLInputElement;
 
     /** Reference to the currently selected phrase's key */
-    public  currentKey?       : string;
+    public  currentKey?   : string;
     /** Reference to the currently selected phrase entry */
-    private currentEntry?     : HTMLElement;
-    /** Reference to the currently highlighted phrase entry */
-    private currentHighlight? : HTMLElement;
+    private currentEntry? : HTMLElement;
 
     public constructor()
     {
@@ -33,12 +31,19 @@ export class EditorPhrases
     }
 
     /** Selects the given phrase entry, calling handlers elsewhere */
-    public select(item: HTMLElement) : void
+    public select(item: HTMLElement, scroll: boolean = false) : void
     {
         this.visualSelect(item);
         this.checkMissing(item);
 
         this.currentKey = item.dataset['key']!;
+
+        if (scroll) this.currentEntry!.scrollIntoView(
+            {
+                behavior : 'instant',
+                block    : 'center',
+                inline   : 'center'
+            });
 
         VoxEditor.voices.loadFromDisk();
     }
@@ -52,8 +57,7 @@ export class EditorPhrases
         let next = this.currentEntry.previousElementSibling
             || this.domList.lastElementChild!;
 
-        this.select(next as HTMLElement);
-        next.scrollIntoView({block : 'center'});
+        this.select(next as HTMLElement, true);
     }
 
     /** Selects the next phrase entry, relative to current selection */
@@ -65,8 +69,7 @@ export class EditorPhrases
         let next = this.currentEntry.nextElementSibling
             || this.domList.firstElementChild!;
 
-        this.select(next as HTMLElement);
-        next.scrollIntoView({block : 'center'});
+        this.select(next as HTMLElement, true);
     }
 
     /** Visually selects the given phrase entry */
@@ -148,20 +151,14 @@ export class EditorPhrases
         if (this.domList.children.length === 0)
             return;
 
-        // Clear highlight if empty
-        if ( Strings.isNullOrEmpty(this.inputFind.value) )
-            return this.clearHighlight();
-
         let dir     = ev.shiftKey ? -1 : 1;
         let query   = this.inputFind.value.toLowerCase();
-        let current = this.currentHighlight as HTMLElement;
+        let current = this.currentEntry as HTMLElement;
 
         if (!current)
             current = (dir === 1)
                 ? this.domList.lastElementChild!  as HTMLElement
                 : this.domList.firstElementChild! as HTMLElement;
-
-        this.clearHighlight();
 
         for (let i = 0; i < this.domList.children.length; i++)
         {
@@ -175,31 +172,10 @@ export class EditorPhrases
 
             // Found a match
             if (current.innerText.toLowerCase().indexOf(query) !== -1)
-            {
-                this.currentHighlight = current;
-                this.currentHighlight.classList.add('highlight');
-                this.currentHighlight.scrollIntoView(
-                {
-                    behavior : 'instant',
-                    block    : 'center',
-                    inline   : 'center'
-                });
-
-                return;
-            }
+                return this.select(current, true);
         }
 
         this.inputFind.classList.add('noMatches');
-    }
-
-    /** Clears the currently highlighted entry */
-    private clearHighlight() : void
-    {
-        if (!this.currentHighlight)
-            return;
-
-        this.currentHighlight.classList.remove('highlight');
-        this.currentHighlight = undefined;
     }
 
     /** Clears and fills the list with all available IDs and captions */
@@ -207,7 +183,7 @@ export class EditorPhrases
     {
         this.domList.classList.add('hidden');
 
-        this.clearHighlight();
+        this.currentEntry      = undefined;
         this.domList.innerText = '';
 
         let keys = Object.keys(VoxEditor.captioner.captionBank).sort();
