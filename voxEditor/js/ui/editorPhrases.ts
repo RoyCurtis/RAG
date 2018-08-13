@@ -7,11 +7,11 @@ import * as fs from "fs";
 export class EditorPhrases
 {
     /** Reference to the list of clickable phrase IDs */
-    private readonly domList    : HTMLUListElement;
-    /** Reference to the list of orphan vox files */
-    private readonly domOrphans : HTMLUListElement;
+    private readonly domList   : HTMLUListElement;
+    /** Reference to the orphan files warning */
+    private readonly domOrphan : HTMLElement;
     /** Reference to the phrase search box */
-    private readonly inputFind  : HTMLInputElement;
+    private readonly inputFind : HTMLInputElement;
 
     /** Reference to the currently selected phrase's key */
     public  currentKey?       : string;
@@ -22,9 +22,9 @@ export class EditorPhrases
 
     public constructor()
     {
-        this.domList    = DOM.require('#phraseList');
-        this.domOrphans = DOM.require('#orphanList ul');
-        this.inputFind  = DOM.require('#inputFind');
+        this.domList   = DOM.require('#phraseList');
+        this.domOrphan = DOM.require('#orphanWarning');
+        this.inputFind = DOM.require('#inputFind');
 
         this.domList.onclick     = this.onClick.bind(this);
         this.inputFind.onkeydown = this.onFind.bind(this);
@@ -231,7 +231,7 @@ export class EditorPhrases
     /** Clears and fills the orphans list with all orphaned voice files */
     private populateOrphans() : void
     {
-        this.domOrphans.innerHTML = '';
+        let found = false;
 
         fs.readdirSync(VoxEditor.config.voicePath).forEach(file =>
         {
@@ -240,17 +240,19 @@ export class EditorPhrases
             if (key in VoxEditor.captioner.captionBank)
                 return;
 
-            // TODO: Make DOM sugar for this
-            let orphan = document.createElement('li');
+            if (!found)
+                console.group(`Orphaned files found in ${VoxEditor.config.voicePath}:`);
 
-            orphan.innerText = file;
-
-            this.domOrphans.appendChild(orphan);
+            console.log(file);
+            found = true;
         });
 
-        if (this.domOrphans.children.length > 0)
-            this.domOrphans.parentElement!.classList.remove('hidden');
+        if (found)
+        {
+            this.domOrphan.classList.remove('hidden');
+            console.groupEnd();
+        }
         else
-            this.domOrphans.parentElement!.classList.add('hidden');
+            this.domOrphan.classList.add('hidden');
     }
 }

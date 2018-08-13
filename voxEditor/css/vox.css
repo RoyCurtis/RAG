@@ -61,13 +61,10 @@ h1 {
 #partSelector .searchBox input.noMatches {
   background: #f2a6a6;
 }
-#partSelector #orphanList {
+#partSelector #orphanWarning {
   background: #c21d1d;
   margin: 16px 12px 16px 16px;
   padding: 8px;
-}
-#partSelector #orphanList ul {
-  margin: 16px 0 0 16px;
 }
 #partSelector > ul {
   -webkit-user-select: none;
