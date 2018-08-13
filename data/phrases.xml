@@ -69,14 +69,12 @@
 
   <!-- Platform alterations -->
   <phrase>
-    This is a platform alteration. The <phrase ref="service"/>
-    <phraseset ref="destination_from_to"/>, will now <phraseset ref="depart_arrive"/>
-    platform <platform/>.
+    This is a platform alteration. <phraseset ref="platform_alteration"/>
   </phrase>
 
   <!-- Non-stop trains -->
   <phrase>
-    <phrase ref="nonstop_pre" chance="25"/> <phraseset ref="nonstop_begin"/> platform
+    <phrase ref="nonstop_pre" chance="25"/> <phraseset ref="nonstop_begin"/>
     <platform/> does not stop here. <phrase ref="nonstop_end" chance="25"/>
   </phrase>
 
@@ -162,8 +160,10 @@
     <phrase ref="platform_wait"/>.
   </phrase>
   <phrase>
-    The next train to <phraseset ref="depart_arrive"/> platform <platform/> will be
-    <phrase ref="service_to"/>.
+    The next train to depart from platform <platform/> will be <phrase ref="service_to"/>.
+  </phrase>
+  <phrase>
+    The next train to arrive at platform <platform/> will be <phrase ref="service_to"/>.
   </phrase>
   <phrase>
     The train now approaching platform <platform/> is <phrase ref="service_to"/>.
@@ -312,16 +312,25 @@
   <station context="destination_split"/>, departing from platform <platform/>.
 </phrase>
 
+<phraseset id="platform_alteration">
+  <phrase>The <phrase ref="service"/> <phraseset ref="destination_from_to"/>, will now
+    depart from platform <platform/>.
+  </phrase>
+  <phrase>The <phrase ref="service"/> <phraseset ref="destination_from_to"/>, will now
+    arrive at platform <platform/>.
+  </phrase>
+</phraseset>
+
 <phrase id="nonstop_pre">
   Stand well back from the platform edge.
 </phrase>
 
 <phraseset id="nonstop_begin">
   <phrase>
-    The train now approaching
+    The train now approaching platform
   </phrase>
   <phrase>
-    The next train at
+    The next train at platform
   </phrase>
 </phraseset>
 
@@ -453,11 +462,6 @@
 <phraseset id="leave">
   <phrase>leave</phrase>
   <phrase>alight</phrase>
-</phraseset>
-
-<phraseset id="depart_arrive">
-  <phrase>depart from</phrase>
-  <phrase>arrive at</phrase>
 </phraseset>
 
 <phraseset id="destination_from_to">

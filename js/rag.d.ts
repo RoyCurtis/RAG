@@ -844,16 +844,18 @@ declare class VoxEngine {
     isSpeaking: boolean;
     /** Reference number for the current pump timer */
     private pumpTimer;
+    /** Tracks the audio context's wall-clock time to schedule next clip */
+    private nextBegin;
     /** References to currently pending requests, as a FIFO queue */
     private pendingReqs;
+    /** References to currently scheduled audio buffers */
+    private scheduledBuffers;
     /** List of vox IDs currently being run through */
     private currentIds?;
     /** Voice currently being used */
     private currentVoice?;
     /** Speech settings currently being used */
     private currentSettings?;
-    /** Audio buffer node holding and playing the current voice file */
-    private currentBufNode?;
     /** Audio node that adds a reverb to the voice, if available */
     private audioReverb?;
     constructor();
@@ -872,19 +874,14 @@ declare class VoxEngine {
      * and then feeding their data (in enforced order) to the audio chain, one at a time.
      */
     private pump;
-    /**
-     * If there's a pending request and it's ready, and a buffer node is not currently
-     * playing, then that next pending request is played. The buffer node created by this
-     * method, automatically calls this method when playing is done.
-     */
-    private playNext;
+    private schedule;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Represents a request for a vox file, immediately begun on creation */
 declare class VoxRequest {
     /** Relative remote path of this voice file request */
     readonly path: string;
-    /** Amount of milliseconds to delay the playback of this request */
+    /** Amount of seconds to delay the playback of this request */
     readonly delay: number;
     /** Whether this request is done and ready for handling (even if failed) */
     isDone: boolean;
