@@ -81,7 +81,7 @@ class Resolver
 
         // If text is just a full stop, return silence
         if (text === '.')
-            return [250];
+            return [0.5];
 
         // If the text doesn't contain any words, skip
         if ( !text.match(/[a-z0-9]/i) )
@@ -108,18 +108,18 @@ class Resolver
 
         // If text ends with a full stop, add silence
         if ( text.endsWith('.') )
-            set.push(250);
+            set.push(0.5);
 
         return set;
     }
 
     /** Resolve ID from a given coach element and current state */
-    private resolveCoach(element: HTMLElement) : string[]
+    private resolveCoach(element: HTMLElement) : VoxKey[]
     {
         let ctx   = element.dataset['context']!;
         let coach = RAG.state.getCoach(ctx);
 
-        return [`letter.${coach}`];
+        return [0.1, `letter.${coach}`, 0.1];
     }
 
     /** Resolve ID from a given excuse element and current state */
@@ -133,18 +133,18 @@ class Resolver
     }
 
     /** Resolve IDs from a given integer element and current state */
-    private resolveInteger(element: HTMLElement) : string[]
+    private resolveInteger(element: HTMLElement) : VoxKey[]
     {
         let ctx      = element.dataset['context']!;
         let singular = element.dataset['singular'];
         let plural   = element.dataset['plural'];
         let integer  = RAG.state.getInteger(ctx);
-        let parts    = [`number.mid.${integer}`];
+        let parts    = [0.1, `number.mid.${integer}`];
 
         if      (singular && integer === 1)
-            parts.push(`number.suffix.${singular}`);
+            parts.push(0.1, `number.suffix.${singular}`);
         else if (plural   && integer !== 1)
-            parts.push(`number.suffix.${plural}`);
+            parts.push(0.1, `number.suffix.${plural}`);
 
         return parts;
     }
@@ -158,14 +158,12 @@ class Resolver
     }
 
     /** Resolve IDs from a given platform element and current state */
-    private resolvePlatform() : string[]
+    private resolvePlatform() : VoxKey[]
     {
         let platform = RAG.state.platform;
-        let parts    = [];
+        let key      = `number.mid.${platform[0]}${platform[1]}`;
 
-        parts.push(`number.mid.${platform[0]}${platform[1]}`);
-
-        return parts;
+        return [0.05, key, 0.1];
     }
 
     /** Resolve ID from a given service element and current state */
@@ -178,23 +176,23 @@ class Resolver
     }
 
     /** Resolve ID from a given station element and current state */
-    private resolveStation(element: HTMLElement) : string[]
+    private resolveStation(element: HTMLElement) : VoxKey[]
     {
         let ctx     = element.dataset['context']!;
         let station = RAG.state.getStation(ctx);
         // TODO: Context sensitive types
         let type    = 'end';
 
-        return [`station.end.${station}`];
+        return [0.1, `station.end.${station}`, 0.1];
     }
 
     /** Resolve IDs from a given station list element and current state */
-    private resolveStationList(element: HTMLElement) : string[]
+    private resolveStationList(element: HTMLElement) : VoxKey[]
     {
         let ctx  = element.dataset['context']!;
         let list = RAG.state.getStationList(ctx);
 
-        let parts : string[] = [];
+        let parts : VoxKey[] = [0.1];
 
         list.forEach( (v, k) =>
         {
@@ -203,39 +201,40 @@ class Resolver
             {
                 // Add "and" if list has more than 1 station and this is the end
                 if (list.length > 1)
-                    parts.push('station.parts.and');
+                    parts.push(0.1, 'station.parts.and', 0.1);
 
                 parts.push(`station.end.${v}`);
             }
             else
-                parts.push(`station.middle.${v}`);
+                parts.push(`station.middle.${v}`, 0.2);
         });
 
         // Add "only" if only one station in the calling list
         if (list.length === 1 && ctx === 'calling')
-            parts.push('station.parts.only');
+            parts.push(0.1, 'station.parts.only');
 
-        return parts;
+        return [...parts, 0.2];
     }
 
     /** Resolve IDs from a given time element and current state */
-    private resolveTime(element: HTMLElement) : string[]
+    private resolveTime(element: HTMLElement) : VoxKey[]
     {
         let ctx   = element.dataset['context']!;
         let time  = RAG.state.getTime(ctx).split(':');
-        let parts = [];
+
+        let parts : VoxKey[] = [0.1];
 
         if (time[0] === '00' && time[1] === '00')
-            return ['number.0000'];
+            return [...parts, 'number.0000'];
 
         // Hours
-        parts.push(`number.mid.${time[0]}`);
+        parts.push(`number.mid.${time[0]}`, 0.1);
 
         if (time[1] === '00')
             parts.push('number.mid.hundred');
         else
             parts.push(`number.mid.${time[1]}`);
 
-        return parts;
+        return [...parts, 0.1];
     }
 }
