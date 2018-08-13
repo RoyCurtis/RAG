@@ -18,6 +18,7 @@ export class Captioner
         // Note that the captioner should generate IDs the same way that the Resolver
         // does, in RAG/vox/resolver.ts. Else, voice will not match text content.
 
+        this.populateSpecial();
         this.populateLetters();
         this.populateNumbers();
         this.populateExcuses();
@@ -25,7 +26,6 @@ export class Captioner
         this.populateNames();
         this.populateServices();
         this.populateStations();
-        this.populateSpecial();
     }
 
     /** TreeWalker filter to only accept text nodes */
@@ -36,18 +36,6 @@ export class Captioner
             return NodeFilter.FILTER_ACCEPT;
 
         return NodeFilter.FILTER_REJECT;
-    }
-
-    /** TreeWalker filter to only accept integer nodes with suffixes */
-    private filterIntegers(node: Node): number
-    {
-        let element = node as HTMLElement;
-
-        if (element.nodeName.toLowerCase() === 'integer')
-        if ( element.hasAttribute('singular') || element.hasAttribute('plural') )
-            return NodeFilter.FILTER_ACCEPT;
-
-        return NodeFilter.FILTER_SKIP;
     }
 
     private populateLetters() : void
@@ -117,9 +105,6 @@ export class Captioner
             false
         );
 
-        let lastId  = '';
-        let lastIdx = 0;
-
         while ( treeWalker.nextNode() )
         {
             let current = treeWalker.currentNode;
@@ -146,13 +131,7 @@ export class Captioner
                 id += `.${psIndex}`;
 
             // Append the text part's index inside the phrase
-            if (lastId !== id)
-            {
-                lastIdx = 0;
-                lastId  = id;
-            }
-
-            id += `.${lastIdx++}`;
+            id += `.${DOM.nodeIndexOf(current)}`;
 
             // Append a "preview" of the next sibling to the text
             if (current.nextSibling)

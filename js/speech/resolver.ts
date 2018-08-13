@@ -48,9 +48,6 @@ class Resolver
         return NodeFilter.FILTER_ACCEPT;
     }
 
-    /** Keeps track of phrases' text node relative indexes */
-    private phraseIdxs : Dictionary<number> = {};
-
     /**
      * Uses the type and value of the given node, to resolve it to vox file IDs.
      *
@@ -95,16 +92,14 @@ class Resolver
         }
 
         let ref = parent.dataset['ref'];
+        let idx = DOM.nodeIndexOf(node);
         let id  = `phrase.${ref}`;
 
         // Append index of phraseset's choice of phrase
         if (type === 'phraseset')
             id += `.${parent.dataset['idx']}`;
 
-        if (!this.phraseIdxs[id])
-            this.phraseIdxs[id] = 0;
-
-        id += `.${this.phraseIdxs[id]++}`;
+        id += `.${idx}`;
 
         return [id];
     }

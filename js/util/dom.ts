@@ -226,4 +226,19 @@ class DOM
             ? Array.prototype.indexOf.call(parent.children, child)
             : -1;
     }
+
+    /**
+     * Gets the index of a child node, relevant to its parent. Used for text nodes.
+     *
+     * @see https://stackoverflow.com/a/9132575/3354920
+     * @param child Child node to get the index of
+     */
+    public static nodeIndexOf(child: Node) : number
+    {
+        let parent = child.parentNode;
+
+        return parent
+            ? Array.prototype.indexOf.call(parent.childNodes, child)
+            : -1;
+    }
 }

@@ -752,8 +752,6 @@ declare class CustomVoice {
 declare class Resolver {
     /** TreeWalker filter to reduce a walk to just the elements the resolver needs */
     static nodeFilter(node: Node): number;
-    /** Keeps track of phrases' text node relative indexes */
-    private phraseIdxs;
     /**
      * Uses the type and value of the given node, to resolve it to vox file IDs.
      *
@@ -1174,6 +1172,13 @@ declare class DOM {
      * @param child Child element to get the index of
      */
     static indexOf(child: HTMLElement): number;
+    /**
+     * Gets the index of a child node, relevant to its parent. Used for text nodes.
+     *
+     * @see https://stackoverflow.com/a/9132575/3354920
+     * @param child Child node to get the index of
+     */
+    static nodeIndexOf(child: Node): number;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** A very, very small subset of Markdown for hyperlinking a block of text */
