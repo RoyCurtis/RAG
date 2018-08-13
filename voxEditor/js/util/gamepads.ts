@@ -84,10 +84,6 @@ export class Gamepads
     {
         Gamepads.timer = requestAnimationFrame(Gamepads.poll);
 
-        // Do nothing if document isn't focused
-        if ( !document.hasFocus() )
-            return;
-
         // Get the first available pad
         let pad : Gamepad = Array.prototype.find
             .call(navigator.getGamepads(), (v : any) => v);
