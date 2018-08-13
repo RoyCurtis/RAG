@@ -16,16 +16,10 @@ class Resolver
             parentType = parent.dataset['type'];
         }
 
+        // Accept text only from phrase and phrasesets
         if (node.nodeType === Node.TEXT_NODE)
-        {
-            // Only accept text nodes with words in them
-            if ( !node.textContent!.match(/[a-z0-9]/i) )
-                return NodeFilter.FILTER_REJECT;
-
-            // Accept text only from phrase and phrasesets
-            if (parentType !== 'phraseset' && parentType !== 'phrase')
-                return NodeFilter.FILTER_SKIP;
-        }
+        if (parentType !== 'phraseset' && parentType !== 'phrase')
+            return NodeFilter.FILTER_SKIP;
 
         if (node.nodeType === Node.ELEMENT_NODE)
         {
@@ -54,7 +48,7 @@ class Resolver
      * @param node Node to resolve to vox IDs
      * @returns Array of IDs that make up one or more file IDs. Can be empty.
      */
-    public resolve(node: Node) : string[]
+    public resolve(node: Node) : VoxKey[]
     {
         if (node.nodeType === Node.TEXT_NODE)
             return this.resolveText(node);
@@ -79,10 +73,19 @@ class Resolver
     }
 
     /** Resolve text nodes from phrases and phrasesets to ID strings */
-    private resolveText(node: Node) : string[]
+    private resolveText(node: Node) : VoxKey[]
     {
         let parent = node.parentElement!;
         let type   = parent.dataset['type'];
+        let text   = Strings.clean(node.textContent!);
+
+        // If text is just a full stop, return silence
+        if (text === '.')
+            return [250];
+
+        // If the text doesn't contain any words, skip
+        if ( !text.match(/[a-z0-9]/i) )
+            return [];
 
         // If type is missing, parent is a wrapper
         if (!type)
@@ -94,14 +97,20 @@ class Resolver
         let ref = parent.dataset['ref'];
         let idx = DOM.nodeIndexOf(node);
         let id  = `phrase.${ref}`;
+        let set = [];
 
         // Append index of phraseset's choice of phrase
         if (type === 'phraseset')
             id += `.${parent.dataset['idx']}`;
 
         id += `.${idx}`;
+        set.push(id);
 
-        return [id];
+        // If text ends with a full stop, add silence
+        if ( text.endsWith('.') )
+            set.push(250);
+
+        return set;
     }
 
     /** Resolve ID from a given coach element and current state */

@@ -1,5 +1,7 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+type VoxKey = string | number;
+
 /** Synthesizes speech by dynamically loading and piecing together voice files */
 class VoxEngine
 {
@@ -15,7 +17,7 @@ class VoxEngine
     /** References to currently pending requests, as a FIFO queue */
     private pendingReqs      : VoxRequest[] = [];
     /** List of vox IDs currently being run through */
-    private currentIds?      : string[];
+    private currentIds?      : VoxKey[];
     /** Voice currently being used */
     private currentVoice?    : CustomVoice;
     /** Speech settings currently being used */
@@ -67,7 +69,7 @@ class VoxEngine
      * @param voice Custom voice to use
      * @param settings Voice settings to use
      */
-    public speak(ids: string[], voice: Voice, settings: SpeechSettings) : void
+    public speak(ids: VoxKey[], voice: Voice, settings: SpeechSettings) : void
     {
         console.debug('VOX SPEAK:', ids, voice, settings);
 
@@ -128,12 +130,24 @@ class VoxEngine
         this.playNext();
 
         // Then, fill any free pending slots with new requests
+        let nextDelay = 0;
+
         while (this.currentIds[0] && this.pendingReqs.length < 10)
         {
-            let id   = this.currentIds.shift();
-            let path = `${this.currentVoice.voiceURI}/${id}.mp3`;
+            let key = this.currentIds.shift()!;
 
-            this.pendingReqs.push( new VoxRequest(path) );
+            // If this key is a number, it's an amount of silence, so hold it as the
+            // playback delay for the next available request (if any).
+            if (typeof key === 'number')
+            {
+                nextDelay = key;
+                continue;
+            }
+
+            let path = `${this.currentVoice.voiceURI}/${key}.mp3`;
+
+            this.pendingReqs.push( new VoxRequest(path, nextDelay) );
+            nextDelay = 0;
         }
 
         // Stop pumping when we're out of IDs to queue and nothing is playing
@@ -158,23 +172,30 @@ class VoxEngine
 
         let req = this.pendingReqs.shift()!;
 
-        console.log('VOX PLAYING:', req.path);
-
         // If the next request errored out (buffer missing), skip it
         // TODO: Replace with silence?
         if (!req.buffer)
+        {
+            console.log('VOX CLIP SKIPPED:', req.path);
             return this.playNext();
+        }
 
-        this.currentBufNode        = this.audioContext.createBufferSource();
-        this.currentBufNode.buffer = req.buffer;
+        console.log('VOX CLIP PLAYING:', req.path, req.buffer.duration);
+
+        let delay   = this.audioContext.currentTime + (req.delay / 1000);
+        let node    = this.currentBufNode = this.audioContext.createBufferSource();
+        node.buffer = req.buffer;
 
         // Only connect to reverb if it's available
-        this.currentBufNode.connect(this.audioFilter);
-        this.currentBufNode.start();
+        node.playbackRate.value = 0.98;
+        node.connect(this.audioFilter);
+        node.start(delay);
 
         // Have this buffer node automatically try to play next, when done
-        this.currentBufNode.onended = _ =>
+        node.onended = _ =>
         {
+            console.log('VOX CLIP ENDED:', req.path);
+
             if (!this.isSpeaking)
                 return;
 

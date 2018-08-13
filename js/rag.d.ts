@@ -758,7 +758,7 @@ declare class Resolver {
      * @param node Node to resolve to vox IDs
      * @returns Array of IDs that make up one or more file IDs. Can be empty.
      */
-    resolve(node: Node): string[];
+    resolve(node: Node): VoxKey[];
     /** Resolve text nodes from phrases and phrasesets to ID strings */
     private resolveText;
     /** Resolve ID from a given coach element and current state */
@@ -833,6 +833,7 @@ interface SpeechSettings {
     rate?: number;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+declare type VoxKey = string | number;
 /** Synthesizes speech by dynamically loading and piecing together voice files */
 declare class VoxEngine {
     /** The core audio context that handles audio effects and playback */
@@ -863,7 +864,7 @@ declare class VoxEngine {
      * @param voice Custom voice to use
      * @param settings Voice settings to use
      */
-    speak(ids: string[], voice: Voice, settings: SpeechSettings): void;
+    speak(ids: VoxKey[], voice: Voice, settings: SpeechSettings): void;
     /** Stops playing any currently spoken speech and resets state */
     stop(): void;
     /**
@@ -883,11 +884,13 @@ declare class VoxEngine {
 declare class VoxRequest {
     /** Relative remote path of this voice file request */
     readonly path: string;
+    /** Amount of milliseconds to delay the playback of this request */
+    readonly delay: number;
     /** Whether this request is done and ready for handling (even if failed) */
     isDone: boolean;
     /** Raw audio data from the loaded file, if available */
     buffer?: AudioBuffer;
-    constructor(path: string);
+    constructor(path: string, delay: number);
     /** Cancels this request from proceeding any further */
     cancel(): void;
     /** Begins decoding the loaded MP3 voice file to raw audio data */

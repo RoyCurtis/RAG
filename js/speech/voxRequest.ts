@@ -4,17 +4,20 @@
 class VoxRequest
 {
     /** Relative remote path of this voice file request */
-    public readonly path : string;
+    public readonly path  : string;
+    /** Amount of milliseconds to delay the playback of this request */
+    public readonly delay : number;
 
     /** Whether this request is done and ready for handling (even if failed) */
     public isDone  : boolean = false;
     /** Raw audio data from the loaded file, if available */
     public buffer? : AudioBuffer;
 
-    public constructor(path: string)
+    public constructor(path: string, delay: number)
     {
         console.debug('VOX REQUEST:', path);
-        this.path = path;
+        this.path  = path;
+        this.delay = delay;
 
         fetch(path)
             .then ( this.onFulfill.bind(this) )
