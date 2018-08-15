@@ -114,7 +114,7 @@ export class EditorPhrases
         for (let i = 0; i < this.domList.children.length; i++)
             this.checkMissing(this.domList.children[i] as HTMLElement);
 
-        this.populateOrphans();
+        this.findOrphans();
         this.domList.classList.remove('hidden');
     }
 
@@ -203,12 +203,12 @@ export class EditorPhrases
 
         this.inputFind.disabled = (this.domList.children.length === 0);
 
-        this.populateOrphans();
+        this.findOrphans();
         this.domList.classList.remove('hidden');
     }
 
     /** Clears and fills the orphans list with all orphaned voice files */
-    private populateOrphans() : void
+    private findOrphans() : void
     {
         let found = false;
 
