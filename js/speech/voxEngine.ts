@@ -137,11 +137,11 @@ class VoxEngine
         {
             let key = this.currentIds.shift()!;
 
-            // If this key is a number, it's an amount of silence, so hold it as the
-            // playback delay for the next available request (if any).
+            // If this key is a number, it's an amount of silence, so add it as the
+            // playback delay for the next playable request (if any).
             if (typeof key === 'number')
             {
-                nextDelay = key;
+                nextDelay += key;
                 continue;
             }
 
