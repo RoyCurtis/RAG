@@ -125,18 +125,6 @@ class Speech
         : void
     {
         // TODO: use volume settings
-        let ids        = [];
-        let resolver   = new Resolver();
-        let treeWalker = document.createTreeWalker(
-            phrase,
-            NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
-            { acceptNode: Resolver.nodeFilter },
-            false
-        );
-
-        while ( treeWalker.nextNode() )
-            ids.push( ...resolver.resolve(treeWalker.currentNode) );
-
-        this.voxEngine.speak(ids, voice, settings);
+        this.voxEngine.speak(Resolver.toVox(phrase), voice, settings);
     }
 }
