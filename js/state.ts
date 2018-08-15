@@ -92,10 +92,10 @@ class State
 
         switch(context)
         {
-            case "coaches":       min = 1; max = 10;  break;
-            case "delayed":       min = 5; max = 120; break;
-            case "front_coaches": min = 2; max = 5;   break;
-            case "rear_coaches":  min = 2; max = 5;   break;
+            case "coaches":       min = 1; max = 10; break;
+            case "delayed":       min = 5; max = 60; break;
+            case "front_coaches": min = 2; max = 5;  break;
+            case "rear_coaches":  min = 2; max = 5;  break;
         }
 
         this._integers[context] = Random.int(min, max);
