@@ -750,28 +750,32 @@ declare class CustomVoice {
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility class for resolving a given phrase to vox keys */
 declare class Resolver {
-    static toVox(phrase: HTMLElement): VoxKey[];
     /** TreeWalker filter to reduce a walk to just the elements the resolver needs */
-    static nodeFilter(node: Node): number;
+    private static nodeFilter;
+    private phrase;
+    private flattened;
+    private resolved;
+    constructor(phrase: HTMLElement);
+    toVox(): VoxKey[];
     /**
      * Uses the type and value of the given node, to resolve it to vox file IDs.
      *
      * @param node Node to resolve to vox IDs
-     * @param phrase Flattened array of nodes that make up the whole phrase
      * @param idx Index of the node being resolved relative to the phrase array
      * @returns Array of IDs that make up one or more file IDs. Can be empty.
      */
-    static resolve(node: Node, phrase: Node[], idx: number): VoxKey[];
-    private static resolveText;
-    private static resolveCoach;
-    private static resolveExcuse;
-    private static resolveInteger;
-    private static resolveNamed;
-    private static resolvePlatform;
-    private static resolveService;
-    private static resolveStation;
-    private static resolveStationList;
-    private static resolveTime;
+    private resolve;
+    private getInflection;
+    private resolveText;
+    private resolveCoach;
+    private resolveExcuse;
+    private resolveInteger;
+    private resolveNamed;
+    private resolvePlatform;
+    private resolveService;
+    private resolveStation;
+    private resolveStationList;
+    private resolveTime;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Union type for both kinds of voices available */
@@ -1252,7 +1256,7 @@ declare class Strings {
     static fromTime(hours: number | Date, minutes?: number): string;
     /** Cleans up the given text of excess whitespace and any newlines */
     static clean(text: string): string;
-    /** Formats the given string to one more filename friendly */
+    /** Strongly compresses the given string to one more filename friendly */
     static filename(text: string): string;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */

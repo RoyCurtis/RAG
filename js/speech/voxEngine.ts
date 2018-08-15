@@ -188,7 +188,7 @@ class VoxEngine
         console.log('VOX CLIP PLAYING:', req.path, req.buffer.duration, this.nextBegin);
 
         let node    = this.audioContext.createBufferSource();
-        let latency = this.audioContext.baseLatency + 0.1;
+        let latency = this.audioContext.baseLatency + 0.15;
         let delay   = req.delay;
         node.buffer = req.buffer;
 
