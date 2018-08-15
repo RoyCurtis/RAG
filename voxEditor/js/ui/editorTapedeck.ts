@@ -278,7 +278,7 @@ export class EditorTapedeck
     {
         this.dirty = false;
         VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
-        VoxEditor.voices.loadFromDisk();
+        this.clipEditor.redraw();
     }
 
     private onLoad() : void

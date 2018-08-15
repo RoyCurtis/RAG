@@ -182,6 +182,8 @@ export class VoiceManager
     {
         if (!this.currentClip || !this.currentPath)
             throw Error('Attempted to save without state nor path');
+        else
+            this.stopClip();
 
         // https://github.com/zhuker/lamejs/issues/10#issuecomment-141720630
         let blocks : Int8Array[] = [];
@@ -193,16 +195,19 @@ export class VoiceManager
         let length     = channel.length;
         let totalSize  = 0;
 
-        // First, get a clipped copy of the data if given bounds
-        // TODO: Soften like on mic recordings
+        // First, clip the data to the given bounds and replace original buffer
 
         if ( bounds && (bounds[0] > 0 || bounds[1] < 1) )
         {
-            let left  = length * bounds[0];
-            let right = length * bounds[1];
+            let lower = length * bounds[0];
+            let upper = length * bounds[1];
+            let rate  = this.currentClip.sampleRate;
 
-            channel = channel.slice(left, right);
+            channel = channel.slice(lower, upper);
             length  = channel.length;
+
+            this.currentClip = this.audioContext.createBuffer(1, length, rate);
+            this.currentClip.copyToChannel(channel, 0);
         }
 
         // Then, convert the clip data from -1..1 floats to -32768..32767 integers
