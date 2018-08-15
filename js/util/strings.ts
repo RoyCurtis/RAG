@@ -65,12 +65,21 @@ class Strings
             .replace(/\s([.,])/gi, '$1');
     }
 
-    /** Formats the given string to one more filename friendly */
+    /** Strongly compresses the given string to one more filename friendly */
     public static filename(text: string) : string
     {
         return text
             .toLowerCase()
-            .replace(/\s/g,         '_')
-            .replace(/[^a-z0-9_]/g, '' );
+            // Replace plurals
+            .replace(/ies\b/g, 'y')
+            // Remove common words
+            .replace(/\b(a|an|at|be|of|on|the|to|in|is|has|by|with)\b/g, '')
+            .trim()
+            // Convert spaces to underscores
+            .replace(/\s+/g, '_')
+            // Remove all non-alphanumericals
+            .replace(/[^a-z0-9_]/g, '')
+            // Limit to 100 chars; most systems support max. 255 bytes in filenames
+            .substring(0, 100);
     }
 }

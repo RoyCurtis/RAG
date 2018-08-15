@@ -43,17 +43,19 @@ export class Captioner
         // TODO: After moving letters out of I18n, fix this
         let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+        // Both middle and end inflections are needed
         for (let i = 0; i < letters.length; i++)
         {
             let letter = letters[i];
 
-            this.captionBank[`letter.${letter}`] = letter;
+            this.captionBank[`letter.${letter}.mid`] = letter;
+            this.captionBank[`letter.${letter}.end`] = letter;
         }
     }
 
     private populateNumbers() : void
     {
-        // Get all suffixes
+        // Get all suffixes. End inflection only, for now
         let suffixes = VoxEditor.database.phrasesets.querySelectorAll(
             'integer[singular], integer[plural]'
         );
@@ -65,46 +67,52 @@ export class Captioner
             let clean    = Strings.filename;
 
             if (singular)
-                this.captionBank[`number.suffix.${clean(singular)}`] = singular;
+                this.captionBank[`number.suffix.${clean(singular)}.end`] = singular;
 
             if (plural)
-                this.captionBank[`number.suffix.${clean(plural)}`] = plural;
+                this.captionBank[`number.suffix.${clean(plural)}.end`] = plural;
         });
 
         // Single digits with middle inflection (minutes)
         for (let n = 0; n <= 60; n++)
-            this.captionBank[`number.mid.${n}`] = n.toString();
+            this.captionBank[`number.${n}.end`] = n.toString();
 
         // Single digits with end inflection (platforms)
         for (let n = 0; n <= 26; n++)
-            this.captionBank[`number.end.${n}`] = n.toString();
+            this.captionBank[`number.${n}.end`] = n.toString();
 
         // Lettered platforms
         for (let n = 0; n <= 12; n++)
         for (let i = 0; i <  3;  i++)
         {
-            this.captionBank[`number.mid.${n}${'ABC'[i]}`] = n.toString() + 'ABC'[i];
-            this.captionBank[`number.end.${n}${'ABC'[i]}`] = n.toString() + 'ABC'[i];
+            this.captionBank[`number.${n}${'ABC'[i]}.mid`] = n.toString() + 'ABC'[i];
+            this.captionBank[`number.${n}${'ABC'[i]}.end`] = n.toString() + 'ABC'[i];
         }
 
         // 24 hour double digits
         for (let n = 1; n <= 9; n++)
-            this.captionBank[`number.mid.0${n}`] = `Oh-${n}`;
+            this.captionBank[`number.0${n}.mid`] = `Oh-${n}`;
 
         // 00:MM
-        this.captionBank[`number.mid.00`] = 'Oh-oh';
+        this.captionBank[`number.00.mid`] = 'Oh-oh';
 
         // 00:00
-        this.captionBank[`number.0000`] = 'Oh-zero hundred';
+        this.captionBank[`number.0000.mid`] = 'Oh-zero hundred';
 
         // "Hundred"
-        this.captionBank['number.mid.hundred'] = 'Hundred';
+        this.captionBank['number.hundred.mid'] = 'Hundred';
     }
 
     private populateExcuses() : void
     {
-        for (let i = 0; i < VoxEditor.database.excuses.length; i++)
-            this.captionBank[`excuse.${i}`] = VoxEditor.database.excuses[i];
+        // Both middle and end inflections needed
+        VoxEditor.database.excuses.forEach(excuse =>
+        {
+            let key = Strings.filename(excuse);
+
+            this.captionBank[`excuse.${key}.mid`] = excuse;
+            this.captionBank[`excuse.${key}.end`] = excuse;
+        });
     }
 
     /** Walks through every XML element and populates the caption bank from phrasesets */
@@ -171,7 +179,7 @@ export class Captioner
         VoxEditor.database.named.forEach(name =>
         {
             let key = Strings.filename(name);
-            this.captionBank[`named.${key}`] = name;
+            this.captionBank[`named.${key}.mid`] = name;
         });
     }
 
@@ -180,7 +188,7 @@ export class Captioner
         VoxEditor.database.services.forEach(service =>
         {
             let key = Strings.filename(service);
-            this.captionBank[`service.${key}`] = service;
+            this.captionBank[`service.${key}.mid`] = service;
         });
     }
 
@@ -192,19 +200,19 @@ export class Captioner
         let keys     = Object.keys(stations);
 
         // For the "and" in station lists
-        this.captionBank[`station.parts.and`]  = 'and';
+        this.captionBank[`station.parts.and.mid`]  = 'and';
 
         // For the "only" at the end of some single-station lists
-        this.captionBank[`station.parts.only`] = 'only';
+        this.captionBank[`station.parts.only.end`] = 'only';
 
         // For stations to be read in the middle of lists or sentences
         keys.forEach(k =>
-            this.captionBank[`station.mid.${k}`] = filter(stations[k])
+            this.captionBank[`station.${k}.mid`] = filter(stations[k])
         );
 
         // For stations to be read at the end of lists or sentences
         keys.forEach(k =>
-            this.captionBank[`station.end.${k}`] = filter(stations[k])
+            this.captionBank[`station.${k}.end`] = filter(stations[k])
         );
     }
 

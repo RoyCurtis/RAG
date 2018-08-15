@@ -125,6 +125,8 @@ class Speech
         : void
     {
         // TODO: use volume settings
-        this.voxEngine.speak(Resolver.toVox(phrase), voice, settings);
+        let resolver = new Resolver(phrase);
+
+        this.voxEngine.speak(resolver.toVox(), voice, settings);
     }
 }
