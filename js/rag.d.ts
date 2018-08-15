@@ -748,37 +748,30 @@ declare class CustomVoice {
     constructor(name: string, lang: string);
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Utility class for resolving a given phrase element to a vox key */
+/** Utility class for resolving a given phrase to vox keys */
 declare class Resolver {
+    static toVox(phrase: HTMLElement): VoxKey[];
     /** TreeWalker filter to reduce a walk to just the elements the resolver needs */
     static nodeFilter(node: Node): number;
     /**
      * Uses the type and value of the given node, to resolve it to vox file IDs.
      *
      * @param node Node to resolve to vox IDs
+     * @param phrase Flattened array of nodes that make up the whole phrase
+     * @param idx Index of the node being resolved relative to the phrase array
      * @returns Array of IDs that make up one or more file IDs. Can be empty.
      */
-    resolve(node: Node): VoxKey[];
-    /** Resolve text nodes from phrases and phrasesets to ID strings */
-    private resolveText;
-    /** Resolve ID from a given coach element and current state */
-    private resolveCoach;
-    /** Resolve ID from a given excuse element and current state */
-    private resolveExcuse;
-    /** Resolve IDs from a given integer element and current state */
-    private resolveInteger;
-    /** Resolve ID from a given named element and current state */
-    private resolveNamed;
-    /** Resolve IDs from a given platform element and current state */
-    private resolvePlatform;
-    /** Resolve ID from a given service element and current state */
-    private resolveService;
-    /** Resolve ID from a given station element and current state */
-    private resolveStation;
-    /** Resolve IDs from a given station list element and current state */
-    private resolveStationList;
-    /** Resolve IDs from a given time element and current state */
-    private resolveTime;
+    static resolve(node: Node, phrase: Node[], idx: number): VoxKey[];
+    private static resolveText;
+    private static resolveCoach;
+    private static resolveExcuse;
+    private static resolveInteger;
+    private static resolveNamed;
+    private static resolvePlatform;
+    private static resolveService;
+    private static resolveStation;
+    private static resolveStationList;
+    private static resolveTime;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Union type for both kinds of voices available */
