@@ -75,10 +75,17 @@ export class Captioner
         for (let n = 0; n <= 60; n++)
             this.captionBank[`number.mid.${n}`] = n.toString();
 
+        // Single digits with end inflection (platforms)
+        for (let n = 0; n <= 26; n++)
+            this.captionBank[`number.end.${n}`] = n.toString();
+
         // Lettered platforms
         for (let n = 0; n <= 12; n++)
         for (let i = 0; i <  3;  i++)
+        {
             this.captionBank[`number.mid.${n}${'ABC'[i]}`] = n.toString() + 'ABC'[i];
+            this.captionBank[`number.end.${n}${'ABC'[i]}`] = n.toString() + 'ABC'[i];
+        }
 
         // 24 hour double digits
         for (let n = 1; n <= 9; n++)
@@ -192,7 +199,7 @@ export class Captioner
 
         // For stations to be read in the middle of lists or sentences
         keys.forEach(k =>
-            this.captionBank[`station.middle.${k}`] = filter(stations[k])
+            this.captionBank[`station.mid.${k}`] = filter(stations[k])
         );
 
         // For stations to be read at the end of lists or sentences
