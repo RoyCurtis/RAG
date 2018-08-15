@@ -40,7 +40,7 @@
 
   <!-- Train departing from platform -->
   <phrase>
-    The train at platform <platform/> is <phrase ref="service_to"/>.
+    The train at platform <platform/> is the <phrase ref="service_to"/>.
     <phraseset ref="calling_at"/> Will passengers intending to travel on this service
     please join the train now, as it is ready to leave. <phrase ref="platform_wait"/>,
     which is ready to leave.
@@ -48,28 +48,32 @@
 
   <!-- Terminating train -->
   <phrase>
-    Platform <platform/> for the <phrase ref="service"/> from <station context="source"/>.
-    This train will terminate here.
+    Platform <platform/> for the <phrase ref="service"/> service from
+    <station context="source"/>. This train will terminate here.
   </phrase>
 
   <!-- Delayed and cancelled trains -->
   <phrase>
     <phrase ref="attention_please_platform" chance="25"/>
-    <phraseset ref="apology_begin"/> <phrase ref="service"/> to
+    <phraseset ref="apology_begin"/> <phrase ref="service"/> service to
     <phrase ref="destination"/><phraseset ref="delayed_or_cancelled"/>
+    <phraseset ref="excuse_or_wait" chance="50"/>
+    <phraseset ref="service_apology" chance="50"/>
     <phrase ref="next_fastest" chance="5"/>
   </phrase>
 
   <!-- General service delay -->
   <phrase>
     We are sorry that services are subject to delay because of <excuse/>
-    <phrase ref="delay_at_near" chance="50"/>.
-    <phraseset ref="general_apology_delay" chance="50"/>
+    <phraseset ref="delay_at_near" chance="50"/>.
+    <phraseset ref="service_apology" chance="50"/>
   </phrase>
 
   <!-- Platform alterations -->
   <phrase>
-    This is a platform alteration. <phraseset ref="platform_alteration"/>
+    This is a platform alteration. The <phrase ref="service"/>
+    <phraseset ref="platform_alteration_part1"/>
+    <phraseset ref="platform_alteration_part2"/>
   </phrase>
 
   <!-- Non-stop trains -->
@@ -160,19 +164,22 @@
     <phrase ref="platform_wait"/>.
   </phrase>
   <phrase>
-    The next train to depart from platform <platform/> will be <phrase ref="service_to"/>.
+    The next train to depart from platform <platform/> will be the
+    <phrase ref="service_to"/>.
   </phrase>
   <phrase>
-    The next train to arrive at platform <platform/> will be <phrase ref="service_to"/>.
+    The next train to arrive at platform <platform/> will be the
+    <phrase ref="service_to"/>.
   </phrase>
   <phrase>
-    The train now approaching platform <platform/> is <phrase ref="service_to"/>.
+    The train now approaching platform <platform/> is the <phrase ref="service_to"/>.
     <phrase ref="service_from" chance="50"/>
   </phrase>
 </phraseset>
 
 <phrase id="platform_wait">
-  Platform <platform/> for the <phrase ref="service"/> to <phrase ref="destination"/>
+  Platform <platform/> for the <phrase ref="service"/> service to
+  <phrase ref="destination"/>
 </phrase>
 
 <phrase id="platform_wait_end">
@@ -197,7 +204,7 @@
 </phrase>
 
 <phrase id="service_to">
-  the <phrase ref="delayed" chance="5"/> <phrase ref="service"/> to
+  <phrase ref="delayed" chance="5"/> <phrase ref="service"/> service to
   <phrase ref="destination"/>
 </phrase>
 
@@ -207,7 +214,7 @@
 
 <phrase id="service">
   <phrase ref="service_named" chance="5"/> <time context="main"/>
-  <phrase ref="service_label" chance="90"/> service
+  <phrase ref="service_label" chance="90"/>
 </phrase>
 
 <phrase id="service_named">
@@ -251,55 +258,40 @@
 </phraseset>
 
 <phraseset id="delayed_or_cancelled">
-  <phrase>
-    is delayed
-    <phraseset ref="excuse_or_wait" chance="50"/>.
-    <phraseset ref="service_apology_delay" chance="50"/>
-  </phrase>
+  <phrase>is delayed.</phrase>
   <phrase>
     is delayed by approximately
-    <integer context="delayed" plural="minutes" singular="minute"/>
-    <phraseset ref="excuse_or_wait" chance="50"/>.
-    <phraseset ref="service_apology_delay" chance="50"/>
+    <integer context="delayed" plural="minutes" singular="minute"/>.
   </phrase>
   <phrase>
-    has been cancelled <phraseset ref="excuse_or_wait" chance="50"/>.
-    <phraseset ref="service_apology" chance="50"/>
+    has been cancelled.
   </phrase>
 </phraseset>
 
-<phrase id="delay_at_near">
-  <phraseset ref="at_near"/> <station context="excuse"/>
-</phrase>
+<phraseset id="excuse_or_wait">
+  <phrase><phrase ref="excuse"/>.</phrase>
+  <phrase>Please listen for further announcements.</phrase>
+</phraseset>
 
 <phraseset id="excuse_pre">
-  <phrase>, </phrase>
-  <phrase>. This is </phrase>
+  <phrase>Due to</phrase>
+  <phrase>This is due to</phrase>
 </phraseset>
 
 <phrase id="excuse">
-  <phraseset ref="excuse_pre"/>due to <excuse/> <phrase ref="delay_at_near" chance="50"/>
+  <phraseset ref="excuse_pre"/> <excuse/> <phraseset ref="delay_at_near" chance="50"/>
 </phrase>
 
-<phraseset id="excuse_or_wait">
-  <phrase><phrase ref="excuse"/></phrase>
-  <phrase>. Please listen for further announcements</phrase>
-</phraseset>
-
-<phraseset id="general_apology_delay">
-  <phrase>National Rail apologises for this delay.</phrase>
-  <phrase>We apologise for the inconvenience this may cause you.</phrase>
-</phraseset>
-
-<phraseset id="service_apology_delay">
-  <phrase><service context="provider"/> apologises for this delay.</phrase>
-  <phrase><phraseset ref="general_apology_delay"/></phrase>
-  <phrase><phraseset ref="service_apology"/></phrase>
+<phraseset id="delay_at_near">
+  <phrase>at <station context="excuse"/></phrase>
+  <phrase>near <station context="excuse"/></phrase>
 </phraseset>
 
 <phraseset id="service_apology">
   <phrase>We apologise for the inconvenience this may cause you.</phrase>
   <phrase>We apologise for the disruption to your journey today.</phrase>
+  <phrase>National Rail apologises for this delay.</phrase>
+  <phrase><service context="provider"/> apologises for this delay.</phrase>
   <phrase>
     <service context="provider"/> apologises for the disruption to your journey today.
   </phrase>
@@ -313,13 +305,14 @@
   <station context="destination_split"/>, departing from platform <platform/>.
 </phrase>
 
-<phraseset id="platform_alteration">
-  <phrase>The <phrase ref="service"/> <phraseset ref="destination_from_to"/>, will now
-    depart from platform <platform/>.
-  </phrase>
-  <phrase>The <phrase ref="service"/> <phraseset ref="destination_from_to"/>, will now
-    arrive at platform <platform/>.
-  </phrase>
+<phraseset id="platform_alteration_part1">
+  <phrase>service to <phrase ref="destination"/>,</phrase>
+  <phrase>service from <station context="source"/>,</phrase>
+</phraseset>
+
+<phraseset id="platform_alteration_part2">
+  <phrase>will now depart from platform <platform/>.</phrase>
+  <phrase>will now arrive at platform <platform/>.</phrase>
 </phraseset>
 
 <phrase id="nonstop_pre">
@@ -352,21 +345,26 @@
 </phraseset>
 
 <phrase id="not_stopping">
-  This train will not be calling at <stationlist context="not_stopping"/> today
+  This train will not be calling at <stationlist context="not_stopping"/> today.
   <phrase ref="excuse"/>.
 </phrase>
 
 <phraseset id="request_stop">
   <phrase>
     <station context="calling"/> is a request stop, and passengers for this station should
-    ask the conductor on the train to arrange for the train to stop, to allow them to
-    <phraseset ref="leave"/>.
+    ask the conductor on the train to arrange for the train to stop,
+    <phraseset ref="request_stop_end"/>.
   </phrase>
   <phrase>
     <stationlist context="request"/> are request stops, and passengers for these stations
-    should ask the conductor on the train to arrange for the train to stop, to allow them
-    to <phraseset ref="leave"/>.
+    should ask the conductor on the train to arrange for the train to stop,
+    <phraseset ref="request_stop_end"/>.
   </phrase>
+</phraseset>
+
+<phraseset id="request_stop_end">
+  <phrase>to allow them to leave.</phrase>
+  <phrase>to allow them to alight.</phrase>
 </phraseset>
 
 <phrase id="coach_count">
@@ -419,7 +417,10 @@
     First class accommodation is available on the train.
   </phrase>
   <phrase>
-    First class is at the <phraseset ref="front_rear"/> of the train.
+    First class is at the front of the train.
+  </phrase>
+  <phrase>
+    First class is at the rear of the train.
   </phrase>
   <phrase>
     First class is at the front, standard class is at the middle and rear, bicycle spaces
@@ -454,26 +455,6 @@
 </phrase>
 
 <!-- Common vocabulary collections -->
-
-<phraseset id="front_rear">
-  <phrase>front</phrase>
-  <phrase>rear</phrase>
-</phraseset>
-
-<phraseset id="leave">
-  <phrase>leave</phrase>
-  <phrase>alight</phrase>
-</phraseset>
-
-<phraseset id="destination_from_to">
-  <phrase>to <phrase ref="destination"/></phrase>
-  <phrase>from <station context="source"/></phrase>
-</phraseset>
-
-<phraseset id="at_near">
-  <phrase>at</phrase>
-  <phrase>near</phrase>
-</phraseset>
 
 <phraseset id="coaches_carriages">
   <phrase>
