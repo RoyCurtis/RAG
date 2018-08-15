@@ -253,7 +253,12 @@
 <phraseset id="delayed_or_cancelled">
   <phrase>
     is delayed
-    <phrase ref="delayed_approx" chance="50"/>
+    <phraseset ref="excuse_or_wait" chance="50"/>.
+    <phraseset ref="service_apology_delay" chance="50"/>
+  </phrase>
+  <phrase>
+    is delayed by approximately
+    <integer context="delayed" plural="minutes" singular="minute"/>
     <phraseset ref="excuse_or_wait" chance="50"/>.
     <phraseset ref="service_apology_delay" chance="50"/>
   </phrase>
@@ -262,10 +267,6 @@
     <phraseset ref="service_apology" chance="50"/>
   </phrase>
 </phraseset>
-
-<phrase id="delayed_approx">
-  by approximately <integer context="delayed" plural="minutes" singular="minute"/>
-</phrase>
 
 <phrase id="delay_at_near">
   <phraseset ref="at_near"/> <station context="excuse"/>
