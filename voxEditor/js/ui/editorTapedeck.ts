@@ -4,7 +4,7 @@ import {VoxEditor} from "../voxEditor";
 import {ClipEditor} from "./controls/clipEditor";
 import {VoiceMeter} from "./controls/voiceMeter";
 import {GamepadButtonEvent, Gamepads, XBOX} from "../util/gamepads";
-import {fail} from "assert";
+import {PhrasePreview} from "./controls/phrasePreview";
 
 /** Controller for the tape deck part of the editor */
 export class EditorTapedeck
@@ -27,11 +27,11 @@ export class EditorTapedeck
 
     private readonly voiceMeter : VoiceMeter;
 
+    private readonly previewer  : PhrasePreview;
+
     private readonly domForm    : HTMLFormElement;
 
     private readonly lblId      : HTMLParagraphElement;
-
-    private readonly lblCaption : HTMLParagraphElement;
 
     private _dirty : boolean = false;
 
@@ -52,6 +52,7 @@ export class EditorTapedeck
     {
         this.clipEditor = new ClipEditor('.clipEditor');
         this.voiceMeter = new VoiceMeter('.voiceMeter');
+        this.previewer  = new PhrasePreview('#phrasePreviewer');
         this.domForm    = DOM.require('#frmTapedeck');
         this.btnPrev    = DOM.require('#btnPrev', this.domForm);
         this.btnPlay    = DOM.require('#btnPlay', this.domForm);
@@ -61,7 +62,6 @@ export class EditorTapedeck
         this.btnLoad    = DOM.require('#btnLoad', this.domForm);
         this.btnNext    = DOM.require('#btnNext', this.domForm);
         this.lblId      = DOM.require('.id',      this.domForm);
-        this.lblCaption = DOM.require('.caption', this.domForm);
 
         window.onresize       = this.onResize.bind(this);
         window.onkeydown      = this.onKeyDown.bind(this);
@@ -95,10 +95,10 @@ export class EditorTapedeck
     {
         let path = VoxEditor.voices.keyToPath(key);
 
-        this.btnNext.disabled     =
-        this.btnPrev.disabled     = false;
-        this.lblId.innerText      = `Loading '${key}'...`;
-        this.lblCaption.innerText = `Loading from: ${path}`;
+        this.btnNext.disabled =
+        this.btnPrev.disabled = false;
+        this.lblId.innerText  = `Loading '${key}'...`;
+        this.previewer.setText(`Loading from: ${path}`);
     }
 
     public handleClipLoad(key: string) : void
@@ -109,9 +109,9 @@ export class EditorTapedeck
             ? path
             : `New file, will be saved at: ${path}`;
 
-        this.lblId.innerText      = key;
-        this.lblCaption.innerText = VoxEditor.captioner.captionBank[key];
-        this.btnRec.disabled      = false;
+        this.previewer.generateExample(key);
+        this.lblId.innerText = key;
+        this.btnRec.disabled = false;
 
         this.btnPlay.disabled =
         this.btnStop.disabled =
@@ -124,8 +124,8 @@ export class EditorTapedeck
 
     public handleClipFail(key: string, err: any) : void
     {
-        this.lblId.innerText      = key;
-        this.lblCaption.innerText = VoxEditor.captioner.captionBank[key];
+        this.previewer.generateExample(key);
+        this.lblId.innerText = key;
 
         this.clipEditor.setTitle(`Could not load clip: ${err}`);
     }

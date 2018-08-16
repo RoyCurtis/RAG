@@ -139,6 +139,10 @@ export class Captioner
                 parent  = phraseSet;
             }
 
+            // Skip vox editor phrases
+            if ( parent.id.startsWith('voxeditor') )
+                continue;
+
             // Calculate ID by getting relative indicies of phrases and text parts
             id = 'phrase.' + parent.id;
 
@@ -163,7 +167,7 @@ export class Captioner
                 else if (next.hasAttribute('ref'))
                     tag += ':' + next.getAttribute('ref');
 
-                value += ` <${tag}>`;
+                value += ` [${tag}]`;
             }
 
             this.captionBank[id] = value;
