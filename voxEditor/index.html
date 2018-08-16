@@ -73,8 +73,17 @@
     <h1>Phrases</h1>
 
     <div class="searchBox">
-      <input disabled type="text" id="inputFind" placeholder="Find..."
+      <input disabled type="text" id="inputFind" placeholder="Find with regex..."
              title="Enter search query; ENTER to find next, G to focus this box"/>
+      <menu>
+        <button id="btnGetExcuse"  title="Go to excuses" >excuse</button>
+        <button id="btnGetLetter"  title="Go to letters" >letter</button>
+        <button id="btnGetNamed"   title="Go to names"   >named</button>
+        <button id="btnGetNumber"  title="Go to numbers" >number</button>
+        <button id="btnGetPhrase"  title="Go to phrases" >phrase</button>
+        <button id="btnGetService" title="Go to services">service</button>
+        <button id="btnGetStation" title="Go to stations">station</button>
+      </menu>
     </div>
 
     <p id="orphanWarning" class="hidden">

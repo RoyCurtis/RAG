@@ -31,7 +31,7 @@ h1
   overflow   auto
 
   .searchBox
-    flexbox()
+    flexbox(column)
     margin    16px 16px 0 16px
     position  sticky
     top       16px
@@ -42,9 +42,20 @@ h1
       flex-grow 1
       font-size large
       padding   8px
+      z-index   10
 
       &.noMatches
         background lightness($bgPanic, 80%)
+
+    menu
+      flexbox(row, space-around)
+      border-bottom 2px solid $fgFocus
+
+      button
+        pressable()
+        flex-grow   1
+        font-family monospace;
+        padding     4px
 
   #orphanWarning
     background $bgPanic

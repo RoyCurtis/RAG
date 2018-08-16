@@ -4,12 +4,29 @@ import {VoxEditor} from "../voxEditor";
 import * as fs from "fs";
 
 /** Controller for the phrase list part of the editor */
+// TODO: Rename "phrases" to parts
 export class EditorPhrases
 {
+    /** Reference to the entire phrase selector */
+    private readonly dom       : HTMLElement;
     /** Reference to the list of clickable phrase IDs */
     private readonly domList   : HTMLUListElement;
     /** Reference to the orphan files warning */
     private readonly domOrphan : HTMLElement;
+
+    private readonly btnGetExcuse  : HTMLButtonElement;
+
+    private readonly btnGetLetter  : HTMLButtonElement;
+
+    private readonly btnGetNamed   : HTMLButtonElement;
+
+    private readonly btnGetNumber  : HTMLButtonElement;
+
+    private readonly btnGetPhrase  : HTMLButtonElement;
+
+    private readonly btnGetService : HTMLButtonElement;
+
+    private readonly btnGetStation : HTMLButtonElement;
     /** Reference to the phrase search box */
     private readonly inputFind : HTMLInputElement;
 
@@ -20,11 +37,19 @@ export class EditorPhrases
 
     public constructor()
     {
-        this.domList   = DOM.require('#phraseList');
-        this.domOrphan = DOM.require('#orphanWarning');
-        this.inputFind = DOM.require('#inputFind');
+        this.dom           = DOM.require('#partSelector');
+        this.domList       = DOM.require('#phraseList',    this.dom);
+        this.domOrphan     = DOM.require('#orphanWarning', this.dom);
+        this.btnGetExcuse  = DOM.require('#btnGetExcuse',  this.dom);
+        this.btnGetLetter  = DOM.require('#btnGetLetter',  this.dom);
+        this.btnGetNamed   = DOM.require('#btnGetNamed',   this.dom);
+        this.btnGetNumber  = DOM.require('#btnGetNumber',  this.dom);
+        this.btnGetPhrase  = DOM.require('#btnGetPhrase',  this.dom);
+        this.btnGetService = DOM.require('#btnGetService', this.dom);
+        this.btnGetStation = DOM.require('#btnGetStation', this.dom);
+        this.inputFind     = DOM.require('#inputFind',     this.dom);
 
-        this.domList.onclick     = this.onClick.bind(this);
+        this.dom.onclick         = this.onClick.bind(this);
         this.inputFind.onkeydown = this.onFind.bind(this);
 
         this.populateList();
@@ -118,20 +143,29 @@ export class EditorPhrases
         this.domList.classList.remove('hidden');
     }
 
-    /** Handles click events for all phrase entries */
+    /** Handles click events for all phrase entries and buttons */
     private onClick(ev: MouseEvent) : void
     {
         let target = ev.target as HTMLElement;
 
-        // Ignore targetless or parent clicks
-        if (!target || target === this.domList)
+        // Ignore targetless clicks
+        if (!target)
             return;
+
+        // Handle go-to toolbar clicks
+        if (target.tagName === 'BUTTON')
+        {
+            this.inputFind.value = `^${target.innerText}\\.`;
+            return this.findAndSelect(1, true);
+        }
 
         // Redirect child clicks
         if (target.tagName === 'CODE')
             target = target.parentElement!;
 
-        this.select(target);
+        // Ignore non-list clicks
+        if (target.parentElement! === this.domList)
+            this.select(target);
     }
 
     /**
@@ -147,35 +181,7 @@ export class EditorPhrases
         if (ev.key !== 'Enter')
             return;
 
-        // Don't operate on empty list
-        if (this.domList.children.length === 0)
-            return;
-
-        let dir     = ev.shiftKey ? -1 : 1;
-        let query   = this.inputFind.value.toLowerCase();
-        let current = this.currentEntry as HTMLElement;
-
-        if (!current)
-            current = (dir === 1)
-                ? this.domList.lastElementChild!  as HTMLElement
-                : this.domList.firstElementChild! as HTMLElement;
-
-        for (let i = 0; i < this.domList.children.length; i++)
-        {
-            // Direction depending on SHIFT key being held
-            if (dir === 1)
-                current = current.nextElementSibling   as HTMLElement
-                    || this.domList.firstElementChild! as HTMLElement;
-            else
-                current = current.previousElementSibling as HTMLElement
-                    || this.domList.lastElementChild!    as HTMLElement;
-
-            // Found a match
-            if (current.innerText.toLowerCase().indexOf(query) !== -1)
-                return this.select(current, true);
-        }
-
-        this.inputFind.classList.add('noMatches');
+        this.findAndSelect(ev.shiftKey ? -1 : 1);
     }
 
     /** Clears and fills the list with all available IDs and captions */
@@ -207,7 +213,7 @@ export class EditorPhrases
         this.domList.classList.remove('hidden');
     }
 
-    /** Clears and fills the orphans list with all orphaned voice files */
+    /** Finds all orphaned voice files and logs them to console */
     private findOrphans() : void
     {
         let found = false;
@@ -233,5 +239,41 @@ export class EditorPhrases
         }
         else
             this.domOrphan.classList.add('hidden');
+    }
+
+    private findAndSelect(dir: number, keyOnly: boolean = false) : void
+    {
+        // Don't operate on empty list
+        if (this.domList.children.length === 0)
+            return;
+
+        let query   = new RegExp(this.inputFind.value, 'i');
+        let current = this.currentEntry as HTMLElement;
+
+        if (!current)
+            current = (dir === 1)
+                ? this.domList.lastElementChild!  as HTMLElement
+                : this.domList.firstElementChild! as HTMLElement;
+
+        for (let i = 0; i < this.domList.children.length; i++)
+        {
+            // Direction depending on SHIFT key being held
+            if (dir === 1)
+                current = current.nextElementSibling   as HTMLElement
+                    || this.domList.firstElementChild! as HTMLElement;
+            else
+                current = current.previousElementSibling as HTMLElement
+                    || this.domList.lastElementChild!    as HTMLElement;
+
+            let haystack = keyOnly
+                ? current.dataset['key']!.toLowerCase()
+                : current.innerText.toLowerCase();
+
+            // Found a match
+            if ( query.test(haystack) )
+                return this.select(current, true);
+        }
+
+        this.inputFind.classList.add('noMatches');
     }
 }
