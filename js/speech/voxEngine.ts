@@ -29,7 +29,7 @@ class VoxEngine
     /** Audio node that adds a reverb to the voice, if available */
     private audioReverb?     : ConvolverNode;
 
-    public constructor()
+    public constructor(reverb: string = 'data/vox')
     {
         // Setup the core audio context
 
@@ -48,7 +48,7 @@ class VoxEngine
         // Setup reverb
 
         // TODO: Make this user configurable and choosable
-        fetch('data/vox/ir.stalbans_a_mono.wav')
+        fetch(`${reverb}/ir.stalbans_a_mono.wav`)
             .then( res => res.arrayBuffer() )
             .then( buf => Sounds.decode(this.audioContext, buf) )
             .then( rev =>
