@@ -69,9 +69,9 @@ export class Captioner
                 this.captionBank[`number.suffix.${clean(plural)}.end`] = plural;
         });
 
-        // Single digits with middle inflection (minutes)
+        // Single digits with middle inflection (minutes and platforms)
         for (let n = 0; n <= 60; n++)
-            this.captionBank[`number.${n}.end`] = n.toString();
+            this.captionBank[`number.${n}.mid`] = n.toString();
 
         // Single digits with end inflection (platforms)
         for (let n = 0; n <= 26; n++)
