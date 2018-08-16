@@ -45,7 +45,7 @@ h1 {
 }
 #partSelector .searchBox {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-start;
   margin: 16px 16px 0 16px;
   position: sticky;
@@ -57,9 +57,45 @@ h1 {
   flex-grow: 1;
   font-size: large;
   padding: 8px;
+  z-index: 10;
 }
 #partSelector .searchBox input.noMatches {
   background: #f2a6a6;
+}
+#partSelector .searchBox menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  border-bottom: 2px solid #cc7e00;
+}
+#partSelector .searchBox menu button {
+  background: #222;
+  border: none;
+  box-shadow: 0 0 8px #222;
+  color: #f5f5f5;
+  cursor: pointer;
+  fill: #f5f5f5;
+  flex-grow: 1;
+  font-family: monospace;
+  padding: 4px;
+}
+#partSelector .searchBox menu button:hover {
+  background: #444;
+}
+#partSelector .searchBox menu button:active {
+  background: #000;
+  color: #aaa;
+  fill: #aaa;
+  box-shadow: 0 0 4px #000 inset;
+}
+#partSelector .searchBox menu button:disabled {
+  background: #222;
+  color: #444;
+  cursor: default;
+  fill: #444;
+}
+#partSelector .searchBox menu button:disabled:active {
+  background: #222;
 }
 #partSelector #orphanWarning {
   background: #c21d1d;
@@ -120,6 +156,16 @@ h1 {
   margin: 16px;
   width: auto;
 }
+#tapeDeck #frmSetup spacer {
+  grid-column-start: span 2;
+}
+#tapeDeck #frmSetup #inputScript {
+  grid-column-start: span 3;
+}
+#tapeDeck #frmSetup.saved select,
+#tapeDeck #frmSetup.saved input {
+  animation: saved 1s;
+}
 #tapeDeck #frmTapedeck {
   display: flex;
   flex-direction: column;
@@ -173,9 +219,17 @@ h1 {
   font-size: large;
   font-family: monospace;
 }
-#tapeDeck #frmTapedeck .caption {
+#tapeDeck #frmTapedeck #phrasePreviewer {
+  color: #aaa;
   font-size: x-large;
   height: 100px;
+}
+#tapeDeck #frmTapedeck #phrasePreviewer .highlight {
+  border: 2px solid #fff;
+  border-radius: 8px;
+  border-width: 0 2px;
+  color: #fff;
+  padding: 0 4px;
 }
 .clipEditor {
   align-self: stretch;
@@ -222,20 +276,20 @@ h1 {
   border: 1px solid #aaa;
   content: ' ';
   position: absolute;
-  top: 25px;
+  top: 140px;
   width: 8px;
-  height: 29px;
+  height: 30px;
 }
 .clipEditor .clipper.left {
   border-right: 1px solid #aaa;
-  left: 0px;
+  left: 0;
 }
 .clipEditor .clipper.left::after {
   right: -5px;
 }
 .clipEditor .clipper.right {
   border-left: 1px solid #aaa;
-  right: 0px;
+  right: 0;
 }
 .clipEditor .clipper.right::after {
   left: -5px;
@@ -260,5 +314,37 @@ h1 {
 }
 iframe {
   display: none;
+}
+@-moz-keyframes saved {
+  from {
+    background: #adff2f;
+  }
+  to {
+    background: #fff;
+  }
+}
+@-webkit-keyframes saved {
+  from {
+    background: #adff2f;
+  }
+  to {
+    background: #fff;
+  }
+}
+@-o-keyframes saved {
+  from {
+    background: #adff2f;
+  }
+  to {
+    background: #fff;
+  }
+}
+@keyframes saved {
+  from {
+    background: #adff2f;
+  }
+  to {
+    background: #fff;
+  }
 }
 /*# sourceMappingURL=css/vox.css.map */

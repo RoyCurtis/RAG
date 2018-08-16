@@ -743,11 +743,11 @@ declare class CustomVoice {
     readonly lang: string;
     /** Only present for consistency with SpeechSynthesisVoice */
     readonly localService: boolean;
-    /** Gets the canonical name of this voice */
+    /** Gets the ID of this voice */
     readonly name: string;
     /** Gets the relative URI of this voice's files */
     readonly voiceURI: string;
-    constructor(name: string, lang: string);
+    constructor(id: string, lang: string);
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility class for resolving a given phrase to vox keys */
@@ -858,7 +858,7 @@ declare class VoxEngine {
     private currentSettings?;
     /** Audio node that adds a reverb to the voice, if available */
     private audioReverb?;
-    constructor();
+    constructor(reverb?: string);
     /**
      * Begins loading and speaking a set of vox files. Stops any speech.
      *
@@ -883,11 +883,13 @@ declare class VoxRequest {
     readonly path: string;
     /** Amount of seconds to delay the playback of this request */
     readonly delay: number;
+    /** Audio context to use for decoding */
+    private readonly context;
     /** Whether this request is done and ready for handling (even if failed) */
     isDone: boolean;
     /** Raw audio data from the loaded file, if available */
     buffer?: AudioBuffer;
-    constructor(path: string, delay: number);
+    constructor(path: string, delay: number, context: AudioContext);
     /** Cancels this request from proceeding any further */
     cancel(): void;
     /** Begins decoding the loaded MP3 voice file to raw audio data */
@@ -1262,7 +1264,7 @@ declare class Strings {
     /** Strongly compresses the given string to one more filename friendly */
     static filename(text: string): string;
     /** Gets the first match of a pattern in a string, or undefined if not found */
-    static firstMatch(text: string, pattern: RegExp, idx: number): string | null;
+    static firstMatch(text: string, pattern: RegExp, idx: number): string | undefined;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Union type for iterable types with a .length property */

@@ -144,12 +144,16 @@ export class EditorTapedeck
     /** Called when a clip has begun playing */
     public handleBeginPlay() : void
     {
+        this.btnStop.classList.remove('hidden');
+        this.btnPlay.classList.add('hidden');
         this.clipEditor.beginNeedle();
     }
 
     /** Called when a clip has finished or stopped playing */
     public handleEndPlay() : void
     {
+        this.btnStop.classList.add('hidden');
+        this.btnPlay.classList.remove('hidden');
         this.clipEditor.endNeedle();
     }
 
@@ -236,9 +240,12 @@ export class EditorTapedeck
         VoxEditor.views.phrases.selectPrev();
     }
 
-    public onPlay() : void
+    public onPlay(ev?: MouseEvent) : void
     {
-        VoxEditor.voices.playClip( this.clipEditor.getBounds() );
+        if (ev && ev.shiftKey)
+            VoxEditor.voices.playPreview(this.previewer.dom);
+        else
+            VoxEditor.voices.playClip( this.clipEditor.getBounds() );
     }
 
     private onStop() : void

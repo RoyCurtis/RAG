@@ -15,9 +15,11 @@ export class VoiceManager
     private static readonly VOX_REGEX : RegExp = /(.+)_([a-z]{2}-[A-Z]{2})/;
 
     /** List of discovered and available voices */
-    public  readonly list         : CustomVoice[];
+    public  readonly voxList      : CustomVoice[];
     /** Audio output through which clips are played */
     private readonly audioContext : AudioContext;
+    /** Vox engine instance for preview phrases */
+    private readonly voxEngine    : VoxEngine;
 
     /** Current clip's audio buffer */
     public  currentClip?    : AudioBuffer;
@@ -26,27 +28,38 @@ export class VoiceManager
     /** Audio buffer node holding and playing the current voice clip */
     private currentBufNode? : AudioBufferSourceNode;
 
+    public get currentVoice() : CustomVoice | undefined
+    {
+        return this.voxList.find(v => v.name === VoxEditor.config.voiceID);
+    }
+
+    public get currentPlayVoice() : CustomVoice | undefined
+    {
+        return this.voxList.find(v => v.name === VoxEditor.config.voicePlayID);
+    }
+
     public constructor()
     {
-        this.list            = [];
+        this.voxList         = [];
         this.audioContext    = new AudioContext();
+        this.voxEngine       = new VoxEngine('../data/vox');
         CustomVoice.basePath = VoiceManager.VOX_DIR;
 
         // Discover valid voice folders
         this.discoverVoices();
 
         // Create new voice if none found
-        if (VoxEditor.config.voicePath === '')
+        if (VoxEditor.config.voiceID === '')
             this.createNewVoice();
     }
 
     /** Makes a relative path out of the given key */
     public keyToPath(key: string) : string
     {
-        if (VoxEditor.config.voicePath === '')
+        if (!this.currentVoice)
             throw Error('Attempted to get path of key with no voice set');
 
-        return path.join(VoxEditor.config.voicePath, `${key}.mp3`);
+        return path.join(this.currentVoice!.voiceURI, `${key}.mp3`);
     }
 
     /** Checks whether a clip for the given key exists on disk */
@@ -122,6 +135,14 @@ export class VoiceManager
         this.currentPath = undefined;
 
         VoxEditor.views.tapedeck.handleClipUnload();
+    }
+
+    public playPreview(phrase: HTMLElement) : void
+    {
+        let resolver = new Resolver(phrase);
+
+        if (this.currentPlayVoice)
+            this.voxEngine.speak(resolver.toVox(), this.currentPlayVoice, {});
     }
 
     /** Plays the currently loaded clip, if any */
@@ -278,11 +299,11 @@ export class VoiceManager
                 if (!parts)
                     return;
 
-                this.list.push( new CustomVoice(parts[1], parts[2]) );
+                this.voxList.push( new CustomVoice(parts[1], parts[2]) );
 
                 // If no voice configured yet, choose the first one found
-                if (VoxEditor.config.voicePath === '')
-                    VoxEditor.config.voicePath = dir;
+                if (VoxEditor.config.voiceID === '')
+                    VoxEditor.config.voiceID = parts[1];
             });
     }
 
@@ -293,8 +314,9 @@ export class VoiceManager
         let newVoice = path.join(VoiceManager.VOX_DIR, newName);
 
         fs.mkdirSync(newVoice);
-        VoxEditor.config.voicePath = newVoice;
-        this.list.push( new CustomVoice(newName, 'en-GB') );
+        VoxEditor.config.voiceID     = newVoice;
+        VoxEditor.config.voicePlayID = newVoice;
+        this.voxList.push( new CustomVoice(newName, 'en-GB') );
 
         alert(`No voices were found, so a new one was made at '${newVoice}'`);
     }

@@ -217,8 +217,9 @@ export class EditorPhrases
     private findOrphans() : void
     {
         let found = false;
+        let voice = VoxEditor.voices.currentVoice;
 
-        fs.readdirSync(VoxEditor.config.voicePath).forEach(file =>
+        if (voice) fs.readdirSync(voice.voiceURI).forEach(file =>
         {
             let key = file.replace('.mp3', '');
 
@@ -226,7 +227,7 @@ export class EditorPhrases
                 return;
 
             if (!found)
-                console.group(`Orphaned files found in ${VoxEditor.config.voicePath}:`);
+                console.group(`Orphaned files found in ${voice!.voiceURI}:`);
 
             console.log(file);
             found = true;

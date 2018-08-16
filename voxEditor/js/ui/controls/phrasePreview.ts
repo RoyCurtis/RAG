@@ -6,7 +6,7 @@ import {VoxEditor} from "../../voxEditor";
 export class PhrasePreview
 {
     /** Reference to the container for this previewer */
-    private readonly dom : HTMLElement;
+    public readonly dom : HTMLElement;
 
     public constructor(query: string)
     {

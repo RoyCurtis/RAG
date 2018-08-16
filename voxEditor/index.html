@@ -19,6 +19,15 @@
 
       <label for="selInputDevice">Input device</label>
       <select id="selInputDevice"></select>
+
+      <label for="selPlayVoice">Playback Voice</label>
+      <select id="selPlayVoice"></select>
+
+      <spacer></spacer>
+
+      <label for="inputScript">Post-process command</label>
+      <input type="text" id="inputScript"
+             title="Command to run after save; $1 for input file, $2 for output"/>
     </form>
 
     <h1>Recording</h1>
@@ -28,10 +37,11 @@
         <button disabled id="btnPrev" title="Previous track (LEFT ARROW)">
           <svg><use xlink:href="../css/icons/icoMoon.svg#icon-prev"></use></svg>
         </button>
-        <button disabled id="btnPlay" title="Play (SPACE)">
+        <button disabled id="btnPlay"
+                title="Play clip (SPACE), or Preview phrase (SHIFT+SPACE)">
           <svg><use xlink:href="../css/icons/icoMoon.svg#icon-play"></use></svg>
         </button>
-        <button disabled id="btnStop" title="Stop (SPACE)">
+        <button disabled id="btnStop" title="Stop (SPACE)" class="hidden">
           <svg><use xlink:href="../css/icons/icoMoon.svg#icon-stop"></use></svg>
         </button>
         <button disabled id="btnRec" title="Record (R)">
@@ -63,7 +73,7 @@
         <div class="needle hidden"></div>
         <div class="clipper left"></div>
         <div class="clipper right"></div>
-        <pre class="title">No data available</pre>
+        <div class="title">No data available</div>
       </div>
     </form>
 

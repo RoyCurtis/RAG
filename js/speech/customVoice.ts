@@ -12,17 +12,17 @@ class CustomVoice
     public readonly lang         : string;
     /** Only present for consistency with SpeechSynthesisVoice */
     public readonly localService : boolean;
-    /** Gets the canonical name of this voice */
+    /** Gets the ID of this voice */
     public readonly name         : string;
     /** Gets the relative URI of this voice's files */
     public readonly voiceURI     : string;
 
-    public constructor(name: string, lang: string)
+    public constructor(id: string, lang: string)
     {
         this.default      = false;
         this.localService = false;
-        this.name         = `RAG-VOX ${name}`;
+        this.name         = id;
         this.lang         = lang;
-        this.voiceURI     = `${CustomVoice.basePath}/${name}_${lang}`;
+        this.voiceURI     = `${CustomVoice.basePath}/${id}_${lang}`;
     }
 }

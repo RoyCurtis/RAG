@@ -107,6 +107,15 @@ h1
       margin    16px
       width     auto
 
+    spacer
+      grid-column-start span 2
+
+    #inputScript
+      grid-column-start span 3
+
+    &.saved select, &.saved input
+      animation saved 1s
+
   #frmTapedeck
     flexbox(column)
     align-items center
@@ -187,20 +196,20 @@ h1
       border     1px solid $fgDim
       content    ' '
       position   absolute
-      top        25px
+      top        140px
       width      8px
-      height     29px
+      height     30px
 
     &.left
       border-right 1px solid $fgDim
-      left         0px
+      left         0
 
       &::after
         right -5px
 
     &.right
       border-left 1px solid $fgDim
-      right       0px
+      right       0
 
       &::after
         left -5px
@@ -224,3 +233,12 @@ h1
 // Hides embedded phraseset XML documents
 iframe
   display none
+
+// Animations
+
+@keyframes saved
+  from
+    background greenyellow
+
+  to
+    background $fgBrightest
