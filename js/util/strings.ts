@@ -82,4 +82,15 @@ class Strings
             // Limit to 100 chars; most systems support max. 255 bytes in filenames
             .substring(0, 100);
     }
+
+    /** Gets the first match of a pattern in a string, or undefined if not found */
+    public static firstMatch(text: string, pattern: RegExp, idx: number)
+        : string | undefined
+    {
+        let match = text.match(pattern);
+
+        return (match && match[idx])
+            ? match[idx]
+            : undefined;
+    }
 }
