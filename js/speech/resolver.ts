@@ -107,6 +107,7 @@ class Resolver
             case 'station':     return this.resolveStation(element, idx);
             case 'stationlist': return this.resolveStationList(element, idx);
             case 'time':        return this.resolveTime(element);
+            case 'vox':         return this.resolveVox(element);
         }
 
         return [];
@@ -286,5 +287,10 @@ class Resolver
             parts.push(0.1, `number.${time[1]}.mid`);
 
         return [...parts, 0.05];
+    }
+
+    private resolveVox(element: HTMLElement) : VoxKey[]
+    {
+        return [element.dataset['key']!];
     }
 }

@@ -185,10 +185,20 @@
         </xs:documentation>
       </xs:annotation>
     </xs:element>
+
+    <xs:element name="vox" type="vox">
+      <xs:annotation>
+        <xs:documentation>
+          An arbritary chunk of text to be spoken by a specific vox key. Meant for use by
+          the VOX editor.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:element>
   </xs:choice>
 </xs:group>
 
 
+<!-- TODO: This might not be necessary after all -->
 <xs:complexType name="vox_hintable">
   <xs:attribute name="vox" type="vox_hint" default="mid">
     <xs:annotation>
@@ -327,6 +337,17 @@
     <xs:annotation>
       <xs:documentation>
         Specifies the context to pick a time for.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+</xs:complexType>
+
+
+<xs:complexType name="vox" mixed="true">
+  <xs:attribute name="key" type="xs:string" use="required">
+    <xs:annotation>
+      <xs:documentation>
+        Must be a valid vox key, to be spoken for this element.
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>

@@ -164,6 +164,15 @@ class ElementProcessors
         ctx.newElement.dataset['context'] = context;
     }
 
+    /** Fills in vox parts */
+    public static vox(ctx: PhraseContext)
+    {
+        let key = DOM.requireAttr(ctx.xmlElement, 'key');
+
+        ctx.newElement.textContent    = ctx.xmlElement.textContent;
+        ctx.newElement.dataset['key'] = key;
+    }
+
     /** Handles unknown elements with an inline error message */
     public static unknown(ctx: PhraseContext)
     {

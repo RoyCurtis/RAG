@@ -700,6 +700,8 @@ declare class ElementProcessors {
     static stationlist(ctx: PhraseContext): void;
     /** Fills in the time */
     static time(ctx: PhraseContext): void;
+    /** Fills in vox parts */
+    static vox(ctx: PhraseContext): void;
     /** Handles unknown elements with an inline error message */
     static unknown(ctx: PhraseContext): void;
     /**
@@ -776,6 +778,7 @@ declare class Resolver {
     private resolveStation;
     private resolveStationList;
     private resolveTime;
+    private resolveVox;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Union type for both kinds of voices available */
@@ -1258,6 +1261,8 @@ declare class Strings {
     static clean(text: string): string;
     /** Strongly compresses the given string to one more filename friendly */
     static filename(text: string): string;
+    /** Gets the first match of a pattern in a string, or undefined if not found */
+    static firstMatch(text: string, pattern: RegExp, idx: number): string | null;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Union type for iterable types with a .length property */

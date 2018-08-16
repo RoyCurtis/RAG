@@ -59,6 +59,7 @@ class Phraser
                 case 'station':     ElementProcessors.station(context);     break;
                 case 'stationlist': ElementProcessors.stationlist(context); break;
                 case 'time':        ElementProcessors.time(context);        break;
+                case 'vox':         ElementProcessors.vox(context);         break;
                 default:            ElementProcessors.unknown(context);     break;
             }
 
