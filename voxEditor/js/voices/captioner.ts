@@ -1,15 +1,21 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/// <reference path="../../../js/rag.d.ts"/>
-
-import {VoxEditor} from "../voxEditor";
-
 /** Represents a dictionary of voice keys and their captions */
 export type PhraseCaptions = {[id: string] : string};
 
 /** Generates a bank of IDs and captions from a given phraseset document and data */
 export class Captioner
 {
+    /** TreeWalker filter to only accept text nodes */
+    private static filterText(node: Node): number
+    {
+        // Only accept text nodes with words in them
+        if ( node.textContent!.match(/[a-z0-9]/i) )
+            return NodeFilter.FILTER_ACCEPT;
+
+        return NodeFilter.FILTER_REJECT;
+    }
+
     /** Reference to the generated phrase caption bank */
     public readonly captionBank : PhraseCaptions = {};
 
@@ -26,16 +32,6 @@ export class Captioner
         this.populateNames();
         this.populateServices();
         this.populateStations();
-    }
-
-    /** TreeWalker filter to only accept text nodes */
-    private filterText(node: Node): number
-    {
-        // Only accept text nodes with words in them
-        if ( node.textContent!.match(/[a-z0-9]/i) )
-            return NodeFilter.FILTER_ACCEPT;
-
-        return NodeFilter.FILTER_REJECT;
     }
 
     private populateLetters() : void
@@ -56,7 +52,7 @@ export class Captioner
     private populateNumbers() : void
     {
         // Get all suffixes. End inflection only, for now
-        let suffixes = VoxEditor.database.phrasesets.querySelectorAll(
+        let suffixes = RAG.database.phrasesets.querySelectorAll(
             'integer[singular], integer[plural]'
         );
 
@@ -106,7 +102,7 @@ export class Captioner
     private populateExcuses() : void
     {
         // Both middle and end inflections needed
-        VoxEditor.database.excuses.forEach(excuse =>
+        RAG.database.excuses.forEach(excuse =>
         {
             let key = Strings.filename(excuse);
 
@@ -119,9 +115,9 @@ export class Captioner
     private populatePhrasesets() : void
     {
         let treeWalker = document.createTreeWalker(
-            VoxEditor.database.phrasesets,
+            RAG.database.phrasesets,
             NodeFilter.SHOW_TEXT,
-            { acceptNode: this.filterText },
+            { acceptNode: Captioner.filterText },
             false
         );
 
@@ -176,7 +172,7 @@ export class Captioner
 
     private populateNames() : void
     {
-        VoxEditor.database.named.forEach(name =>
+        RAG.database.named.forEach(name =>
         {
             let key = Strings.filename(name);
             this.captionBank[`named.${key}.mid`] = name;
@@ -185,7 +181,7 @@ export class Captioner
 
     private populateServices() : void
     {
-        VoxEditor.database.services.forEach(service =>
+        RAG.database.services.forEach(service =>
         {
             let key = Strings.filename(service);
             this.captionBank[`service.${key}.mid`] = service;
@@ -196,7 +192,7 @@ export class Captioner
     {
         // Filter out parenthesized location context
         let filter   = (v: string) => v.replace(/\(.+\)/i, '').trim();
-        let stations = VoxEditor.database.stations;
+        let stations = RAG.database.stations;
         let keys     = Object.keys(stations);
 
         // For the "and" in station lists

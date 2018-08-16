@@ -13,8 +13,6 @@ export class VoxEditor
     public static captioner : Captioner;
     /** Gets the configuration holder */
     public static config    : EditorConfig;
-    /** Gets the database manager, which holds phrase, station and train data */
-    public static database  : Database;
     /** Gets the microphone manager */
     public static mics      : MicManager;
     /** Gets the view controller, which manages UI interaction */
@@ -29,8 +27,13 @@ export class VoxEditor
 
         I18n.init();
 
+        // Light bootstrap of RAG to allow other components to work
+        RAG.config   = new Config(false);
+        RAG.database = new Database(dataRefs);
+        RAG.phraser  = new Phraser();
+        RAG.state    = new State();
+
         VoxEditor.config    = new EditorConfig(true);
-        VoxEditor.database  = new Database(dataRefs);
         VoxEditor.captioner = new Captioner();
         VoxEditor.mics      = new MicManager();
         VoxEditor.voices    = new VoiceManager();
