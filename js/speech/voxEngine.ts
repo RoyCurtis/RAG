@@ -147,7 +147,7 @@ class VoxEngine
 
             let path = `${this.currentVoice.voiceURI}/${key}.mp3`;
 
-            this.pendingReqs.push( new VoxRequest(path, nextDelay) );
+            this.pendingReqs.push( new VoxRequest(path, nextDelay, this.audioContext) );
             nextDelay = 0;
         }
 

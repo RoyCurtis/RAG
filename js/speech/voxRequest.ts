@@ -4,20 +4,23 @@
 class VoxRequest
 {
     /** Relative remote path of this voice file request */
-    public readonly path  : string;
+    public  readonly path    : string;
     /** Amount of seconds to delay the playback of this request */
-    public readonly delay : number;
+    public  readonly delay   : number;
+    /** Audio context to use for decoding */
+    private readonly context : AudioContext;
 
     /** Whether this request is done and ready for handling (even if failed) */
     public isDone  : boolean = false;
     /** Raw audio data from the loaded file, if available */
     public buffer? : AudioBuffer;
 
-    public constructor(path: string, delay: number)
+    public constructor(path: string, delay: number, context: AudioContext)
     {
         console.debug('VOX REQUEST:', path);
-        this.path  = path;
-        this.delay = delay;
+        this.context = context;
+        this.path    = path;
+        this.delay   = delay;
 
         fetch(path)
             .then ( this.onFulfill.bind(this) )
@@ -42,7 +45,7 @@ class VoxRequest
     /** Takes the array buffer from the fulfilled fetch and decodes it */
     private onArrayBuffer(buffer: ArrayBuffer) : void
     {
-        Sounds.decode(RAG.speech.voxEngine.audioContext, buffer)
+        Sounds.decode(this.context, buffer)
             .then ( this.onDecode.bind(this) )
             .catch( this.onError.bind(this)  );
     }
