@@ -160,6 +160,7 @@ h1 {
   grid-column-start: span 2;
 }
 #tapeDeck #frmSetup #inputScript {
+  font-family: monospace;
   grid-column-start: span 3;
 }
 #tapeDeck #frmSetup.saved select,

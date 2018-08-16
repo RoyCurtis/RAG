@@ -5,6 +5,7 @@ import {Files} from "../util/files";
 import * as path from "path";
 import {VoxEditor} from "../voxEditor";
 import Mp3Encoder = lamejs.Mp3Encoder;
+import * as child_process from "child_process";
 
 /** Manages available voices and clips */
 export class VoiceManager
@@ -269,7 +270,7 @@ export class VoiceManager
             totalSize += finalBlock.length;
         }
 
-        // Finally, write it to disk
+        // Then, write it to disk
 
         let bytes  = Buffer.alloc(totalSize);
         let offset = 0;
@@ -282,6 +283,21 @@ export class VoiceManager
 
         fs.writeFileSync(this.currentPath, bytes, { encoding : null });
         VoxEditor.views.phrases.handleSave();
+
+        // Finally, post-process it with an external command, if configured
+        if ( Strings.isNullOrEmpty(VoxEditor.config.ppCommand) )
+            return;
+
+        let key      = VoxEditor.views.phrases.currentKey;
+        let playPath = path.join(this.currentPlayVoice!.voiceURI, `${key}.mp3`);
+        let command  = VoxEditor.config.ppCommand
+            .replace('$1', this.currentPath)
+            .replace('$2', playPath);
+        
+        child_process.execSync(command, {
+            cwd: process.cwd(),
+            env: process.env
+        });
     }
 
     /** Looks for and keeps track of any voices available on disk */

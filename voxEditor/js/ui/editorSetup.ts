@@ -23,8 +23,9 @@ export class EditorSetup
         this.selPlayVoice   = DOM.require('#selPlayVoice');
         this.inputScript    = DOM.require('#inputScript');
 
-        this.domForm.onchange = this.onFormChange.bind(this);
-        this.domForm.onsubmit = this.onFormChange.bind(this);
+        this.domForm.onchange  = this.onFormChange.bind(this);
+        this.domForm.onsubmit  = this.onFormChange.bind(this);
+        this.inputScript.value = VoxEditor.config.ppCommand;
 
         navigator.mediaDevices.ondevicechange = this.onDevicesChanged.bind(this);
         this.onDevicesChanged();
