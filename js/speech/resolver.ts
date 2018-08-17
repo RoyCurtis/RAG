@@ -18,8 +18,8 @@ class Resolver
 
         // Accept text only from phrase and phrasesets
         if (node.nodeType === Node.TEXT_NODE)
-            if (parentType !== 'phraseset' && parentType !== 'phrase')
-                return NodeFilter.FILTER_SKIP;
+        if (parentType !== 'phraseset' && parentType !== 'phrase')
+            return NodeFilter.FILTER_SKIP;
 
         if (node.nodeType === Node.ELEMENT_NODE)
         {
@@ -77,7 +77,7 @@ class Resolver
 
         this.flattened.forEach( (v, i) => this.resolved.push( ...this.resolve(v, i) ) );
 
-        console.log(this.flattened);
+        console.log(this.flattened, this.resolved);
         return this.resolved;
     }
 
@@ -139,7 +139,7 @@ class Resolver
 
         // If the text doesn't contain any words, skip
         if ( !text.match(/[a-z0-9]/i) )
-            return [];
+            return set;
 
         // If type is missing, parent is a wrapper
         if (!type)
