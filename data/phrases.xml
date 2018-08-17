@@ -468,26 +468,27 @@
 <!-- Preview phrases for the VOX editor -->
 
 <phrase id="voxeditor_excuse_mid">
-  <vox key="phrase.root.4.0">We are sorry that services are subject to delay because
-  of</vox> <excuse/> <vox key="phrase.delay_at_near.0.0">at</vox>
-  <station context="excuse"/>. ...<vox key="phrase.excuse_pre.1.0">This is due to</vox>
-  <excuse/> <vox key="phrase.delay_at_near.1.0">near</vox> <station context="excuse"/>.
+  <vox key="phraseset.root.4.0">We are sorry that services are subject to delay because
+  of</vox> <excuse/> <vox key="phraseset.delay_at_near.0.0">at</vox>
+  <station context="excuse"/>. ...<vox key="phraseset.excuse_pre.1.0">This is due to</vox>
+  <excuse/> <vox key="phraseset.delay_at_near.1.0">near</vox> <station context="excuse"/>.
 </phrase>
 
 <phrase id="voxeditor_excuse_end">
-  <vox key="phrase.root.4.0">We are sorry that services are subject to delay because
-  of</vox> <excuse/>. ...<vox key="phrase.excuse_pre.1.0">This is due to</vox> <excuse/>.
+  <vox key="phraseset.root.4.0">We are sorry that services are subject to delay because
+  of</vox> <excuse/>. ...<vox key="phraseset.excuse_pre.1.0">This is due to</vox>
+  <excuse/>.
 </phrase>
 
 <phrase id="voxeditor_letter_mid">
-  <vox key="phrase.catering_service.4.0">You can find the shop in coach</vox>
-  <coach context="first"/> <vox key="phrase.catering_service.4.2">for delicious hot and
+  <vox key="phraseset.catering_service.4.0">You can find the shop in coach</vox>
+  <coach context="first"/> <vox key="phraseset.catering_service.4.2">for delicious hot and
   cold refreshments.</vox>
 </phrase>
 
 <phrase id="voxeditor_letter_end">
-  <vox key="phrase.train_layout.8.4">...with first class unreserved seating in coach</vox>
-  <coach context="first"/>.
+  <vox key="phraseset.train_layout.8.4">...with first class unreserved seating in
+  coach</vox> <coach context="first"/>.
 </phrase>
 
 <phrase id="voxeditor_named_mid">
@@ -530,7 +531,7 @@
   <station context="destination"/>... <vox key="phrase.ticket_conditions.0">Please be
   aware that tickets marked "</vox> <service context="alternative"/>
   <vox key="phrase.ticket_conditions.2">only" are not valid on this train.</vox>
-  ...<service context="provider"/> <vox key="phrase.service_apology.4.2">apologises for
+  ...<service context="provider"/> <vox key="phraseset.service_apology.4.2">apologises for
   the disruption to your journey today.</vox>
 </phrase>
 

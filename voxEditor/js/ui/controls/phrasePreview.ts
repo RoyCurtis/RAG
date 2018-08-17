@@ -40,14 +40,15 @@ export class PhrasePreview
 
         switch (this.type)
         {
-            case 'excuse':  this.excuseCaption();  return;
-            case 'letter':  this.letterCaption();  return;
-            case 'named':   this.namedCaption();   return;
-            case 'number':  this.numberCaption();  return;
-            case 'phrase':  this.phraseCaption();  return;
-            case 'service': this.serviceCaption(); return;
-            case 'station': this.stationCaption(); return;
-            default:        this.genericCaption(); return;
+            case 'phrase':    // Fall-through
+            case 'phraseset': this.phraseCaption();  return;
+            case 'excuse':    this.excuseCaption();  return;
+            case 'letter':    this.letterCaption();  return;
+            case 'named':     this.namedCaption();   return;
+            case 'number':    this.numberCaption();  return;
+            case 'service':   this.serviceCaption(); return;
+            case 'station':   this.stationCaption(); return;
+            default:          this.genericCaption(); return;
         }
     }
 
@@ -69,6 +70,11 @@ export class PhrasePreview
         RAG.state.setStation('excuse',            'PAD');
         RAG.state.setStation('destination',       'VIC');
         RAG.state.setStation('destination_split', 'EPH');
+        RAG.state.setStationList('calling',       ['VIC', 'CLJ']);
+        RAG.state.setStationList('calling_split', ['PAD', 'EPH']);
+        RAG.state.setStationList('changes',       ['BRI', 'SWI']);
+        RAG.state.setStationList('not_stopping',  ['CRE', 'RDG']);
+        RAG.state.setStationList('request',       ['GLC', 'GLD']);
     }
 
     private generate() : void
@@ -176,11 +182,37 @@ export class PhrasePreview
 
     private phraseCaption() : void
     {
-        let caption = VoxEditor.captioner.captionBank[this.key!];
-        this.dom.innerHTML = `<vox key="${this.key}">${caption}</vox>`;
+        let key     = this.key!;
+        let index   = parseInt(Strings.firstMatch(key, /\.(\d+)$/i, 1)      || '0');
+        let psIndex = parseInt(Strings.firstMatch(key, /\.(\d+)\.\d+$/i, 1) || '0');
 
+        if (this.type === 'phraseset')
+            RAG.state.setPhrasesetIdx(this.value, psIndex);
+
+        this.dom.innerHTML = `<${this.type} ref="${this.value}"/>`;
         RAG.phraser.process(this.dom);
-        this.highlightTypes(['vox']);
+
+        // Convert all the text fragments to vox nodes
+        this.dom.children[0]!.childNodes.forEach( (node, i) =>
+        {
+            if (node.nodeType !== Node.TEXT_NODE)
+                return;
+
+            // TODO: This feels like a duplication of captioner code. Not very DRY.
+            let newNode = document.createElement('span');
+            let newKey  = (this.type === 'phraseset')
+                ? `phraseset.${this.value}.${psIndex}.${i}`
+                : `phrase.${this.value}.${i}`;
+
+            newNode.textContent     = node.textContent!;
+            newNode.dataset['type'] = 'vox';
+            newNode.dataset['key']  = newKey;
+
+            if (i === index)
+                newNode.classList.add('highlight');
+
+            this.dom.children[0]!.replaceChild(newNode, node);
+        });
     }
 
     private serviceCaption() : void

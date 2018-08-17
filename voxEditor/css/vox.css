@@ -225,6 +225,10 @@ h1 {
   font-size: x-large;
   height: 100px;
 }
+#tapeDeck #frmTapedeck #phrasePreviewer > * {
+  margin: 0 4px;
+  padding: 0 4px;
+}
 #tapeDeck #frmTapedeck #phrasePreviewer .highlight {
   border: solid #fff;
   border-radius: 8px;

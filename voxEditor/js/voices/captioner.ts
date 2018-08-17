@@ -153,23 +153,6 @@ export class Captioner
             // Append the text part's index inside the phrase
             id += `.${DOM.nodeIndexOf(current)}`;
 
-            // Append a "preview" of the next sibling to the text
-            if (current.nextSibling)
-            {
-                let next = current.nextSibling as HTMLElement;
-                let tag  = next.nodeName.toUpperCase();
-
-                // Append extra reference data to tag
-                if      (next.id)
-                    tag += ':' + next.id;
-                else if (next.hasAttribute('context'))
-                    tag += ':' + next.getAttribute('context');
-                else if (next.hasAttribute('ref'))
-                    tag += ':' + next.getAttribute('ref');
-
-                value += ` [${tag}]`;
-            }
-
             this.captionBank[id] = value;
         }
     }
