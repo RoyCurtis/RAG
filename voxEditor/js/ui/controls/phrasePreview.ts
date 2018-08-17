@@ -8,20 +8,21 @@ export class PhrasePreview
     /** Reference to the container for this previewer */
     public readonly dom : HTMLElement;
 
+    private key     : string = '';
+    private type    : string = '';
+    private value   : string = '';
+    private inflect : string = '';
+
     public constructor(query: string)
     {
-        this.dom = DOM.require(query);
+        this.dom         = DOM.require(query);
+        this.dom.onclick = this.onClick.bind(this);
     }
 
     public setText(text: string) : void
     {
         this.dom.innerText = text;
     }
-
-    private key     : string = '';
-    private type    : string = '';
-    private value   : string = '';
-    private inflect : string = '';
 
     public generateExample(key: string) : void
     {
@@ -48,6 +49,15 @@ export class PhrasePreview
             case 'station': this.stationCaption(); return;
             default:        this.genericCaption(); return;
         }
+    }
+
+    private onClick(ev: MouseEvent) : void
+    {
+        let target = ev.target as HTMLElement;
+        let key    = target.dataset['key'];
+
+        if (key)
+            VoxEditor.views.phrases.selectKey(key);
     }
 
     private setDefaultState() : void

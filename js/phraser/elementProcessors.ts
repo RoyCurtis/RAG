@@ -169,7 +169,9 @@ class ElementProcessors
     {
         let key = DOM.requireAttr(ctx.xmlElement, 'key');
 
+        // TODO: Localize
         ctx.newElement.textContent    = ctx.xmlElement.textContent;
+        ctx.newElement.title          = `Click to edit this phrase (${key})`;
         ctx.newElement.dataset['key'] = key;
     }
 

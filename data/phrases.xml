@@ -469,13 +469,14 @@
 
 <phrase id="voxeditor_excuse_mid">
   <vox key="phrase.root.4.0">We are sorry that services are subject to delay because
-  of</vox> <excuse/> <phraseset ref="delay_at_near"/>. ...<phraseset ref="excuse_pre"/>
-  <excuse/> <phraseset ref="delay_at_near"/>.
+  of</vox> <excuse/> <vox key="phrase.delay_at_near.0.0">at</vox>
+  <station context="excuse"/>. ...<vox key="phrase.excuse_pre.1.0">This is due to</vox>
+  <excuse/> <vox key="phrase.delay_at_near.1.0">near</vox> <station context="excuse"/>.
 </phrase>
 
 <phrase id="voxeditor_excuse_end">
   <vox key="phrase.root.4.0">We are sorry that services are subject to delay because
-  of</vox> <excuse/>. ...<phraseset ref="excuse_pre"/> <excuse/>.
+  of</vox> <excuse/>. ...<vox key="phrase.excuse_pre.1.0">This is due to</vox> <excuse/>.
 </phrase>
 
 <phrase id="voxeditor_letter_mid">
@@ -491,9 +492,9 @@
 
 <phrase id="voxeditor_named_mid">
   <vox key="phrase.platform_wait.0">Platform</vox> <platform/>
-  <vox key="phrase.platform_wait.2">for the</vox> <phrase ref="service_named"/>
-  <time context="main"/> <vox key="phrase.platform_wait.4">service to</vox>
-  <station context="destination"/>.
+  <vox key="phrase.platform_wait.2">for the</vox> <named />
+  <vox key="phrase.service_named.2">, the</vox> <time context="main"/>
+  <vox key="phrase.platform_wait.4">service to</vox> <station context="destination"/>.
 </phrase>
 
 <phrase id="voxeditor_number_mid">
@@ -526,18 +527,20 @@
   <vox key="phrase.platform_wait.0">Platform</vox> <platform/>
   <vox key="phrase.platform_wait.2">for the</vox> <time context="main"/>
   <service context="provider"/> <vox key="phrase.platform_wait.4">service to</vox>
-  <station context="destination"/>...
-  <phrase ref="ticket_conditions"/> ...<service context="provider"/>
-  <vox key="phrase.service_apology.4.2">apologises for the disruption to your journey
-  today.</vox>
+  <station context="destination"/>... <vox key="phrase.ticket_conditions.0">Please be
+  aware that tickets marked "</vox> <service context="alternative"/>
+  <vox key="phrase.ticket_conditions.2">only" are not valid on this train.</vox>
+  ...<service context="provider"/> <vox key="phrase.service_apology.4.2">apologises for
+  the disruption to your journey today.</vox>
 </phrase>
 
 <phrase id="voxeditor_station_mid">
   <vox key="phrase.platform_wait.0">Platform</vox> <platform/>
   <vox key="phrase.platform_wait.2">for the</vox> <time context="main"/>
   <vox key="phrase.platform_wait.4">service to</vox>
-  <station context="destination"/> <phrase ref="dest_via"/>.
-  <vox key="phrase.calling_at.0.0">Calling at</vox> <stationlist context="calling"/>.
+  <station context="destination"/> <vox key="phrase.dest_via.0">via</vox>
+  <station context="via"/>. <vox key="phrase.calling_at.0.0">Calling at</vox>
+  <stationlist context="calling"/>.
 </phrase>
 
 <phrase id="voxeditor_station_end">

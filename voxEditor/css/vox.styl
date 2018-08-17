@@ -127,13 +127,13 @@ h1
     menu button
       pressable()
       font-size large
-      height    48px
+      height    40px
       margin    8px
       padding   8px
 
       svg
-        width  32px
-        height 32px
+        width  24px
+        height 24px
 
       &.recording, &.savePending
         background $fgMarquee
@@ -150,11 +150,15 @@ h1
       height    100px
 
       .highlight
-        border        2px solid $fgBrightest
+        border        solid $fgBrightest
         border-radius 8px
         border-width  0 2px
         color         $fgBrightest
         padding       0 4px
+
+      span[data-key]:hover
+        background $bgDarker
+        cursor     pointer
 
 .clipEditor
   align-self   stretch

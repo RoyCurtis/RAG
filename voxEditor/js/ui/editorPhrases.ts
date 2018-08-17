@@ -97,6 +97,15 @@ export class EditorPhrases
         this.select(next as HTMLElement, true);
     }
 
+    /** Selects the entry of the given key */
+    public selectKey(key: string): void
+    {
+        let entry = this.domList.querySelector(`[data-key='${key}']`);
+
+        if (entry)
+            this.select(entry as HTMLElement, true);
+    }
+
     /** Visually selects the given phrase entry */
     public visualSelect(item: HTMLElement) : void
     {
