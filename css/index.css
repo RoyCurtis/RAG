@@ -352,10 +352,10 @@
 }
 #stationlistPicker form .stationList menu .addStation:disabled,
 #stationlistPicker form .stationList menu .closePicker:disabled {
-  background: #222;
-  color: #444;
-  cursor: default;
-  fill: #444;
+  background: #222 !important;
+  color: #444 !important;
+  cursor: default !important;
+  fill: #444 !important;
 }
 #stationlistPicker form .stationList menu .addStation:disabled:active,
 #stationlistPicker form .stationList menu .closePicker:disabled:active {
@@ -477,10 +477,10 @@
   box-shadow: 0 0 4px #000 inset;
 }
 #toolbar > button:disabled {
-  background: #222;
-  color: #444;
-  cursor: default;
-  fill: #444;
+  background: #222 !important;
+  color: #444 !important;
+  cursor: default !important;
+  fill: #444 !important;
 }
 #toolbar > button:disabled:active {
   background: #222;
@@ -524,10 +524,10 @@
   box-shadow: 0 0 4px #000 inset;
 }
 #settingsScreen button:disabled {
-  background: #222;
-  color: #444;
-  cursor: default;
-  fill: #444;
+  background: #222 !important;
+  color: #444 !important;
+  cursor: default !important;
+  fill: #444 !important;
 }
 #settingsScreen button:disabled:active {
   background: #222;

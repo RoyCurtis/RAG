@@ -9,6 +9,8 @@ import {PhrasePreview} from "./controls/phrasePreview";
 /** Controller for the tape deck part of the editor */
 export class EditorTapedeck
 {
+    public  readonly btnBack    : HTMLButtonElement;
+
     public  readonly btnPrev    : HTMLButtonElement;
 
     public  readonly btnPlay    : HTMLButtonElement;
@@ -23,6 +25,8 @@ export class EditorTapedeck
 
     public  readonly btnNext    : HTMLButtonElement;
 
+    public  readonly btnFwd     : HTMLButtonElement;
+
     private readonly clipEditor : ClipEditor;
 
     private readonly voiceMeter : VoiceMeter;
@@ -33,7 +37,11 @@ export class EditorTapedeck
 
     private readonly lblId      : HTMLParagraphElement;
 
-    private _dirty : boolean = false;
+    private history    : string[] = [];
+
+    private historyIdx : number   = 0;
+
+    private _dirty     : boolean  = false;
 
     public get dirty(): boolean
     {
@@ -53,7 +61,9 @@ export class EditorTapedeck
         this.clipEditor = new ClipEditor('.clipEditor');
         this.voiceMeter = new VoiceMeter('.voiceMeter');
         this.previewer  = new PhrasePreview('#phrasePreviewer');
+        // TODO: Make a View base class, with sugar for these
         this.domForm    = DOM.require('#frmTapedeck');
+        this.btnBack    = DOM.require('#btnBack', this.domForm);
         this.btnPrev    = DOM.require('#btnPrev', this.domForm);
         this.btnPlay    = DOM.require('#btnPlay', this.domForm);
         this.btnStop    = DOM.require('#btnStop', this.domForm);
@@ -61,6 +71,7 @@ export class EditorTapedeck
         this.btnSave    = DOM.require('#btnSave', this.domForm);
         this.btnLoad    = DOM.require('#btnLoad', this.domForm);
         this.btnNext    = DOM.require('#btnNext', this.domForm);
+        this.btnFwd     = DOM.require('#btnFwd',  this.domForm);
         this.lblId      = DOM.require('.id',      this.domForm);
 
         window.onresize       = this.onResize.bind(this);
@@ -69,6 +80,7 @@ export class EditorTapedeck
         Gamepads.onbuttonup   = this.onPadUp.bind(this);
         Gamepads.onbuttonhold = this.onPadHold.bind(this);
         this.domForm.onsubmit = ev => ev.preventDefault();
+        this.btnBack.onclick  = this.onBack.bind(this);
         this.btnPrev.onclick  = this.onPrev.bind(this);
         this.btnPlay.onclick  = this.onPlay.bind(this);
         this.btnStop.onclick  = this.onStop.bind(this);
@@ -76,6 +88,7 @@ export class EditorTapedeck
         this.btnSave.onclick  = this.onSave.bind(this);
         this.btnLoad.onclick  = this.onLoad.bind(this);
         this.btnNext.onclick  = this.onNext.bind(this);
+        this.btnFwd.onclick   = this.onFwd.bind(this);
 
         // Mark dirty from bounds change only if clip is loaded
         this.clipEditor.onchange = () =>
@@ -109,7 +122,7 @@ export class EditorTapedeck
 
         this.previewer.generateExample(key);
         this.lblId.innerText  = key;
-        this.btnRec.disabled  = 
+        this.btnRec.disabled  =
         this.btnNext.disabled =
         this.btnPrev.disabled = false;
 
@@ -120,6 +133,24 @@ export class EditorTapedeck
 
         this.clipEditor.setTitle(title);
         this.clipEditor.redraw();
+
+        // Don't record duplicates or back entries into history
+        if (this.history[this.historyIdx] !== key)
+        {
+            // If this new entry is the same as the forward entry, shift index forward
+            if (this.history[this.historyIdx + 1] === key)
+                this.historyIdx++;
+            // Else, clear all forward history and add new history entry
+            else
+            {
+                this.history.splice(this.historyIdx + 1);
+                this.history.push(key);
+                this.historyIdx = this.history.length - 1;
+            }
+        }
+
+        this.btnBack.disabled = (this.history.length < 2 || this.historyIdx === 0);
+        this.btnFwd.disabled  = (this.historyIdx === this.history.length - 1);
     }
 
     public handleClipFail(key: string, err: any) : void
@@ -187,6 +218,8 @@ export class EditorTapedeck
             case XBOX.Y:     return this.btnRec.click();
             case XBOX.LB:    return this.btnPrev.click();
             case XBOX.RB:    return this.btnNext.click();
+            case XBOX.Left:  return this.btnBack.click();
+            case XBOX.Right: return this.btnFwd.click();
             case XBOX.Start: return this.btnSave.click();
             case XBOX.Back:  return this.btnLoad.click();
             case XBOX.LS:    return this.onScale(1.25);
@@ -236,9 +269,19 @@ export class EditorTapedeck
         this.voiceMeter.redraw();
     }
 
+    private onBack() : void
+    {
+        // Note: Button states are handled by handleClipLoad
+        let prev = this.history[this.historyIdx - 1];
+
+        if (!prev) return;
+
+        this.historyIdx--;
+        VoxEditor.views.phrases.selectKey(prev);
+    }
+
     private onPrev() : void
     {
-        // TODO: Make this a toggle
         if (this.dirty)
             VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
 
@@ -305,6 +348,17 @@ export class EditorTapedeck
             VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
 
         VoxEditor.views.phrases.selectNext();
+    }
+
+    private onFwd() : void
+    {
+        // Note: Button states and index shifting are handled by handleClipLoad
+        let next = this.history[this.historyIdx + 1];
+
+        if (!next) return;
+
+        this.historyIdx++;
+        VoxEditor.views.phrases.selectKey(next);
     }
 
     private onScale(scale: number) : void

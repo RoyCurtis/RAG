@@ -89,10 +89,10 @@ h1 {
   box-shadow: 0 0 4px #000 inset;
 }
 #partSelector .searchBox menu button:disabled {
-  background: #222;
-  color: #444;
-  cursor: default;
-  fill: #444;
+  background: #222 !important;
+  color: #444 !important;
+  cursor: default !important;
+  fill: #444 !important;
 }
 #partSelector .searchBox menu button:disabled:active {
   background: #222;
@@ -198,10 +198,10 @@ h1 {
   box-shadow: 0 0 4px #000 inset;
 }
 #tapeDeck #frmTapedeck menu button:disabled {
-  background: #222;
-  color: #444;
-  cursor: default;
-  fill: #444;
+  background: #222 !important;
+  color: #444 !important;
+  cursor: default !important;
+  fill: #444 !important;
 }
 #tapeDeck #frmTapedeck menu button:disabled:active {
   background: #222;
