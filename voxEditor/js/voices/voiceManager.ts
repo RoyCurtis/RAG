@@ -232,6 +232,15 @@ export class VoiceManager
             this.currentClip.copyToChannel(channel, 0);
         }
 
+        // Then, soften the end of the data with fades
+        if  (length > 512)
+        for (let i = 0; i < 512; i++)
+        {
+            let factor = (1 / 512) * i;
+            channel[length - i] *= factor;
+        }
+
+
         // Then, convert the clip data from -1..1 floats to -32768..32767 integers
 
         intChannel = new Int16Array(length);
@@ -293,7 +302,7 @@ export class VoiceManager
         let command  = VoxEditor.config.ppCommand
             .replace('$1', this.currentPath)
             .replace('$2', playPath);
-        
+
         child_process.execSync(command, {
             cwd: process.cwd(),
             env: process.env
