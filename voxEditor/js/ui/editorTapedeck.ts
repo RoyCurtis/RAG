@@ -87,7 +87,7 @@ export class EditorTapedeck
         this.btnRec.disabled = true;
 
         if (VoxEditor.mics.canRecord)
-        if (VoxEditor.voices.currentClip)
+        if (VoxEditor.voices.currentPath)
             this.btnRec.disabled = false;
     }
 
