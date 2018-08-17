@@ -70,6 +70,8 @@ export class EditorPhrases
                 inline   : 'center'
             });
 
+        VoxEditor.config.lastKey = this.currentKey;
+        VoxEditor.config.save();
         VoxEditor.voices.loadFromDisk();
     }
 
@@ -131,6 +133,13 @@ export class EditorPhrases
             item.classList.remove('missing');
         else
             item.classList.add('missing');
+    }
+
+    /** Called when vox editor is ready */
+    public handleReady(): void
+    {
+        if ( !Strings.isNullOrEmpty(VoxEditor.config.lastKey) )
+            this.selectKey(VoxEditor.config.lastKey);
     }
 
     /** Called when a voice clip for the current selected phrase is saved */

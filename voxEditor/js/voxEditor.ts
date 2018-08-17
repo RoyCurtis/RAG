@@ -38,5 +38,7 @@ export class VoxEditor
         VoxEditor.mics      = new MicManager();
         VoxEditor.voices    = new VoiceManager();
         VoxEditor.views     = new EditorViews();
+
+        VoxEditor.views.phrases.handleReady();
     }
 }
