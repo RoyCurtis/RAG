@@ -191,6 +191,11 @@ export class EditorTapedeck
             case XBOX.Back:  return this.btnLoad.click();
             case XBOX.LS:    return this.onScale(1.25);
             case XBOX.RS:    return this.onScale(0.8);
+            case XBOX.X:
+                if (!this.btnPlay.disabled)
+                    VoxEditor.voices.playPreview(this.previewer.dom);
+
+                return;
         }
     }
 
