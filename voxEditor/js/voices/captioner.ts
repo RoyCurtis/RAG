@@ -144,7 +144,7 @@ export class Captioner
                 continue;
 
             // Calculate ID by getting relative indicies of phrases and text parts
-            id = 'phrase.' + parent.id;
+            id = `${parent.nodeName.toLowerCase()}.${parent.id}`;
 
             // Append phrase index if we're in a phraseset
             if (psIndex !== -1)

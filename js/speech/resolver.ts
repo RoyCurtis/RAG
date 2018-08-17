@@ -148,9 +148,9 @@ class Resolver
             type   = parent.dataset['type'];
         }
 
-        let ref = parent.dataset['ref'];
-        let idx = DOM.nodeIndexOf(node);
-        let id  = `phrase.${ref}`;
+        let ref  = parent.dataset['ref'];
+        let idx  = DOM.nodeIndexOf(node);
+        let id   = `${type}.${ref}`;
 
         // Append index of phraseset's choice of phrase
         if (type === 'phraseset')
