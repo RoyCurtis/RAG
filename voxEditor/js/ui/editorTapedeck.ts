@@ -95,8 +95,6 @@ export class EditorTapedeck
     {
         let path = VoxEditor.voices.keyToPath(key);
 
-        this.btnNext.disabled =
-        this.btnPrev.disabled = false;
         this.lblId.innerText  = `Loading '${key}'...`;
         this.previewer.setText(`Loading from: ${path}`);
     }
@@ -110,8 +108,10 @@ export class EditorTapedeck
             : `New file, will be saved at: ${path}`;
 
         this.previewer.generateExample(key);
-        this.lblId.innerText = key;
-        this.btnRec.disabled = false;
+        this.lblId.innerText  = key;
+        this.btnRec.disabled  = 
+        this.btnNext.disabled =
+        this.btnPrev.disabled = false;
 
         this.btnPlay.disabled =
         this.btnStop.disabled =
