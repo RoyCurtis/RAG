@@ -32,9 +32,6 @@ export class PhrasePreview
         this.value   = Strings.firstMatch(key, /\.([a-z0-9_]+)\./i, 1) || '';
         this.inflect = Strings.firstMatch(key, /\.(mid|end)$/i, 1)     || '';
 
-        if (this.type === 'phrase')
-            return this.genericCaption();
-
         if (this.value === 'suffix')
             return this.genericCaption();
 
@@ -46,6 +43,7 @@ export class PhrasePreview
             case 'letter':  this.letterCaption();  return;
             case 'named':   this.namedCaption();   return;
             case 'number':  this.numberCaption();  return;
+            case 'phrase':  this.phraseCaption();  return;
             case 'service': this.serviceCaption(); return;
             case 'station': this.stationCaption(); return;
             default:        this.genericCaption(); return;
@@ -166,9 +164,19 @@ export class PhrasePreview
         this.highlightTypes(types);
     }
 
+    private phraseCaption() : void
+    {
+        let caption = VoxEditor.captioner.captionBank[this.key!];
+        this.dom.innerHTML = `<vox key="${this.key}">${caption}</vox>`;
+
+        RAG.phraser.process(this.dom);
+        this.highlightTypes(['vox']);
+    }
+
     private serviceCaption() : void
     {
-        RAG.state.setService('provider', VoxEditor.captioner.captionBank[this.key!]);
+        RAG.state.setService('provider',    VoxEditor.captioner.captionBank[this.key!]);
+        RAG.state.setService('alternative', VoxEditor.captioner.captionBank[this.key!]);
         this.generate();
         this.highlightTypes(['service']);
     }
