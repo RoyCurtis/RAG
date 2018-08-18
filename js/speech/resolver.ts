@@ -181,7 +181,7 @@ class Resolver
         let key     = Strings.filename(excuse);
         let inflect = this.getInflection(idx);
 
-        return [0.1, `excuse.${key}.${inflect}`, 0.1];
+        return [0.2, `excuse.${key}.${inflect}`];
     }
 
     private resolveInteger(element: HTMLElement) : VoxKey[]
@@ -211,9 +211,12 @@ class Resolver
     {
         let platform = RAG.state.platform;
         let inflect  = this.getInflection(idx);
-        let key      = `number.${platform[0]}${platform[1]}.${inflect}`;
+        let result   = [0.2, `number.${platform[0]}${platform[1]}.${inflect}`];
 
-        return [0.1, key, 0.1];
+        if (inflect === 'mid')
+            result.push(0.2);
+
+        return result;
     }
 
     private resolveService(element: HTMLElement) : VoxKey[]
@@ -230,8 +233,12 @@ class Resolver
         let ctx     = element.dataset['context']!;
         let station = RAG.state.getStation(ctx);
         let inflect = this.getInflection(idx);
+        let result  = [0.2, `station.${station}.${inflect}`];
 
-        return [0.1, `station.${station}.${inflect}`, 0.1];
+        if (inflect === 'mid')
+            result.push(0.2);
+
+        return result;
     }
 
     private resolveStationList(element: HTMLElement, idx: number) : VoxKey[]
@@ -240,7 +247,7 @@ class Resolver
         let list    = RAG.state.getStationList(ctx);
         let inflect = this.getInflection(idx);
 
-        let parts : VoxKey[] = [0.1];
+        let parts : VoxKey[] = [0.2];
 
         list.forEach( (v, k) =>
         {
@@ -253,13 +260,13 @@ class Resolver
 
             // Add "and" if list has more than 1 station and this is the end
             if (list.length > 1)
-                parts.push(0.15, 'station.parts.and.mid', 0.15);
+                parts.push('station.parts.and.mid', 0.2);
 
             // Add "only" if only one station in the calling list
             if (list.length === 1 && ctx === 'calling')
             {
                 parts.push(`station.${v}.mid`);
-                parts.push(0.1, 'station.parts.only.end');
+                parts.push(0.2, 'station.parts.only.end');
             }
             else
                 parts.push(`station.${v}.${inflect}`);
@@ -273,20 +280,20 @@ class Resolver
         let ctx   = element.dataset['context']!;
         let time  = RAG.state.getTime(ctx).split(':');
 
-        let parts : VoxKey[] = [0.1];
+        let parts : VoxKey[] = [0.2];
 
         if (time[0] === '00' && time[1] === '00')
             return [...parts, 'number.0000.mid'];
 
         // Hours
-        parts.push(`number.${time[0]}.mid`);
+        parts.push(`number.${time[0]}.begin`);
 
         if (time[1] === '00')
             parts.push('number.hundred.mid');
         else
-            parts.push(0.1, `number.${time[1]}.mid`);
+            parts.push(0.2, `number.${time[1]}.mid`);
 
-        return [...parts, 0.05];
+        return [...parts, 0.15];
     }
 
     private resolveVox(element: HTMLElement) : VoxKey[]
