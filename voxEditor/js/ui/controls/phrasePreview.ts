@@ -30,8 +30,8 @@ export class PhrasePreview
 
         this.key     = key;
         this.type    = type || '';
-        this.value   = Strings.firstMatch(key, /\.([a-z0-9_]+)\./i, 1) || '';
-        this.inflect = Strings.firstMatch(key, /\.(mid|end)$/i, 1)     || '';
+        this.value   = Strings.firstMatch(key, /\.([a-z0-9_]+)\./i, 1)   || '';
+        this.inflect = Strings.firstMatch(key, /\.(begin|mid|end)$/i, 1) || '';
 
         if (this.value === 'suffix')
             return this.genericCaption();
@@ -146,10 +146,18 @@ export class PhrasePreview
             types.push('time');
         }
         // Time hours
+        else if ( this.inflect === 'begin' )
+        {
+            RAG.state.setTime('main',        `${this.value}:${this.value}`);
+            RAG.state.setTime('alternative', this.value + ':52');
+            this.type = 'time';
+            types.push('time');
+        }
+        // Time double-digits
         else if ( this.value!.match(/^0[0-9]$/) )
         {
-            RAG.state.setTime('main',        '11:' + this.value);
-            RAG.state.setTime('alternative', this.value + ':15');
+            RAG.state.setTime('main',        `${this.value}:${this.value}`);
+            RAG.state.setTime('alternative', `13:${this.value}`);
             this.type = 'time';
             types.push('time');
         }

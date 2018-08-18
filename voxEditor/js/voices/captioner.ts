@@ -85,12 +85,19 @@ export class Captioner
             this.captionBank[`number.${n}${'ABC'[i]}.end`] = n.toString() + 'ABC'[i];
         }
 
-        // 24 hour double digits
+        // Clock double digits (hours and minutes)
         for (let n = 1; n <= 9; n++)
-            this.captionBank[`number.0${n}.mid`] = `Oh-${n}`;
+        {
+            this.captionBank[`number.0${n}.begin`] = `Oh-${n}`;
+            this.captionBank[`number.0${n}.mid`]   = `Oh-${n}`;
+        }
+
+        // Hours with beginning inflection
+        for (let n = 10; n <= 23; n++)
+            this.captionBank[`number.${n}.begin`] = `${n}`;
 
         // 00:MM
-        this.captionBank[`number.00.mid`] = 'Oh-oh';
+        this.captionBank[`number.00.begin`] = 'Oh-oh';
 
         // 00:00
         this.captionBank[`number.0000.mid`] = 'Oh-zero hundred';
