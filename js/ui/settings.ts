@@ -143,6 +143,7 @@ class Settings
             let time   = Strings.fromTime( new Date() );
             let phrase = document.createElement('span');
 
+            // TODO: Use the phraseset document for this
             phrase.innerHTML = '<span data-type="phrase" data-ref="sample">' +
                 'This is a test of the Rail Announcement Generator at' +
                 '<span data-type="time">' + time + '</span>' +

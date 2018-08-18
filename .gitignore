@@ -1,10 +1,7 @@
 /.idea/
-/adb.lnk
-/serve.py
 node_modules
 /voxEditor/dist/
 /data/vox/*/
 /data/vox/Backups.lnk
 /data/vox/batch.sh
 /data/vox/noise.profile
-/data/vox/watch.js

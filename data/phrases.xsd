@@ -598,6 +598,14 @@
         </xs:documentation>
       </xs:annotation>
     </xs:enumeration>
+
+    <xs:enumeration value="current">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies the current real-world time.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:enumeration>
   </xs:restriction>
 </xs:simpleType>
 
