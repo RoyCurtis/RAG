@@ -109,7 +109,7 @@ class Database
      * @param filtered Whether to filter out parenthesized location context
      * @returns Station name for the given code, filtered if specified
      */
-    public getStation(code: string, filtered: boolean = false) : string
+    public getStation(code: string) : string
     {
         let station = this.stations[code];
 
@@ -117,9 +117,6 @@ class Database
             return L.DB_UNKNOWN_STATION(code);
         else if ( Strings.isNullOrEmpty(station) )
             return L.DB_EMPTY_STATION(code);
-
-        if (filtered)
-            station = station.replace(/\(.+\)/i, '').trim();
 
         return station;
     }

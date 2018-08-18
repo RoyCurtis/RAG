@@ -21,7 +21,7 @@ class Strings
         let result = '';
         let names  = codes.slice();
 
-        names.forEach( (c, i) => names[i] = RAG.database.getStation(c, true) );
+        names.forEach( (c, i) => names[i] = RAG.database.getStation(c) );
 
         if (names.length === 1)
             result = (context === 'calling')

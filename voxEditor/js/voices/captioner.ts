@@ -184,8 +184,6 @@ export class Captioner
 
     private populateStations() : void
     {
-        // Filter out parenthesized location context
-        let filter   = (v: string) => v.replace(/\(.+\)/i, '').trim();
         let stations = RAG.database.stations;
         let keys     = Object.keys(stations);
 
@@ -196,14 +194,10 @@ export class Captioner
         this.captionBank[`station.parts.only.end`] = 'only';
 
         // For stations to be read in the middle of lists or sentences
-        keys.forEach(k =>
-            this.captionBank[`station.${k}.mid`] = filter(stations[k])
-        );
+        keys.forEach(k => this.captionBank[`station.${k}.mid`] = stations[k]);
 
         // For stations to be read at the end of lists or sentences
-        keys.forEach(k =>
-            this.captionBank[`station.${k}.end`] = filter(stations[k])
-        );
+        keys.forEach(k => this.captionBank[`station.${k}.end`] = stations[k]);
     }
 
     private populateSpecial() : void

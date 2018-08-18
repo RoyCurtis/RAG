@@ -1414,7 +1414,7 @@ declare class Database {
      * @param filtered Whether to filter out parenthesized location context
      * @returns Station name for the given code, filtered if specified
      */
-    getStation(code: string, filtered?: boolean): string;
+    getStation(code: string): string;
     /**
      * Picks a random range of station codes, ensuring there are no duplicates.
      *

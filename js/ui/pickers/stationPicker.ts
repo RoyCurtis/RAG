@@ -54,7 +54,7 @@ class StationPicker extends Picker
     {
         let query = `[data-type=station][data-context=${this.currentCtx}]`;
         let code  = entry.dataset['code']!;
-        let name  = RAG.database.getStation(code, true);
+        let name  = RAG.database.getStation(code);
 
         RAG.state.setStation(this.currentCtx, code);
         RAG.views.editor

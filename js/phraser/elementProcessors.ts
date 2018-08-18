@@ -135,7 +135,7 @@ class ElementProcessors
         let code    = RAG.state.getStation(context);
 
         ctx.newElement.title       = L.TITLE_STATION(context);
-        ctx.newElement.textContent = RAG.database.getStation(code, true);
+        ctx.newElement.textContent = RAG.database.getStation(code);
 
         ctx.newElement.dataset['context'] = context;
     }

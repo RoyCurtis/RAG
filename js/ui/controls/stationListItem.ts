@@ -30,7 +30,7 @@ class StationListItem
             StationListItem.init();
 
         this.dom           = StationListItem.TEMPLATE.cloneNode(true) as HTMLElement;
-        this.dom.innerText = RAG.database.getStation(code, false);
+        this.dom.innerText = RAG.database.getStation(code);
 
         this.dom.dataset['code'] = code;
     }
