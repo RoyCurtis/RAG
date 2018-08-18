@@ -239,7 +239,7 @@ export class EditorPhrases
 
         if (voice) fs.readdirSync(voice.voiceURI).forEach(file =>
         {
-            let key = file.replace('.mp3', '');
+            let key = file.replace('.mp3', '').replace('.wav', '');
 
             if (key in VoxEditor.captioner.captionBank)
                 return;

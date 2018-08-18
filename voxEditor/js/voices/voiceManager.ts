@@ -4,8 +4,8 @@ import * as fs from "fs";
 import {Files} from "../util/files";
 import * as path from "path";
 import {VoxEditor} from "../voxEditor";
-import Mp3Encoder = lamejs.Mp3Encoder;
 import * as child_process from "child_process";
+import {VoiceExporter} from "./voiceExporter";
 
 /** Manages available voices and clips */
 export class VoiceManager
@@ -60,7 +60,9 @@ export class VoiceManager
         if (!this.currentVoice)
             throw Error('Attempted to get path of key with no voice set');
 
-        return path.join(this.currentVoice!.voiceURI, `${key}.mp3`);
+        let format = VoxEditor.config.format;
+
+        return path.join(this.currentVoice!.voiceURI, `${key}.${format}`);
     }
 
     /** Checks whether a clip for the given key exists on disk */
@@ -113,8 +115,8 @@ export class VoiceManager
         // themselves after being loaded multiple times. It may just be an issue with
         // the mp3 files exported from Audacity.
 
-        let buffer       = fs.readFileSync(this.currentPath);
-        let arrayBuffer  = buffer.buffer.slice(0);
+        let buffer      = fs.readFileSync(this.currentPath);
+        let arrayBuffer = buffer.buffer.slice(0);
         this.audioContext.decodeAudioData(arrayBuffer)
             .then(audio =>
             {
@@ -207,17 +209,11 @@ export class VoiceManager
         else
             this.stopClip();
 
-        // https://github.com/zhuker/lamejs/issues/10#issuecomment-141720630
-        let blocks : Int8Array[] = [];
-
-        let intChannel : Int16Array;
-        let encoder    = new Mp3Encoder(1, this.currentClip.sampleRate, 128);
-        let channel    = this.currentClip.getChannelData(0);
-        let blockSize  = 1152;
-        let length     = channel.length;
-        let totalSize  = 0;
+        let channel = this.currentClip.getChannelData(0);
+        let length  = channel.length;
 
         // First, clip the data to the given bounds and replace original buffer
+        // Only do so if necessary (e.g. useful bounds given)
 
         if ( bounds && (bounds[0] > 0 || bounds[1] < 1) )
         {
@@ -232,68 +228,14 @@ export class VoiceManager
             this.currentClip.copyToChannel(channel, 0);
         }
 
-        // Then, soften the end of the data with fades
-        if  (length > 512)
-        for (let i = 0; i < 512; i++)
-        {
-            let factor = (1 / 512) * i;
-            channel[length - i] *= factor;
-        }
+        // Then, encode it to the user's configured format
 
-
-        // Then, convert the clip data from -1..1 floats to -32768..32767 integers
-
-        intChannel = new Int16Array(length);
-
-        for (let i = 0; i < length; i++)
-        {
-            let n = channel[i];
-            let v = n < 0
-                ? n * 32768
-                : n * 32767;
-
-            intChannel[i] = Math.max( -32768, Math.min(32768, v) );
-        }
-
-        // Then, encode the clip's data into mp3 chunks
-
-        for (let i = 0; i < length; i += blockSize)
-        {
-            let bufBlock = intChannel.subarray(i, i + blockSize);
-            let mp3Block = encoder.encodeBuffer(bufBlock);
-
-            if (mp3Block.length > 0)
-            {
-                blocks.push(mp3Block);
-                totalSize += mp3Block.length;
-            }
-        }
-
-        // Then, finalize the MP3
-
-        let finalBlock = encoder.flush();
-
-        if (finalBlock.length > 0)
-        {
-            blocks.push(finalBlock);
-            totalSize += finalBlock.length;
-        }
-
-        // Then, write it to disk
-
-        let bytes  = Buffer.alloc(totalSize);
-        let offset = 0;
-
-        blocks.forEach(block =>
-        {
-            bytes.set(block, offset);
-            offset += block.length;
-        });
-
-        fs.writeFileSync(this.currentPath, bytes, { encoding : null });
+        new VoiceExporter(this.currentClip)
+            .write(this.currentPath, VoxEditor.config.format);
         VoxEditor.views.phrases.handleSave();
 
         // Finally, post-process it with an external command, if configured
+
         if ( Strings.isNullOrEmpty(VoxEditor.config.ppCommand) )
             return;
 
@@ -307,6 +249,15 @@ export class VoiceManager
             cwd: process.cwd(),
             env: process.env
         });
+    }
+
+    public handleFormatChange() : void
+    {
+        if (!this.currentPath || !VoxEditor.views.phrases.currentKey)
+            return;
+
+        this.currentPath = this.keyToPath(VoxEditor.views.phrases.currentKey);
+        this.loadFromDisk();
     }
 
     /** Looks for and keeps track of any voices available on disk */

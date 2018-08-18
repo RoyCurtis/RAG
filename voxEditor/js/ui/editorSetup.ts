@@ -13,6 +13,8 @@ export class EditorSetup
 
     private readonly selPlayVoice   : HTMLSelectElement;
 
+    private readonly selFormat      : HTMLSelectElement;
+
     private readonly inputScript    : HTMLInputElement;
 
     public constructor()
@@ -21,10 +23,12 @@ export class EditorSetup
         this.selInputDevice = DOM.require('#selInputDevice');
         this.selVoice       = DOM.require('#selVoice');
         this.selPlayVoice   = DOM.require('#selPlayVoice');
+        this.selFormat      = DOM.require('#selFormat');
         this.inputScript    = DOM.require('#inputScript');
 
         this.domForm.onchange  = this.onFormChange.bind(this);
         this.domForm.onsubmit  = this.onFormChange.bind(this);
+        this.selFormat.value   = VoxEditor.config.format;
         this.inputScript.value = VoxEditor.config.ppCommand;
 
         navigator.mediaDevices.ondevicechange = this.onDevicesChanged.bind(this);
@@ -67,6 +71,7 @@ export class EditorSetup
         VoxEditor.config.deviceId    = this.selInputDevice.value;
         VoxEditor.config.voiceID     = this.selVoice.value;
         VoxEditor.config.voicePlayID = this.selPlayVoice.value;
+        VoxEditor.config.format      = this.selFormat.value;
         VoxEditor.config.ppCommand   = this.inputScript.value;
         VoxEditor.config.save();
 
@@ -79,6 +84,9 @@ export class EditorSetup
 
         if (target === this.selVoice)
             VoxEditor.views.phrases.handleVoiceChange();
+
+        if (target === this.selFormat)
+            VoxEditor.voices.handleFormatChange();
     }
 
     /** Handles changes to input devices */
