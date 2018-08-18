@@ -25,13 +25,7 @@ export class VoiceExporter
 
         let channel = this.buffer.getChannelData(0);
 
-        // First, soften the end of the data with fades
-
-        if  (length > 512)
-        for (let i = 0; i < 512; i++)
-            channel[length - i] *= (1 / 512) * i;
-
-        // Then, encode to the asked format
+        // First, encode to the asked format
 
         let bytes = (format === 'mp3')
             ? this.encodeMP3(channel)
