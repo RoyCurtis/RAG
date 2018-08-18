@@ -299,6 +299,7 @@ export class EditorTapedeck
     private onStop() : void
     {
         VoxEditor.voices.stopClip();
+        VoxEditor.voices.stopPreview();
     }
 
     private onRec() : void

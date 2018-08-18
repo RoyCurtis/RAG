@@ -133,6 +133,7 @@ export class VoiceManager
             return;
 
         this.stopClip();
+        this.stopPreview();
 
         this.currentClip = undefined;
         this.currentPath = undefined;
@@ -143,6 +144,8 @@ export class VoiceManager
     public playPreview(phrase: HTMLElement) : void
     {
         let resolver = new Resolver(phrase);
+
+        this.stopPreview();
 
         if (this.currentPlayVoice)
             this.voxEngine.speak(resolver.toVox(), this.currentPlayVoice, {});
@@ -173,6 +176,11 @@ export class VoiceManager
         }
         else
             this.currentBufNode.start();
+    }
+
+    public stopPreview() : void
+    {
+        this.voxEngine.stop();
     }
 
     /** Stops playing the current clip, if any */
@@ -245,10 +253,7 @@ export class VoiceManager
             .replace('$1', this.currentPath)
             .replace('$2', playPath);
 
-        child_process.execSync(command, {
-            cwd: process.cwd(),
-            env: process.env
-        });
+        child_process.execSync(command);
     }
 
     public handleFormatChange() : void
