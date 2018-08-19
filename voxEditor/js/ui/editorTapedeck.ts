@@ -222,8 +222,8 @@ export class EditorTapedeck
             case XBOX.Right: return this.btnFwd.click();
             case XBOX.Start: return this.btnSave.click();
             case XBOX.Back:  return this.btnLoad.click();
-            case XBOX.LS:    return this.onScale(1.25);
-            case XBOX.RS:    return this.onScale(0.8);
+            case XBOX.LS:    return this.onScale(1 / 0.9);
+            case XBOX.RS:    return this.onScale(0.9);
             case XBOX.X:
                 if (!this.btnPlay.disabled)
                     VoxEditor.voices.playPreview(this.previewer.dom);
