@@ -171,8 +171,12 @@ class Resolver
         let ctx     = element.dataset['context']!;
         let coach   = RAG.state.getCoach(ctx);
         let inflect = this.getInflection(idx);
+        let result  = [0.2, `letter.${coach}.${inflect}`];
 
-        return [0.1, `letter.${coach}.${inflect}`, 0.1];
+        if (inflect === 'mid')
+            result.push(0.2);
+
+        return result;
     }
 
     private resolveExcuse(idx: number) : VoxKey[]
@@ -180,8 +184,12 @@ class Resolver
         let excuse  = RAG.state.excuse;
         let key     = Strings.filename(excuse);
         let inflect = this.getInflection(idx);
+        let result  = [0.2, `excuse.${key}.${inflect}`];
 
-        return [0.2, `excuse.${key}.${inflect}`];
+        if (inflect === 'mid')
+            result.push(0.2);
+
+        return result;
     }
 
     private resolveInteger(element: HTMLElement) : VoxKey[]
@@ -190,12 +198,12 @@ class Resolver
         let singular = element.dataset['singular'];
         let plural   = element.dataset['plural'];
         let integer  = RAG.state.getInteger(ctx);
-        let parts    = [0.1, `number.${integer}.mid`];
+        let parts    = [0.2, `number.${integer}.mid`];
 
         if      (singular && integer === 1)
-            parts.push(0.1, `number.suffix.${singular}.end`);
+            parts.push(0.2, `number.suffix.${singular}.end`);
         else if (plural   && integer !== 1)
-            parts.push(0.1, `number.suffix.${plural}.end`);
+            parts.push(0.2, `number.suffix.${plural}.end`);
 
         return parts;
     }
@@ -204,7 +212,7 @@ class Resolver
     {
         let named = Strings.filename(RAG.state.named);
 
-        return [0.1, `named.${named}.mid`, 0.1];
+        return [0.2, `named.${named}.mid`, 0.2];
     }
 
     private resolvePlatform(idx: number) : VoxKey[]
@@ -247,7 +255,7 @@ class Resolver
         let list    = RAG.state.getStationList(ctx);
         let inflect = this.getInflection(idx);
 
-        let parts : VoxKey[] = [0.2];
+        let parts : VoxKey[] = [0.25];
 
         list.forEach( (v, k) =>
         {
@@ -298,6 +306,17 @@ class Resolver
 
     private resolveVox(element: HTMLElement) : VoxKey[]
     {
-        return [element.dataset['key']!];
+        let text   = element.innerText.trim();
+        let result = [];
+
+        if ( text.startsWith('.') )
+            result.push(0.5);
+
+        result.push( element.dataset['key']! );
+
+        if ( text.endsWith('.') )
+            result.push(0.5);
+
+        return result;
     }
 }
