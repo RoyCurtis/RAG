@@ -206,6 +206,10 @@ export class PhrasePreview
             if (node.nodeType !== Node.TEXT_NODE)
                 return;
 
+            // If the text doesn't contain any words, skip
+            if ( !node.textContent!.match(/[a-z0-9]/i) )
+                return;
+
             // TODO: This feels like a duplication of captioner code. Not very DRY.
             let newNode = document.createElement('span');
             let newKey  = (this.type === 'phraseset')
