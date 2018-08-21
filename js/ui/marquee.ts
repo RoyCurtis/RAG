@@ -23,21 +23,22 @@ class Marquee
     }
 
     /** Sets the message on the scrolling marquee, and starts animating it */
-    public set(msg: string) : void
+    public set(msg: string, animate: boolean = true) : void
     {
         window.cancelAnimationFrame(this.timer);
 
         this.domSpan.textContent = msg;
-        this.offset              = this.dom.clientWidth;
+
+        if (!animate) return;
 
         // I tried to use CSS animation for this, but couldn't figure out how for a
         // dynamically sized element like the span.
-        let limit = -this.domSpan.clientWidth - 100;
-        let anim  = () =>
+        this.offset = this.dom.clientWidth;
+        let limit   = -this.domSpan.clientWidth - 100;
+        let anim    = () =>
         {
-            this.offset -= (DOM.isMobile ? 5 : 7);
-
-            this.domSpan.style.transform = `translateX(${this.offset}px)`;
+            this.offset                  -= 6;
+            this.domSpan.style.transform  = `translateX(${this.offset}px)`;
 
             if (this.offset < limit)
                 this.domSpan.style.transform = '';
