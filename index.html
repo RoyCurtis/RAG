@@ -324,26 +324,20 @@
   <!-- Application logic -->
   <script src="js/rag.js" type="text/javascript"></script>
 
-  <script type="application/javascript">
-    function init()
-    {
-      RAG.main({
-        phrasesetEmbed: '#nrPhraseset',
-        excusesData:    DATA_EXCUSES,
-        namedData:      DATA_NAMED,
-        servicesData:   DATA_SERVICES,
-        stationsData:   DATA_STATIONS
-      });
-    }
-  </script>
-
   <!-- National Rail phrase sets and vocabulary data -->
-  <!-- Has to be down here, so the phraseset can load synchronously. -->
   <script src="data/nr_excuses.js"  type="text/javascript"></script>
   <script src="data/nr_named.js"    type="text/javascript"></script>
   <script src="data/nr_services.js" type="text/javascript"></script>
   <script src="data/nr_stations.js" type="text/javascript"></script>
-  <iframe id="nrPhraseset" src="data/nr_phrases.xml" onload="init()"></iframe>
+  <!-- Loads RAG synchronously, after loading phrase data -->
+  <iframe id="nrPhraseset" class="hidden" src="data/nr_phrases.xml"
+          onload="RAG.main({
+            phrasesetEmbed: '#nrPhraseset',
+            excusesData:    DATA_EXCUSES,
+            namedData:      DATA_NAMED,
+            servicesData:   DATA_SERVICES,
+            stationsData:   DATA_STATIONS
+          });"></iframe>
 </scripts>
 
 </html>
