@@ -3,8 +3,6 @@
 #settingsScreen
   align-content flex-start
   background    $bgDarkest
-  display       flex
-  flex-flow     row wrap
   overflow-x    hidden
   overflow-y    auto
   position      absolute
@@ -15,17 +13,15 @@
   width  100%
   height 100%
 
+  > *
+    margin    0 auto
+    max-width 640px
+
   button
     pressable()
     font-size large
     height    48px
     margin    16px
-
-  #btnResetSettings
-    flex 4
-
-  #btnSaveSettings
-    flex 6
 
   #btnSpeechTest
     grid-column 2
@@ -39,7 +35,45 @@
     padding-bottom 8px
     margin-bottom  8px
 
-  p
+  form
+    align-items center
+    display grid
+    flex    1
+
+    grid-template-columns 40% 60%
+
+    label, select, input, p
+      margin 24px
+
+    label, select, input
+      font-size large
+
+    label
+      unselectable()
+
+
+    input[type=range]
+      width auto
+
+    // Select elements do not correctly size on any browser
+    select
+      width     100%
+      max-width 336px
+
+    p
+      grid-column span 2
+      margin-top  0
+
+  #settingsMenu
+    display flex
+
+    #btnResetSettings
+      flex 4
+
+    #btnSaveSettings
+      flex 6
+
+  #legalBlock
     column-count 2
     column-gap   24px
     flex         100%
@@ -53,22 +87,3 @@
 
       &:visited
         color $fgDim
-
-  form
-    display grid
-    flex    1
-
-    grid-template-columns 40% 60%
-
-    label
-      unselectable()
-
-    label, select, input
-      flex      1
-      font-size large
-      margin    24px
-      width     auto
-
-    select
-      justify-self right
-      width        75%

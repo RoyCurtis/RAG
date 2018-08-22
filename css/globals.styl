@@ -48,13 +48,34 @@ backAndForeColor($bg = $bgDarkest, $fg = $fgBright)
   color      $fg
   fill       $fg
 
-gradient($dir, $col1, $stop1, $col2, $stop2)
-  linear-gradient(to $dir, $col1 $stop1, $col2 $stop2)
-
 flexbox($dir = row, $justify = flex-start)
   display         flex
   flex-direction  $dir
   justify-content $justify
+
+// TODO: Apply this where needed
+glow($color = $fgFocus, $inset = true)
+  text-shadow 0 0 5px $color
+
+  if $inset
+    box-shadow 0 0 5px $color, 0 0 5px $color inset
+  else
+    box-shadow 0 0 5px $color
+
+gradient($dir, $col1, $stop1, $col2, $stop2)
+  linear-gradient(to $dir, $col1 $stop1, $col2 $stop2)
+
+// TODO: Apply this where needed
+rect($width, $height = $width)
+  width  $width
+  height $height
+
+// Mixins
+
+no-appearance()
+  appearance         none
+  -moz-appearance    none
+  -webkit-appearance none
 
 singleLine()
   overflow      hidden
@@ -67,6 +88,35 @@ unselectable()
   -moz-user-select    none
   -ms-user-select     none
   user-select         none
+
+// Global controls
+
+input[type=range]
+  no-appearance()
+  background none
+  cursor     pointer
+  position   relative
+
+  &::before
+    content ' '
+    display block
+    width 100%
+    height 3px
+    background $fgFocus
+    position absolute
+    top 14px
+
+  &::-webkit-slider-runnable-track
+    background none
+    border     none
+
+  &::-webkit-slider-thumb
+    rect(32px)
+    no-appearance()
+    background $bgDarker
+    border 2px solid $fgFocus
+    border-radius 16px
+    position relative
 
 // Global classes
 
