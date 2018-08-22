@@ -337,12 +337,11 @@
 
   <!-- National Rail phrase sets and vocabulary data -->
   <!-- Has to be down here, so the phraseset can load synchronously. -->
-  <!-- TODO: Make RAG load these more intelligently? -->
   <script src="data/nr_excuses.js"  type="text/javascript"></script>
   <script src="data/nr_named.js"    type="text/javascript"></script>
   <script src="data/nr_services.js" type="text/javascript"></script>
   <script src="data/nr_stations.js" type="text/javascript"></script>
-  <iframe id="nrPhraseset" src="data/phrases.xml" onload="init()"></iframe>
+  <iframe id="nrPhraseset" src="data/nr_phrases.xml" onload="init()"></iframe>
 </scripts>
 
 </html>

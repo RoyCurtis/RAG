@@ -969,7 +969,7 @@ declare class Marquee {
     private offset;
     constructor();
     /** Sets the message on the scrolling marquee, and starts animating it */
-    set(msg: string): void;
+    set(msg: string, animate?: boolean): void;
     /** Stops the current marquee animation */
     stop(): void;
 }
