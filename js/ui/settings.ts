@@ -1,46 +1,34 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+///<reference path="baseView.ts"/>
+
 /** Controller for the settings screen */
-class Settings
+class Settings extends BaseView
 {
-    /** Reference to the container for the settings screen */
-    private dom              : HTMLElement;
-    /** Reference to the "Reset settings" button */
-    private btnReset         : HTMLButtonElement;
-    /** Reference to the "Save and close" button */
-    private btnSave          : HTMLButtonElement;
-    /** Reference to the voice selection box */
-    private selSpeechVoice   : HTMLSelectElement;
-    /** Reference to the voice volume slider */
-    private rangeSpeechVol   : HTMLInputElement;
-    /** Reference to the voice pitch slider */
-    private rangeSpeechPitch : HTMLInputElement;
-    /** Reference to the voice rate slider */
-    private rangeSpeechRate  : HTMLInputElement;
-    /** Reference to the speech test button */
-    private btnSpeechTest    : HTMLInputElement;
+    private readonly btnReset         =
+        this.attach <HTMLButtonElement> ('#btnResetSettings');
+    private readonly btnSave          =
+        this.attach <HTMLButtonElement> ('#btnSaveSettings');
+    private readonly selSpeechVoice   =
+        this.attach <HTMLSelectElement> ('#selSpeechChoice');
+    private readonly rangeSpeechVol   =
+        this.attach <HTMLInputElement>  ('#rangeSpeechVol');
+    private readonly rangeSpeechPitch =
+        this.attach <HTMLInputElement>  ('#rangeSpeechPitch');
+    private readonly rangeSpeechRate  =
+        this.attach <HTMLInputElement>  ('#rangeSpeechRate');
+    private readonly btnSpeechTest    =
+        this.attach <HTMLButtonElement> ('#btnSpeechTest');
+
     /** Reference to the timer for the "Reset" button confirmation step */
-    private resetTimeout?    : number;
+    private resetTimeout? : number;
 
     public constructor()
     {
-        // General settings form
+        super('#settingsScreen');
 
-        this.dom      = DOM.require('#settingsScreen');
-        this.btnReset = DOM.require('#btnResetSettings');
-        this.btnSave  = DOM.require('#btnSaveSettings');
-
-        this.btnReset.onclick = this.handleReset.bind(this);
-        this.btnSave.onclick  = this.handleSave.bind(this);
-
-        // Speech form
-
-        this.selSpeechVoice   = DOM.require('#selSpeechChoice');
-        this.rangeSpeechVol   = DOM.require('#rangeSpeechVol');
-        this.rangeSpeechPitch = DOM.require('#rangeSpeechPitch');
-        this.rangeSpeechRate  = DOM.require('#rangeSpeechRate');
-        this.btnSpeechTest    = DOM.require('#btnSpeechTest');
-
+        this.btnReset.onclick      = this.handleReset.bind(this);
+        this.btnSave.onclick       = this.handleSave.bind(this);
         this.btnSpeechTest.onclick = this.handleVoiceTest.bind(this);
 
         // Legal and acknowledgements
