@@ -87,6 +87,7 @@ class ElementProcessors
     {
         let ref       = DOM.requireAttr(ctx.xmlElement, 'ref');
         let phraseset = RAG.database.getPhraseset(ref);
+        let forcedIdx = ctx.xmlElement.getAttribute('idx');
 
         ctx.newElement.dataset['ref'] = ref;
 
@@ -96,10 +97,13 @@ class ElementProcessors
             return;
         }
 
-        let idx    = RAG.state.getPhrasesetIdx(ref);
+        let idx = forcedIdx
+            ? parseInt(forcedIdx)
+            : RAG.state.getPhrasesetIdx(ref);
+
         let phrase = phraseset.children[idx] as HTMLElement;
 
-        ctx.newElement.dataset['idx'] = idx.toString();
+        ctx.newElement.dataset['idx'] = forcedIdx || idx.toString();
 
         ctx.newElement.title = L.TITLE_PHRASESET(ref);
 

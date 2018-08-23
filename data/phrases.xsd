@@ -286,6 +286,14 @@
     </xs:annotation>
   </xs:attribute>
 
+  <xs:attribute name="idx" type="xs:integer">
+    <xs:annotation>
+      <xs:documentation>
+        If set, forcefully picks the id of the referenced phraseset.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
   <xs:attribute name="chance" type="chance"/>
 </xs:complexType>
 
