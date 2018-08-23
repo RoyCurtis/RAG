@@ -114,6 +114,16 @@ class VoxEngine
 
         this.gainNode.gain.value = volume;
 
+        // Set chime
+
+        if ( !Strings.isNullOrEmpty(settings.voxChime) )
+        {
+            let path = `${this.dataPath}/${settings.voxChime!}`;
+
+            this.pendingReqs.push( new VoxRequest(path, 0, this.audioContext) );
+            ids.unshift(1.0);
+        }
+
         // Begin the pump loop. On iOS, the context may have to be resumed first
 
         if (this.audioContext.state === 'suspended')
