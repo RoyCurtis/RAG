@@ -820,9 +820,17 @@ declare type VoxKey = string | number;
 /** Synthesizes speech by dynamically loading and piecing together voice files */
 declare class VoxEngine {
     /** The core audio context that handles audio effects and playback */
-    readonly audioContext: AudioContext;
-    /** Audio node that filters voice with various effects */
-    readonly audioFilter: BiquadFilterNode;
+    private readonly audioContext;
+    /** Audio node that amplifies or attenuates voice */
+    private readonly gainNode;
+    /** Audio node that applies the tannoy filter */
+    private readonly filterNode;
+    /** Audio node that adds a reverb to the voice, if available */
+    private readonly reverbNode;
+    /** Cache of impulse responses audio data, for reverb */
+    private readonly impulses;
+    /** Relative path to fetch impulse response and chime files from */
+    private readonly dataPath;
     /** Whether this engine is currently running and speaking */
     isSpeaking: boolean;
     /** Reference number for the current pump timer */
@@ -837,9 +845,7 @@ declare class VoxEngine {
     private currentIds?;
     /** Speech settings currently being used */
     private currentSettings?;
-    /** Audio node that adds a reverb to the voice, if available */
-    private audioReverb?;
-    constructor(reverb?: string);
+    constructor(dataPath?: string);
     /**
      * Begins loading and speaking a set of vox files. Stops any speech.
      *
@@ -855,6 +861,7 @@ declare class VoxEngine {
      */
     private pump;
     private schedule;
+    private toggleReverb;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Represents a request for a vox file, immediately begun on creation */

@@ -6,9 +6,17 @@ type VoxKey = string | number;
 class VoxEngine
 {
     /** The core audio context that handles audio effects and playback */
-    public readonly audioContext : AudioContext;
-    /** Audio node that filters voice with various effects */
-    public readonly audioFilter  : BiquadFilterNode;
+    private readonly audioContext : AudioContext;
+    /** Audio node that amplifies or attenuates voice */
+    private readonly gainNode     : GainNode;
+    /** Audio node that applies the tannoy filter */
+    private readonly filterNode   : BiquadFilterNode;
+    /** Audio node that adds a reverb to the voice, if available */
+    private readonly reverbNode   : ConvolverNode;
+    /** Cache of impulse responses audio data, for reverb */
+    private readonly impulses     : Dictionary<AudioBuffer> = {};
+    /** Relative path to fetch impulse response and chime files from */
+    private readonly dataPath     : string;
 
     /** Whether this engine is currently running and speaking */
     public  isSpeaking       : boolean      = false;
@@ -24,41 +32,29 @@ class VoxEngine
     private currentIds?      : VoxKey[];
     /** Speech settings currently being used */
     private currentSettings? : SpeechSettings;
-    /** Audio node that adds a reverb to the voice, if available */
-    private audioReverb?     : ConvolverNode;
 
-    public constructor(reverb: string = 'data/vox')
+    public constructor(dataPath: string = 'data/vox')
     {
         // Setup the core audio context
 
         // @ts-ignore
         let AudioContext  = window.AudioContext || window.webkitAudioContext;
         this.audioContext = new AudioContext();
+        this.dataPath  = dataPath;
 
-        // Setup tannoy filter
+        // Setup nodes
 
-        this.audioFilter         = this.audioContext.createBiquadFilter();
-        this.audioFilter.type    = 'highpass';
-        this.audioFilter.Q.value = 0.4;
+        this.gainNode   = this.audioContext.createGain();
+        this.filterNode = this.audioContext.createBiquadFilter();
+        this.reverbNode = this.audioContext.createConvolver();
 
-        this.audioFilter.connect(this.audioContext.destination);
+        this.reverbNode.buffer    = this.impulses[''];
+        this.reverbNode.normalize = true;
+        this.filterNode.type      = 'highpass';
+        this.filterNode.Q.value   = 0.4;
 
-        // Setup reverb
-
-        // TODO: Make this user configurable and choosable
-        fetch(`${reverb}/ir.stalbans_a_mono.wav`)
-            .then( res => res.arrayBuffer() )
-            .then( buf => Sounds.decode(this.audioContext, buf) )
-            .then( rev =>
-            {
-                this.audioReverb           = this.audioContext.createConvolver();
-                this.audioReverb.buffer    = rev;
-                this.audioReverb.normalize = true;
-
-                this.audioFilter.connect(this.audioReverb);
-                this.audioReverb.connect(this.audioContext.destination);
-                console.debug('VOX REVERB LOADED');
-            });
+        this.gainNode.connect(this.filterNode);
+        // Rest of nodes get connected when speak is called
     }
 
     /**
@@ -71,6 +67,8 @@ class VoxEngine
     {
         console.debug('VOX SPEAK:', ids, settings);
 
+        // Set state
+
         if (this.isSpeaking)
             this.stop();
 
@@ -78,7 +76,46 @@ class VoxEngine
         this.currentIds      = ids;
         this.currentSettings = settings;
 
+        // Set reverb
+
+        if ( Strings.isNullOrEmpty(settings.voxReverb) )
+            this.toggleReverb(false);
+        else
+        {
+            let file    = settings.voxReverb!;
+            let impulse = this.impulses[file];
+
+            if (!impulse)
+                fetch(`${this.dataPath}/${file}`)
+                    .then( res => res.arrayBuffer() )
+                    .then( buf => Sounds.decode(this.audioContext, buf) )
+                    .then( imp =>
+                    {
+                        // Cache buffer for later
+                        this.impulses[file]    = imp;
+                        this.reverbNode.buffer = imp;
+                        this.toggleReverb(true);
+                        console.debug('VOX REVERB LOADED');
+                    });
+            else
+            {
+                this.reverbNode.buffer = impulse;
+                this.toggleReverb(true);
+            }
+        }
+
+        // Set volume
+
+        let volume = either(settings.volume, 1);
+
+        // Remaps the 1.1...1.9 range to 2...10
+        if (volume > 1)
+            volume = (volume * 10) - 9;
+
+        this.gainNode.gain.value = volume;
+
         // Begin the pump loop. On iOS, the context may have to be resumed first
+
         if (this.audioContext.state === 'suspended')
             this.audioContext.resume().then( () => this.pump() );
         else
@@ -185,10 +222,19 @@ class VoxEngine
         let node    = this.audioContext.createBufferSource();
         let latency = this.audioContext.baseLatency + 0.15;
         let delay   = req.delay;
+        let rate    = this.currentSettings!.rate || 1;
         node.buffer = req.buffer;
 
-        node.playbackRate.value = 0.98;
-        node.connect(this.audioFilter);
+        // Remap rate from 0.1..1.9 to 0.8..1.5
+        if      (rate < 1) rate = (rate * 0.2) + 0.8;
+        else if (rate > 1) rate = (rate * 0.5) + 0.5;
+
+        delay *= 1 / rate;
+
+        console.log(rate, delay);
+
+        node.playbackRate.value = rate;
+        node.connect(this.gainNode);
         node.start(this.nextBegin + delay);
 
         this.scheduledBuffers.push(node);
@@ -203,5 +249,19 @@ class VoxEngine
             if (idx !== -1)
                 this.scheduledBuffers.splice(idx, 1);
         };
+    }
+
+    private toggleReverb(state: boolean) : void
+    {
+        this.reverbNode.disconnect();
+        this.filterNode.disconnect();
+
+        if (state)
+        {
+            this.filterNode.connect(this.reverbNode);
+            this.reverbNode.connect(this.audioContext.destination);
+        }
+        else
+            this.filterNode.connect(this.audioContext.destination);
     }
 }
