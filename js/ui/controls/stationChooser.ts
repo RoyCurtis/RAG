@@ -1,5 +1,7 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+// TODO: Search by station code
+
 /**
  * Singleton instance of the station picker. Since there are expected to be 2500+
  * stations, this element would take up a lot of memory and generate a lot of DOM. So, it

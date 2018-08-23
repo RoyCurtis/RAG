@@ -11,9 +11,11 @@ class VoxRequest
     private readonly context : AudioContext;
 
     /** Whether this request is done and ready for handling (even if failed) */
-    public isDone  : boolean = false;
+    public isDone     : boolean = false;
     /** Raw audio data from the loaded file, if available */
-    public buffer? : AudioBuffer;
+    public buffer?    : AudioBuffer;
+    /** Playback rate to force this clip to play at */
+    public forceRate? : number;
 
     public constructor(path: string, delay: number, context: AudioContext)
     {

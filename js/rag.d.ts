@@ -876,6 +876,8 @@ declare class VoxRequest {
     isDone: boolean;
     /** Raw audio data from the loaded file, if available */
     buffer?: AudioBuffer;
+    /** Playback rate to force this clip to play at */
+    forceRate?: number;
     constructor(path: string, delay: number, context: AudioContext);
     /** Cancels this request from proceeding any further */
     cancel(): void;

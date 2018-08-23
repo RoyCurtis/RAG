@@ -114,13 +114,15 @@ class VoxEngine
 
         this.gainNode.gain.value = volume;
 
-        // Set chime
+        // Set chime, at forced playback rate of 1
 
         if ( !Strings.isNullOrEmpty(settings.voxChime) )
         {
-            let path = `${this.dataPath}/${settings.voxChime!}`;
+            let path      = `${this.dataPath}/${settings.voxChime!}`;
+            let req       = new VoxRequest(path, 0, this.audioContext);
+            req.forceRate = 1;
 
-            this.pendingReqs.push( new VoxRequest(path, 0, this.audioContext) );
+            this.pendingReqs.push(req);
             ids.unshift(1.0);
         }
 
@@ -216,7 +218,6 @@ class VoxEngine
         let req = this.pendingReqs.shift()!;
 
         // If the next request errored out (buffer missing), skip it
-        // TODO: Replace with silence?
         if (!req.buffer)
         {
             console.log('VOX CLIP SKIPPED:', req.path);
@@ -229,19 +230,18 @@ class VoxEngine
 
         console.log('VOX CLIP PLAYING:', req.path, req.buffer.duration, this.nextBegin);
 
-        let node     = this.audioContext.createBufferSource();
-        let latency  = this.audioContext.baseLatency + 0.15;
-        let rate     = this.currentSettings!.rate || 1;
-        node.buffer  = req.buffer;
+        let node    = this.audioContext.createBufferSource();
+        let latency = this.audioContext.baseLatency + 0.15;
+        let rate    = req.forceRate || this.currentSettings!.rate || 1;
+        node.buffer = req.buffer;
 
         // Remap rate from 0.1..1.9 to 0.8..1.5
         if      (rate < 1) rate = (rate * 0.2) + 0.8;
         else if (rate > 1) rate = (rate * 0.5) + 0.5;
 
+        // Calculate delay and duration based on playback rate
         let delay    = req.delay * (1 / rate);
         let duration = node.buffer.duration * (1 / rate);
-
-        console.log(rate, delay, duration);
 
         node.playbackRate.value = rate;
         node.connect(this.gainNode);
