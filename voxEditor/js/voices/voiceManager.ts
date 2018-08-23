@@ -145,7 +145,10 @@ export class VoiceManager
         this.stopPreview();
 
         if (this.currentPlayVoice)
+        {
             this.voxEngine.speak(resolver.toVox(), {voxPath : this.currentPlayVoice});
+            VoxEditor.views.tapedeck.handleBeginPlay(false);
+        }
     }
 
     /** Plays the currently loaded clip, if any */
@@ -160,7 +163,7 @@ export class VoiceManager
         this.currentBufNode.onended = _ => { this.stopClip(); };
 
         this.currentBufNode.connect(this.audioContext.destination);
-        VoxEditor.views.tapedeck.handleBeginPlay();
+        VoxEditor.views.tapedeck.handleBeginPlay(true);
 
         // If given bounds, only play within those bounds
         if ( bounds && (bounds[0] > 0 || bounds[1] < 1) )
@@ -178,6 +181,7 @@ export class VoiceManager
     public stopPreview() : void
     {
         this.voxEngine.stop();
+        VoxEditor.views.tapedeck.handleEndPlay();
     }
 
     /** Stops playing the current clip, if any */

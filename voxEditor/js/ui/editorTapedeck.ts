@@ -173,11 +173,13 @@ export class EditorTapedeck
     }
 
     /** Called when a clip has begun playing */
-    public handleBeginPlay() : void
+    public handleBeginPlay(needle: boolean) : void
     {
         this.btnStop.hidden = false;
         this.btnPlay.hidden = true;
-        this.clipEditor.beginNeedle();
+
+        if (needle)
+            this.clipEditor.beginNeedle();
     }
 
     /** Called when a clip has finished or stopped playing */
