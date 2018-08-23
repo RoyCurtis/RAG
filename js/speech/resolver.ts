@@ -148,9 +148,9 @@ class Resolver
             type   = parent.dataset['type'];
         }
 
-        let ref  = parent.dataset['ref'];
-        let idx  = DOM.nodeIndexOf(node);
-        let id   = `${type}.${ref}`;
+        let ref = parent.dataset['ref'];
+        let idx = DOM.nodeIndexOf(node);
+        let id  = `${type}.${ref}`;
 
         // Append index of phraseset's choice of phrase
         if (type === 'phraseset')
@@ -198,12 +198,14 @@ class Resolver
         let singular = element.dataset['singular'];
         let plural   = element.dataset['plural'];
         let integer  = RAG.state.getInteger(ctx);
-        let parts    = [0.2, `number.${integer}.mid`];
+        let parts    = [0.125, `number.${integer}.mid`];
 
         if      (singular && integer === 1)
-            parts.push(0.2, `number.suffix.${singular}.end`);
+            parts.push(0.15, `number.suffix.${singular}.end`);
         else if (plural   && integer !== 1)
-            parts.push(0.2, `number.suffix.${plural}.end`);
+            parts.push(0.15, `number.suffix.${plural}.end`);
+        else
+            parts.push(0.15);
 
         return parts;
     }
@@ -302,7 +304,7 @@ class Resolver
         parts.push(`number.${time[0]}.begin`);
 
         if (time[1] === '00')
-            parts.push('number.hundred.mid');
+            parts.push(0.075, 'number.hundred.mid');
         else
             parts.push(0.2, `number.${time[1]}.mid`);
 

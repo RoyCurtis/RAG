@@ -68,6 +68,8 @@ export class PhrasePreview
         RAG.state.setTime('alternative', '10:22');
         RAG.state.setStation('via',               'CLJ');
         RAG.state.setStation('excuse',            'PAD');
+        RAG.state.setStation('source',            'PAD');
+        RAG.state.setStation('calling',           'AGV');
         RAG.state.setStation('destination',       'VIC');
         RAG.state.setStation('destination_split', 'EPH');
         RAG.state.setStationList('calling',       ['VIC', 'CLJ']);
