@@ -170,14 +170,10 @@ class Settings extends BaseView
         {
             this.btnSpeechTest.disabled = false;
 
-            let time   = Strings.fromTime( new Date() );
-            let phrase = document.createElement('span');
+            let phrase       = document.createElement('div');
+            phrase.innerHTML = '<phrase ref="sample"/>';
 
-            // TODO: Use the phraseset document for this
-            phrase.innerHTML = '<span data-type="phrase" data-ref="sample">' +
-                'This is a test of the Rail Announcement Generator at' +
-                '<span data-type="time">' + time + '</span>' +
-                '</span>';
+            RAG.phraser.process(phrase);
 
             RAG.speech.speak(
                 phrase.firstElementChild! as HTMLElement,

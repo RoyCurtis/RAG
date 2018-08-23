@@ -24,7 +24,6 @@ export class Captioner
         // Note that the captioner should generate IDs the same way that the Resolver
         // does, in RAG/vox/resolver.ts. Else, voice will not match text content.
 
-        this.populateSpecial();
         this.populateLetters();
         this.populateNumbers();
         this.populateExcuses();
@@ -202,12 +201,5 @@ export class Captioner
 
         // For stations to be read at the end of lists or sentences
         keys.forEach(k => this.captionBank[`station.${k}.end`] = stations[k]);
-    }
-
-    private populateSpecial() : void
-    {
-        // Testing phrase
-        this.captionBank['phrase.sample.0'] = 'This is a test of the Rail Announcement' +
-            ' Generator at <TIME>';
     }
 }

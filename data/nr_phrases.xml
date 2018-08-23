@@ -353,12 +353,12 @@
   <phrase>
     <station context="calling"/> is a request stop, and passengers for this station should
     ask the conductor on the train to arrange for the train to stop,
-    <phraseset ref="request_stop_end"/>.
+    <phraseset ref="request_stop_end"/>
   </phrase>
   <phrase>
     <stationlist context="request"/> are request stops, and passengers for these stations
     should ask the conductor on the train to arrange for the train to stop,
-    <phraseset ref="request_stop_end"/>.
+    <phraseset ref="request_stop_end"/>
   </phrase>
 </phraseset>
 
@@ -455,7 +455,7 @@
 </phrase>
 
 <phrase id="sample">
-  This is a test of the Rail Announcement Generator at <time context="current"/>
+  <phrase ref="attention_please"/> <phraseset ref="notices" idx="9"/>
 </phrase>
 
 <!-- Common vocabulary collections -->
