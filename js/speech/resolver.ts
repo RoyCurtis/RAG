@@ -184,7 +184,7 @@ class Resolver
         let excuse  = RAG.state.excuse;
         let key     = Strings.filename(excuse);
         let inflect = this.getInflection(idx);
-        let result  = [0.2, `excuse.${key}.${inflect}`];
+        let result  = [0.15, `excuse.${key}.${inflect}`];
 
         if (inflect === 'mid')
             result.push(0.2);
@@ -219,7 +219,8 @@ class Resolver
     {
         let platform = RAG.state.platform;
         let inflect  = this.getInflection(idx);
-        let result   = [0.2, `number.${platform[0]}${platform[1]}.${inflect}`];
+        let letter   = (platform[1] === '¾') ? 'M' : platform[1];
+        let result   = [0.15, `number.${platform[0]}${letter}.${inflect}`];
 
         if (inflect === 'mid')
             result.push(0.2);
@@ -231,12 +232,16 @@ class Resolver
     {
         let ctx     = element.dataset['context']!;
         let service = Strings.filename( RAG.state.getService(ctx) );
+        let result  = [];
 
-        return [0.1, `service.${service}.mid`, 0.1];
+        // Only add beginning delay if there isn't already one prior
+        if (typeof this.resolved.slice(-1)[0] !== 'number')
+            result.push(0.1);
+
+        return [...result, `service.${service}.mid`, 0.15];
     }
 
-    private resolveStation(element: HTMLElement, idx: number)
-        : VoxKey[]
+    private resolveStation(element: HTMLElement, idx: number) : VoxKey[]
     {
         let ctx     = element.dataset['context']!;
         let station = RAG.state.getStation(ctx);
@@ -255,20 +260,20 @@ class Resolver
         let list    = RAG.state.getStationList(ctx);
         let inflect = this.getInflection(idx);
 
-        let parts : VoxKey[] = [0.25];
+        let parts : VoxKey[] = [0.2];
 
         list.forEach( (v, k) =>
         {
             // Handle middle of list inflection
             if (k !== list.length - 1)
             {
-                parts.push(`station.${v}.mid`, 0.3);
+                parts.push(`station.${v}.mid`, 0.25);
                 return;
             }
 
             // Add "and" if list has more than 1 station and this is the end
             if (list.length > 1)
-                parts.push('station.parts.and.mid', 0.2);
+                parts.push('station.parts.and.mid', 0.25);
 
             // Add "only" if only one station in the calling list
             if (list.length === 1 && ctx === 'calling')
@@ -291,7 +296,7 @@ class Resolver
         let parts : VoxKey[] = [0.2];
 
         if (time[0] === '00' && time[1] === '00')
-            return [...parts, 'number.0000.mid'];
+            return [...parts, 'number.0000.mid', 0.2];
 
         // Hours
         parts.push(`number.${time[0]}.begin`);

@@ -96,11 +96,15 @@ export class Captioner
         for (let n = 10; n <= 23; n++)
             this.captionBank[`number.${n}.begin`] = `${n}`;
 
+        // Magic values
+        this.captionBank['number.9M.mid'] = '9¾';
+        this.captionBank['number.9M.end'] = '9¾';
+
         // 00:MM
-        this.captionBank[`number.00.begin`] = 'Oh-oh';
+        this.captionBank['number.00.begin'] = 'Oh-oh';
 
         // 00:00
-        this.captionBank[`number.0000.mid`] = 'Oh-zero hundred';
+        this.captionBank['number.0000.mid'] = 'Oh-zero hundred';
 
         // "Hundred"
         this.captionBank['number.hundred.mid'] = 'Hundred';

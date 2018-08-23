@@ -287,10 +287,15 @@ class State
             ? Random.int(1, 26).toString()
             : '0';
 
+        // Magic values
+        if (platform[0] === '9')
+            platform[1] = Random.bool(25) ? '¾' : '';
+
         // Only 10% chance for platform letter, since it's uncommon
-        platform[1] = Random.bool(10)
-            ? Random.array('ABC')
-            : '';
+        if (platform[1] === '')
+            platform[1] = Random.bool(10)
+                ? Random.array('ABC')
+                : '';
 
         this._platform = platform;
         return this._platform;

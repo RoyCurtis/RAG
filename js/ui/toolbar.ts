@@ -72,9 +72,9 @@ class Toolbar
     /** Handles the stop button, stopping the marquee and any speech */
     private handleStop() : void
     {
-        RAG.speech.onstop = undefined;
         RAG.speech.stop();
         RAG.views.marquee.stop();
+        RAG.speech.onstop = undefined;
     }
 
     /** Handles the generate button, generating new random state and phrase */

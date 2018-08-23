@@ -175,6 +175,13 @@ export class PhrasePreview
             this.type          = 'platform';
             types.push('platform');
         }
+        // Magic values
+        else if (this.value === '9M')
+        {
+            RAG.state.platform = ['9', '¾'];
+            this.type          = 'platform';
+            types.push('platform');
+        }
         // Mixed number types
         else
         {
