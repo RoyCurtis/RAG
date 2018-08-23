@@ -131,11 +131,11 @@ class Resolver
 
         // If text is just a full stop, return silence
         if (text === '.')
-            return [0.5];
+            return [0.65];
 
         // If it begins with a full stop, add silence
         if ( text.startsWith('.') )
-            set.push(0.5);
+            set.push(0.65);
 
         // If the text doesn't contain any words, skip
         if ( !text.match(/[a-z0-9]/i) )
@@ -161,7 +161,7 @@ class Resolver
 
         // If text ends with a full stop, add silence
         if ( text.endsWith('.') )
-            set.push(0.5);
+            set.push(0.65);
 
         return set;
     }
@@ -262,7 +262,7 @@ class Resolver
             // Handle middle of list inflection
             if (k !== list.length - 1)
             {
-                parts.push(`station.${v}.mid`, 0.25);
+                parts.push(`station.${v}.mid`, 0.3);
                 return;
             }
 
@@ -310,12 +310,12 @@ class Resolver
         let result = [];
 
         if ( text.startsWith('.') )
-            result.push(0.5);
+            result.push(0.65);
 
         result.push( element.dataset['key']! );
 
         if ( text.endsWith('.') )
-            result.push(0.5);
+            result.push(0.65);
 
         return result;
     }
