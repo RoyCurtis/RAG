@@ -219,26 +219,26 @@ class VoxEngine
 
         console.log('VOX CLIP PLAYING:', req.path, req.buffer.duration, this.nextBegin);
 
-        let node    = this.audioContext.createBufferSource();
-        let latency = this.audioContext.baseLatency + 0.15;
-        let delay   = req.delay;
-        let rate    = this.currentSettings!.rate || 1;
-        node.buffer = req.buffer;
+        let node     = this.audioContext.createBufferSource();
+        let latency  = this.audioContext.baseLatency + 0.15;
+        let rate     = this.currentSettings!.rate || 1;
+        node.buffer  = req.buffer;
 
         // Remap rate from 0.1..1.9 to 0.8..1.5
         if      (rate < 1) rate = (rate * 0.2) + 0.8;
         else if (rate > 1) rate = (rate * 0.5) + 0.5;
 
-        delay *= 1 / rate;
+        let delay    = req.delay * (1 / rate);
+        let duration = node.buffer.duration * (1 / rate);
 
-        console.log(rate, delay);
+        console.log(rate, delay, duration);
 
         node.playbackRate.value = rate;
         node.connect(this.gainNode);
         node.start(this.nextBegin + delay);
 
         this.scheduledBuffers.push(node);
-        this.nextBegin += (node.buffer.duration + delay - latency);
+        this.nextBegin += (duration + delay - latency);
 
         // Have this buffer node remove itself from the schedule when done
         node.onended = _ =>
