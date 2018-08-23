@@ -44,15 +44,14 @@ export class EditorSetup
             {
                 // Note: Don't bother doing default selection here, as voice manager will
                 // create a new voice and select it. Also handled by discoverVoices.
-                let name   = `RAG-VOX ${voice.name}`;
-                let option = DOM.addOption(this.selVoice, name, voice.name);
+                let option = DOM.addOption(this.selVoice, voice, voice);
 
-                if (voice.name === VoxEditor.config.voiceID)
+                if (voice === VoxEditor.config.voicePath)
                     option.selected = true;
 
-                option = DOM.addOption(this.selPlayVoice, name, voice.name);
+                option = DOM.addOption(this.selPlayVoice, voice, voice);
 
-                if (voice.name === VoxEditor.config.voicePlayID)
+                if (voice === VoxEditor.config.voicePlayPath)
                     option.selected = true;
             });
     }
@@ -68,11 +67,11 @@ export class EditorSetup
         if (ev.type === 'submit')
             ev.preventDefault();
 
-        VoxEditor.config.deviceId    = this.selInputDevice.value;
-        VoxEditor.config.voiceID     = this.selVoice.value;
-        VoxEditor.config.voicePlayID = this.selPlayVoice.value;
-        VoxEditor.config.format      = this.selFormat.value;
-        VoxEditor.config.ppCommand   = this.inputScript.value;
+        VoxEditor.config.deviceId      = this.selInputDevice.value;
+        VoxEditor.config.voicePath     = this.selVoice.value;
+        VoxEditor.config.voicePlayPath = this.selPlayVoice.value;
+        VoxEditor.config.format        = this.selFormat.value;
+        VoxEditor.config.ppCommand     = this.inputScript.value;
         VoxEditor.config.save();
 
         // Animate green "confirm" indicator

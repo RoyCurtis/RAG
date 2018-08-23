@@ -11,12 +11,10 @@ import {VoiceExporter} from "./voiceExporter";
 export class VoiceManager
 {
     /** Relative path to find voices in */
-    private static readonly VOX_DIR   : string = '../data/vox';
-    /** Pattern to match voice folder names */
-    private static readonly VOX_REGEX : RegExp = /(.+)_([a-z]{2}-[A-Z]{2})/;
+    private static readonly VOX_DIR : string = '../data/vox';
 
     /** List of discovered and available voices */
-    public  readonly voxList      : CustomVoice[];
+    public  readonly voxList      : string[];
     /** Audio output through which clips are played */
     private readonly audioContext : AudioContext;
     /** Vox engine instance for preview phrases */
@@ -29,28 +27,27 @@ export class VoiceManager
     /** Audio buffer node holding and playing the current voice clip */
     private currentBufNode? : AudioBufferSourceNode;
 
-    public get currentVoice() : CustomVoice | undefined
+    public get currentVoice() : string | undefined
     {
-        return this.voxList.find(v => v.name === VoxEditor.config.voiceID);
+        return this.voxList.find(v => v === VoxEditor.config.voicePath);
     }
 
-    public get currentPlayVoice() : CustomVoice | undefined
+    public get currentPlayVoice() : string | undefined
     {
-        return this.voxList.find(v => v.name === VoxEditor.config.voicePlayID);
+        return this.voxList.find(v => v === VoxEditor.config.voicePlayPath);
     }
 
     public constructor()
     {
-        this.voxList         = [];
-        this.audioContext    = new AudioContext();
-        this.voxEngine       = new VoxEngine('../data/vox');
-        CustomVoice.basePath = VoiceManager.VOX_DIR;
+        this.voxList      = [];
+        this.audioContext = new AudioContext();
+        this.voxEngine    = new VoxEngine('../data/vox');
 
         // Discover valid voice folders
         this.discoverVoices();
 
         // Create new voice if none found
-        if (VoxEditor.config.voiceID === '')
+        if (VoxEditor.config.voicePath === '')
             this.createNewVoice();
     }
 
@@ -62,7 +59,7 @@ export class VoiceManager
 
         let format = VoxEditor.config.format;
 
-        return path.join(this.currentVoice!.voiceURI, `${key}.${format}`);
+        return path.join(this.currentVoice, `${key}.${format}`);
     }
 
     /** Checks whether a clip for the given key exists on disk */
@@ -148,7 +145,7 @@ export class VoiceManager
         this.stopPreview();
 
         if (this.currentPlayVoice)
-            this.voxEngine.speak(resolver.toVox(), this.currentPlayVoice, {});
+            this.voxEngine.speak(resolver.toVox(), {voxPath : this.currentPlayVoice});
     }
 
     /** Plays the currently loaded clip, if any */
@@ -248,7 +245,7 @@ export class VoiceManager
             return;
 
         let key      = VoxEditor.views.phrases.currentKey;
-        let playPath = path.join(this.currentPlayVoice!.voiceURI, `${key}.mp3`);
+        let playPath = path.join(this.currentPlayVoice!, `${key}.mp3`);
         let command  = VoxEditor.config.ppCommand
             .replace('$1', this.currentPath)
             .replace('$2', playPath);
@@ -273,18 +270,11 @@ export class VoiceManager
             .filter(Files.isDir)
             .forEach(dir =>
             {
-                let name  = path.basename(dir);
-                let parts = name.match(VoiceManager.VOX_REGEX);
-
-                // Skip voices that do not match the format
-                if (!parts)
-                    return;
-
-                this.voxList.push( new CustomVoice(parts[1], parts[2]) );
+                this.voxList.push(dir);
 
                 // If no voice configured yet, choose the first one found
-                if (VoxEditor.config.voiceID === '')
-                    VoxEditor.config.voiceID = parts[1];
+                if (VoxEditor.config.voicePath === '')
+                    VoxEditor.config.voicePath = dir;
             });
     }
 
@@ -295,9 +285,9 @@ export class VoiceManager
         let newVoice = path.join(VoiceManager.VOX_DIR, newName);
 
         fs.mkdirSync(newVoice);
-        VoxEditor.config.voiceID     = newVoice;
-        VoxEditor.config.voicePlayID = newVoice;
-        this.voxList.push( new CustomVoice(newName, 'en-GB') );
+        VoxEditor.config.voicePath     = newVoice;
+        VoxEditor.config.voicePlayPath = newVoice;
+        this.voxList.push(newVoice);
 
         alert(`No voices were found, so a new one was made at '${newVoice}'`);
     }

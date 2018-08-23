@@ -237,19 +237,21 @@ export class EditorPhrases
         let found = false;
         let voice = VoxEditor.voices.currentVoice;
 
-        if (voice) fs.readdirSync(voice.voiceURI).forEach(file =>
-        {
-            let key = file.replace('.mp3', '').replace('.wav', '');
+        if (voice) fs.readdirSync(voice)
+            .filter( file => file.match(/\.(mp3|wav)$/i) )
+            .forEach(file =>
+            {
+                let key = file.replace('.mp3', '').replace('.wav', '');
 
-            if (key in VoxEditor.captioner.captionBank)
-                return;
+                if (key in VoxEditor.captioner.captionBank)
+                    return;
 
-            if (!found)
-                console.group(`Orphaned files found in ${voice!.voiceURI}:`);
+                if (!found)
+                    console.group(`Orphaned files found in ${voice}:`);
 
-            console.log(file);
-            found = true;
-        });
+                console.log(file);
+                found = true;
+            });
 
         if (found)
         {

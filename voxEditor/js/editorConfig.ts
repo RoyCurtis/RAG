@@ -5,17 +5,17 @@
 export class EditorConfig
 {
     /** Recording device ID to use */
-    public deviceId    : string = 'default';
+    public deviceId      : string = 'default';
     /** Export format for saved clips */
-    public format      : string = 'mp3';
+    public format        : string = 'mp3';
     /** Post-process command to use on saved clips */
-    public ppCommand   : string = '';
+    public ppCommand     : string = '';
     /** Key of the last voice clip selected */
-    public lastKey     : string = '';
-    /** ID of the voice that was last being edited */
-    public voiceID     : string = '';
-    /** ID of the playback voice that was last chosen */
-    public voicePlayID : string = '';
+    public lastKey       : string = '';
+    /** Path of the voice that was last being edited */
+    public voicePath     : string = '';
+    /** Path of the playback voice that was last chosen */
+    public voicePlayPath : string = '';
 
     /** Safely loads runtime configuration from localStorage, if any */
     public constructor(load: boolean)
