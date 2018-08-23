@@ -474,13 +474,13 @@
 <phrase id="voxeditor_excuse_mid">
   <vox key="phraseset.root.4.0">We are sorry that services are subject to delay because
   of</vox> <excuse/> <vox key="phraseset.delay_at_near.0.0">at</vox>
-  <station context="excuse"/>. ...<vox key="phraseset.excuse_pre.1.0">This is due to</vox>
+  <station context="excuse"/>. <vox key="phraseset.excuse_pre.1.0">This is due to</vox>
   <excuse/> <vox key="phraseset.delay_at_near.1.0">near</vox> <station context="excuse"/>.
 </phrase>
 
 <phrase id="voxeditor_excuse_end">
   <vox key="phraseset.root.4.0">We are sorry that services are subject to delay because
-  of</vox> <excuse/>. ...<vox key="phraseset.excuse_pre.1.0">This is due to</vox>
+  of</vox> <excuse/>. <vox key="phraseset.excuse_pre.1.0">This is due to</vox>
   <excuse/>.
 </phrase>
 
@@ -491,7 +491,7 @@
 </phrase>
 
 <phrase id="voxeditor_letter_end">
-  <vox key="phraseset.train_layout.8.4">...with first class unreserved seating in
+  <vox key="phraseset.train_layout.8.4">with first class unreserved seating in
   coach</vox> <coach context="first"/>.
 </phrase>
 
@@ -505,37 +505,37 @@
 <phrase id="voxeditor_number_mid">
   <vox key="phrase.platform_wait.0">Platform</vox> <platform/>
   <vox key="phrase.platform_wait.2">for the</vox> <time context="main"/>
-  <vox key="phrase.platform_wait.4">service to</vox> <station context="destination"/>...
+  <vox key="phrase.platform_wait.4">service to</vox> <station context="destination"/>.
 </phrase>
 
 <phrase id="voxeditor_number_end">
   <vox key="phrase.attention_please_platform.0">May I have your attention please on
   platform</vox> <platform/>.
-  <vox key="phraseset.root.7.2">...is not in passenger service. Please do not board the
-  next train at platform</vox> <platform/>.
+  <vox key="phraseset.root.7.2">is not in passenger service. Please do not board the next
+  train at platform</vox> <platform/>.
 </phrase>
 
 <phrase id="voxeditor_platform_mid">
   <vox key="phrase.platform_wait.0">Platform</vox> <platform/>
   <vox key="phrase.platform_wait.2">for the</vox> <time context="main"/>
-  <vox key="phrase.platform_wait.4">service to</vox> <station context="destination"/>...
+  <vox key="phrase.platform_wait.4">service to</vox> <station context="destination"/>.
 </phrase>
 
 <phrase id="voxeditor_platform_end">
   <vox key="phrase.attention_please_platform.0">May I have your attention please on
   platform</vox> <platform/>.
-  <vox key="phraseset.root.7.2">...is not in passenger service. Please do not board the
-  next train at platform</vox> <platform/>.
+  <vox key="phraseset.root.7.2">is not in passenger service. Please do not board the next
+  train at platform</vox> <platform/>.
 </phrase>
 
 <phrase id="voxeditor_service_mid">
   <vox key="phrase.platform_wait.0">Platform</vox> <platform/>
   <vox key="phrase.platform_wait.2">for the</vox> <time context="main"/>
   <service context="provider"/> <vox key="phrase.platform_wait.4">service to</vox>
-  <station context="destination"/>... <vox key="phrase.ticket_conditions.0">Please be
-  aware that tickets marked "</vox> <service context="alternative"/>
+  <station context="destination"/>. <vox key="phrase.ticket_conditions.0">Please be aware
+  that tickets marked "</vox> <service context="alternative"/>
   <vox key="phrase.ticket_conditions.2">only" are not valid on this train.</vox>
-  ...<service context="provider"/> <vox key="phraseset.service_apology.4.2">apologises for
+  <service context="provider"/> <vox key="phraseset.service_apology.4.2">apologises for
   the disruption to your journey today.</vox>
 </phrase>
 
@@ -560,16 +560,16 @@
   <vox key="phrase.platform_wait.0">Platform</vox> <platform/>
   <vox key="phrase.platform_wait.2">for the</vox> <time context="main"/>
   <vox key="phrase.platform_wait.4">service to</vox> <station context="destination"/>.
-  <vox key="phrase.next_fastest.2">...your next fastest direct service is now expected to
-    be the</vox> <time context="alternative"/> to <station context="destination_split"/>.
+  <vox key="phrase.next_fastest.2">your next fastest direct service is now expected to be
+  the</vox> <time context="alternative"/> to <station context="destination_split"/>.
 </phrase>
 
 <phrase id="voxeditor_time_mid">
   <vox key="phrase.platform_wait.0">Platform</vox> <platform/>
   <vox key="phrase.platform_wait.2">for the</vox> <time context="main"/>
   <vox key="phrase.platform_wait.4">service to</vox> <station context="destination"/>.
-  <vox key="phrase.next_fastest.2">...your next fastest direct service is now expected to
-  be the</vox> <time context="alternative"/> to <station context="destination_split"/>.
+  <vox key="phrase.next_fastest.2">your next fastest direct service is now expected to be
+  the</vox> <time context="alternative"/> to <station context="destination_split"/>.
 </phrase>
 
 </messages>
