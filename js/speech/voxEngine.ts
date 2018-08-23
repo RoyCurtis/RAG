@@ -137,6 +137,10 @@ class VoxEngine
     /** Stops playing any currently spoken speech and resets state */
     public stop() : void
     {
+        // Already stopped? Do not continue
+        if (!this.isSpeaking)
+            return;
+
         // Stop pumping
         clearTimeout(this.pumpTimer);
 

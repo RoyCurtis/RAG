@@ -767,9 +767,13 @@ declare class Resolver {
 /** Manages speech synthesis using both native and custom engines */
 declare class Speech {
     /** Instance of the custom voice engine */
-    readonly voxEngine: VoxEngine;
+    private readonly voxEngine;
     /** Array of browser-provided voices available */
     browserVoices: SpeechSynthesisVoice[];
+    /** Event handler for when speech has ended */
+    onstop?: () => void;
+    /** Reference to the speech-stopped check timer */
+    private stopTimer;
     constructor();
     /** Begins speaking the given phrase components */
     speak(phrase: HTMLElement, settings?: SpeechSettings): void;

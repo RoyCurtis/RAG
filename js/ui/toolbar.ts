@@ -34,9 +34,9 @@ class Toolbar
         this.btnRecall.onclick   = this.handleLoad.bind(this);
         this.btnOption.onclick   = this.handleOption.bind(this);
 
+        // Has to execute on a delay, as speech cancel is unreliable without it
         this.btnPlay.onclick = ev =>
         {
-            // Has to execute on a delay, as speech cancel is unreliable without it
             ev.preventDefault();
             RAG.speech.stop();
             this.btnPlay.disabled = true;
@@ -56,19 +56,23 @@ class Toolbar
     /** Handles the play button, playing the editor's current phrase with speech */
     private handlePlay() : void
     {
-        // Note: It would be nice to have the play button change to the stop button and
-        // automatically change back. However, speech's 'onend' event was found to be
-        // unreliable, so I decided to keep play and stop separate.
-        // TODO: Use a timer to check speech end instead
-
         RAG.speech.speak( RAG.views.editor.getPhrase() );
         RAG.views.marquee.set( RAG.views.editor.getText() );
         this.btnPlay.disabled = false;
+        this.btnStop.hidden   = false;
+        this.btnPlay.hidden   = true;
+
+        RAG.speech.onstop = () =>
+        {
+            this.btnStop.hidden = true;
+            this.btnPlay.hidden = false;
+        };
     }
 
     /** Handles the stop button, stopping the marquee and any speech */
     private handleStop() : void
     {
+        RAG.speech.onstop = undefined;
         RAG.speech.stop();
         RAG.views.marquee.stop();
     }

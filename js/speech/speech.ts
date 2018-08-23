@@ -4,10 +4,14 @@
 class Speech
 {
     /** Instance of the custom voice engine */
-    public readonly voxEngine : VoxEngine;
+    private readonly voxEngine : VoxEngine;
 
     /** Array of browser-provided voices available */
-    public browserVoices : SpeechSynthesisVoice[] = [];
+    public  browserVoices : SpeechSynthesisVoice[] = [];
+    /** Event handler for when speech has ended */
+    public  onstop?       : () => void;
+    /** Reference to the speech-stopped check timer */
+    private stopTimer     : number = 0;
 
     public constructor()
     {
@@ -32,16 +36,33 @@ class Speech
     /** Begins speaking the given phrase components */
     public speak(phrase: HTMLElement, settings: SpeechSettings = {}) : void
     {
+        this.stop();
+
         either(settings.useVox, RAG.config.voxEnabled)
             ? this.speakVox(phrase, settings)
             : this.speakBrowser(phrase, settings);
+
+        // This checks for when both engines have stopped speaking, and calls the onstop
+        // event handler in stop(). I could use SpeechSynthesis.onend instead, but it was
+        // found to be unreliable, so I have to poll the speaking property this way. Since
+        // I am doing this, I have not bothered to give VOX engine an onend event.
+
+        this.stopTimer = setInterval(() =>
+        {
+            if (!window.speechSynthesis.speaking && !this.voxEngine.isSpeaking)
+                this.stop();
+        }, 100);
     }
 
     /** Stops and cancels all queued speech */
     public stop() : void
     {
+        clearInterval(this.stopTimer);
         window.speechSynthesis.cancel();
         this.voxEngine.stop();
+
+        if (this.onstop)
+            this.onstop();
     }
 
     /** Pause and unpause speech if the page is hidden or unhidden */
@@ -76,7 +97,6 @@ class Speech
         let text  = DOM.getCleanedVisibleText(phrase);
         let parts = text.split(/\.\s/i);
 
-        RAG.speech.stop();
         parts.forEach( (segment, idx) =>
         {
             // Add missing full stop to each sentence except the last, which has it
@@ -103,7 +123,6 @@ class Speech
      */
     private speakVox(phrase: HTMLElement, settings: SpeechSettings) : void
     {
-        // TODO: use volume settings
         let resolver = new Resolver(phrase);
         let voxPath  = RAG.config.voxPath || RAG.config.voxCustomPath;
 
