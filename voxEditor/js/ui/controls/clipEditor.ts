@@ -46,7 +46,7 @@ export class ClipEditor
     /** Shows and begins animating the needle from left to right bound */
     public beginNeedle() : void
     {
-        this.domNeedle.classList.remove('hidden');
+        this.domNeedle.hidden = false;
 
         let clip = VoxEditor.voices.currentClip;
 
@@ -80,7 +80,7 @@ export class ClipEditor
     public endNeedle() : void
     {
         cancelAnimationFrame(this.needleTimer);
-        this.domNeedle.classList.add('hidden');
+        this.domNeedle.hidden = true;
     }
 
     public getBounds() : [number, number]

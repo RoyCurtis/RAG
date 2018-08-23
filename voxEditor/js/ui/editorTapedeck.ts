@@ -175,16 +175,16 @@ export class EditorTapedeck
     /** Called when a clip has begun playing */
     public handleBeginPlay() : void
     {
-        this.btnStop.classList.remove('hidden');
-        this.btnPlay.classList.add('hidden');
+        this.btnStop.hidden = false;
+        this.btnPlay.hidden = true;
         this.clipEditor.beginNeedle();
     }
 
     /** Called when a clip has finished or stopped playing */
     public handleEndPlay() : void
     {
-        this.btnStop.classList.add('hidden');
-        this.btnPlay.classList.remove('hidden');
+        this.btnStop.hidden = true;
+        this.btnPlay.hidden = false;
         this.clipEditor.endNeedle();
     }
 

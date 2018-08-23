@@ -66,7 +66,7 @@ class Settings extends BaseView
         this.rangeSpeechRate.valueAsNumber  = RAG.config.speechRate;
 
         this.layout();
-        this.dom.classList.remove('hidden');
+        this.dom.hidden = false;
         this.btnSave.focus();
     }
 
@@ -75,7 +75,7 @@ class Settings extends BaseView
     {
         this.cancelReset();
         RAG.speech.stop();
-        this.dom.classList.add('hidden');
+        this.dom.hidden = true;
         DOM.blurActive(this.dom);
     }
 

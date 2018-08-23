@@ -9,10 +9,9 @@ class StationListItem
     /** Creates and detaches the template on first create */
     private static init() : void
     {
-        StationListItem.TEMPLATE    = DOM.require('#stationListItemTemplate');
-        StationListItem.TEMPLATE.id = '';
-
-        StationListItem.TEMPLATE.classList.remove('hidden');
+        StationListItem.TEMPLATE        = DOM.require('#stationListItemTemplate');
+        StationListItem.TEMPLATE.id     = '';
+        StationListItem.TEMPLATE.hidden = false;
         StationListItem.TEMPLATE.remove();
     }
 

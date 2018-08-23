@@ -176,7 +176,7 @@ class StationListPicker extends StationPicker
 
         // Add the new entry to the sortable list
         this.inputList.appendChild(newEntry.dom);
-        this.domEmptyList.classList.add('hidden');
+        this.domEmptyList.hidden = true;
 
         // Disable the added station in the chooser
         StationPicker.chooser.disable(code);
@@ -204,7 +204,7 @@ class StationListPicker extends StationPicker
         this.update();
 
         if (this.inputList.children.length === 0)
-            this.domEmptyList.classList.remove('hidden');
+            this.domEmptyList.hidden = false;
     }
 
     /** Updates the station list element and state currently being edited */

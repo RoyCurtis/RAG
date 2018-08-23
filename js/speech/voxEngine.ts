@@ -228,7 +228,7 @@ class VoxEngine
         if (this.nextBegin === 0)
             this.nextBegin = this.audioContext.currentTime;
 
-        console.log('VOX CLIP PLAYING:', req.path, req.buffer.duration, this.nextBegin);
+        console.log('VOX CLIP QUEUED:', req.path, req.buffer.duration, this.nextBegin);
 
         let node    = this.audioContext.createBufferSource();
         let latency = this.audioContext.baseLatency + 0.15;

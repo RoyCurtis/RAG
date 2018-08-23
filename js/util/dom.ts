@@ -206,7 +206,7 @@ class DOM
                 return null;
 
             // If this element isn't hidden and is focusable, return it!
-            if ( !current.classList.contains('hidden') )
+            if ( !current.hidden )
             if ( current.hasAttribute('tabindex') )
                 return current;
         }

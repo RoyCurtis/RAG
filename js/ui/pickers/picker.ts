@@ -65,7 +65,7 @@ abstract class Picker
      */
     public open(target: HTMLElement) : void
     {
-        this.dom.classList.remove('hidden');
+        this.dom.hidden = false;
         this.domEditing = target;
         this.layout();
     }
@@ -76,7 +76,7 @@ abstract class Picker
         // Fix keyboard staying open in iOS on close
         DOM.blurActive(this.dom);
 
-        this.dom.classList.add('hidden');
+        this.dom.hidden = true;
     }
 
     /** Positions this picker relative to the target phrase element */

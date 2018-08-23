@@ -12,10 +12,9 @@ class Chooser
     /** Creates and detaches the template on first create */
     private static init() : void
     {
-        Chooser.TEMPLATE    = DOM.require('#chooserTemplate');
-        Chooser.TEMPLATE.id = '';
-
-        Chooser.TEMPLATE.classList.remove('hidden');
+        Chooser.TEMPLATE        = DOM.require('#chooserTemplate');
+        Chooser.TEMPLATE.id     = '';
+        Chooser.TEMPLATE.hidden = false;
         Chooser.TEMPLATE.remove();
     }
 
@@ -222,13 +221,14 @@ class Chooser
             : Chooser.filterItem;
 
         // Prevent browser redraw/reflow during filtering
-        this.inputChoices.classList.add('hidden');
+        // TODO: Might the use of hidden break A11y here? (e.g. defocus)
+        this.inputChoices.hidden = true;
 
         // Iterate through all the items
         for (let i = 0; i < items.length; i++)
             engine(items[i] as HTMLElement, filter);
 
-        this.inputChoices.classList.remove('hidden');
+        this.inputChoices.hidden = false;
     }
 
     /** Applies filter to an item, showing it if matched, hiding if not */
@@ -237,14 +237,14 @@ class Chooser
         // Show if contains search term
         if (item.innerText.toLowerCase().indexOf(filter) >= 0)
         {
-            item.classList.remove('hidden');
+            item.hidden = false;
             return 0;
         }
 
         // Hide if not
         else
         {
-            item.classList.add('hidden');
+            item.hidden = true;
             return 1;
         }
     }
@@ -262,9 +262,9 @@ class Chooser
 
         // If all station names in this letter section were hidden, hide the section
         if (hidden >= count)
-            group.classList.add('hidden');
+            group.hidden = true;
         else
-            group.classList.remove('hidden');
+            group.hidden = false;
     }
 
     /** Visually changes the current selection, and updates the state and editor */

@@ -79,7 +79,7 @@
   </div>
 
   <!-- The settings screen -->
-  <div id="settingsScreen" class="hidden">
+  <div id="settingsScreen" hidden>
     <menu id="settingsMenu">
       <button tabindex="2" id="btnResetSettings" title="%ST_RESET_T%">
         %ST_RESET%
@@ -220,7 +220,7 @@
 
   <!-- UI definitions for phrase element editor dialogs -->
 
-  <div id="coachPicker" class="picker hidden">
+  <div id="coachPicker" hidden class="picker">
     <header></header>
 
     <form>
@@ -228,7 +228,7 @@
     </form>
   </div>
 
-  <div id="excusePicker" class="picker fullWidth hidden">
+  <div id="excusePicker" hidden class="picker fullWidth">
     <header></header>
 
     <form>
@@ -240,7 +240,7 @@
     </form>
   </div>
 
-  <div id="integerPicker" class="picker hidden">
+  <div id="integerPicker" hidden class="picker">
     <header></header>
 
     <form>
@@ -249,7 +249,7 @@
     </form>
   </div>
 
-  <div id="namedPicker" class="picker fullWidth hidden">
+  <div id="namedPicker" hidden class="picker fullWidth">
     <header></header>
 
     <form>
@@ -261,7 +261,7 @@
     </form>
   </div>
 
-  <div id="phrasesetPicker" class="picker modal hidden">
+  <div id="phrasesetPicker" hidden class="picker modal">
     <header></header>
 
     <form>
@@ -273,7 +273,7 @@
     </form>
   </div>
 
-  <div id="platformPicker" class="picker hidden">
+  <div id="platformPicker" hidden class="picker">
     <header></header>
 
     <form>
@@ -288,7 +288,7 @@
     </form>
   </div>
 
-  <div id="servicePicker" class="picker fullWidth hidden">
+  <div id="servicePicker" hidden class="picker fullWidth">
     <header></header>
 
     <form>
@@ -300,7 +300,7 @@
     </form>
   </div>
 
-  <div id="stationPicker" class="picker fullWidth hidden">
+  <div id="stationPicker" hidden class="picker fullWidth">
     <header></header>
 
     <form>
@@ -313,7 +313,7 @@
     </form>
   </div>
 
-  <div id="stationlistPicker" class="picker modal hidden">
+  <div id="stationlistPicker" hidden class="picker modal">
     <header></header>
 
     <form>
@@ -337,7 +337,7 @@
     </form>
   </div>
 
-  <div id="timePicker" class="picker hidden">
+  <div id="timePicker" hidden class="picker">
     <header></header>
 
     <form>
@@ -348,13 +348,13 @@
 
   <!-- UI definitions for common controls -->
 
-  <div id="chooserTemplate" class="chooser hidden">
+  <div id="chooserTemplate" hidden class="chooser">
     <input class="chSearchBox" type="text" tabindex="50" title=""/>
 
     <dl class="chChoicesBox" tabindex="50"></dl>
   </div>
 
-  <dd id="stationListItemTemplate" class="hidden" tabindex="-1" title="%P_SL_ITEM_T%">
+  <dd id="stationListItemTemplate" hidden tabindex="-1" title="%P_SL_ITEM_T%">
 
   </dd>
 
@@ -373,7 +373,7 @@
   <script src="data/nr_services.js" type="text/javascript"></script>
   <script src="data/nr_stations.js" type="text/javascript"></script>
   <!-- Loads RAG synchronously, after loading phrase data -->
-  <iframe id="nrPhraseset" class="hidden" src="data/nr_phrases.xml"
+  <iframe id="nrPhraseset" hidden src="data/nr_phrases.xml"
           onload="RAG.main({
             phrasesetEmbed: '#nrPhraseset',
             excusesData:    DATA_EXCUSES,

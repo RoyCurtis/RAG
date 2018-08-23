@@ -152,13 +152,13 @@ export class EditorPhrases
     /** Called when the choice of voice changes, by marking all missing entries */
     public handleVoiceChange() : void
     {
-        this.domList.classList.add('hidden');
+        this.domList.hidden = true;
 
         for (let i = 0; i < this.domList.children.length; i++)
             this.checkMissing(this.domList.children[i] as HTMLElement);
 
         this.findOrphans();
-        this.domList.classList.remove('hidden');
+        this.domList.hidden = false;
     }
 
     /** Handles click events for all phrase entries and buttons */
@@ -205,7 +205,7 @@ export class EditorPhrases
     /** Clears and fills the list with all available IDs and captions */
     private populateList() : void
     {
-        this.domList.classList.add('hidden');
+        this.domList.hidden = true;
 
         this.currentEntry      = undefined;
         this.domList.innerText = '';
@@ -228,7 +228,7 @@ export class EditorPhrases
         this.inputFind.disabled = (this.domList.children.length === 0);
 
         this.findOrphans();
-        this.domList.classList.remove('hidden');
+        this.domList.hidden = false;
     }
 
     /** Finds all orphaned voice files and logs them to console */
@@ -253,11 +253,11 @@ export class EditorPhrases
 
         if (found)
         {
-            this.domOrphan.classList.remove('hidden');
+            this.domOrphan.hidden = false;
             console.groupEnd();
         }
         else
-            this.domOrphan.classList.add('hidden');
+            this.domOrphan.hidden = true;
     }
 
     private findAndSelect(dir: number, keyOnly: boolean = false) : void

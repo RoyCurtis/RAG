@@ -87,7 +87,7 @@ input[type=range]::-webkit-slider-thumb {
   border: 2px solid #cc7e00;
   position: relative;
 }
-.hidden {
+[hidden] {
   display: none !important;
 }
 .warningScreen {
