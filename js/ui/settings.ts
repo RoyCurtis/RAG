@@ -9,6 +9,18 @@ class Settings extends BaseView
         this.attach <HTMLButtonElement> ('#btnResetSettings');
     private readonly btnSave          =
         this.attach <HTMLButtonElement> ('#btnSaveSettings');
+    private readonly chkUseVox        =
+        this.attach <HTMLInputElement>  ('#chkUseVox');
+    private readonly hintUseVox       =
+        this.attach <HTMLElement>       ('#hintUseVox');
+    private readonly selVoxVoice      =
+        this.attach <HTMLSelectElement> ('#selVoxVoice');
+    private readonly inputVoxPath     =
+        this.attach <HTMLInputElement>  ('#inputVoxPath');
+    private readonly selVoxReverb     =
+        this.attach <HTMLSelectElement> ('#selVoxReverb');
+    private readonly selVoxChime      =
+        this.attach <HTMLSelectElement> ('#selVoxChime');
     private readonly selSpeechVoice   =
         this.attach <HTMLSelectElement> ('#selSpeechChoice');
     private readonly rangeSpeechVol   =
@@ -26,12 +38,13 @@ class Settings extends BaseView
     public constructor()
     {
         super('#settingsScreen');
+        // TODO: Check if VOX is available, disable if not
 
         this.btnReset.onclick      = this.handleReset.bind(this);
         this.btnSave.onclick       = this.handleSave.bind(this);
+        this.chkUseVox.onchange    = this.layout.bind(this);
+        this.selVoxVoice.onchange  = this.layout.bind(this);
         this.btnSpeechTest.onclick = this.handleVoiceTest.bind(this);
-
-        // Legal and acknowledgements
 
         Linkdown.parse( DOM.require('#legalBlock') );
     }
@@ -39,15 +52,21 @@ class Settings extends BaseView
     /** Opens the settings screen */
     public open() : void
     {
-        this.dom.classList.remove('hidden');
-
         // The voice list has to be populated each open, in case it changes
         this.populateVoiceList();
 
+        this.chkUseVox.checked              = RAG.config.voxEnabled;
+        this.selVoxVoice.value              = RAG.config.voxPath;
+        this.inputVoxPath.value             = RAG.config.voxCustomPath;
+        this.selVoxReverb.value             = RAG.config.voxReverb;
+        this.selVoxChime.value              = RAG.config.voxChime;
         this.selSpeechVoice.selectedIndex   = RAG.config.speechVoice;
         this.rangeSpeechVol.valueAsNumber   = RAG.config.speechVol;
         this.rangeSpeechPitch.valueAsNumber = RAG.config.speechPitch;
         this.rangeSpeechRate.valueAsNumber  = RAG.config.speechRate;
+
+        this.layout();
+        this.dom.classList.remove('hidden');
         this.btnSave.focus();
     }
 
@@ -55,9 +74,26 @@ class Settings extends BaseView
     public close() : void
     {
         this.cancelReset();
-        RAG.speech.cancel();
+        RAG.speech.stop();
         this.dom.classList.add('hidden');
         DOM.blurActive(this.dom);
+    }
+
+    /** Calculates form layout and control visibility based on state */
+    private layout() : void
+    {
+        let voxEnabled = this.chkUseVox.checked;
+        let voxCustom  = (this.selVoxVoice.value === '');
+
+        // TODO: Migrate all of RAG to use hidden attributes instead, for screen readers
+        DOM.toggleHiddenAll(
+            [this.selSpeechVoice,   !voxEnabled],
+            [this.rangeSpeechPitch, !voxEnabled],
+            [this.selVoxVoice,       voxEnabled],
+            [this.inputVoxPath,      voxEnabled && voxCustom],
+            [this.selVoxReverb,      voxEnabled],
+            [this.selVoxChime,       voxEnabled]
+        );
     }
 
     /** Clears and populates the voice list */
@@ -65,7 +101,7 @@ class Settings extends BaseView
     {
         this.selSpeechVoice.innerHTML = '';
 
-        let voices = RAG.speech.getVoices();
+        let voices = RAG.speech.browserVoices;
 
         // Handle empty list
         if (voices.length <= 0)
@@ -90,7 +126,7 @@ class Settings extends BaseView
         }
 
         RAG.config.reset();
-        RAG.speech.cancel();
+        RAG.speech.stop();
         this.cancelReset();
         this.open();
         alert( L.ST_RESET_DONE() );
@@ -108,10 +144,16 @@ class Settings extends BaseView
     /** Handles the save button, saving config to storage */
     private handleSave() : void
     {
-        RAG.config.speechVoice  = this.selSpeechVoice.selectedIndex;
-        RAG.config.speechVol    = parseFloat(this.rangeSpeechVol.value);
-        RAG.config.speechPitch  = parseFloat(this.rangeSpeechPitch.value);
-        RAG.config.speechRate   = parseFloat(this.rangeSpeechRate.value);
+        RAG.config.voxEnabled    = this.chkUseVox.checked;
+        RAG.config.voxPath       = this.selVoxVoice.value;
+        RAG.config.voxCustomPath = this.inputVoxPath.value;
+        RAG.config.voxReverb     = this.selVoxReverb.value;
+        RAG.config.voxChime      = this.selVoxChime.value;
+        RAG.config.speechVoice   = this.selSpeechVoice.selectedIndex;
+        // parseFloat instead of valueAsNumber; see Architecture.md
+        RAG.config.speechVol     = parseFloat(this.rangeSpeechVol.value);
+        RAG.config.speechPitch   = parseFloat(this.rangeSpeechPitch.value);
+        RAG.config.speechRate    = parseFloat(this.rangeSpeechRate.value);
         RAG.config.save();
         this.close();
     }
@@ -120,7 +162,7 @@ class Settings extends BaseView
     private handleVoiceTest(ev: Event) : void
     {
         ev.preventDefault();
-        RAG.speech.cancel();
+        RAG.speech.stop();
         this.btnSpeechTest.disabled = true;
 
         // Has to execute on a delay, as speech cancel is unreliable without it
@@ -140,10 +182,14 @@ class Settings extends BaseView
             RAG.speech.speak(
                 phrase.firstElementChild! as HTMLElement,
                 {
-                    voiceIdx : this.selSpeechVoice.selectedIndex,
-                    volume   : this.rangeSpeechVol.valueAsNumber,
-                    pitch    : this.rangeSpeechPitch.valueAsNumber,
-                    rate     : this.rangeSpeechRate.valueAsNumber
+                    useVox    : this.chkUseVox.checked,
+                    voxPath   : this.selVoxVoice.value || this.inputVoxPath.value,
+                    voxReverb : this.selVoxReverb.value,
+                    voxChime  : this.selVoxChime.value,
+                    voiceIdx  : this.selSpeechVoice.selectedIndex,
+                    volume    : this.rangeSpeechVol.valueAsNumber,
+                    pitch     : this.rangeSpeechPitch.valueAsNumber,
+                    rate      : this.rangeSpeechRate.valueAsNumber
                 }
             );
         }, 200);

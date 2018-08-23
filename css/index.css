@@ -1,5 +1,92 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 @import "font/5by7.css";
+input[type=checkbox] {
+  width: 64px;
+  height: 32px;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: 2px solid #444;
+  border-radius: 0;
+  cursor: pointer;
+  display: block;
+}
+input[type=checkbox]::after {
+  text-shadow: 0 0 5px #000;
+  box-shadow: 0 0 5px #000;
+  width: 24px;
+  height: 24px;
+  background: #444;
+  content: ' ';
+  display: block;
+  left: 2px;
+  position: relative;
+  top: 2px;
+}
+input[type=checkbox]:active::after {
+  left: 6px;
+  width: 28px;
+}
+input[type=checkbox]:checked {
+  text-shadow: 0 0 5px #cc7e00;
+  box-shadow: 0 0 5px #cc7e00, 0 0 5px #cc7e00 inset;
+  border-color: #ffa500;
+}
+input[type=checkbox]:checked::after {
+  text-shadow: 0 0 5px #cc7e00;
+  box-shadow: 0 0 5px #cc7e00, 0 0 5px #cc7e00 inset;
+  background: #ffa500;
+  left: 34px;
+}
+input[type=checkbox]:checked:active::after {
+  left: 26px;
+  width: 28px;
+}
+input[type=checkbox][disabled] {
+  border-style: dotted;
+  cursor: not-allowed;
+  opacity: 1;
+}
+input[type=checkbox][disabled]:active::after {
+  left: 2px;
+  width: 24px;
+}
+input[type=range] {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  cursor: pointer;
+  position: relative;
+}
+input[type=range]::before {
+  background: #cc7e00;
+  content: ' ';
+  display: block;
+  height: 3px;
+  position: absolute;
+  top: 14px;
+  width: 100%;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  background: none;
+  border: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  width: 32px;
+  height: 32px;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background: #222;
+  border: 2px solid #cc7e00;
+  position: relative;
+}
 .hidden {
   display: none !important;
 }
@@ -492,8 +579,6 @@
 #settingsScreen {
   align-content: flex-start;
   background: #000;
-  display: flex;
-  flex-flow: row wrap;
   overflow-x: hidden;
   overflow-y: auto;
   position: absolute;
@@ -502,6 +587,10 @@
   left: 0;
   width: 100%;
   height: 100%;
+}
+#settingsScreen > * {
+  margin: 0 auto;
+  max-width: 640px;
 }
 #settingsScreen button {
   background: #222;
@@ -532,12 +621,6 @@
 #settingsScreen button:disabled:active {
   background: #222;
 }
-#settingsScreen #btnResetSettings {
-  flex: 4;
-}
-#settingsScreen #btnSaveSettings {
-  flex: 6;
-}
 #settingsScreen #btnSpeechTest {
   grid-column: 2;
 }
@@ -554,25 +637,22 @@
   padding-bottom: 8px;
   margin-bottom: 8px;
 }
-#settingsScreen p {
-  column-count: 2;
-  column-gap: 24px;
-  flex: 100%;
-  font-size: small;
-  line-height: 175%;
-  padding: 24px;
-  text-align: justify;
-}
-#settingsScreen p a {
-  color: #fff;
-}
-#settingsScreen p a:visited {
-  color: #aaa;
-}
 #settingsScreen form {
+  align-items: center;
   display: grid;
   flex: 1;
   grid-template-columns: 40% 60%;
+}
+#settingsScreen form label,
+#settingsScreen form select,
+#settingsScreen form input,
+#settingsScreen form p {
+  margin: 24px;
+}
+#settingsScreen form label,
+#settingsScreen form select,
+#settingsScreen form input {
+  font-size: large;
 }
 #settingsScreen form label {
   -webkit-user-select: none;
@@ -581,17 +661,45 @@
   -ms-user-select: none;
   user-select: none;
 }
-#settingsScreen form label,
-#settingsScreen form select,
-#settingsScreen form input {
-  flex: 1;
-  font-size: large;
-  margin: 24px;
+#settingsScreen form input[type=checkbox],
+#settingsScreen form select {
+  justify-self: right;
+}
+#settingsScreen form input[type=range] {
   width: auto;
 }
 #settingsScreen form select {
-  justify-self: right;
-  width: 75%;
+  width: 100%;
+  max-width: 336px;
+}
+#settingsScreen form p {
+  font-size: smaller;
+  grid-column: span 2;
+  margin-top: 0;
+}
+#settingsScreen #settingsMenu {
+  display: flex;
+}
+#settingsScreen #settingsMenu #btnResetSettings {
+  flex: 4;
+}
+#settingsScreen #settingsMenu #btnSaveSettings {
+  flex: 6;
+}
+#settingsScreen #legalBlock {
+  column-count: 2;
+  column-gap: 24px;
+  flex: 100%;
+  font-size: small;
+  line-height: 175%;
+  padding: 24px;
+  text-align: justify;
+}
+#settingsScreen #legalBlock a {
+  color: #fff;
+}
+#settingsScreen #legalBlock a:visited {
+  color: #aaa;
 }
 * {
   margin: 0;
@@ -615,9 +723,6 @@ body {
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
-}
-iframe {
-  display: none;
 }
 #tooSmallScreen {
   display: none;
@@ -756,24 +861,6 @@ iframe {
     height: 32px;
     margin: 8px;
   }
-  #settingsScreen #btnResetSettings {
-    flex: 1;
-  }
-  #settingsScreen #btnSaveSettings {
-    flex: 1;
-  }
-  #settingsScreen h1 {
-    font-size: large;
-    padding: 12px;
-  }
-  #settingsScreen p {
-    column-count: 1;
-    font-size: smaller;
-    padding-top: 8px;
-  }
-  #settingsScreen form {
-    grid-template-columns: 25% 75%;
-  }
   #settingsScreen form label,
   #settingsScreen form select,
   #settingsScreen form input {
@@ -785,6 +872,25 @@ iframe {
     overflow: hidden;
     width: 75%;
   }
+  #settingsScreen form p {
+    font-size: smaller;
+    margin: 0 12px 12px;
+  }
+  #settingsScreen h1 {
+    font-size: large;
+    padding: 12px;
+  }
+  #settingsScreen #settingsMenu #btnResetSettings {
+    flex: 1;
+  }
+  #settingsScreen #settingsMenu #btnSaveSettings {
+    flex: 1;
+  }
+  #settingsScreen #legalBlock {
+    column-count: 1;
+    font-size: smaller;
+    padding-top: 8px;
+  }
 }
 @media (max-height: 400px) {
   #mainScreen,
@@ -795,6 +901,12 @@ iframe {
   #tooSmallScreen {
     display: block;
   }
+}
+input[type=checkbox] {
+  transition: border-color 100ms;
+}
+input[type=checkbox]::after {
+  transition: left 100ms, width 100ms, background 100ms;
 }
 #editor span {
   transition: background 500ms, border 100ms;

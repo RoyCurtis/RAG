@@ -38,7 +38,7 @@ class Toolbar
         {
             // Has to execute on a delay, as speech cancel is unreliable without it
             ev.preventDefault();
-            RAG.speech.cancel();
+            RAG.speech.stop();
             this.btnPlay.disabled = true;
             window.setTimeout(this.handlePlay.bind(this), 200);
         };
@@ -59,6 +59,7 @@ class Toolbar
         // Note: It would be nice to have the play button change to the stop button and
         // automatically change back. However, speech's 'onend' event was found to be
         // unreliable, so I decided to keep play and stop separate.
+        // TODO: Use a timer to check speech end instead
 
         RAG.speech.speak( RAG.views.editor.getPhrase() );
         RAG.views.marquee.set( RAG.views.editor.getText() );
@@ -68,7 +69,7 @@ class Toolbar
     /** Handles the stop button, stopping the marquee and any speech */
     private handleStop() : void
     {
-        RAG.speech.cancel();
+        RAG.speech.stop();
         RAG.views.marquee.stop();
     }
 

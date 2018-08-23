@@ -241,4 +241,34 @@ class DOM
             ? Array.prototype.indexOf.call(parent.childNodes, child)
             : -1;
     }
+
+    /**
+     * Toggles the hidden attribute of the given element, and all its labels.
+     *
+     * @param element Element to toggle the hidden attribute of
+     * @param force Optional value to force toggling to
+     */
+    public static toggleHidden(element: HTMLElement, force?: boolean) : void
+    {
+        let hidden = !element.hidden;
+
+        // Do nothing if already toggled to the forced state
+        if (hidden === force)
+            return;
+
+        element.hidden = hidden;
+
+        if (element.labels)
+            element.labels.forEach(l => l.hidden = hidden);
+    }
+
+    /**
+     * Toggles the hidden attribute of a group of elements, in bulk.
+     *
+     * @param list An array of argument pairs for {toggleHidden}
+     */
+    public static toggleHiddenAll(...list: [HTMLElement, boolean?][]) : void
+    {
+        list.forEach( l => this.toggleHidden(...l) );
+    }
 }

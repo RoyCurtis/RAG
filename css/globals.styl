@@ -91,6 +91,52 @@ unselectable()
 
 // Global controls
 
+input[type=checkbox]
+  rect(64px, 32px)
+  no-appearance()
+  unselectable()
+
+  border        2px solid $bgDark
+  border-radius 0
+  cursor        pointer
+  display       block
+
+  &::after
+    glow($bgDarkest, false)
+    rect(24px)
+    background $bgDark
+    content    ' '
+    display    block
+    left       2px
+    position   relative
+    top        2px
+
+  &:active::after
+    left  6px
+    width 28px
+
+  &:checked
+    glow($fgFocus)
+    border-color $fgMarquee
+
+    &::after
+      glow($fgFocus)
+      background $fgMarquee
+      left       34px
+
+    &:active::after
+      left  26px
+      width 28px
+
+  &[disabled]
+    border-style dotted
+    cursor       not-allowed
+    opacity      1
+
+    &:active::after
+      left  2px
+      width 24px
+
 input[type=range]
   no-appearance()
   background none

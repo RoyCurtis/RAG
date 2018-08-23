@@ -733,23 +733,6 @@ declare class Phraser {
     process(container: HTMLElement, level?: number): void;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Custom voice that synthesizes speech by piecing pre-recorded files together */
-declare class CustomVoice {
-    /** Changeable base path for all custom voices */
-    static basePath: string;
-    /** Only present for consistency with SpeechSynthesisVoice */
-    readonly default: boolean;
-    /** Gets the BCP 47 tag indicating the language of this voice */
-    readonly lang: string;
-    /** Only present for consistency with SpeechSynthesisVoice */
-    readonly localService: boolean;
-    /** Gets the ID of this voice */
-    readonly name: string;
-    /** Gets the relative URI of this voice's files */
-    readonly voiceURI: string;
-    constructor(id: string, lang: string);
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility class for resolving a given phrase to vox keys */
 declare class Resolver {
     /** TreeWalker filter to reduce a walk to just the elements the resolver needs */
@@ -781,23 +764,17 @@ declare class Resolver {
     private resolveVox;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Union type for both kinds of voices available */
-declare type Voice = SpeechSynthesisVoice | CustomVoice;
 /** Manages speech synthesis using both native and custom engines */
 declare class Speech {
     /** Instance of the custom voice engine */
     readonly voxEngine: VoxEngine;
     /** Array of browser-provided voices available */
-    private browserVoices;
-    /** Array of custom pre-recorded voices available */
-    private customVoices;
+    browserVoices: SpeechSynthesisVoice[];
     constructor();
-    /** Gets all the voices currently available */
-    getVoices(): Voice[];
     /** Begins speaking the given phrase components */
     speak(phrase: HTMLElement, settings?: SpeechSettings): void;
     /** Stops and cancels all queued speech */
-    cancel(): void;
+    stop(): void;
     /** Pause and unpause speech if the page is hidden or unhidden */
     private onVisibilityChange;
     /** Handles async voice list loading on some browsers, and sets default */
@@ -806,7 +783,6 @@ declare class Speech {
      * Converts the given phrase to text and speaks it via native browser voices.
      *
      * @param phrase Phrase elements to speak
-     * @param voice Browser voice to use
      * @param settings Settings to use for the voice
      */
     private speakBrowser;
@@ -815,14 +791,21 @@ declare class Speech {
      * sound file IDs, and feeding the entire array to the vox engine.
      *
      * @param phrase Phrase elements to speak
-     * @param voice Custom voice to use
      * @param settings Settings to use for the voice
      */
-    private speakCustom;
+    private speakVox;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Type definition for speech config overrides passed to the speak method */
 interface SpeechSettings {
+    /** Whether to force use of the VOX engine */
+    useVox?: boolean;
+    /** Override absolute or relative URL of VOX voice to use */
+    voxPath?: string;
+    /** Override choice of reverb to use */
+    voxReverb?: string;
+    /** Override choice of chime to use */
+    voxChime?: string;
     /** Override choice of voice */
     voiceIdx?: number;
     /** Override volume of voice */
@@ -852,8 +835,6 @@ declare class VoxEngine {
     private scheduledBuffers;
     /** List of vox IDs currently being run through */
     private currentIds?;
-    /** Voice currently being used */
-    private currentVoice?;
     /** Speech settings currently being used */
     private currentSettings?;
     /** Audio node that adds a reverb to the voice, if available */
@@ -863,10 +844,9 @@ declare class VoxEngine {
      * Begins loading and speaking a set of vox files. Stops any speech.
      *
      * @param ids List of vox ids to load as files, in speaking order
-     * @param voice Custom voice to use
      * @param settings Voice settings to use
      */
-    speak(ids: VoxKey[], voice: Voice, settings: SpeechSettings): void;
+    speak(ids: VoxKey[], settings: SpeechSettings): void;
     /** Stops playing any currently spoken speech and resets state */
     stop(): void;
     /**
@@ -900,6 +880,16 @@ declare class VoxRequest {
     private onDecode;
     /** Called if the fetch or decode stages fail */
     private onError;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Base class for a view; anything with a base DOM element */
+declare abstract class BaseView {
+    /** Reference to this view's primary DOM element */
+    protected readonly dom: HTMLElement;
+    /** Creates this base view, attaching it to the element matching the given query */
+    protected constructor(domQuery: string);
+    /** Gets this view's child element matching the given query */
+    protected attach<T extends HTMLElement>(query: string): T;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the phrase editor */
@@ -975,23 +965,20 @@ declare class Marquee {
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the settings screen */
-declare class Settings {
-    /** Reference to the container for the settings screen */
-    private dom;
-    /** Reference to the "Reset settings" button */
-    private btnReset;
-    /** Reference to the "Save and close" button */
-    private btnSave;
-    /** Reference to the voice selection box */
-    private selSpeechVoice;
-    /** Reference to the voice volume slider */
-    private rangeSpeechVol;
-    /** Reference to the voice pitch slider */
-    private rangeSpeechPitch;
-    /** Reference to the voice rate slider */
-    private rangeSpeechRate;
-    /** Reference to the speech test button */
-    private btnSpeechTest;
+declare class Settings extends BaseView {
+    private readonly btnReset;
+    private readonly btnSave;
+    private readonly chkUseVox;
+    private readonly hintUseVox;
+    private readonly selVoxVoice;
+    private readonly inputVoxPath;
+    private readonly selVoxReverb;
+    private readonly selVoxChime;
+    private readonly selSpeechVoice;
+    private readonly rangeSpeechVol;
+    private readonly rangeSpeechPitch;
+    private readonly rangeSpeechRate;
+    private readonly btnSpeechTest;
     /** Reference to the timer for the "Reset" button confirmation step */
     private resetTimeout?;
     constructor();
@@ -999,6 +986,8 @@ declare class Settings {
     open(): void;
     /** Closes the settings screen */
     close(): void;
+    /** Calculates form layout and control visibility based on state */
+    private layout;
     /** Clears and populates the voice list */
     private populateVoiceList;
     /** Handles the reset button, with a confirm step that cancels after 15 seconds */
@@ -1181,6 +1170,19 @@ declare class DOM {
      * @param child Child node to get the index of
      */
     static nodeIndexOf(child: Node): number;
+    /**
+     * Toggles the hidden attribute of the given element, and all its labels.
+     *
+     * @param element Element to toggle the hidden attribute of
+     * @param force Optional value to force toggling to
+     */
+    static toggleHidden(element: HTMLElement, force?: boolean): void;
+    /**
+     * Toggles the hidden attribute of a group of elements, in bulk.
+     *
+     * @param list An array of argument pairs for {toggleHidden}
+     */
+    static toggleHiddenAll(...list: [HTMLElement, boolean?][]): void;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** A very, very small subset of Markdown for hyperlinking a block of text */
@@ -1299,6 +1301,9 @@ interface String {
 interface Array<T> {
     includes(searchElement: T, fromIndex?: number): boolean;
 }
+interface HTMLElement {
+    labels: NodeListOf<HTMLElement>;
+}
 declare class MediaRecorder {
     constructor(stream: MediaStream, options?: MediaRecorderOptions);
     start(timeslice?: number): void;
@@ -1343,6 +1348,8 @@ declare function registerProcessor(name: string, ctor: AudioWorkletProcessor): v
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Holds runtime configuration */
 declare class Config {
+    /** If user has clicked shuffle at least once */
+    clickedGenerate: boolean;
     /** Volume for speech to be set at */
     speechVol: number;
     /** Pitch for speech to be set at */
@@ -1351,8 +1358,16 @@ declare class Config {
     speechRate: number;
     /** Choice of speech voice to use, as getVoices index or -1 if unset */
     private _speechVoice;
-    /** If user has clicked shuffle at least once */
-    clickedGenerate: boolean;
+    /** Whether to use the VOX engine */
+    voxEnabled: boolean;
+    /** Relative or absolute URL of the VOX voice to use */
+    voxPath: string;
+    /** Relative or absolute URL of the custom VOX voice to use */
+    voxCustomPath: string;
+    /** Impulse response to use for VOX's reverb */
+    voxReverb: string;
+    /** VOX key of the chime to use prior to speaking */
+    voxChime: string;
     /**
      * Choice of speech voice to use, as getVoices index. Because of the async nature of
      * getVoices, the default value will be fetched from it each time.

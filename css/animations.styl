@@ -1,5 +1,11 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+input[type=checkbox]
+  transition border-color 100ms
+
+  &::after
+    transition left 100ms, width 100ms, background 100ms
+
 #editor span
   // Smoother fading of borders on hover
   transition background 500ms, border 100ms

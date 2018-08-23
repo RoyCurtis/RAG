@@ -1,8 +1,5 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-/** Union type for both kinds of voices available */
-type Voice = SpeechSynthesisVoice | CustomVoice;
-
 /** Manages speech synthesis using both native and custom engines */
 class Speech
 {
@@ -10,9 +7,7 @@ class Speech
     public readonly voxEngine : VoxEngine;
 
     /** Array of browser-provided voices available */
-    private browserVoices : SpeechSynthesisVoice[] = [];
-    /** Array of custom pre-recorded voices available */
-    private customVoices  : CustomVoice[]          = [];
+    public browserVoices : SpeechSynthesisVoice[] = [];
 
     public constructor()
     {
@@ -21,7 +16,7 @@ class Speech
         window.onbeforeunload =
         window.onunload       =
         window.onpageshow     =
-        window.onpagehide     = this.cancel.bind(this);
+        window.onpagehide     = this.stop.bind(this);
 
         document.onvisibilitychange            = this.onVisibilityChange.bind(this);
         window.speechSynthesis.onvoiceschanged = this.onVoicesChanged.bind(this);
@@ -32,34 +27,18 @@ class Speech
 
         // TODO: Make this a dynamic registration and check for features
         this.voxEngine = new VoxEngine();
-
-        this.customVoices.push( new CustomVoice('Test', 'en-GB') );
-        this.customVoices.push( new CustomVoice('Roy',  'en-GB') );
-        this.customVoices.push( new CustomVoice('RoyRaw',  'en-GB') );
-    }
-
-    /** Gets all the voices currently available */
-    public getVoices() : Voice[]
-    {
-        return this.customVoices.concat(this.browserVoices);
     }
 
     /** Begins speaking the given phrase components */
     public speak(phrase: HTMLElement, settings: SpeechSettings = {}) : void
     {
-        // Reset to first voice, if configured choice is missing
-        let voices   = this.getVoices();
-        let voiceIdx = either(settings.voiceIdx, RAG.config.speechVoice);
-        let voice    = voices[voiceIdx] || voices[0];
-        let engine   = (voice instanceof CustomVoice)
-            ? this.speakCustom.bind(this)
-            : this.speakBrowser.bind(this);
-
-        engine(phrase, voice, settings);
+        either(settings.useVox, RAG.config.voxEnabled)
+            ? this.speakVox(phrase, settings)
+            : this.speakBrowser(phrase, settings);
     }
 
     /** Stops and cancels all queued speech */
-    public cancel() : void
+    public stop() : void
     {
         window.speechSynthesis.cancel();
         this.voxEngine.stop();
@@ -84,18 +63,20 @@ class Speech
      * Converts the given phrase to text and speaks it via native browser voices.
      *
      * @param phrase Phrase elements to speak
-     * @param voice Browser voice to use
      * @param settings Settings to use for the voice
      */
-    private speakBrowser(phrase: HTMLElement, voice: Voice, settings: SpeechSettings)
-        : void
+    private speakBrowser(phrase: HTMLElement, settings: SpeechSettings) : void
     {
+        // Reset to first voice, if configured choice is missing
+        let voiceIdx = either(settings.voiceIdx, RAG.config.speechVoice);
+        let voice    = this.browserVoices[voiceIdx] || this.browserVoices[0];
+
         // The phrase text is split into sentences, as queueing large sentences that last
         // many seconds can break some TTS engines and browsers.
         let text  = DOM.getCleanedVisibleText(phrase);
         let parts = text.split(/\.\s/i);
 
-        RAG.speech.cancel();
+        RAG.speech.stop();
         parts.forEach( (segment, idx) =>
         {
             // Add missing full stop to each sentence except the last, which has it
@@ -118,15 +99,21 @@ class Speech
      * sound file IDs, and feeding the entire array to the vox engine.
      *
      * @param phrase Phrase elements to speak
-     * @param voice Custom voice to use
      * @param settings Settings to use for the voice
      */
-    private speakCustom(phrase: HTMLElement, voice: Voice, settings: SpeechSettings)
-        : void
+    private speakVox(phrase: HTMLElement, settings: SpeechSettings) : void
     {
         // TODO: use volume settings
         let resolver = new Resolver(phrase);
+        let voxPath  = RAG.config.voxPath || RAG.config.voxCustomPath;
 
-        this.voxEngine.speak(resolver.toVox(), voice, settings);
+        // Apply settings from config here, to keep VOX engine decoupled from RAG
+        settings.voxPath   = either(settings.voxPath,   voxPath);
+        settings.voxReverb = either(settings.voxReverb, RAG.config.voxReverb);
+        settings.voxChime  = either(settings.voxChime,  RAG.config.voxChime);
+        settings.volume    = either(settings.volume,    RAG.config.speechVol);
+        settings.rate      = either(settings.rate,      RAG.config.speechRate);
+
+        this.voxEngine.speak(resolver.toVox(), settings);
     }
 }

@@ -3,16 +3,26 @@
 /** Holds runtime configuration */
 class Config
 {
-    /** Volume for speech to be set at */
-    public  speechVol      : number = 1.0;
-    /** Pitch for speech to be set at */
-    public  speechPitch    : number = 1.0;
-    /** Rate for speech to be set at */
-    public  speechRate     : number = 1.0;
-    /** Choice of speech voice to use, as getVoices index or -1 if unset */
-    private _speechVoice   : number = -1;
     /** If user has clicked shuffle at least once */
     public clickedGenerate : boolean = false;
+    /** Volume for speech to be set at */
+    public  speechVol      : number  = 1.0;
+    /** Pitch for speech to be set at */
+    public  speechPitch    : number  = 1.0;
+    /** Rate for speech to be set at */
+    public  speechRate     : number  = 1.0;
+    /** Choice of speech voice to use, as getVoices index or -1 if unset */
+    private _speechVoice   : number  = -1;
+    /** Whether to use the VOX engine */
+    public  voxEnabled     : boolean = true;
+    /** Relative or absolute URL of the VOX voice to use */
+    public  voxPath        : string  = 'https://roycurtis.github.io/RAG-VOX-Roy';
+    /** Relative or absolute URL of the custom VOX voice to use */
+    public  voxCustomPath  : string  = '';
+    /** Impulse response to use for VOX's reverb */
+    public  voxReverb      : string  = 'ir.stalbans_a_mono.wav';
+    /** VOX key of the chime to use prior to speaking */
+    public  voxChime       : string  = '';
 
     /**
      * Choice of speech voice to use, as getVoices index. Because of the async nature of
@@ -26,7 +36,7 @@ class Config
             return this._speechVoice;
 
         // Select English voices by default
-        for (let i = 0, v = RAG.speech.getVoices(); i < v.length ; i++)
+        for (let i = 0, v = RAG.speech.browserVoices; i < v.length ; i++)
         {
             let lang = v[i].lang;
 

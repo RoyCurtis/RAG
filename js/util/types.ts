@@ -42,6 +42,11 @@ interface Array<T>
     includes(searchElement: T, fromIndex?: number) : boolean;
 }
 
+interface HTMLElement
+{
+    labels : NodeListOf<HTMLElement>;
+}
+
 declare class MediaRecorder
 {
     constructor(stream: MediaStream, options?: MediaRecorderOptions);

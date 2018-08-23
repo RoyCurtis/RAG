@@ -22,8 +22,6 @@ class VoxEngine
     private scheduledBuffers : AudioBufferSourceNode[] = [];
     /** List of vox IDs currently being run through */
     private currentIds?      : VoxKey[];
-    /** Voice currently being used */
-    private currentVoice?    : CustomVoice;
     /** Speech settings currently being used */
     private currentSettings? : SpeechSettings;
     /** Audio node that adds a reverb to the voice, if available */
@@ -67,19 +65,17 @@ class VoxEngine
      * Begins loading and speaking a set of vox files. Stops any speech.
      *
      * @param ids List of vox ids to load as files, in speaking order
-     * @param voice Custom voice to use
      * @param settings Voice settings to use
      */
-    public speak(ids: VoxKey[], voice: Voice, settings: SpeechSettings) : void
+    public speak(ids: VoxKey[], settings: SpeechSettings) : void
     {
-        console.debug('VOX SPEAK:', ids, voice, settings);
+        console.debug('VOX SPEAK:', ids, settings);
 
         if (this.isSpeaking)
             this.stop();
 
         this.isSpeaking      = true;
         this.currentIds      = ids;
-        this.currentVoice    = voice;
         this.currentSettings = settings;
 
         // Begin the pump loop. On iOS, the context may have to be resumed first
@@ -109,7 +105,6 @@ class VoxEngine
 
         this.nextBegin        = 0;
         this.currentIds       = undefined;
-        this.currentVoice     = undefined;
         this.currentSettings  = undefined;
         this.pendingReqs      = [];
         this.scheduledBuffers = [];
@@ -124,7 +119,7 @@ class VoxEngine
     private pump() : void
     {
         // If the engine has stopped, do not proceed.
-        if (!this.isSpeaking || !this.currentIds || !this.currentVoice)
+        if (!this.isSpeaking || !this.currentIds || !this.currentSettings)
             return;
 
         // First, schedule fulfilled requests into the audio buffer, in FIFO order
@@ -145,7 +140,7 @@ class VoxEngine
                 continue;
             }
 
-            let path = `${this.currentVoice.voiceURI}/${key}.mp3`;
+            let path = `${this.currentSettings.voxPath}/${key}.mp3`;
 
             this.pendingReqs.push( new VoxRequest(path, nextDelay, this.audioContext) );
             nextDelay = 0;

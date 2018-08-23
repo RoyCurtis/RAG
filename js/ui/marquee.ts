@@ -27,7 +27,8 @@ class Marquee
     {
         window.cancelAnimationFrame(this.timer);
 
-        this.domSpan.textContent = msg;
+        this.domSpan.textContent     = msg;
+        this.domSpan.style.transform = '';
 
         if (!animate) return;
 
