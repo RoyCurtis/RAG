@@ -73,7 +73,6 @@ class VoxEngine
         this.filterNode = this.audioContext.createBiquadFilter();
         this.reverbNode = this.audioContext.createConvolver();
 
-        this.reverbNode.buffer    = this.impulses[''];
         this.reverbNode.normalize = true;
         this.filterNode.type      = 'highpass';
         this.filterNode.Q.value   = 0.4;
