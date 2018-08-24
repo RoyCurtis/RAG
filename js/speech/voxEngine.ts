@@ -5,6 +5,26 @@ type VoxKey = string | number;
 /** Synthesizes speech by dynamically loading and piecing together voice files */
 class VoxEngine
 {
+    private static instance : VoxEngine;
+
+    public static getInstance(dataPath: string  = 'data/vox') : VoxEngine | undefined
+    {
+        if (VoxEngine.instance)
+            return VoxEngine.instance;
+
+        try
+        {
+            VoxEngine.instance =  new VoxEngine(dataPath);
+            return VoxEngine.instance;
+        }
+        catch (err)
+        {
+            // TODO: Localize
+            console.error('Could not create a VOX engine instance:', err);
+            return;
+        }
+    }
+
     /** The core audio context that handles audio effects and playback */
     private readonly audioContext : AudioContext;
     /** Audio node that amplifies or attenuates voice */
@@ -18,8 +38,10 @@ class VoxEngine
     /** Relative path to fetch impulse response and chime files from */
     private readonly dataPath     : string;
 
+    /** Event handler for when speech has ended */
+    public  onstop?          : () => void;
     /** Whether this engine is currently running and speaking */
-    public  isSpeaking       : boolean      = false;
+    private isSpeaking       : boolean      = false;
     /** Reference number for the current pump timer */
     private pumpTimer        : number       = 0;
     /** Tracks the audio context's wall-clock time to schedule next clip */
@@ -33,17 +55,20 @@ class VoxEngine
     /** Speech settings currently being used */
     private currentSettings? : SpeechSettings;
 
-    public constructor(dataPath: string = 'data/vox')
+    private constructor(dataPath: string)
     {
         // Setup the core audio context
 
-        // @ts-ignore
-        let AudioContext  = window.AudioContext || window.webkitAudioContext;
-        this.audioContext = new AudioContext();
-        this.dataPath  = dataPath;
+        if      (AudioContext)       this.audioContext = new AudioContext();
+        else if (webkitAudioContext) this.audioContext = new webkitAudioContext();
+        else                         this.audioContext = new mozAudioContext();
+
+        if (!this.audioContext)
+            throw new Error('Could not get audio context');
 
         // Setup nodes
 
+        this.dataPath   = dataPath;
         this.gainNode   = this.audioContext.createGain();
         this.filterNode = this.audioContext.createBiquadFilter();
         this.reverbNode = this.audioContext.createConvolver();
@@ -163,6 +188,9 @@ class VoxEngine
         this.scheduledBuffers = [];
 
         console.debug('VOX STOPPED');
+
+        if (this.onstop)
+            this.onstop();
     }
 
     /**
@@ -207,7 +235,6 @@ class VoxEngine
 
         this.pumpTimer = setTimeout(this.pump.bind(this), 100);
     }
-
 
     private schedule() : void
     {

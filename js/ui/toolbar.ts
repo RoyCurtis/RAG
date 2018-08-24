@@ -56,17 +56,18 @@ class Toolbar
     /** Handles the play button, playing the editor's current phrase with speech */
     private handlePlay() : void
     {
-        RAG.speech.speak( RAG.views.editor.getPhrase() );
-        RAG.views.marquee.set( RAG.views.editor.getText() );
-        this.btnPlay.disabled = false;
-        this.btnStop.hidden   = false;
-        this.btnPlay.hidden   = true;
-
         RAG.speech.onstop = () =>
         {
             this.btnStop.hidden = true;
             this.btnPlay.hidden = false;
+            RAG.speech.onstop   = undefined;
         };
+
+        this.btnPlay.disabled = false;
+        this.btnStop.hidden   = false;
+        this.btnPlay.hidden   = true;
+        RAG.views.marquee.set( RAG.views.editor.getText() );
+        RAG.speech.speak( RAG.views.editor.getPhrase() );
     }
 
     /** Handles the stop button, stopping the marquee and any speech */
@@ -74,7 +75,6 @@ class Toolbar
     {
         RAG.speech.stop();
         RAG.views.marquee.stop();
-        RAG.speech.onstop = undefined;
     }
 
     /** Handles the generate button, generating new random state and phrase */

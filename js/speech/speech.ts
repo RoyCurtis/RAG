@@ -4,13 +4,13 @@
 class Speech
 {
     /** Instance of the custom voice engine */
-    private readonly voxEngine : VoxEngine;
+    private readonly voxEngine? : VoxEngine;
 
     /** Array of browser-provided voices available */
     public  browserVoices : SpeechSynthesisVoice[] = [];
     /** Event handler for when speech has ended */
     public  onstop?       : () => void;
-    /** Reference to the speech-stopped check timer */
+    /** Reference to the native speech-stopped check timer */
     private stopTimer     : number = 0;
 
     public constructor()
@@ -30,7 +30,7 @@ class Speech
         this.onVoicesChanged();
 
         // TODO: Make this a dynamic registration and check for features
-        this.voxEngine = new VoxEngine();
+        this.voxEngine = VoxEngine.getInstance();
     }
 
     /** Begins speaking the given phrase components */
@@ -38,31 +38,24 @@ class Speech
     {
         this.stop();
 
-        either(settings.useVox, RAG.config.voxEnabled)
-            ? this.speakVox(phrase, settings)
-            : this.speakBrowser(phrase, settings);
-
-        // This checks for when both engines have stopped speaking, and calls the onstop
-        // event handler in stop(). I could use SpeechSynthesis.onend instead, but it was
-        // found to be unreliable, so I have to poll the speaking property this way. Since
-        // I am doing this, I have not bothered to give VOX engine an onend event.
-
-        this.stopTimer = setInterval(() =>
-        {
-            if (!window.speechSynthesis.speaking && !this.voxEngine.isSpeaking)
-                this.stop();
-        }, 100);
+        if      ( this.voxEngine && either(settings.useVox, RAG.config.voxEnabled) )
+            this.speakVox(phrase, settings);
+        else if (window.speechSynthesis)
+            this.speakBrowser(phrase, settings);
+        else if (this.onstop)
+            this.onstop();
     }
 
     /** Stops and cancels all queued speech */
     public stop() : void
     {
-        clearInterval(this.stopTimer);
-        window.speechSynthesis.cancel();
-        this.voxEngine.stop();
+        // TODO: Check for speech synthesis
 
-        if (this.onstop)
-            this.onstop();
+        if (window.speechSynthesis)
+            window.speechSynthesis.cancel();
+
+        if (this.voxEngine)
+            this.voxEngine.stop();
     }
 
     /** Pause and unpause speech if the page is hidden or unhidden */
@@ -112,6 +105,22 @@ class Speech
 
             window.speechSynthesis.speak(utterance);
         });
+
+        // This checks for when the native engine has stopped speaking, and calls the
+        // onstop event handler. I could use SpeechSynthesis.onend instead, but it was
+        // found to be unreliable, so I have to poll the speaking property this way.
+        clearInterval(this.stopTimer);
+
+        this.stopTimer = setInterval(() =>
+        {
+            if (window.speechSynthesis.speaking)
+                return;
+
+            clearInterval(this.stopTimer);
+
+            if (this.onstop)
+                this.onstop();
+        }, 100);
     }
 
     /**
@@ -126,6 +135,14 @@ class Speech
         let resolver = new Resolver(phrase);
         let voxPath  = RAG.config.voxPath || RAG.config.voxCustomPath;
 
+        this.voxEngine!.onstop = () =>
+        {
+            this.voxEngine!.onstop = undefined;
+
+            if (this.onstop)
+                this.onstop();
+        };
+
         // Apply settings from config here, to keep VOX engine decoupled from RAG
         settings.voxPath   = either(settings.voxPath,   voxPath);
         settings.voxReverb = either(settings.voxReverb, RAG.config.voxReverb);
@@ -133,6 +150,6 @@ class Speech
         settings.volume    = either(settings.volume,    RAG.config.speechVol);
         settings.rate      = either(settings.rate,      RAG.config.speechRate);
 
-        this.voxEngine.speak(resolver.toVox(), settings);
+        this.voxEngine!.speak(resolver.toVox(), settings);
     }
 }

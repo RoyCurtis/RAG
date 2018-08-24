@@ -767,12 +767,12 @@ declare class Resolver {
 /** Manages speech synthesis using both native and custom engines */
 declare class Speech {
     /** Instance of the custom voice engine */
-    private readonly voxEngine;
+    private readonly voxEngine?;
     /** Array of browser-provided voices available */
     browserVoices: SpeechSynthesisVoice[];
     /** Event handler for when speech has ended */
     onstop?: () => void;
-    /** Reference to the speech-stopped check timer */
+    /** Reference to the native speech-stopped check timer */
     private stopTimer;
     constructor();
     /** Begins speaking the given phrase components */
@@ -823,6 +823,8 @@ interface SpeechSettings {
 declare type VoxKey = string | number;
 /** Synthesizes speech by dynamically loading and piecing together voice files */
 declare class VoxEngine {
+    private static instance;
+    static getInstance(dataPath?: string): VoxEngine | undefined;
     /** The core audio context that handles audio effects and playback */
     private readonly audioContext;
     /** Audio node that amplifies or attenuates voice */
@@ -835,8 +837,10 @@ declare class VoxEngine {
     private readonly impulses;
     /** Relative path to fetch impulse response and chime files from */
     private readonly dataPath;
+    /** Event handler for when speech has ended */
+    onstop?: () => void;
     /** Whether this engine is currently running and speaking */
-    isSpeaking: boolean;
+    private isSpeaking;
     /** Reference number for the current pump timer */
     private pumpTimer;
     /** Tracks the audio context's wall-clock time to schedule next clip */
@@ -849,7 +853,7 @@ declare class VoxEngine {
     private currentIds?;
     /** Speech settings currently being used */
     private currentSettings?;
-    constructor(dataPath?: string);
+    private constructor();
     /**
      * Begins loading and speaking a set of vox files. Stops any speech.
      *
@@ -1307,6 +1311,14 @@ interface DataRefs {
 interface Window {
     onunhandledrejection: ErrorEventHandler;
 }
+declare var webkitAudioContext: {
+    prototype: AudioContext;
+    new (contextOptions?: AudioContextOptions): AudioContext;
+};
+declare var mozAudioContext: {
+    prototype: AudioContext;
+    new (contextOptions?: AudioContextOptions): AudioContext;
+};
 interface String {
     padStart(targetLength: number, padString?: string): string;
     padEnd(targetLength: number, padString?: string): string;
