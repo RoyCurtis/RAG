@@ -59,9 +59,9 @@ class VoxEngine
     {
         // Setup the core audio context
 
-        if      (AudioContext)       this.audioContext = new AudioContext();
-        else if (webkitAudioContext) this.audioContext = new webkitAudioContext();
-        else                         this.audioContext = new mozAudioContext();
+        // @ts-ignore - Defining these in Window interface does not work
+        let audioContext  = window.AudioContext || window.webkitAudioContext;
+        this.audioContext = new audioContext();
 
         if (!this.audioContext)
             throw new Error('Could not get audio context');

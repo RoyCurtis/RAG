@@ -1311,14 +1311,6 @@ interface DataRefs {
 interface Window {
     onunhandledrejection: ErrorEventHandler;
 }
-declare var webkitAudioContext: {
-    prototype: AudioContext;
-    new (contextOptions?: AudioContextOptions): AudioContext;
-};
-declare var mozAudioContext: {
-    prototype: AudioContext;
-    new (contextOptions?: AudioContextOptions): AudioContext;
-};
 interface String {
     padStart(targetLength: number, padString?: string): string;
     padEnd(targetLength: number, padString?: string): string;
