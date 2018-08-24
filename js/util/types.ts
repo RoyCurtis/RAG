@@ -47,29 +47,6 @@ interface HTMLElement
     labels : NodeListOf<HTMLElement>;
 }
 
-declare class MediaRecorder
-{
-    constructor(stream: MediaStream, options?: MediaRecorderOptions);
-    start(timeslice?: number) : void;
-    stop() : void;
-    ondataavailable : ((this: MediaRecorder, ev: BlobEvent) => any) | null;
-    onstop : ((this: MediaRecorder, ev: Event) => any) | null;
-}
-
-interface MediaRecorderOptions
-{
-    mimeType? : string;
-    audioBitsPerSecond? : number;
-    videoBitsPerSecond? : number;
-    bitsPerSecond? : number;
-}
-
-declare class BlobEvent extends Event
-{
-    readonly data     : Blob;
-    readonly timecode : number;
-}
-
 interface AudioContextBase
 {
     audioWorklet : AudioWorklet;

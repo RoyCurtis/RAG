@@ -30,7 +30,14 @@ class Speech
         this.onVoicesChanged();
 
         // TODO: Make this a dynamic registration and check for features
-        this.voxEngine = VoxEngine.getInstance();
+        try
+        {
+            this.voxEngine = new VoxEngine();
+        }
+        catch (err)
+        {
+            console.error('Could not create VOX engine:', err);
+        }
     }
 
     /** Begins speaking the given phrase components */
@@ -61,6 +68,7 @@ class Speech
     /** Pause and unpause speech if the page is hidden or unhidden */
     private onVisibilityChange() : void
     {
+        // TODO: This needs to pause VOX engine
         let hiding = (document.visibilityState === 'hidden');
 
         if (hiding) window.speechSynthesis.pause();

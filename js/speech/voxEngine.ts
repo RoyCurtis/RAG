@@ -5,26 +5,6 @@ type VoxKey = string | number;
 /** Synthesizes speech by dynamically loading and piecing together voice files */
 class VoxEngine
 {
-    private static instance : VoxEngine;
-
-    public static getInstance(dataPath: string  = 'data/vox') : VoxEngine | undefined
-    {
-        if (VoxEngine.instance)
-            return VoxEngine.instance;
-
-        try
-        {
-            VoxEngine.instance =  new VoxEngine(dataPath);
-            return VoxEngine.instance;
-        }
-        catch (err)
-        {
-            // TODO: Localize
-            console.error('Could not create a VOX engine instance:', err);
-            return;
-        }
-    }
-
     /** The core audio context that handles audio effects and playback */
     private readonly audioContext : AudioContext;
     /** Audio node that amplifies or attenuates voice */
@@ -55,7 +35,7 @@ class VoxEngine
     /** Speech settings currently being used */
     private currentSettings? : SpeechSettings;
 
-    private constructor(dataPath: string)
+    public constructor(dataPath: string = 'data/vox')
     {
         // Setup the core audio context
 

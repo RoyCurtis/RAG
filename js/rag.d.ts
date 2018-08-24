@@ -823,8 +823,6 @@ interface SpeechSettings {
 declare type VoxKey = string | number;
 /** Synthesizes speech by dynamically loading and piecing together voice files */
 declare class VoxEngine {
-    private static instance;
-    static getInstance(dataPath?: string): VoxEngine | undefined;
     /** The core audio context that handles audio effects and playback */
     private readonly audioContext;
     /** Audio node that amplifies or attenuates voice */
@@ -853,7 +851,7 @@ declare class VoxEngine {
     private currentIds?;
     /** Speech settings currently being used */
     private currentSettings?;
-    private constructor();
+    constructor(dataPath?: string);
     /**
      * Begins loading and speaking a set of vox files. Stops any speech.
      *
@@ -1320,23 +1318,6 @@ interface Array<T> {
 }
 interface HTMLElement {
     labels: NodeListOf<HTMLElement>;
-}
-declare class MediaRecorder {
-    constructor(stream: MediaStream, options?: MediaRecorderOptions);
-    start(timeslice?: number): void;
-    stop(): void;
-    ondataavailable: ((this: MediaRecorder, ev: BlobEvent) => any) | null;
-    onstop: ((this: MediaRecorder, ev: Event) => any) | null;
-}
-interface MediaRecorderOptions {
-    mimeType?: string;
-    audioBitsPerSecond?: number;
-    videoBitsPerSecond?: number;
-    bitsPerSecond?: number;
-}
-declare class BlobEvent extends Event {
-    readonly data: Blob;
-    readonly timecode: number;
 }
 interface AudioContextBase {
     audioWorklet: AudioWorklet;
