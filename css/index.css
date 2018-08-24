@@ -893,12 +893,12 @@ body {
   }
 }
 @media (max-height: 400px) {
-  #mainScreen,
-  .picker,
-  #settingsScreen {
+  .javascriptEnabled #mainScreen,
+  .javascriptEnabled .picker,
+  .javascriptEnabled #settingsScreen {
     display: none;
   }
-  #tooSmallScreen {
+  .javascriptEnabled #tooSmallScreen {
     display: block;
   }
 }

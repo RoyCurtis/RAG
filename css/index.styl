@@ -44,11 +44,12 @@ body
   @import "responsive"
 
 @media (max-height 400px)
-  #mainScreen, .picker, #settingsScreen
-    display none
+  .javascriptEnabled
+    #mainScreen, .picker, #settingsScreen
+      display none
 
-  #tooSmallScreen
-    display block
+    #tooSmallScreen
+      display block
 
 // Animations
 @import "animations"
