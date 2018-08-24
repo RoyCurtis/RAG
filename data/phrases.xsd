@@ -146,7 +146,7 @@
       </xs:annotation>
     </xs:element>
 
-    <xs:element name="platform" type="platform">
+    <xs:element name="platform">
       <xs:annotation>
         <xs:documentation>
           Picks a platform number, sometimes with letter.
@@ -198,69 +198,49 @@
 </xs:group>
 
 
-<!-- TODO: This might not be necessary after all -->
-<xs:complexType name="vox_hintable">
-  <xs:attribute name="vox" type="vox_hint" default="mid">
+<xs:complexType name="coach">
+  <xs:attribute name="context" type="coach_context" use="required">
     <xs:annotation>
       <xs:documentation>
-        Optional inflection hint for any voice files of this element.
+        Specifies the context to pick a coach for.
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
 </xs:complexType>
 
 
-<xs:complexType name="coach">
-  <xs:complexContent>
-    <xs:extension base="vox_hintable">
-      <xs:attribute name="context" type="coach_context" use="required">
-        <xs:annotation>
-          <xs:documentation>
-            Specifies the context to pick a coach for.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-    </xs:extension>
-  </xs:complexContent>
-</xs:complexType>
-
-
 <xs:complexType name="integer">
-  <xs:complexContent>
-    <xs:extension base="vox_hintable">
-      <xs:attribute name="context" type="integer_context" use="required">
-        <xs:annotation>
-          <xs:documentation>
-            Specifies the context to pick an integer for.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
+  <xs:attribute name="context" type="integer_context" use="required">
+    <xs:annotation>
+      <xs:documentation>
+        Specifies the context to pick an integer for.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
 
-      <xs:attribute name="singular" type="xs:string">
-        <xs:annotation>
-          <xs:documentation>
-            Optional noun to append after chosen integer, if it is one.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
+  <xs:attribute name="singular" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Optional noun to append after chosen integer, if it is one.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
 
-      <xs:attribute name="plural" type="xs:string">
-        <xs:annotation>
-          <xs:documentation>
-            Optional noun to append after chosen integer, if it is many.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
+  <xs:attribute name="plural" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        Optional noun to append after chosen integer, if it is many.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
 
-      <xs:attribute name="words" type="xs:boolean" default="false">
-        <xs:annotation>
-          <xs:documentation>
-            If true, the integer is printed as a word, than in digits.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-    </xs:extension>
-  </xs:complexContent>
+  <xs:attribute name="words" type="xs:boolean" default="false">
+    <xs:annotation>
+      <xs:documentation>
+        If true, the integer is printed as a word, than in digits.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
 </xs:complexType>
 
 
@@ -295,15 +275,6 @@
   </xs:attribute>
 
   <xs:attribute name="chance" type="chance"/>
-</xs:complexType>
-
-
-<xs:complexType name="platform">
-  <xs:complexContent>
-    <xs:extension base="vox_hintable">
-
-    </xs:extension>
-  </xs:complexContent>
 </xs:complexType>
 
 
@@ -611,35 +582,6 @@
       <xs:annotation>
         <xs:documentation>
           Specifies the current real-world time.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:enumeration>
-  </xs:restriction>
-</xs:simpleType>
-
-
-<xs:simpleType name="vox_hint">
-  <xs:restriction base="xs:string">
-    <xs:enumeration value="begin">
-      <xs:annotation>
-        <xs:documentation>
-          Whether this part should be inflected as if beginning a sentence.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:enumeration>
-
-    <xs:enumeration value="mid">
-      <xs:annotation>
-        <xs:documentation>
-          Whether this part should be inflected as if in the middle of a sentence.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:enumeration>
-
-    <xs:enumeration value="end">
-      <xs:annotation>
-        <xs:documentation>
-          Whether this part should be inflected as if ending a sentence.
         </xs:documentation>
       </xs:annotation>
     </xs:enumeration>

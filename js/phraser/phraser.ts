@@ -40,10 +40,6 @@ class Phraser
 
             newElement.dataset['type'] = elementName;
 
-            // If the element is vox hintable, add the vox hint
-            if ( element.hasAttribute('vox') )
-                newElement.dataset['vox'] = element.getAttribute('vox')!;
-
             // I wanted to use an index on ElementProcessors for this, but it caused every
             // processor to have an "unused method" warning.
             switch (elementName)
