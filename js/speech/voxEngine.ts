@@ -234,8 +234,9 @@ class VoxEngine
 
         console.log('VOX CLIP QUEUED:', req.path, req.buffer.duration, this.nextBegin);
 
+        // Base latency not available in some browsers
+        let latency = (this.audioContext.baseLatency || 0.01) + 0.15;
         let node    = this.audioContext.createBufferSource();
-        let latency = this.audioContext.baseLatency + 0.15;
         let rate    = req.forceRate || this.currentSettings!.rate || 1;
         node.buffer = req.buffer;
 

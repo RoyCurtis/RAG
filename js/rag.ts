@@ -61,7 +61,7 @@ class RAG
     {
         let msg = '<div id="panicScreen" class="warningScreen">';
         msg    += '<h1>"We are sorry to announce that..."</h1>';
-        msg    += `<p>RAG has crashed because: <code>${error}</code>.</p>`;
+        msg    += `<p>RAG has crashed because: <code>${error}</code></p>`;
         msg    += `<p>Please open the console for more information.</p>`;
         msg    += '</div>';
 
