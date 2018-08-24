@@ -258,8 +258,8 @@ class DOM
 
         element.hidden = hidden;
 
-        if (element.labels)
-            element.labels.forEach(l => l.hidden = hidden);
+        document.querySelectorAll(`[for='${element.id}']`)
+            .forEach(l => (l as HTMLElement).hidden = hidden);
     }
 
     /**
