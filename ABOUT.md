@@ -4,18 +4,23 @@ Rail Announcement Generator; built by [Roy Curtis][0] in 2018, under the [MIT li
 
 Built using [TypeScript][3], [Stylus][4], [JetBrains WebStorm][5], and [Node][6].
 
-Uses the [IcoMoon-Free icon pack by Keyamoon][7]. Uses the [5by7 font by Peter Wiegel][8].
+Uses the [IcoMoon-Free icon pack by Keyamoon][7], the [5by7 font by Peter Wiegel][8], and
+the [Draggable library by Shopify][9].
 
-Uses the [Draggable library by Shopify][9].
+The VOX editor uses the [ElectronJS framework][18], the [LAME MP3 encoder][19] via the
+[lamejs library by Alex Zhukov][20], and the [audiobuffer-to-wav encoder by
+Matt DesLauriers and Matt Diamond][21].
 
 With thanks to: [Paul Casillas][10] for his recordings of station announcements on
 YouTube, [WhatDoTheyKnow][11] for hosting freedom of information request responses that
-contain announcement data, "Mark" for making said FOI requests, and various StackOverflow
-contributors (where attributed) for code snippets and advice.
+contain announcement data, "Mark" for making said FOI requests, [John Ball][17] for his
+Welsh place name pronunciations, and various StackOverflow contributors (where attributed)
+for code snippets and advice.
 
 Thank you also to [Stitch][12], [Spin][13], Tropic, Poster, Devon, [Robro][14], Grant,
 Bjarke, Nik, Dylan, rjlan, Fyrrian, CGDoctor8, Mikko, Griffin, Leroy, Maitre, Shilo, Pat,
-[Kristi Kates and her entire community][15] for the love, testing, and encouragement.
+Toby and Kerys, [Kristi Kates and her entire community][15] for the love, testing, and
+encouragement.
 
 No user-inputted or generated data is ever sent to a remote server, at any time.
 
@@ -60,3 +65,8 @@ a hobby of mine, with zero commercial intent. Please enjoy, and thanks!
 [14]: https://robrotheram.com/
 [15]: https://www.twitch.tv/kristikates
 [16]: http://www.nationalrail.co.uk/
+[17]: https://www.jlb2011.co.uk/wales/sounds/index.htm
+[18]: https://electronjs.org/
+[19]: http://lame.sourceforge.net/
+[20]: https://github.com/zhuker/lamejs/
+[21]: https://github.com/Jam3/audiobuffer-to-wav/

@@ -4,7 +4,7 @@
 class Linkdown
 {
     /** Regex pattern for matching linked text */
-    private static readonly REGEX_LINK = /\[(.+?)\]\[(\d+)\]/gi;
+    private static readonly REGEX_LINK = /\[([\s\S]+?)\]\[(\d+)\]/gmi;
     /** Regex pattern for matching link references */
     private static readonly REGEX_REF  = /^\[(\d+)\]:\s+(\S+)$/gmi;
 
@@ -46,9 +46,12 @@ class Linkdown
             return '';
         });
 
-        // Finally, replace each tagged part of text with a link element
-        return text.replace(this.REGEX_LINK, (_, t, k) =>
-            `<a href='${links[k]}' target="_blank" rel="noopener">${t}</a>`
+        // Finally, replace each tagged part of text with a link element. If a tag has
+        // an invalid reference, it is ignored.
+        return text.replace(this.REGEX_LINK, (match, t, k) =>
+            links[k]
+                ? `<a href='${links[k]}' target="_blank" rel="noopener">${t}</a>`
+                : match
         );
     }
 }
