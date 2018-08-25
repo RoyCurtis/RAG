@@ -15,6 +15,8 @@ export class EditorConfig extends ConfigBase<EditorConfig>
     public voicePath     : string = '';
     /** Path of the playback voice that was last chosen */
     public voicePlayPath : string = '';
+    /** Impulse response to use for VOX's reverb */
+    public voiceReverb   : string  = 'ir.stalbans.wav';
 
     public constructor(autoLoad: boolean = false)
     {

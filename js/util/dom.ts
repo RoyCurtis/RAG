@@ -130,6 +130,25 @@ class DOM
     }
 
     /**
+     * Sugar for populating a select element with items from a given object.
+     *
+     * @param list Select element to populate
+     * @param items A dictionary where keys act like values, and values like labels
+     * @param selected If matches a dictionary key, that key is the pre-selected option
+     */
+    public static populate(list: HTMLSelectElement, items: any, selected?: any) : void
+    {
+        for (let value in items)
+        {
+            let label = items[value];
+            let opt   = DOM.addOption(list, label, value);
+
+            if (selected !== undefined && value === selected)
+                opt.selected = true;
+        }
+    }
+
+    /**
      * Gets the text content of the given element, excluding the text of hidden children.
      * Be warned; this method uses RAG-specific code.
      *

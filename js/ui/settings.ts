@@ -46,6 +46,10 @@ class Settings extends ViewBase
         this.selVoxVoice.onchange  = this.layout.bind(this);
         this.btnSpeechTest.onclick = this.handleVoiceTest.bind(this);
 
+        // Populate list of impulse response files
+        DOM.populate(this.selVoxReverb, VoxEngine.REVERBS, RAG.config.voxReverb);
+
+        // Populate the legal & acknowledgements block
         Linkdown.loadInto('ABOUT.md', '#aboutBlock');
     }
 

@@ -136,15 +136,19 @@ export class VoiceManager
 
     public playPreview(phrase: HTMLElement) : void
     {
-        let resolver = new Resolver(phrase);
-
         this.stopPreview();
 
-        if (this.currentPlayVoice)
-        {
-            this.voxEngine.speak(resolver.toVox(), {voxPath : this.currentPlayVoice});
-            VoxEditor.views.tapedeck.handleBeginPlay(false);
-        }
+        if (!this.currentPlayVoice)
+            return;
+
+        let resolver = new Resolver(phrase);
+        let settings = {
+            voxPath   : this.currentPlayVoice,
+            voxReverb : VoxEditor.config.voiceReverb
+        };
+
+        this.voxEngine.speak(resolver.toVox(), settings);
+        VoxEditor.views.tapedeck.handleBeginPlay(false);
     }
 
     /** Plays the currently loaded clip, if any */

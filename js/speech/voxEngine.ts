@@ -5,6 +5,14 @@ type VoxKey = string | number;
 /** Synthesizes speech by dynamically loading and piecing together voice files */
 class VoxEngine
 {
+    /** List of impulse responses that come with RAG */
+    public static readonly REVERBS : Dictionary<string> = {
+        ''                     : 'None',
+        'ir.stalbans.wav'      : 'The Lady Chapel, St Albans Cathedral',
+        'ir.middle_tunnel.wav' : 'Innocent Railway Tunnel, Edinburgh',
+        'ir.grange-centre.wav' : 'Grange stone circle, County Limerick'
+    };
+
     /** The core audio context that handles audio effects and playback */
     private readonly audioContext : AudioContext;
     /** Audio node that amplifies or attenuates voice */

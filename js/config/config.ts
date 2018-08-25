@@ -20,7 +20,7 @@ class Config extends ConfigBase<Config>
     /** Relative or absolute URL of the custom VOX voice to use */
     public  voxCustomPath   : string  = '';
     /** Impulse response to use for VOX's reverb */
-    public  voxReverb       : string  = 'ir.stalbans_a_mono.wav';
+    public  voxReverb       : string  = 'ir.stalbans.wav';
     /** VOX key of the chime to use prior to speaking */
     public  voxChime        : string  = '';
     /** Choice of speech voice to use, as getVoices index or -1 if unset */

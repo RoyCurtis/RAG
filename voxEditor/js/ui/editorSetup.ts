@@ -15,6 +15,8 @@ export class EditorSetup
 
     private readonly selFormat      : HTMLSelectElement;
 
+    private readonly selReverb      : HTMLSelectElement;
+
     private readonly inputScript    : HTMLInputElement;
 
     public constructor()
@@ -24,16 +26,22 @@ export class EditorSetup
         this.selVoice       = DOM.require('#selVoice');
         this.selPlayVoice   = DOM.require('#selPlayVoice');
         this.selFormat      = DOM.require('#selFormat');
+        this.selReverb      = DOM.require('#selReverb');
         this.inputScript    = DOM.require('#inputScript');
 
         this.domForm.onchange  = this.onFormChange.bind(this);
         this.domForm.onsubmit  = this.onFormChange.bind(this);
         this.selFormat.value   = VoxEditor.config.format;
+        this.selReverb.value   = VoxEditor.config.voiceReverb;
         this.inputScript.value = VoxEditor.config.ppCommand;
 
         navigator.mediaDevices.ondevicechange = this.onDevicesChanged.bind(this);
         this.onDevicesChanged();
 
+        // Populate list of impulse response files
+        DOM.populate(this.selReverb, VoxEngine.REVERBS, VoxEditor.config.voiceReverb);
+
+        // Populate list of voices for both types
         if (VoxEditor.voices.voxList.length === 0)
         {
             DOM.addOption(this.selVoice,     'None available').disabled = true;
@@ -70,6 +78,7 @@ export class EditorSetup
         VoxEditor.config.deviceId      = this.selInputDevice.value;
         VoxEditor.config.voicePath     = this.selVoice.value;
         VoxEditor.config.voicePlayPath = this.selPlayVoice.value;
+        VoxEditor.config.voiceReverb   = this.selReverb.value;
         VoxEditor.config.format        = this.selFormat.value;
         VoxEditor.config.ppCommand     = this.inputScript.value;
         VoxEditor.config.save();
