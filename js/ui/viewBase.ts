@@ -2,7 +2,7 @@
 
 // TODO: Make all views use this class
 /** Base class for a view; anything with a base DOM element */
-abstract class BaseView
+abstract class ViewBase
 {
     /** Reference to this view's primary DOM element */
     protected readonly dom : HTMLElement;
