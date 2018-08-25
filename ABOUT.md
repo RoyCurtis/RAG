@@ -4,8 +4,9 @@ Rail Announcement Generator; built by [Roy Curtis][0] in 2018, under the [MIT li
 
 Built using [TypeScript][3], [Stylus][4], [JetBrains WebStorm][5], and [Node][6].
 
-Uses the [IcoMoon-Free icon pack by Keyamoon][7], the [5by7 font by Peter Wiegel][8], and
-the [Draggable library by Shopify][9].
+Uses the [IcoMoon-Free icon pack by Keyamoon][7], the [5by7 font by Peter Wiegel][8],
+the [Draggable library by Shopify][9], and impulse response recordings from the [Open AIR
+library][22].
 
 The VOX editor uses the [ElectronJS framework][18], the [LAME MP3 encoder][19] via the
 [lamejs library by Alex Zhukov][20], and the [audiobuffer-to-wav encoder by
@@ -70,3 +71,4 @@ a hobby of mine, with zero commercial intent. Please enjoy, and thanks!
 [19]: http://lame.sourceforge.net/
 [20]: https://github.com/zhuker/lamejs/
 [21]: https://github.com/Jam3/audiobuffer-to-wav/
+[22]: http://www.openairlib.net/
