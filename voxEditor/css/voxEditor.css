@@ -115,8 +115,8 @@ html {
 }
 body {
   background: #000;
-  color: #f5f5f5;
-  fill: #f5f5f5;
+  color: #fff;
+  fill: #fff;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -446,4 +446,4 @@ iframe {
     background: #fff;
   }
 }
-/*# sourceMappingURL=css/vox.css.map */
+/*# sourceMappingURL=css/voxEditor.css.map */

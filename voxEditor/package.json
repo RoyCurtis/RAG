@@ -14,7 +14,7 @@
   "scripts": {
     "start": "electron ./dist/voxEditor-init.js --experimental-modules",
     "watch-tsc": "tsc -w",
-    "watch-stylus": "stylus -m -w css/vox.styl",
+    "watch-stylus": "stylus -m -w css/voxEditor.styl",
     "watch": "npm-run-all --parallel watch-tsc watch-stylus"
   }
 }
