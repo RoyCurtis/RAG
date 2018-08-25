@@ -1351,42 +1351,6 @@ interface MediaTrackConstraintSet {
 }
 declare function registerProcessor(name: string, ctor: AudioWorkletProcessor): void;
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Holds runtime configuration */
-declare class Config {
-    /** If user has clicked shuffle at least once */
-    clickedGenerate: boolean;
-    /** Volume for speech to be set at */
-    speechVol: number;
-    /** Pitch for speech to be set at */
-    speechPitch: number;
-    /** Rate for speech to be set at */
-    speechRate: number;
-    /** Choice of speech voice to use, as getVoices index or -1 if unset */
-    private _speechVoice;
-    /** Whether to use the VOX engine */
-    voxEnabled: boolean;
-    /** Relative or absolute URL of the VOX voice to use */
-    voxPath: string;
-    /** Relative or absolute URL of the custom VOX voice to use */
-    voxCustomPath: string;
-    /** Impulse response to use for VOX's reverb */
-    voxReverb: string;
-    /** VOX key of the chime to use prior to speaking */
-    voxChime: string;
-    /**
-     * Choice of speech voice to use, as getVoices index. Because of the async nature of
-     * getVoices, the default value will be fetched from it each time.
-     */
-    /** Sets the choice of speech to use, as getVoices index */
-    speechVoice: number;
-    /** Safely loads runtime configuration from localStorage, if any */
-    constructor(load: boolean);
-    /** Safely saves runtime configuration to localStorage */
-    save(): void;
-    /** Safely deletes runtime configuration from localStorage and resets state */
-    reset(): void;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Manages data for excuses, trains, services and stations */
 declare class Database {
     /** Loaded dataset of delay or cancellation excuses */
@@ -1448,7 +1412,7 @@ declare class Database {
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Main class of the entire Rail Announcements Generator application */
 declare class RAG {
-    /** Gets the configuration holder */
+    /** Gets the configuration container */
     static config: Config;
     /** Gets the database manager, which holds phrase, station and train data */
     static database: Database;
@@ -1618,4 +1582,50 @@ declare class State {
      * duplicates in inappropriate places and contexts.
      */
     genDefaultState(): void;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Base class for configuration objects, that can save, load, and reset themselves */
+declare abstract class ConfigBase<T extends ConfigBase<T>> {
+    /** localStorage key where config is expected to be stored */
+    private static readonly SETTINGS_KEY;
+    /** Prototype object for creating new copies of self */
+    private type;
+    protected constructor(type: (new () => T));
+    /** Safely loads runtime configuration from localStorage, if any */
+    load(): void;
+    /** Safely saves this configuration to localStorage */
+    save(): void;
+    /** Safely deletes this configuration from localStorage and resets state */
+    reset(): void;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Holds runtime configuration for RAG */
+declare class Config extends ConfigBase<Config> {
+    /** If user has clicked shuffle at least once */
+    clickedGenerate: boolean;
+    /** Volume for speech to be set at */
+    speechVol: number;
+    /** Pitch for speech to be set at */
+    speechPitch: number;
+    /** Rate for speech to be set at */
+    speechRate: number;
+    /** Whether to use the VOX engine */
+    voxEnabled: boolean;
+    /** Relative or absolute URL of the VOX voice to use */
+    voxPath: string;
+    /** Relative or absolute URL of the custom VOX voice to use */
+    voxCustomPath: string;
+    /** Impulse response to use for VOX's reverb */
+    voxReverb: string;
+    /** VOX key of the chime to use prior to speaking */
+    voxChime: string;
+    /** Choice of speech voice to use, as getVoices index or -1 if unset */
+    private _speechVoice;
+    /**
+     * Choice of speech voice to use, as getVoices index. Because of the async nature of
+     * getVoices, the default value will be fetched from it each time.
+     */
+    /** Sets the choice of speech to use, as getVoices index */
+    speechVoice: number;
+    constructor(autoLoad?: boolean);
 }

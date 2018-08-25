@@ -868,9 +868,9 @@ body {
     margin: 12px;
   }
   #settingsScreen form select {
-    justify-self: end;
-    overflow: hidden;
-    width: 75%;
+    width: 80%;
+    width: -webkit-fill-available;
+    width: -moz-available;
   }
   #settingsScreen form p {
     font-size: smaller;

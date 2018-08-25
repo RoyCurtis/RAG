@@ -137,10 +137,11 @@
       font-size medium
       margin    12px
 
+    // Select elements do not correctly size on any browser
     select
-      justify-self end
-      overflow     hidden
-      width        75%
+      width 80%
+      width -webkit-fill-available
+      width -moz-available
 
     p
       font-size smaller

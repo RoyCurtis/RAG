@@ -3,7 +3,7 @@
 /** Main class of the entire Rail Announcements Generator application */
 class RAG
 {
-    /** Gets the configuration holder */
+    /** Gets the configuration container */
     public static config   : Config;
     /** Gets the database manager, which holds phrase, station and train data */
     public static database : Database;
