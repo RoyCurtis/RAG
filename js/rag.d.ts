@@ -1200,19 +1200,26 @@ declare class DOM {
     static toggleHiddenAll(...list: [HTMLElement, boolean?][]): void;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** A very, very small subset of Markdown for hyperlinking a block of text */
+/** A very small subset of Markdown for hyperlinking a block of text */
 declare class Linkdown {
     /** Regex pattern for matching linked text */
     private static readonly REGEX_LINK;
     /** Regex pattern for matching link references */
     private static readonly REGEX_REF;
     /**
-     * Parses the text of the given block as Linkdown, converting tagged text into links
-     * using a given list of index-based references.
+     * Attempts to load the given linkdown file, parse and set it as an element's text.
      *
-     * @param block Element with text to replace; all children cleared
+     * @param path Relative or absolute URL to fetch the linkdown from
+     * @param query DOM query for the object to put the text into
      */
-    static parse(block: HTMLElement): void;
+    static loadInto(path: string, query: string): void;
+    /**
+     * Parses the given text from Linkdown to HTML, converting tagged text into links
+     * using a given list of references.
+     *
+     * @param text Linkdown text to transform to HTML
+     */
+    private static parse;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Utility methods for parsing data from strings */

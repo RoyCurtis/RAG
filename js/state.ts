@@ -126,6 +126,7 @@ class State
         let phraseset = RAG.database.getPhraseset(ref);
 
         // TODO: is this safe across phraseset changes?
+        // TODO: introduce an asserts util, and start using them all over
         if (!phraseset)
             throw Error( L.STATE_NONEXISTANT_PHRASESET(ref) );
 

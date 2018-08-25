@@ -108,10 +108,6 @@ export class VoiceManager
         // possible because decodeAudioData holds a copy of the given buffer, preventing
         // the release of resources held by readFileSync.
 
-        // TODO: BUG: There appears to be a Chromium bug, where some clips repeat
-        // themselves after being loaded multiple times. It may just be an issue with
-        // the mp3 files exported from Audacity.
-
         let buffer      = fs.readFileSync(this.currentPath);
         let arrayBuffer = buffer.buffer.slice(0);
         this.audioContext.decodeAudioData(arrayBuffer)

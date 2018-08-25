@@ -686,7 +686,7 @@ input[type=range]::-webkit-slider-thumb {
 #settingsScreen #settingsMenu #btnSaveSettings {
   flex: 6;
 }
-#settingsScreen #legalBlock {
+#settingsScreen #aboutBlock {
   column-count: 2;
   column-gap: 24px;
   flex: 100%;
@@ -695,10 +695,10 @@ input[type=range]::-webkit-slider-thumb {
   padding: 24px;
   text-align: justify;
 }
-#settingsScreen #legalBlock a {
+#settingsScreen #aboutBlock a {
   color: #fff;
 }
-#settingsScreen #legalBlock a:visited {
+#settingsScreen #aboutBlock a:visited {
   color: #aaa;
 }
 * {
@@ -886,7 +886,7 @@ body {
   #settingsScreen #settingsMenu #btnSaveSettings {
     flex: 1;
   }
-  #settingsScreen #legalBlock {
+  #settingsScreen #aboutBlock {
     column-count: 1;
     font-size: smaller;
     padding-top: 8px;

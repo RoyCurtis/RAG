@@ -46,7 +46,7 @@ class Settings extends BaseView
         this.selVoxVoice.onchange  = this.layout.bind(this);
         this.btnSpeechTest.onclick = this.handleVoiceTest.bind(this);
 
-        Linkdown.parse( DOM.require('#legalBlock') );
+        Linkdown.loadInto('ABOUT.md', '#aboutBlock');
     }
 
     /** Opens the settings screen */

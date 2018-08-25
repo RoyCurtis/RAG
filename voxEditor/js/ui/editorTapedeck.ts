@@ -346,7 +346,7 @@ export class EditorTapedeck
 
     private onNext() : void
     {
-        // TODO: Make this a toggle
+        // TODO: Make auto-saving on prev/next a toggleable option
         if (this.dirty)
             VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
 
