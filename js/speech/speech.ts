@@ -13,6 +13,12 @@ class Speech
     /** Reference to the native speech-stopped check timer */
     private stopTimer     : number = 0;
 
+    /** Whether the VOX engine is currently available */
+    public get voxAvailable() : boolean
+    {
+        return this.voxEngine !== undefined;
+    }
+
     public constructor()
     {
         // Some browsers don't properly cancel speech on page close.
@@ -29,15 +35,8 @@ class Speech
         // not actually fire the event until this call...
         this.onVoicesChanged();
 
-        // TODO: Make this a dynamic registration and check for features
-        try
-        {
-            this.voxEngine = new VoxEngine();
-        }
-        catch (err)
-        {
-            console.error('Could not create VOX engine:', err);
-        }
+        try         { this.voxEngine = new VoxEngine(); }
+        catch (err) { console.error('Could not create VOX engine:', err); }
     }
 
     /** Begins speaking the given phrase components */

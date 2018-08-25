@@ -405,6 +405,52 @@ declare class TimePicker extends Picker {
     protected onInput(_: KeyboardEvent): void;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Base class for configuration objects, that can save, load, and reset themselves */
+declare abstract class ConfigBase<T extends ConfigBase<T>> {
+    /** localStorage key where config is expected to be stored */
+    private static readonly SETTINGS_KEY;
+    /** Prototype object for creating new copies of self */
+    private type;
+    protected constructor(type: (new () => T));
+    /** Safely loads runtime configuration from localStorage, if any */
+    load(): void;
+    /** Safely saves this configuration to localStorage */
+    save(): void;
+    /** Safely deletes this configuration from localStorage and resets state */
+    reset(): void;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Holds runtime configuration for RAG */
+declare class Config extends ConfigBase<Config> {
+    /** If user has clicked shuffle at least once */
+    clickedGenerate: boolean;
+    /** Volume for speech to be set at */
+    speechVol: number;
+    /** Pitch for speech to be set at */
+    speechPitch: number;
+    /** Rate for speech to be set at */
+    speechRate: number;
+    /** Whether to use the VOX engine */
+    voxEnabled: boolean;
+    /** Relative or absolute URL of the VOX voice to use */
+    voxPath: string;
+    /** Relative or absolute URL of the custom VOX voice to use */
+    voxCustomPath: string;
+    /** Impulse response to use for VOX's reverb */
+    voxReverb: string;
+    /** VOX key of the chime to use prior to speaking */
+    voxChime: string;
+    /** Choice of speech voice to use, as getVoices index or -1 if unset */
+    private _speechVoice;
+    /**
+     * Choice of speech voice to use, as getVoices index. Because of the async nature of
+     * getVoices, the default value will be fetched from it each time.
+     */
+    /** Sets the choice of speech to use, as getVoices index */
+    speechVoice: number;
+    constructor(autoLoad?: boolean);
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Language entries are template delegates */
 declare type LanguageEntry = (...parts: string[]) => string;
 declare abstract class BaseLanguage {
@@ -774,6 +820,8 @@ declare class Speech {
     onstop?: () => void;
     /** Reference to the native speech-stopped check timer */
     private stopTimer;
+    /** Whether the VOX engine is currently available */
+    readonly voxAvailable: boolean;
     constructor();
     /** Begins speaking the given phrase components */
     speak(phrase: HTMLElement, settings?: SpeechSettings): void;
@@ -897,16 +945,6 @@ declare class VoxRequest {
     private onError;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Base class for a view; anything with a base DOM element */
-declare abstract class BaseView {
-    /** Reference to this view's primary DOM element */
-    protected readonly dom: HTMLElement;
-    /** Creates this base view, attaching it to the element matching the given query */
-    protected constructor(domQuery: string);
-    /** Gets this view's child element matching the given query */
-    protected attach<T extends HTMLElement>(query: string): T;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the phrase editor */
 declare class Editor {
     /** Reference to the DOM container for the editor */
@@ -979,8 +1017,18 @@ declare class Marquee {
     stop(): void;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Base class for a view; anything with a base DOM element */
+declare abstract class ViewBase {
+    /** Reference to this view's primary DOM element */
+    protected readonly dom: HTMLElement;
+    /** Creates this base view, attaching it to the element matching the given query */
+    protected constructor(domQuery: string);
+    /** Gets this view's child element matching the given query */
+    protected attach<T extends HTMLElement>(query: string): T;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the settings screen */
-declare class Settings extends BaseView {
+declare class Settings extends ViewBase {
     private readonly btnReset;
     private readonly btnSave;
     private readonly chkUseVox;
@@ -1582,50 +1630,4 @@ declare class State {
      * duplicates in inappropriate places and contexts.
      */
     genDefaultState(): void;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Base class for configuration objects, that can save, load, and reset themselves */
-declare abstract class ConfigBase<T extends ConfigBase<T>> {
-    /** localStorage key where config is expected to be stored */
-    private static readonly SETTINGS_KEY;
-    /** Prototype object for creating new copies of self */
-    private type;
-    protected constructor(type: (new () => T));
-    /** Safely loads runtime configuration from localStorage, if any */
-    load(): void;
-    /** Safely saves this configuration to localStorage */
-    save(): void;
-    /** Safely deletes this configuration from localStorage and resets state */
-    reset(): void;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Holds runtime configuration for RAG */
-declare class Config extends ConfigBase<Config> {
-    /** If user has clicked shuffle at least once */
-    clickedGenerate: boolean;
-    /** Volume for speech to be set at */
-    speechVol: number;
-    /** Pitch for speech to be set at */
-    speechPitch: number;
-    /** Rate for speech to be set at */
-    speechRate: number;
-    /** Whether to use the VOX engine */
-    voxEnabled: boolean;
-    /** Relative or absolute URL of the VOX voice to use */
-    voxPath: string;
-    /** Relative or absolute URL of the custom VOX voice to use */
-    voxCustomPath: string;
-    /** Impulse response to use for VOX's reverb */
-    voxReverb: string;
-    /** VOX key of the chime to use prior to speaking */
-    voxChime: string;
-    /** Choice of speech voice to use, as getVoices index or -1 if unset */
-    private _speechVoice;
-    /**
-     * Choice of speech voice to use, as getVoices index. Because of the async nature of
-     * getVoices, the default value will be fetched from it each time.
-     */
-    /** Sets the choice of speech to use, as getVoices index */
-    speechVoice: number;
-    constructor(autoLoad?: boolean);
 }

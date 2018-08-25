@@ -1,9 +1,9 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
-///<reference path="baseView.ts"/>
+///<reference path="viewBase.ts"/>
 
 /** Controller for the settings screen */
-class Settings extends BaseView
+class Settings extends ViewBase
 {
     private readonly btnReset         =
         this.attach <HTMLButtonElement> ('#btnResetSettings');
@@ -55,7 +55,18 @@ class Settings extends BaseView
         // The voice list has to be populated each open, in case it changes
         this.populateVoiceList();
 
-        this.chkUseVox.checked              = RAG.config.voxEnabled;
+        if (!RAG.speech.voxAvailable)
+        {
+            // TODO : Localize
+            this.chkUseVox.checked    = false;
+            this.chkUseVox.disabled   = true;
+            this.hintUseVox.innerHTML = '<strong>VOX engine</strong> is unavailable.' +
+                ' Your browser or device may not be supported; please check the console' +
+                ' for more information.'
+        }
+        else
+            this.chkUseVox.checked = RAG.config.voxEnabled;
+
         this.selVoxVoice.value              = RAG.config.voxPath;
         this.inputVoxPath.value             = RAG.config.voxCustomPath;
         this.selVoxReverb.value             = RAG.config.voxReverb;
