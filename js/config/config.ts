@@ -19,12 +19,12 @@ class Config extends ConfigBase<Config>
     public  voxPath         : string  = 'https://roycurtis.github.io/RAG-VOX-Roy';
     /** Relative or absolute URL of the custom VOX voice to use */
     public  voxCustomPath   : string  = '';
-    /** Impulse response to use for VOX's reverb */
-    public  voxReverb       : string  = 'ir.stalbans.wav';
     /** VOX key of the chime to use prior to speaking */
     public  voxChime        : string  = '';
     /** Choice of speech voice to use, as getVoices index or -1 if unset */
     private _speechVoice    : number  = -1;
+    /** Impulse response to use for VOX's reverb */
+    private _voxReverb      : string  = 'ir.stalbans.wav';
 
     /**
      * Choice of speech voice to use, as getVoices index. Because of the async nature of
@@ -54,6 +54,24 @@ class Config extends ConfigBase<Config>
     set speechVoice(value: number)
     {
         this._speechVoice = value;
+    }
+
+    /** Gets the impulse response file to use for VOX engine's reverb */
+    get voxReverb() : string
+    {
+        // Reset choice of reverb if it's invalid
+        let choices = Object.keys(VoxEngine.REVERBS);
+
+        if ( !choices.includes(this._voxReverb) )
+            this._voxReverb = choices[0];
+
+        return this._voxReverb;
+    }
+
+    /** Sets the impulse response file to use for VOX engine's reverb */
+    set voxReverb(value: string)
+    {
+        this._voxReverb = value;
     }
 
     public constructor(autoLoad: boolean = false)

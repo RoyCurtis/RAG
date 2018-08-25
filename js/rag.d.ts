@@ -436,18 +436,21 @@ declare class Config extends ConfigBase<Config> {
     voxPath: string;
     /** Relative or absolute URL of the custom VOX voice to use */
     voxCustomPath: string;
-    /** Impulse response to use for VOX's reverb */
-    voxReverb: string;
     /** VOX key of the chime to use prior to speaking */
     voxChime: string;
     /** Choice of speech voice to use, as getVoices index or -1 if unset */
     private _speechVoice;
+    /** Impulse response to use for VOX's reverb */
+    private _voxReverb;
     /**
      * Choice of speech voice to use, as getVoices index. Because of the async nature of
      * getVoices, the default value will be fetched from it each time.
      */
     /** Sets the choice of speech to use, as getVoices index */
     speechVoice: number;
+    /** Gets the impulse response file to use for VOX engine's reverb */
+    /** Sets the impulse response file to use for VOX engine's reverb */
+    voxReverb: string;
     constructor(autoLoad?: boolean);
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
@@ -871,6 +874,8 @@ interface SpeechSettings {
 declare type VoxKey = string | number;
 /** Synthesizes speech by dynamically loading and piecing together voice files */
 declare class VoxEngine {
+    /** List of impulse responses that come with RAG */
+    static readonly REVERBS: Dictionary<string>;
     /** The core audio context that handles audio effects and playback */
     private readonly audioContext;
     /** Audio node that amplifies or attenuates voice */
@@ -1192,6 +1197,14 @@ declare class DOM {
      * @param value Value for the option
      */
     static addOption(select: HTMLSelectElement, text: string, value?: string): HTMLOptionElement;
+    /**
+     * Sugar for populating a select element with items from a given object.
+     *
+     * @param list Select element to populate
+     * @param items A dictionary where keys act like values, and values like labels
+     * @param selected If matches a dictionary key, that key is the pre-selected option
+     */
+    static populate(list: HTMLSelectElement, items: any, selected?: any): void;
     /**
      * Gets the text content of the given element, excluding the text of hidden children.
      * Be warned; this method uses RAG-specific code.
