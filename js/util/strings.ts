@@ -62,6 +62,8 @@ class Strings
         return text.trim()
             .replace(/[\n\r]/gi,   ''  )
             .replace(/\s{2,}/gi,   ' ' )
+            .replace(/“\s+/gi,     '“' )
+            .replace(/\s+”/gi,     '”' )
             .replace(/\s([.,])/gi, '$1');
     }
 
