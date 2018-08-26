@@ -936,18 +936,17 @@ body {
     padding: 8px;
   }
   .picker .chooser .chChoicesBox {
-    font-size: smaller;
+    font-size: large;
   }
   .picker .chooser .chChoicesBox dt {
-    padding: 5px 8px;
     font-size: smaller;
+    padding: 4px 8px;
   }
   .picker .chooser .chChoicesBox dd {
     padding: 8px;
   }
   #phrasesetPicker .chChoicesBox dd {
-    font-size: smaller;
-    padding: 12px 8px;
+    padding: 8px;
   }
   #platformPicker form input,
   #platformPicker form select {
