@@ -160,7 +160,7 @@ class DOM
     {
         if      (element.nodeType === Node.TEXT_NODE)
             return element.textContent || '';
-        else if ( element.classList.contains('toggle') )
+        else if ( element.tagName === 'BUTTON' )
             return '';
 
         // Return blank (skip) if child of a collapsed element. Previously, this used

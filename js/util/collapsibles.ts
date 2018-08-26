@@ -40,13 +40,13 @@ class Collapsibles
      * Sets the collapse state of a collapsible element.
      *
      * @param span The encapsulating collapsible element
-     * @param toggle The toggle child of the collapsible element
      * @param state True to collapse, false to open
      */
-    public static set(span: HTMLElement, toggle: HTMLElement, state: boolean) : void
+    public static set(span: HTMLElement, state: boolean) : void
     {
-        let ref  = span.dataset['ref'] || '???';
-        let type = span.dataset['type']!;
+        let ref    = span.dataset['ref'] || '???';
+        let type   = span.dataset['type']!;
+        let toggle = DOM.require('.toggle', span);
 
         if (state) span.setAttribute('collapsed', '');
         else       span.removeAttribute('collapsed');

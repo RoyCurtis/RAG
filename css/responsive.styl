@@ -42,19 +42,19 @@
     padding       0 2px
     margin        0 2px
 
-  // Collapsiable elements
-  span[data-chance], span[data-type=phrase][data-chance]
+  // Elements with buttons
+  span[data-type=phraseset], span[data-chance], span[data-type=phrase][data-chance]
     border-color $fgFocus
     border-left  0
     padding-left 0
 
-    > .toggle
+    > button, > button:first-child
       backAndForeColor($fgFocus, $fgBright)
       rect(38px)
 
       svg
-        rect(24px)
-        padding-bottom 0
+        rect(20px)
+        padding-bottom 4px
 
     &[collapsed]
       padding 0

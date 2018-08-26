@@ -727,6 +727,10 @@ declare class EnglishLanguage extends BaseLanguage {
  * current XML element being processed and the XML document being used.
  */
 declare class ElementProcessors {
+    /** Reference to the toggle DOM template to clone */
+    private static PS_TEMPLATE;
+    /** Creates and detaches the template on first create */
+    private static init;
     /** Fills in coach letters from A to Z */
     static coach(ctx: PhraseContext): void;
     /** Fills in the excuse, for a delay or cancellation */
@@ -758,6 +762,7 @@ declare class ElementProcessors {
      * can be made collapsible. Appends it to the new element being processed.
      */
     private static makeCollapsible;
+    private static wrapToInner;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Represents context data for a phrase, to be passed to an element processor */
@@ -1136,10 +1141,9 @@ declare class Collapsibles {
      * Sets the collapse state of a collapsible element.
      *
      * @param span The encapsulating collapsible element
-     * @param toggle The toggle child of the collapsible element
      * @param state True to collapse, false to open
      */
-    static set(span: HTMLElement, toggle: HTMLElement, state: boolean): void;
+    static set(span: HTMLElement, state: boolean): void;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Sugar for choosing second value if first is undefined, instead of falsy */

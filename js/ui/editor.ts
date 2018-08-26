@@ -121,13 +121,9 @@ class Editor
         if (!target)
             return this.closeDialog();
 
-        // Redirect clicks of inner elements
-        if ( target.classList.contains('inner') && target.parentElement )
-        {
-            target = target.parentElement;
-            type   = target.dataset['type'];
-            picker = type ? RAG.views.getPicker(type) : undefined;
-        }
+        // Ignore clicks of inner elements
+        if ( target.classList.contains('inner') )
+            return;
 
         // Ignore clicks to any inner document or unowned element
         if ( !document.body.contains(target) )
@@ -146,10 +142,21 @@ class Editor
         if (target === prevTarget)
             return;
 
+        let toggle       = target.closest('.toggle')       as HTMLElement;
+        let choosePhrase = target.closest('.choosePhrase') as HTMLElement;
+
         // Handle collapsible elements
-        let toggle = target.closest('.toggle') as HTMLElement;
         if (toggle)
             this.toggleCollapsiable(toggle);
+
+        // Special case for phraseset chooser
+        else if (choosePhrase)
+        {
+            // TODO: Assert here?
+            target = choosePhrase.parentElement!;
+            picker = RAG.views.getPicker(target.dataset['type']!);
+            this.openPicker(target, picker);
+        }
 
         // Find and open picker for the target element
         else if (type && picker)
@@ -191,17 +198,11 @@ class Editor
         let collapased = parent.hasAttribute('collapsed');
 
         // Propagate new collapse state to all collapsibles of the same ref
-        this.dom.querySelectorAll(`span[data-type=${type}][data-ref=${ref}]`)
-            .forEach(_ =>
+        this.dom.querySelectorAll(
+            `span[data-type=${type}][data-ref=${ref}][data-chance]`
+        ).forEach(element =>
             {
-                let phraseset = _ as HTMLElement;
-                let toggle    = phraseset.children[0] as HTMLElement;
-
-                // Skip same-ref elements that aren't collapsible
-                if ( !toggle || !toggle.classList.contains('toggle') )
-                    return;
-
-                Collapsibles.set(phraseset, toggle, !collapased);
+                Collapsibles.set(element as HTMLElement, !collapased);
                 // Don't move this to setCollapsible, as state save/load is handled
                 // outside in both usages of setCollapsible.
                 RAG.state.setCollapsed(ref, !collapased);

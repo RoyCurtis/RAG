@@ -209,74 +209,107 @@ input[type=range]::-webkit-slider-thumb {
   position: relative;
   z-index: 150;
 }
+#editor > span:first-child {
+  margin: 0;
+}
 #editor span[data-type=phrase],
-#editor span[data-type=phrase][data-chance] {
+#editor span[data-type=phrase][data-chance],
+#editor span[data-type=phraseset] {
   cursor: default;
   padding-left: 0;
 }
+#editor span[data-type=phraseset],
 #editor span[data-chance],
 #editor span[data-type=phrase][data-chance] {
   border-left: 0;
   padding-left: 0;
 }
-#editor span[data-chance] > .toggle,
-#editor span[data-type=phrase][data-chance] > .toggle {
+#editor span[data-type=phraseset] > button:first-child,
+#editor span[data-chance] > button:first-child,
+#editor span[data-type=phrase][data-chance] > button:first-child {
+  background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(51,51,51,0) 100%);
+  border-radius: 8px 0 0 8px;
+}
+#editor span[data-type=phraseset] > button,
+#editor span[data-chance] > button,
+#editor span[data-type=phrase][data-chance] > button {
   width: 53px;
   height: 53px;
-  border-radius: 8px 0px 0px 8px;
+  background: none;
+  border: none;
   cursor: pointer;
   display: inline-block;
   fill: #aaa;
   text-align: center;
   vertical-align: text-bottom;
 }
-#editor span[data-chance] > .toggle svg,
-#editor span[data-type=phrase][data-chance] > .toggle svg {
-  width: 32px;
-  height: 32px;
-  padding-bottom: 7px;
+#editor span[data-type=phraseset] > button svg,
+#editor span[data-chance] > button svg,
+#editor span[data-type=phrase][data-chance] > button svg {
+  width: 28px;
+  height: 28px;
+  position: relative;
+  top: 2px;
 }
-#editor span[data-chance] > .toggle .plus,
-#editor span[data-type=phrase][data-chance] > .toggle .plus {
+#editor span[data-type=phraseset] > button .plus,
+#editor span[data-chance] > button .plus,
+#editor span[data-type=phrase][data-chance] > button .plus {
   display: none;
 }
-#editor span[data-chance] > .toggle .minus,
-#editor span[data-type=phrase][data-chance] > .toggle .minus {
+#editor span[data-type=phraseset] > button .minus,
+#editor span[data-chance] > button .minus,
+#editor span[data-type=phrase][data-chance] > button .minus {
   display: inline-block;
 }
+#editor span[data-type=phraseset] > .inner,
+#editor span[data-chance] > .inner,
+#editor span[data-type=phrase][data-chance] > .inner {
+  padding-left: 4px;
+}
+#editor span[data-type=phraseset]:hover,
 #editor span[data-chance]:hover,
 #editor span[data-type=phrase][data-chance]:hover {
   border-color: #cc7e00;
 }
-#editor span[data-chance]:hover > .toggle,
-#editor span[data-type=phrase][data-chance]:hover > .toggle {
+#editor span[data-type=phraseset]:hover > button,
+#editor span[data-chance]:hover > button,
+#editor span[data-type=phrase][data-chance]:hover > button {
   background: #cc7e00;
   color: #fff;
   fill: #fff;
 }
+#editor span[data-type=phraseset][collapsed],
 #editor span[data-chance][collapsed],
 #editor span[data-type=phrase][data-chance][collapsed] {
   border-right: 0;
+  padding-right: 0;
 }
+#editor span[data-type=phraseset][collapsed] > .choosePhrase,
+#editor span[data-chance][collapsed] > .choosePhrase,
+#editor span[data-type=phrase][data-chance][collapsed] > .choosePhrase {
+  display: none;
+  visibility: hidden;
+}
+#editor span[data-type=phraseset][collapsed] > .toggle,
 #editor span[data-chance][collapsed] > .toggle,
 #editor span[data-type=phrase][data-chance][collapsed] > .toggle {
   border-radius: 8px;
   margin-right: 0;
 }
+#editor span[data-type=phraseset][collapsed] > .toggle .plus,
 #editor span[data-chance][collapsed] > .toggle .plus,
 #editor span[data-type=phrase][data-chance][collapsed] > .toggle .plus {
   display: inline-block;
 }
+#editor span[data-type=phraseset][collapsed] > .toggle .minus,
 #editor span[data-chance][collapsed] > .toggle .minus,
 #editor span[data-type=phrase][data-chance][collapsed] > .toggle .minus {
   display: none;
 }
+#editor span[data-type=phraseset][collapsed] > .inner,
 #editor span[data-chance][collapsed] > .inner,
 #editor span[data-type=phrase][data-chance][collapsed] > .inner {
   display: none;
-}
-#editor span[data-type=phraseset][data-chance] {
-  padding-left: 0;
 }
 #marquee {
   -webkit-user-select: none;
@@ -839,26 +872,36 @@ body {
     padding: 0 2px;
     margin: 0 2px;
   }
+  #editor span[data-type=phraseset],
   #editor span[data-chance],
   #editor span[data-type=phrase][data-chance] {
     border-color: #cc7e00;
     border-left: 0;
     padding-left: 0;
   }
-  #editor span[data-chance] > .toggle,
-  #editor span[data-type=phrase][data-chance] > .toggle {
+  #editor span[data-type=phraseset] > button,
+  #editor span[data-chance] > button,
+  #editor span[data-type=phrase][data-chance] > button,
+  #editor span[data-type=phraseset] > button:first-child,
+  #editor span[data-chance] > button:first-child,
+  #editor span[data-type=phrase][data-chance] > button:first-child {
     background: #cc7e00;
     color: #fff;
     fill: #fff;
     width: 38px;
     height: 38px;
   }
-  #editor span[data-chance] > .toggle svg,
-  #editor span[data-type=phrase][data-chance] > .toggle svg {
-    width: 24px;
-    height: 24px;
-    padding-bottom: 0;
+  #editor span[data-type=phraseset] > button svg,
+  #editor span[data-chance] > button svg,
+  #editor span[data-type=phrase][data-chance] > button svg,
+  #editor span[data-type=phraseset] > button:first-child svg,
+  #editor span[data-chance] > button:first-child svg,
+  #editor span[data-type=phrase][data-chance] > button:first-child svg {
+    width: 20px;
+    height: 20px;
+    padding-bottom: 4px;
   }
+  #editor span[data-type=phraseset][collapsed],
   #editor span[data-chance][collapsed],
   #editor span[data-type=phrase][data-chance][collapsed] {
     padding: 0;
@@ -985,7 +1028,7 @@ input[type=checkbox]::after {
   transition: left 100ms, width 100ms, background 100ms;
 }
 #editor span {
-  transition: background 100ms, border-color 100ms, fill 100ms;
+  transition: background 500ms, border-color 100ms, fill 100ms;
 }
 #editor span[editing] {
   transition: background 0s;
