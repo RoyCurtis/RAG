@@ -4,19 +4,21 @@
 
 #marquee
   unselectable()
-  border       24px solid
+  border       solid
   border-color $bgDarker $bgDark $bgDark $bgDarker
+  border-width 24px 24px 12px 24px
   background   $bgDarkest
   color        $fgMarquee
   flex-shrink  0
   font-family  "5by7", sans-serif
   font-size    48px
   line-height  84px
-  min-height   128px
+  min-height   116px
   overflow     hidden
   padding      0 24px
   position     relative
   white-space  nowrap
+  z-index      10
 
   > span
     position absolute

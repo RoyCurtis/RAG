@@ -317,19 +317,21 @@ input[type=range]::-webkit-slider-thumb {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  border: 24px solid;
+  border: solid;
   border-color: #222 #444 #444 #222;
+  border-width: 24px 24px 12px 24px;
   background: #000;
   color: #ffa500;
   flex-shrink: 0;
   font-family: "5by7", sans-serif;
   font-size: 48px;
   line-height: 84px;
-  min-height: 128px;
+  min-height: 116px;
   overflow: hidden;
   padding: 0 24px;
   position: relative;
   white-space: nowrap;
+  z-index: 10;
 }
 #marquee > span {
   position: absolute;
@@ -622,11 +624,11 @@ input[type=range]::-webkit-slider-thumb {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  box-shadow: 0 0 18px #000;
   background: linear-gradient(to bottom, #444 50%, #222 100%);
   flex-shrink: 0;
-  height: 48px;
-  padding-bottom: 16px;
-  z-index: 10;
+  padding: 4px 0;
+  z-index: 5;
 }
 #toolbar > button {
   background: #222;
@@ -828,16 +830,15 @@ body {
   #marquee {
     background: #000;
     border: none;
-    border-bottom: 8px solid #444;
     font-size: 32px;
     line-height: 50px;
-    min-height: 56px;
+    min-height: 48px;
     padding: 0 12px;
   }
   #toolbar {
     background: #444;
     height: auto;
-    padding: 0 0 8px 0;
+    padding: 0;
   }
   #toolbar > button {
     flex-grow: 1;

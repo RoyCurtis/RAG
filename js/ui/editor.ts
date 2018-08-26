@@ -138,6 +138,10 @@ class Editor
         let prevTarget = this.domEditing;
         this.closeDialog();
 
+        // Don't handle phrase or phrasesets - only via their buttons
+        if (type === 'phrase' || type === 'phraseset')
+            return;
+
         // If clicking the element already being edited, don't reopen
         if (target === prevTarget)
             return;
