@@ -147,8 +147,9 @@ class Editor
             return;
 
         // Handle collapsible elements
-        if ( target.classList.contains('toggle') )
-            this.toggleCollapsiable(target);
+        let toggle = target.closest('.toggle') as HTMLElement;
+        if (toggle)
+            this.toggleCollapsiable(toggle);
 
         // Find and open picker for the target element
         else if (type && picker)

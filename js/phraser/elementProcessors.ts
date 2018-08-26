@@ -196,11 +196,10 @@ class ElementProcessors
     {
         let chance    = ctx.xmlElement.getAttribute('chance')!;
         let inner     = document.createElement('span');
-        let toggle    = document.createElement('span');
+        let toggle    = Collapsibles.createToggle();
         let collapsed = RAG.state.getCollapsed( ref, parseInt(chance) );
 
         inner.classList.add('inner');
-        toggle.classList.add('toggle');
 
         DOM.cloneInto(source, inner);
         ctx.newElement.dataset['chance'] = chance;

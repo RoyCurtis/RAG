@@ -9,7 +9,7 @@ input[type=checkbox]
 
 #editor span
   // Smoother fading of borders on hover
-  transition background 500ms, border 100ms
+  transition background 100ms, border-color 100ms, fill 100ms
 
   &[editing]
     transition background 0s
@@ -18,7 +18,13 @@ input[type=checkbox]
 // element they had just edited
 #editor
   span[data-type=phraseset]
-    animation 500ms creation
+    animation 2500ms expand
+
+  span[data-chance], span[data-type=phrase][data-chance]
+    animation 2500ms expand
+
+    &[collapsed]
+      animation none
 
 // Smoother fading of button backgrounds on hover
 #toolbar button, #settingsScreen button, .chChoicesBox dd
@@ -37,12 +43,12 @@ input[type=checkbox]
     background $fgFocus !important
     box-shadow 0 0 16px darken($fgFocus, 25%) !important
 
-@keyframes creation
-  from
-    background $fgFocus
+@keyframes expand
+  0%, 25%
+    backAndForeColor($fgFocus, $fgBright)
 
   to
-    background rgba(0, 0, 0, 0)
+    backAndForeColor(transparent, $fgBright)
 
 @keyframes throb
   from

@@ -25,32 +25,39 @@
       height 18px
 
 #editor
-  font-size x-large
+  font-size xx-large
   padding   12px 40px 12px 12px
 
   // All selectable elements
   span[data-type=coach],       span[data-type=excuse],  span[data-type=integer],
-  span[data-type=named],       span[data-type=phrase],  span[data-type=phraseset],
+  span[data-type=named],       span[data-type=phraseset],
   span[data-type=platform],    span[data-type=service], span[data-type=station],
-  span[data-type=stationlist], span[data-type=time]
-    background   alpha($bgMid, 0.1)
-    border-color $fgBright
+  span[data-type=stationlist], span[data-type=time],
+  span[data-type=phrase][data-chance]
+    background    alpha($bgMid, 0.1)
+    border        3px solid $fgBright
+    border-top    none
+    border-bottom none
+    border-radius 8px
+    padding       0 2px
+    margin        0 2px
 
   // Collapsiable elements
-  span[data-chance]
-    border-left-style  dotted
-    border-right-style dotted
+  span[data-chance], span[data-type=phrase][data-chance]
+    border-color $fgFocus
+    border-left  0
+    padding-left 0
 
-    > .toggle::before
-      width 32px
+    > .toggle
+      backAndForeColor($fgFocus, $fgBright)
+      rect(38px)
 
-  // Phrasesets
-  span[data-type=phraseset]
-    border-left-style solid
-    border-left-width 16px
+      svg
+        rect(24px)
+        padding-bottom 0
 
     &[collapsed]
-      border-left-width 4px
+      padding 0
 
 .picker
   border-radius 0

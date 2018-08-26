@@ -19,7 +19,8 @@ class Phraser
         // HTML does not work really well with custom elements, especially if they are of
         // another XML namespace.
 
-        let pending = container.querySelectorAll(':not(span)') as NodeListOf<HTMLElement>;
+        let pending = container
+            .querySelectorAll(':not(span):not(svg):not(use)') as NodeListOf<HTMLElement>;
 
         // No more XML elements to expand
         if (pending.length === 0)
