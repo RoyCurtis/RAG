@@ -1118,8 +1118,20 @@ declare class Views {
     private onInput;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+interface ToggleElement extends HTMLElement {
+    /** Reference to this element's plus icon */
+    plusIcon: HTMLElement;
+    /** Reference to this element's minus icon */
+    minusIcon: HTMLElement;
+}
 /** Utility methods for dealing with collapsible elements */
 declare class Collapsibles {
+    /** Reference to the toggle DOM template to clone */
+    private static TEMPLATE;
+    /** Creates and detaches the template on first create */
+    private static init;
+    /** Creates a toggle element for toggling collapsibles */
+    static createToggle(): ToggleElement;
     /**
      * Sets the collapse state of a collapsible element.
      *

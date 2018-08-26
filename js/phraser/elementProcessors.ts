@@ -14,6 +14,7 @@ class ElementProcessors
 
         ctx.newElement.title       = L.TITLE_COACH(context);
         ctx.newElement.textContent = RAG.state.getCoach(context);
+        ctx.newElement.tabIndex    = 1;
 
         ctx.newElement.dataset['context'] = context;
     }
@@ -23,6 +24,7 @@ class ElementProcessors
     {
         ctx.newElement.title       = L.TITLE_EXCUSE();
         ctx.newElement.textContent = RAG.state.excuse;
+        ctx.newElement.tabIndex    = 1;
     }
 
     /** Fills in integers, optionally with nouns and in word form */
@@ -45,6 +47,7 @@ class ElementProcessors
 
         ctx.newElement.title       = L.TITLE_INTEGER(context);
         ctx.newElement.textContent = intStr;
+        ctx.newElement.tabIndex    = 1;
 
         ctx.newElement.dataset['context'] = context;
 
@@ -58,6 +61,7 @@ class ElementProcessors
     {
         ctx.newElement.title       = L.TITLE_NAMED();
         ctx.newElement.textContent = RAG.state.named;
+        ctx.newElement.tabIndex    = 1;
     }
 
     /** Includes a previously defined phrase, by its `id` */
@@ -105,7 +109,8 @@ class ElementProcessors
 
         ctx.newElement.dataset['idx'] = forcedIdx || idx.toString();
 
-        ctx.newElement.title = L.TITLE_PHRASESET(ref);
+        ctx.newElement.title    = L.TITLE_PHRASESET(ref);
+        ctx.newElement.tabIndex = 1;
 
         // Handle phrasesets with a chance value as collapsible
         if ( ctx.xmlElement.hasAttribute('chance') )
@@ -119,6 +124,7 @@ class ElementProcessors
     {
         ctx.newElement.title       = L.TITLE_PLATFORM();
         ctx.newElement.textContent = RAG.state.platform.join('');
+        ctx.newElement.tabIndex    = 1;
     }
 
     /** Fills in the rail network name */
@@ -128,6 +134,7 @@ class ElementProcessors
 
         ctx.newElement.title       = L.TITLE_SERVICE(context);
         ctx.newElement.textContent = RAG.state.getService(context);
+        ctx.newElement.tabIndex    = 1;
 
         ctx.newElement.dataset['context'] = context;
     }
@@ -140,6 +147,7 @@ class ElementProcessors
 
         ctx.newElement.title       = L.TITLE_STATION(context);
         ctx.newElement.textContent = RAG.database.getStation(code);
+        ctx.newElement.tabIndex    = 1;
 
         ctx.newElement.dataset['context'] = context;
     }
@@ -153,6 +161,7 @@ class ElementProcessors
 
         ctx.newElement.title       = L.TITLE_STATIONLIST(context);
         ctx.newElement.textContent = stationList;
+        ctx.newElement.tabIndex    = 1;
 
         ctx.newElement.dataset['context'] = context;
     }
@@ -164,6 +173,7 @@ class ElementProcessors
 
         ctx.newElement.title       = L.TITLE_TIME(context);
         ctx.newElement.textContent = RAG.state.getTime(context);
+        ctx.newElement.tabIndex    = 1;
 
         ctx.newElement.dataset['context'] = context;
     }
@@ -176,6 +186,7 @@ class ElementProcessors
         // TODO: Localize
         ctx.newElement.textContent    = ctx.xmlElement.textContent;
         ctx.newElement.title          = `Click to edit this phrase (${key})`;
+        ctx.newElement.tabIndex       = 1;
         ctx.newElement.dataset['key'] = key;
     }
 

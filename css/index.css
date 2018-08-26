@@ -107,6 +107,7 @@ input[type=range]::-webkit-slider-thumb {
   background: #222;
   flex-grow: 1;
   font-size: 48px;
+  line-height: 125%;
   padding: 16px 48px 16px 16px;
   overflow-x: hidden;
   overflow-y: auto;
@@ -120,14 +121,14 @@ input[type=range]::-webkit-slider-thumb {
 #editor span[data-type=excuse],
 #editor span[data-type=integer],
 #editor span[data-type=named],
-#editor span[data-type=phrase],
 #editor span[data-type=phraseset],
 #editor span[data-type=platform],
 #editor span[data-type=service],
 #editor span[data-type=station],
 #editor span[data-type=stationlist],
-#editor span[data-type=time] {
-  border: 2px solid transparent;
+#editor span[data-type=time],
+#editor span[data-type=phrase][data-chance] {
+  border: 4px solid transparent;
   border-top: none;
   border-bottom: none;
   border-radius: 8px;
@@ -139,100 +140,150 @@ input[type=range]::-webkit-slider-thumb {
 #editor span[data-type=excuse]:hover,
 #editor span[data-type=integer]:hover,
 #editor span[data-type=named]:hover,
-#editor span[data-type=phrase]:hover,
 #editor span[data-type=phraseset]:hover,
 #editor span[data-type=platform]:hover,
 #editor span[data-type=service]:hover,
 #editor span[data-type=station]:hover,
 #editor span[data-type=stationlist]:hover,
-#editor span[data-type=time]:hover {
+#editor span[data-type=time]:hover,
+#editor span[data-type=phrase][data-chance]:hover {
   background: rgba(128,128,128,0.1);
   border-color: #fff;
+}
+#editor span[data-type=coach]:focus,
+#editor span[data-type=excuse]:focus,
+#editor span[data-type=integer]:focus,
+#editor span[data-type=named]:focus,
+#editor span[data-type=phraseset]:focus,
+#editor span[data-type=platform]:focus,
+#editor span[data-type=service]:focus,
+#editor span[data-type=station]:focus,
+#editor span[data-type=stationlist]:focus,
+#editor span[data-type=time]:focus,
+#editor span[data-type=phrase][data-chance]:focus {
+  background: rgba(128,128,128,0.1);
+  border-color: #cc7e00;
+  outline: none;
 }
 #editor span[data-type=coach][editing],
 #editor span[data-type=excuse][editing],
 #editor span[data-type=integer][editing],
 #editor span[data-type=named][editing],
-#editor span[data-type=phrase][editing],
 #editor span[data-type=phraseset][editing],
 #editor span[data-type=platform][editing],
 #editor span[data-type=service][editing],
 #editor span[data-type=station][editing],
 #editor span[data-type=stationlist][editing],
-#editor span[data-type=time][editing] {
+#editor span[data-type=time][editing],
+#editor span[data-type=phrase][data-chance][editing] {
   background: #cc7e00;
-  color: #fff;
   box-shadow: 8px 8px 8px rgba(0,0,0,0.1);
+  border-color: #cc7e00;
+  color: #fff;
 }
 #editor span[data-type=coach][editing].above,
 #editor span[data-type=excuse][editing].above,
 #editor span[data-type=integer][editing].above,
 #editor span[data-type=named][editing].above,
-#editor span[data-type=phrase][editing].above,
 #editor span[data-type=phraseset][editing].above,
 #editor span[data-type=platform][editing].above,
 #editor span[data-type=service][editing].above,
 #editor span[data-type=station][editing].above,
 #editor span[data-type=stationlist][editing].above,
-#editor span[data-type=time][editing].above {
+#editor span[data-type=time][editing].above,
+#editor span[data-type=phrase][data-chance][editing].above {
   border-radius: 8px 8px 0 0;
 }
 #editor span[data-type=coach][editing].below,
 #editor span[data-type=excuse][editing].below,
 #editor span[data-type=integer][editing].below,
 #editor span[data-type=named][editing].below,
-#editor span[data-type=phrase][editing].below,
 #editor span[data-type=phraseset][editing].below,
 #editor span[data-type=platform][editing].below,
 #editor span[data-type=service][editing].below,
 #editor span[data-type=station][editing].below,
 #editor span[data-type=stationlist][editing].below,
-#editor span[data-type=time][editing].below {
+#editor span[data-type=time][editing].below,
+#editor span[data-type=phrase][data-chance][editing].below {
   border-radius: 0 0 8px 8px;
   position: relative;
   z-index: 150;
 }
-#editor span[data-type=phrase] {
+#editor span[data-type=phrase],
+#editor span[data-type=phrase][data-chance] {
   cursor: default;
-}
-#editor span[data-chance] {
   padding-left: 0;
 }
-#editor span[data-chance] > .toggle::before {
-  background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(51,51,51,0) 100%);
-  border-radius: 8px;
-  color: #aaa;
-  content: '-';
+#editor span[data-chance],
+#editor span[data-type=phrase][data-chance] {
+  border-left: 0;
+  padding-left: 0;
+}
+#editor span[data-chance] > .toggle,
+#editor span[data-type=phrase][data-chance] > .toggle {
+  width: 53px;
+  height: 53px;
+  border-radius: 8px 0px 0px 8px;
   cursor: pointer;
   display: inline-block;
+  fill: #aaa;
   text-align: center;
-  width: 48px;
+  vertical-align: text-bottom;
 }
-#editor span[data-chance]:hover {
-  border-left-style: dotted;
-  border-right-style: dotted;
+#editor span[data-chance] > .toggle svg,
+#editor span[data-type=phrase][data-chance] > .toggle svg {
+  width: 32px;
+  height: 32px;
+  padding-bottom: 7px;
 }
-#editor span[data-chance]:hover > .toggle {
-  border-radius: 0;
-}
-#editor span[data-chance][collapsed] > .toggle::before {
-  background: none;
-  content: '+';
-}
-#editor span[data-chance][collapsed] > .inner {
+#editor span[data-chance] > .toggle .plus,
+#editor span[data-type=phrase][data-chance] > .toggle .plus {
   display: none;
 }
-#editor span[data-type=phraseset] {
-  border-left-width: 8px;
-  padding-left: 8px;
+#editor span[data-chance] > .toggle .minus,
+#editor span[data-type=phrase][data-chance] > .toggle .minus {
+  display: inline-block;
 }
-#editor span[data-type=phraseset]:hover {
-  border-left-style: solid;
+#editor span[data-chance]:hover,
+#editor span[data-type=phrase][data-chance]:hover {
+  border-color: #cc7e00;
+}
+#editor span[data-chance]:hover > .toggle,
+#editor span[data-type=phrase][data-chance]:hover > .toggle {
+  background: #cc7e00;
+  color: #fff;
+  fill: #fff;
+}
+#editor span[data-chance][collapsed],
+#editor span[data-type=phrase][data-chance][collapsed] {
+  border-right: 0;
+}
+#editor span[data-chance][collapsed] > .toggle,
+#editor span[data-type=phrase][data-chance][collapsed] > .toggle {
+  border-radius: 8px;
+  margin-right: 0;
+}
+#editor span[data-chance][collapsed] > .toggle .plus,
+#editor span[data-type=phrase][data-chance][collapsed] > .toggle .plus {
+  display: inline-block;
+}
+#editor span[data-chance][collapsed] > .toggle .minus,
+#editor span[data-type=phrase][data-chance][collapsed] > .toggle .minus {
+  display: none;
+}
+#editor span[data-chance][collapsed] > .inner,
+#editor span[data-type=phrase][data-chance][collapsed] > .inner {
+  display: none;
 }
 #editor span[data-type=phraseset][data-chance] {
   padding-left: 0;
 }
 #marquee {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   border: 24px solid;
   border-color: #222 #444 #444 #222;
   background: #000;
@@ -542,6 +593,7 @@ input[type=range]::-webkit-slider-thumb {
   flex-shrink: 0;
   height: 48px;
   padding-bottom: 16px;
+  z-index: 10;
 }
 #toolbar > button {
   background: #222;
@@ -698,8 +750,12 @@ input[type=range]::-webkit-slider-thumb {
 #settingsScreen #aboutBlock a {
   color: #fff;
 }
-#settingsScreen #aboutBlock a:visited {
-  color: #aaa;
+#settingsScreen #aboutBlock a:focus {
+  background: #fff;
+  color: #000;
+  fill: #000;
+  outline-color: #fff;
+  outline-width: 2px;
 }
 * {
   margin: 0;
@@ -711,6 +767,11 @@ html {
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+:focus {
+  outline-color: #cc7e00;
+  outline-width: 4px;
+  outline-style: solid;
 }
 body {
   background: #444;
@@ -756,36 +817,51 @@ body {
     height: 18px;
   }
   #editor {
-    font-size: x-large;
+    font-size: xx-large;
     padding: 12px 40px 12px 12px;
   }
   #editor span[data-type=coach],
   #editor span[data-type=excuse],
   #editor span[data-type=integer],
   #editor span[data-type=named],
-  #editor span[data-type=phrase],
   #editor span[data-type=phraseset],
   #editor span[data-type=platform],
   #editor span[data-type=service],
   #editor span[data-type=station],
   #editor span[data-type=stationlist],
-  #editor span[data-type=time] {
+  #editor span[data-type=time],
+  #editor span[data-type=phrase][data-chance] {
     background: rgba(128,128,128,0.1);
-    border-color: #fff;
+    border: 3px solid #fff;
+    border-top: none;
+    border-bottom: none;
+    border-radius: 8px;
+    padding: 0 2px;
+    margin: 0 2px;
   }
-  #editor span[data-chance] {
-    border-left-style: dotted;
-    border-right-style: dotted;
+  #editor span[data-chance],
+  #editor span[data-type=phrase][data-chance] {
+    border-color: #cc7e00;
+    border-left: 0;
+    padding-left: 0;
   }
-  #editor span[data-chance] > .toggle::before {
-    width: 32px;
+  #editor span[data-chance] > .toggle,
+  #editor span[data-type=phrase][data-chance] > .toggle {
+    background: #cc7e00;
+    color: #fff;
+    fill: #fff;
+    width: 38px;
+    height: 38px;
   }
-  #editor span[data-type=phraseset] {
-    border-left-style: solid;
-    border-left-width: 16px;
+  #editor span[data-chance] > .toggle svg,
+  #editor span[data-type=phrase][data-chance] > .toggle svg {
+    width: 24px;
+    height: 24px;
+    padding-bottom: 0;
   }
-  #editor span[data-type=phraseset][collapsed] {
-    border-left-width: 4px;
+  #editor span[data-chance][collapsed],
+  #editor span[data-type=phrase][data-chance][collapsed] {
+    padding: 0;
   }
   .picker {
     border-radius: 0;
@@ -909,13 +985,21 @@ input[type=checkbox]::after {
   transition: left 100ms, width 100ms, background 100ms;
 }
 #editor span {
-  transition: background 500ms, border 100ms;
+  transition: background 100ms, border-color 100ms, fill 100ms;
 }
 #editor span[editing] {
   transition: background 0s;
 }
 #editor span[data-type=phraseset] {
-  animation: 500ms creation;
+  animation: 2500ms expand;
+}
+#editor span[data-chance],
+#editor span[data-type=phrase][data-chance] {
+  animation: 2500ms expand;
+}
+#editor span[data-chance][collapsed],
+#editor span[data-type=phrase][data-chance][collapsed] {
+  animation: none;
 }
 #toolbar button,
 #settingsScreen button,
@@ -939,36 +1023,52 @@ input[type=checkbox]::after {
   background: #cc7e00 !important;
   box-shadow: 0 0 16px #995e00 !important;
 }
-@-moz-keyframes creation {
-  from {
+@-moz-keyframes expand {
+  0%, 25% {
     background: #cc7e00;
+    color: #fff;
+    fill: #fff;
   }
   to {
-    background: rgba(0,0,0,0);
+    background: transparent;
+    color: #fff;
+    fill: #fff;
   }
 }
-@-webkit-keyframes creation {
-  from {
+@-webkit-keyframes expand {
+  0%, 25% {
     background: #cc7e00;
+    color: #fff;
+    fill: #fff;
   }
   to {
-    background: rgba(0,0,0,0);
+    background: transparent;
+    color: #fff;
+    fill: #fff;
   }
 }
-@-o-keyframes creation {
-  from {
+@-o-keyframes expand {
+  0%, 25% {
     background: #cc7e00;
+    color: #fff;
+    fill: #fff;
   }
   to {
-    background: rgba(0,0,0,0);
+    background: transparent;
+    color: #fff;
+    fill: #fff;
   }
 }
-@keyframes creation {
-  from {
+@keyframes expand {
+  0%, 25% {
     background: #cc7e00;
+    color: #fff;
+    fill: #fff;
   }
   to {
-    background: rgba(0,0,0,0);
+    background: transparent;
+    color: #fff;
+    fill: #fff;
   }
 }
 @-moz-keyframes throb {

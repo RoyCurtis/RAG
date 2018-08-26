@@ -6,6 +6,8 @@
   flex-shrink    0
   height         48px
   padding-bottom 16px
+  // Needed so marquee doesn't draw over buttons' focus outline
+  z-index        10
 
   > button
     pressable()
