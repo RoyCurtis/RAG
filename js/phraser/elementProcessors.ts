@@ -7,19 +7,6 @@
  */
 class ElementProcessors
 {
-    /** Reference to the toggle DOM template to clone */
-    private static PS_TEMPLATE : HTMLElement;
-
-    /** Creates and detaches the template on first create */
-    private static init() : void
-    {
-        // TODO: This is being duplicated in various places; DRY with sugar method
-        ElementProcessors.PS_TEMPLATE        = DOM.require('#phrasesetButtonTemplate');
-        ElementProcessors.PS_TEMPLATE.id     = '';
-        ElementProcessors.PS_TEMPLATE.hidden = false;
-        ElementProcessors.PS_TEMPLATE.remove();
-    }
-
     /** Fills in coach letters from A to Z */
     public static coach(ctx: PhraseContext)
     {
@@ -92,21 +79,15 @@ class ElementProcessors
             return;
         }
 
-        let wrapped = ElementProcessors.wrapToInner(phrase);
+        // Handle phrases with a chance value as collapsible
+        ElementProcessors.makeCollapsible(ctx, ref);
 
-        // Handle phrasesets with a chance value as collapsible
-        if ( ctx.xmlElement.hasAttribute('chance') )
-            ElementProcessors.makeCollapsible(ctx, ref);
-
-        ctx.newElement.appendChild(wrapped);
+        ctx.newElement.appendChild( ElementProcessors.wrapToInner(phrase) );
     }
 
     /** Includes a phrase from a previously defined phraseset, by its `id` */
     public static phraseset(ctx: PhraseContext)
     {
-        if (!ElementProcessors.PS_TEMPLATE)
-            ElementProcessors.init();
-
         let ref       = DOM.requireAttr(ctx.xmlElement, 'ref');
         let phraseset = RAG.database.getPhraseset(ref);
         let forcedIdx = ctx.xmlElement.getAttribute('idx');
@@ -123,19 +104,14 @@ class ElementProcessors
             ? parseInt(forcedIdx)
             : RAG.state.getPhrasesetIdx(ref);
 
-        let phrase   = phraseset.children[idx] as HTMLElement;
-        let wrapped  = ElementProcessors.wrapToInner(phrase);
-        let button   = ElementProcessors.PS_TEMPLATE.cloneNode(true) as HTMLElement;
-        button.title = L.TITLE_PHRASESET(ref);
+        let phrase = phraseset.children[idx] as HTMLElement;
 
         ctx.newElement.dataset['idx'] = forcedIdx || idx.toString();
 
         // Handle phrasesets with a chance value as collapsible
-        if ( ctx.xmlElement.hasAttribute('chance') )
-            ElementProcessors.makeCollapsible(ctx, ref);
+        ElementProcessors.makeCollapsible(ctx, ref);
 
-        ctx.newElement.appendChild(button);
-        ctx.newElement.appendChild(wrapped);
+        ctx.newElement.appendChild( ElementProcessors.wrapToInner(phrase) );
     }
 
     /** Fills in the current platform */
@@ -218,21 +194,31 @@ class ElementProcessors
     }
 
     /**
-     * Clones the children of the given element into a new inner span tag, so that they
-     * can be made collapsible. Appends it to the new element being processed.
+     * Attaches chance and a pre-determined collapse state for a given phrase element, if
+     * it does have a chance attribue.
+     *
+     * @param ctx Context of the current phrase element being processed
+     * @param ref Reference ID to get (or pick) the collapse state of
      */
     private static makeCollapsible(ctx: PhraseContext, ref: string) : void
     {
+        if ( !ctx.xmlElement.hasAttribute('chance') )
+            return;
+
         let chance    = ctx.xmlElement.getAttribute('chance')!;
-        let toggle    = Collapsibles.createToggle();
         let collapsed = RAG.state.getCollapsed( ref, parseInt(chance) );
 
         ctx.newElement.dataset['chance'] = chance;
 
-        ctx.newElement.appendChild(toggle);
         Collapsibles.set(ctx.newElement, collapsed);
     }
 
+    /**
+     * Clones the children of the given element into a new inner span tag, so that they
+     * can be made collapsible or bundled with buttons.
+     *
+     * @param source Parent to clone the children of, into a wrapper
+     */
     private static wrapToInner(source: HTMLElement) : HTMLElement
     {
         let inner = document.createElement('span');

@@ -28,6 +28,7 @@ class Editor
         this.dom.innerHTML = '<phraseset ref="root" />';
 
         RAG.phraser.process(this.dom);
+        this.attachControls();
 
         // For scroll-past padding under the phrase
         let padding       = document.createElement('span');
@@ -57,6 +58,7 @@ class Editor
 
                 element.parentElement!.replaceChild(newElement, element);
                 RAG.phraser.process(newElement.parentElement!);
+                this.attachControls();
             });
     }
 
@@ -109,6 +111,20 @@ class Editor
 
         this.currentPicker = undefined;
         this.domEditing    = undefined;
+    }
+
+    /** Creates and attaches UI controls for certain phrase elements */
+    private attachControls() : void
+    {
+        this.dom.querySelectorAll('[data-type=phraseset]').forEach(span =>
+            PhrasesetButton.createAndAttach(span)
+        );
+
+        this.dom.querySelectorAll('[data-chance]').forEach(span =>
+        {
+            CollapseToggle.createAndAttach(span);
+            CollapseToggle.update(span as HTMLElement);
+        });
     }
 
     /** Handles a click anywhere in the window depending on the context */
@@ -204,10 +220,11 @@ class Editor
         // Propagate new collapse state to all collapsibles of the same ref
         this.dom.querySelectorAll(
             `span[data-type=${type}][data-ref=${ref}][data-chance]`
-        ).forEach(element =>
+        ).forEach(span =>
             {
-                Collapsibles.set(element as HTMLElement, !collapased);
-                // Don't move this to setCollapsible, as state save/load is handled
+                Collapsibles.set(span as HTMLElement, !collapased);
+                CollapseToggle.update(span as HTMLElement);
+                // Don't move this to Collapsibles.set, as state save/load is handled
                 // outside in both usages of setCollapsible.
                 RAG.state.setCollapsed(ref, !collapased);
             });

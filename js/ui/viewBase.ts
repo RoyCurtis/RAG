@@ -8,9 +8,12 @@ abstract class ViewBase
     protected readonly dom : HTMLElement;
 
     /** Creates this base view, attaching it to the element matching the given query */
-    protected constructor(domQuery: string)
+    protected constructor(domQuery: string | HTMLElement)
     {
-        this.dom = DOM.require(domQuery);
+        if (typeof domQuery === 'string')
+            this.dom = DOM.require(domQuery);
+        else
+            this.dom = domQuery;
     }
 
     /** Gets this view's child element matching the given query */

@@ -103,6 +103,28 @@ declare class Chooser {
     protected isChoice(target?: HTMLElement): boolean;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** UI element for toggling the state of collapsible editor elements */
+declare class CollapseToggle {
+    /** Reference to the toggle button DOM template to clone */
+    private static TEMPLATE;
+    /** Creates and detaches the template on first create */
+    private static init;
+    /** Creates and attaches toggle element for toggling collapsibles */
+    static createAndAttach(parent: Element): void;
+    /** Updates the given collapse toggle's title text, depending on state */
+    static update(span: HTMLElement): void;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** UI element for opening the picker for phraseset editor elements */
+declare class PhrasesetButton {
+    /** Reference to the phraseset button DOM template to clone */
+    private static TEMPLATE;
+    /** Creates and detaches the template on first create */
+    private static init;
+    /** Creates and attaches a button for the given phraseset element */
+    static createAndAttach(phraseset: Element): void;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /**
  * Singleton instance of the station picker. Since there are expected to be 2500+
  * stations, this element would take up a lot of memory and generate a lot of DOM. So, it
@@ -727,10 +749,6 @@ declare class EnglishLanguage extends BaseLanguage {
  * current XML element being processed and the XML document being used.
  */
 declare class ElementProcessors {
-    /** Reference to the toggle DOM template to clone */
-    private static PS_TEMPLATE;
-    /** Creates and detaches the template on first create */
-    private static init;
     /** Fills in coach letters from A to Z */
     static coach(ctx: PhraseContext): void;
     /** Fills in the excuse, for a delay or cancellation */
@@ -758,10 +776,19 @@ declare class ElementProcessors {
     /** Handles unknown elements with an inline error message */
     static unknown(ctx: PhraseContext): void;
     /**
-     * Clones the children of the given element into a new inner span tag, so that they
-     * can be made collapsible. Appends it to the new element being processed.
+     * Attaches chance and a pre-determined collapse state for a given phrase element, if
+     * it does have a chance attribue.
+     *
+     * @param ctx Context of the current phrase element being processed
+     * @param ref Reference ID to get (or pick) the collapse state of
      */
     private static makeCollapsible;
+    /**
+     * Clones the children of the given element into a new inner span tag, so that they
+     * can be made collapsible or bundled with buttons.
+     *
+     * @param source Parent to clone the children of, into a wrapper
+     */
     private static wrapToInner;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
@@ -988,6 +1015,8 @@ declare class Editor {
     setElementsText(type: string, value: string): void;
     /** Closes any currently open editor dialogs */
     closeDialog(): void;
+    /** Creates and attaches UI controls for certain phrase elements */
+    private attachControls;
     /** Handles a click anywhere in the window depending on the context */
     private onClick;
     /** Re-layout the currently open picker on resize */
@@ -1032,7 +1061,7 @@ declare abstract class ViewBase {
     /** Reference to this view's primary DOM element */
     protected readonly dom: HTMLElement;
     /** Creates this base view, attaching it to the element matching the given query */
-    protected constructor(domQuery: string);
+    protected constructor(domQuery: string | HTMLElement);
     /** Gets this view's child element matching the given query */
     protected attach<T extends HTMLElement>(query: string): T;
 }
@@ -1123,20 +1152,8 @@ declare class Views {
     private onInput;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-interface ToggleElement extends HTMLElement {
-    /** Reference to this element's plus icon */
-    plusIcon: HTMLElement;
-    /** Reference to this element's minus icon */
-    minusIcon: HTMLElement;
-}
 /** Utility methods for dealing with collapsible elements */
 declare class Collapsibles {
-    /** Reference to the toggle DOM template to clone */
-    private static TEMPLATE;
-    /** Creates and detaches the template on first create */
-    private static init;
-    /** Creates a toggle element for toggling collapsibles */
-    static createToggle(): ToggleElement;
     /**
      * Sets the collapse state of a collapsible element.
      *
