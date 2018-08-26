@@ -15,8 +15,10 @@ Matt DesLauriers and Matt Diamond][21].
 With thanks to: [Paul Casillas][10] for his recordings of station announcements on
 YouTube, [WhatDoTheyKnow][11] for hosting freedom of information request responses that
 contain announcement data, "Mark" for making said FOI requests, [John Ball][17] for his
-Welsh place name pronunciations, and various StackOverflow contributors (where attributed)
-for code snippets and advice.
+Welsh place name pronunciations, [various users on /r/AskUK for their help][23],
+[Forvo][24] for their pronunciation commons (especially user [mooncow][25] for his
+recordings of many UK place names), and various StackOverflow contributors (where
+attributed) for code snippets and advice.
 
 Thank you also to [Stitch][12], [Spin][13], Tropic, Poster, Devon, [Robro][14], Grant,
 Bjarke, Nik, Dylan, rjlan, Fyrrian, CGDoctor8, Mikko, Griffin, Leroy, Maitre, Shilo, Pat,
@@ -72,3 +74,6 @@ a hobby of mine, with zero commercial intent. Please enjoy, and thanks!
 [20]: https://github.com/zhuker/lamejs/
 [21]: https://github.com/Jam3/audiobuffer-to-wav/
 [22]: http://www.openairlib.net/
+[23]: https://old.reddit.com/r/AskUK/comments/9aa1zb/where_can_i_find_audible_examples_of_uk_place/
+[24]: https://forvo.com
+[25]: https://forvo.com/user/mooncow/
