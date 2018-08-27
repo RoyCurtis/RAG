@@ -77,7 +77,7 @@ export class Captioner
             this.captionBank[`number.${n}.end`] = n.toString();
 
         // Lettered platforms
-        for (let n = 0; n <= 12; n++)
+        for (let n = 0; n <= 26; n++)
         for (let i = 0; i <  3;  i++)
         {
             this.captionBank[`number.${n}${'ABC'[i]}.mid`] = n.toString() + 'ABC'[i];
