@@ -224,12 +224,6 @@ input[type=range]::-webkit-slider-thumb {
   border-left: 0;
   padding-left: 0;
 }
-#editor span[data-type=phraseset] > button:first-child,
-#editor span[data-chance] > button:first-child,
-#editor span[data-type=phrase][data-chance] > button:first-child {
-  background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(51,51,51,0) 100%);
-  border-radius: 8px 0 0 8px;
-}
 #editor span[data-type=phraseset] > button,
 #editor span[data-chance] > button,
 #editor span[data-type=phrase][data-chance] > button {
@@ -261,22 +255,30 @@ input[type=range]::-webkit-slider-thumb {
 #editor span[data-type=phrase][data-chance] > button .minus {
   display: inline-block;
 }
+#editor span[data-type=phraseset] > button:first-child,
+#editor span[data-chance] > button:first-child,
+#editor span[data-type=phrase][data-chance] > button:first-child {
+  background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(51,51,51,0) 100%);
+  border-radius: 8px 0 0 8px;
+}
 #editor span[data-type=phraseset] > .inner,
 #editor span[data-chance] > .inner,
 #editor span[data-type=phrase][data-chance] > .inner {
   padding-left: 4px;
 }
-#editor span[data-type=phraseset]:hover,
-#editor span[data-chance]:hover,
-#editor span[data-type=phrase][data-chance]:hover {
-  border-color: #cc7e00;
-}
 #editor span[data-type=phraseset]:hover > button,
 #editor span[data-chance]:hover > button,
 #editor span[data-type=phrase][data-chance]:hover > button {
-  background: #cc7e00;
-  color: #fff;
   fill: #fff;
+}
+#editor span[data-type=phraseset] > button:hover,
+#editor span[data-chance] > button:hover,
+#editor span[data-type=phrase][data-chance] > button:hover,
+#editor span[data-type=phraseset] > button:focus,
+#editor span[data-chance] > button:focus,
+#editor span[data-type=phrase][data-chance] > button:focus {
+  background: #fff;
+  fill: #000;
 }
 #editor span[data-type=phraseset][collapsed],
 #editor span[data-chance][collapsed],
@@ -435,12 +437,17 @@ input[type=range]::-webkit-slider-thumb {
   width: 100%;
 }
 .picker .chooser .chChoicesBox dd {
+  border: 4px solid transparent;
   cursor: pointer;
   display: inline-block;
-  padding: 16px;
+  padding: 12px;
 }
 .picker .chooser .chChoicesBox dd:hover {
   background: #444;
+}
+.picker .chooser .chChoicesBox dd:focus {
+  border-color: #cc7e00;
+  outline: none;
 }
 .picker .chooser .chChoicesBox dd[selected] {
   background: #cc7e00;
@@ -876,7 +883,6 @@ body {
   #editor span[data-type=phraseset],
   #editor span[data-chance],
   #editor span[data-type=phrase][data-chance] {
-    border-color: #cc7e00;
     border-left: 0;
     padding-left: 0;
   }
@@ -886,9 +892,9 @@ body {
   #editor span[data-type=phraseset] > button:first-child,
   #editor span[data-chance] > button:first-child,
   #editor span[data-type=phrase][data-chance] > button:first-child {
-    background: #cc7e00;
-    color: #fff;
-    fill: #fff;
+    background: #fff;
+    color: #000;
+    fill: #000;
     width: 38px;
     height: 38px;
   }
@@ -901,6 +907,11 @@ body {
     width: 20px;
     height: 20px;
     padding-bottom: 4px;
+  }
+  #editor span[data-type=phraseset]:hover > button,
+  #editor span[data-chance]:hover > button,
+  #editor span[data-type=phrase][data-chance]:hover > button {
+    fill: #000;
   }
   #editor span[data-type=phraseset][collapsed],
   #editor span[data-chance][collapsed],
@@ -1068,9 +1079,9 @@ input[type=checkbox]::after {
 }
 @-moz-keyframes expand {
   0%, 25% {
-    background: #cc7e00;
-    color: #fff;
-    fill: #fff;
+    background: #fff;
+    color: #000;
+    fill: #000;
   }
   to {
     background: transparent;
@@ -1080,9 +1091,9 @@ input[type=checkbox]::after {
 }
 @-webkit-keyframes expand {
   0%, 25% {
-    background: #cc7e00;
-    color: #fff;
-    fill: #fff;
+    background: #fff;
+    color: #000;
+    fill: #000;
   }
   to {
     background: transparent;
@@ -1092,9 +1103,9 @@ input[type=checkbox]::after {
 }
 @-o-keyframes expand {
   0%, 25% {
-    background: #cc7e00;
-    color: #fff;
-    fill: #fff;
+    background: #fff;
+    color: #000;
+    fill: #000;
   }
   to {
     background: transparent;
@@ -1104,9 +1115,9 @@ input[type=checkbox]::after {
 }
 @keyframes expand {
   0%, 25% {
-    background: #cc7e00;
-    color: #fff;
-    fill: #fff;
+    background: #fff;
+    color: #000;
+    fill: #000;
   }
   to {
     background: transparent;

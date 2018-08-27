@@ -67,10 +67,6 @@
     border-left  0
     padding-left 0
 
-    > button:first-child
-      background    gradient(right, alpha(#FFF, 0.1), 0%, alpha(#333, 0), 100%)
-      border-radius 8px 0 0 8px
-
     > button
       rect(53px)
       background     none
@@ -92,14 +88,20 @@
       .minus
         display inline-block
 
+    > button:first-child
+      background    gradient(right, alpha(#FFF, 0.1), 0%, alpha(#333, 0), 100%)
+      border-radius 8px 0 0 8px
+
     > .inner
       padding-left 4px
 
-    &:hover
-      border-color $fgFocus
+    &:hover > button
+      fill $fgBright
 
-      > button
-        backAndForeColor($fgFocus, $fgBright)
+    > button:hover,
+    > button:focus
+      background $fgBright
+      fill       $bgDarkest
 
     &[collapsed]
       border-right  0

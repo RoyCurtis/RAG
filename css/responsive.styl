@@ -43,17 +43,19 @@
 
   // Elements with buttons
   span[data-type=phraseset], span[data-chance], span[data-type=phrase][data-chance]
-    border-color $fgFocus
     border-left  0
     padding-left 0
 
     > button, > button:first-child
-      backAndForeColor($fgFocus, $fgBright)
+      backAndForeColor($fgBright, $bgDarkest)
       rect(38px)
 
       svg
         rect(20px)
         padding-bottom 4px
+
+    &:hover > button
+      fill $bgDarkest
 
     &[collapsed]
       padding 0
