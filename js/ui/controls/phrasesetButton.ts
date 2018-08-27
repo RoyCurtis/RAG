@@ -30,8 +30,6 @@ class PhrasesetButton
         let button   = PhrasesetButton.TEMPLATE.cloneNode(true) as HTMLElement;
         button.title = L.TITLE_PHRASESET(ref);
 
-        phraseset.insertAdjacentElement('afterbegin',
-            PhrasesetButton.TEMPLATE.cloneNode(true) as Element
-        );
+        phraseset.insertAdjacentElement('afterbegin', button);
     }
 }
