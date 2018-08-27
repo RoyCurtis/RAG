@@ -198,15 +198,24 @@ export class VoiceManager
         VoxEditor.views.tapedeck.handleEndPlay();
     }
 
-    /** Scales the current clip's volume (gain) by given amount */
-    public scaleClip(factor: number) : void
+    /** Scales part or all of the current clip's volume (gain) by given amount */
+    public scaleClip(factor: number, bounds?: [number, number]) : void
     {
         if (!this.currentClip)
             return;
 
-        let data = this.currentClip.getChannelData(0);
+        let data   = this.currentClip.getChannelData(0);
+        let length = data.length;
+        let lower  = 0;
+        let upper  = length;
 
-        for (let i = 0; i < data.length; i++)
+        if ( bounds && (bounds[0] > 0 || bounds[1] < 1) )
+        {
+            lower = (length * bounds[0]) | 0;
+            upper = (length * bounds[1]) | 0;
+        }
+
+        for (let i = lower; i < upper; i++)
             data[i] *= factor;
     }
 
@@ -226,8 +235,8 @@ export class VoiceManager
 
         if ( bounds && (bounds[0] > 0 || bounds[1] < 1) )
         {
-            let lower = length * bounds[0];
-            let upper = length * bounds[1];
+            let lower = (length * bounds[0]) | 0;
+            let upper = (length * bounds[1]) | 0;
             let rate  = this.currentClip.sampleRate;
 
             channel = channel.slice(lower, upper);

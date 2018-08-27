@@ -132,7 +132,7 @@ export class EditorTapedeck
         this.btnLoad.disabled = !hasClip;
 
         this.clipEditor.setTitle(title);
-        this.clipEditor.redraw();
+        this.clipEditor.redraw(true);
 
         // Don't record duplicates or back entries into history
         if (this.history[this.historyIdx] !== key)
@@ -169,7 +169,7 @@ export class EditorTapedeck
         this.btnSave.disabled =
         this.btnLoad.disabled = true;
         this.dirty            = false;
-        this.clipEditor.redraw();
+        this.clipEditor.redraw(true);
     }
 
     /** Called when a clip has begun playing */
@@ -267,7 +267,7 @@ export class EditorTapedeck
 
     private onResize() : void
     {
-        this.clipEditor.redraw();
+        this.clipEditor.redraw(true);
         this.voiceMeter.redraw();
     }
 
@@ -343,7 +343,7 @@ export class EditorTapedeck
     {
         this.dirty = false;
         VoxEditor.voices.saveClip( this.clipEditor.getBounds() );
-        this.clipEditor.redraw();
+        this.clipEditor.redraw(true);
     }
 
     private onLoad() : void
@@ -374,7 +374,7 @@ export class EditorTapedeck
     private onScale(scale: number) : void
     {
         this.dirty = true;
-        VoxEditor.voices.scaleClip(scale);
-        this.clipEditor.redraw();
+        VoxEditor.voices.scaleClip( scale, this.clipEditor.getBounds() );
+        this.clipEditor.redraw(false);
     }
 }

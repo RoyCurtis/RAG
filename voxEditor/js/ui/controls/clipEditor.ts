@@ -40,7 +40,7 @@ export class ClipEditor
         this.dom.onmouseout  =
         this.dom.onmouseup   = this.onClipperInteract.bind(this);
 
-        this.redraw();
+        this.redraw(true);
     }
 
     /** Shows and begins animating the needle from left to right bound */
@@ -114,7 +114,7 @@ export class ClipEditor
         else       this.clipperRight.classList.remove('dragging');
     }
 
-    public redraw() : void
+    public redraw(reset: boolean) : void
     {
         let width     = this.domCanvas.width  = this.dom.clientWidth  * 2;
         let height    = this.domCanvas.height = this.dom.clientHeight * 2;
@@ -122,9 +122,12 @@ export class ClipEditor
         let buffer    = VoxEditor.voices.currentClip;
 
         // Reset clippers
-        this.stopDragging();
-        this.clipperLeft.style.width  =
-        this.clipperRight.style.width = '1px';
+        if (reset)
+        {
+            this.stopDragging();
+            this.clipperLeft.style.width  =
+            this.clipperRight.style.width = '1px';
+        }
 
         // Draw middle line
         this.context.fillStyle = buffer ? 'orange' : '#AAAAAA';
