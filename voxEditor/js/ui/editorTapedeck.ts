@@ -321,14 +321,21 @@ export class EditorTapedeck
         }
         else
         {
-            VoxEditor.mics.stopRecording();
-            this.btnPrev.disabled =
-            this.btnPlay.disabled =
-            this.btnStop.disabled =
-            this.btnSave.disabled =
-            this.btnLoad.disabled =
-            this.btnNext.disabled = false;
-            this.dirty            = true;
+            this.btnRec.disabled = true;
+
+            // Stop recording after a delay, to prevent accidental clipping
+            setTimeout(() =>
+            {
+                VoxEditor.mics.stopRecording();
+                this.btnPrev.disabled =
+                this.btnPlay.disabled =
+                this.btnStop.disabled =
+                this.btnRec.disabled  =
+                this.btnSave.disabled =
+                this.btnLoad.disabled =
+                this.btnNext.disabled = false;
+                this.dirty            = true;
+            }, 250);
         }
     }
 
