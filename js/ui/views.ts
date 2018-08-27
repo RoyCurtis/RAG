@@ -3,6 +3,8 @@
 /** Manages UI elements and their logic */
 class Views
 {
+    /** Reference to the main screen */
+    public  readonly main     : HTMLElement;
     /** Reference to the main editor component */
     public  readonly editor   : Editor;
     /** Reference to the main marquee component */
@@ -16,6 +18,7 @@ class Views
 
     public constructor()
     {
+        this.main     = DOM.require('#mainScreen');
         this.editor   = new Editor();
         this.marquee  = new Marquee();
         this.settings = new Settings();

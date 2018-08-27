@@ -73,9 +73,6 @@ abstract class Picker
     /** Closes this picker */
     public close() : void
     {
-        // Fix keyboard staying open in iOS on close
-        DOM.blurActive(this.dom);
-
         this.dom.hidden = true;
     }
 
@@ -118,11 +115,8 @@ abstract class Picker
         // because percentage-based left/top causes subpixel issues on Chrome.
         if (isModal)
         {
-            dialogX = DOM.isMobile ? 0 :
-                ( (docW  * 0.1) / 2 ) | 0;
-
-            dialogY = DOM.isMobile ? 0 :
-                ( (docH * 0.1) / 2 ) | 0;
+            dialogX = DOM.isMobile ? 0 : ( (docW * 0.1) / 2 ) | 0;
+            dialogY = DOM.isMobile ? 0 : ( (docH * 0.1) / 2 ) | 0;
         }
 
         // Clamp to top edge of document

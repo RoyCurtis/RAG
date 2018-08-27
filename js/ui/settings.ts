@@ -81,7 +81,8 @@ class Settings extends ViewBase
         this.rangeSpeechRate.valueAsNumber  = RAG.config.speechRate;
 
         this.layout();
-        this.dom.hidden = false;
+        this.dom.hidden       = false;
+        RAG.views.main.hidden = true;
         this.btnSave.focus();
     }
 
@@ -90,8 +91,9 @@ class Settings extends ViewBase
     {
         this.cancelReset();
         RAG.speech.stop();
-        this.dom.hidden = true;
-        DOM.blurActive(this.dom);
+        RAG.views.main.hidden = false;
+        this.dom.hidden       = true;
+        RAG.views.toolbar.btnOption.focus();
     }
 
     /** Calculates form layout and control visibility based on state */

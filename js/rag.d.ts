@@ -1105,19 +1105,19 @@ declare class Settings extends ViewBase {
 /** Controller for the top toolbar */
 declare class Toolbar {
     /** Reference to the container for the toolbar */
-    private dom;
+    private readonly dom;
     /** Reference to the play button */
-    private btnPlay;
+    private readonly btnPlay;
     /** Reference to the stop button */
-    private btnStop;
+    private readonly btnStop;
     /** Reference to the generate random phrase button */
-    private btnGenerate;
+    private readonly btnGenerate;
     /** Reference to the save state button */
-    private btnSave;
+    private readonly btnSave;
     /** Reference to the recall state button */
-    private btnRecall;
+    private readonly btnRecall;
     /** Reference to the settings button */
-    private btnOption;
+    readonly btnOption: HTMLButtonElement;
     constructor();
     /** Handles the play button, playing the editor's current phrase with speech */
     private handlePlay;
@@ -1135,6 +1135,8 @@ declare class Toolbar {
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Manages UI elements and their logic */
 declare class Views {
+    /** Reference to the main screen */
+    readonly main: HTMLElement;
     /** Reference to the main editor component */
     readonly editor: Editor;
     /** Reference to the main marquee component */

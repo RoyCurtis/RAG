@@ -4,19 +4,19 @@
 class Toolbar
 {
     /** Reference to the container for the toolbar */
-    private dom         : HTMLElement;
+    private readonly dom         : HTMLElement;
     /** Reference to the play button */
-    private btnPlay     : HTMLButtonElement;
+    private readonly btnPlay     : HTMLButtonElement;
     /** Reference to the stop button */
-    private btnStop     : HTMLButtonElement;
+    private readonly btnStop     : HTMLButtonElement;
     /** Reference to the generate random phrase button */
-    private btnGenerate : HTMLButtonElement;
+    private readonly btnGenerate : HTMLButtonElement;
     /** Reference to the save state button */
-    private btnSave     : HTMLButtonElement;
+    private readonly btnSave     : HTMLButtonElement;
     /** Reference to the recall state button */
-    private btnRecall   : HTMLButtonElement;
+    private readonly btnRecall   : HTMLButtonElement;
     /** Reference to the settings button */
-    private btnOption   : HTMLButtonElement;
+    public  readonly btnOption   : HTMLButtonElement;
 
     public constructor()
     {
@@ -58,8 +58,12 @@ class Toolbar
     {
         RAG.speech.onstop = () =>
         {
-            this.btnStop.hidden = true;
             this.btnPlay.hidden = false;
+
+            if (document.activeElement === this.btnStop)
+                this.btnPlay.focus();
+
+            this.btnStop.hidden = true;
             RAG.speech.onstop   = undefined;
         };
 
@@ -68,6 +72,7 @@ class Toolbar
         this.btnPlay.hidden   = true;
         RAG.views.marquee.set( RAG.views.editor.getText() );
         RAG.speech.speak( RAG.views.editor.getPhrase() );
+        this.btnStop.focus();
     }
 
     /** Handles the stop button, stopping the marquee and any speech */

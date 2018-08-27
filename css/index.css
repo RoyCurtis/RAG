@@ -670,6 +670,11 @@ input[type=range]::-webkit-slider-thumb {
   width: 24px;
   height: 24px;
 }
+#toolbar > button:focus {
+  border: 4px solid #ffa500;
+  padding: 4px;
+  outline: none;
+}
 #settingsScreen {
   align-content: flex-start;
   background: #000;
@@ -758,6 +763,10 @@ input[type=range]::-webkit-slider-thumb {
 #settingsScreen form input[type=checkbox],
 #settingsScreen form select {
   justify-self: right;
+}
+#settingsScreen form input[type=text],
+#settingsScreen form input[type=url] {
+  padding: 0 4px;
 }
 #settingsScreen form input[type=range] {
   width: auto;
@@ -856,6 +865,9 @@ body {
   #toolbar > button svg {
     width: 18px;
     height: 18px;
+  }
+  #toolbar > button:focus {
+    z-index: 10;
   }
   #editor {
     font-size: xx-large;
