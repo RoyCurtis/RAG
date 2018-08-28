@@ -238,7 +238,7 @@ class Resolver
 
         // Only add beginning delay if there isn't already one prior
         if (typeof this.resolved.slice(-1)[0] !== 'number')
-            result.push(0.1);
+            result.push(0.15);
 
         return [...result, `service.${service}.mid`, 0.15];
     }
