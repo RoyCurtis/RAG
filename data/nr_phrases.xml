@@ -158,6 +158,10 @@
     remain with their luggage, and personal belongings at all times, as any unattended
     items will be removed by the British Transport Police.
   </phrase>
+  <phrase>
+    <phraseset ref="security_announcement" chance="10"/> Security personnel tour this
+    station 24 hours a day.
+  </phrase>
 </phraseset>
 
 <!-- Various parts of other phrases -->
