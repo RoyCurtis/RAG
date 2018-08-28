@@ -112,40 +112,51 @@
     have left the station premesis.
   </phrase>
   <phrase>
-    24 hour C.C.T.V. recording is in operation at this station for the purpose of security
-    and safety management.
+    <phraseset ref="security_announcement" chance="10"/> 24 hour C.C.T.V. recording is in
+    operation at this station for the purpose of security and safety management.
   </phrase>
   <phrase>
-    Closed circuit television and remote video monitoring is in use at this station for
-    your personal safety and security.
+    <phraseset ref="security_announcement" chance="10"/> Closed circuit television and
+    remote video monitoring is in use at this station for your personal safety and
+    security.
   </phrase>
   <phrase>
-    Please do not leave your personal belongings unattended on the station. Any personal
-    belongings left unattended may be removed without warning, or destroyed or damaged by
-    the security services.
+    <phraseset ref="security_announcement" chance="25"/> Please do not leave your personal
+    belongings unattended on the station. Any personal belongings left unattended may be
+    removed without warning, or destroyed or damaged by the security services.
   </phrase>
   <phrase>
-    Please do not leave your luggage unattended on the station. Luggage left unattended
-    may be removed without warning, or destroyed or damaged by the security services.
+    <phraseset ref="security_announcement" chance="25"/> Please do not leave your luggage
+    unattended on the station. Luggage left unattended may be removed without warning, or
+    destroyed or damaged by the security services.
   </phrase>
   <phrase>
     Penalty fares apply across the entire <service context="provider"/> network. Please
     ensure that you buy your ticket before you board, where facilities are available.
   </phrase>
   <phrase>
-    This is a security message. If you see something that doesn't look right, speak to
-    staff or text the British Transport Police on 61016. We'll sort it. See it, say it,
-    sorted.
+    <phraseset ref="security_announcement" chance="50"/> If you see something that doesn't
+    look right, speak to staff or text the British Transport Police on 61016. We'll sort
+    it. See it, say it, sorted.
   </phrase>
   <phrase>
-    This is a safety announcement. Please take care when using the escalators located on
-    this station. If you have luggage or a bicycle, then please use the passenger lifts
-    and ask for assistance if you need it. Thank you.
+    <phraseset ref="safety_announcement" chance="50"/> Please take care when using the
+    escalators located on this station. If you have luggage or a bicycle, then please use
+    the passenger lifts and ask for assistance if you need it. Thank you.
   </phrase>
   <phrase>
-    In the interests of safety, the riding of skateboards, rollerblades, and cycles on
-    this station are prohibited. Offenders may be prosecuted under the railway bylaw
-    number 30.
+    <phraseset ref="safety_announcement" chance="50"/> In the interests of safety, the
+    riding of skateboards, rollerblades, and cycles on this station are prohibited.
+    <phrase ref="bylaw_30" chance="50"/>
+  </phrase>
+  <phrase>
+    <phraseset ref="safety_announcement" chance="50"/> It is not permitted to cycle,
+    skateboard, or rollerblade within the station area.
+  </phrase>
+  <phrase>
+    <phraseset ref="security_announcement" chance="50"/> Would all passengers please
+    remain with their luggage, and personal belongings at all times, as any unattended
+    items will be removed by the British Transport Police.
   </phrase>
 </phraseset>
 
@@ -448,6 +459,28 @@
     <coach context="first"/>.
   </phrase>
 </phraseset>
+
+<phraseset id="safety_announcement">
+  <phrase>
+    This is a safety announcement.
+  </phrase>
+  <phrase>
+    This is a safety message.
+  </phrase>
+</phraseset>
+
+<phraseset id="security_announcement">
+  <phrase>
+    This is a security announcement.
+  </phrase>
+  <phrase>
+    This is a security message.
+  </phrase>
+</phraseset>
+
+<phrase id="bylaw_30">
+  Offenders may be prosecuted under the railway bylaw number 30.
+</phrase>
 
 <phrase id="bike_booking">
   Please be aware that you can only bring a bicycle on this service if you have booked
