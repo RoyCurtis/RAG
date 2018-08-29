@@ -88,6 +88,7 @@
       .minus
         display inline-block
 
+    // Shows the "peel" gradient
     > button:first-child
       background    gradient(right, alpha(#FFF, 0.1), 0%, alpha(#333, 0), 100%)
       border-radius 8px 0 0 8px
@@ -95,9 +96,16 @@
     > .inner
       padding-left 4px
 
-    &:hover > button
-      fill $fgBright
+    // When hovering over the phrase element, light the buttons and edges up
+    &:hover
+      > button
+        fill $fgBright
 
+      > button:first-child
+        border-left   4px solid $fgBright
+        padding-right 4px
+
+    // ...but when the buttons are individually hovered over, light them up further
     > button:hover,
     > button:focus
       background $fgBright

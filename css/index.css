@@ -271,6 +271,12 @@ input[type=range]::-webkit-slider-thumb {
 #editor span[data-type=phrase][data-chance]:hover > button {
   fill: #fff;
 }
+#editor span[data-type=phraseset]:hover > button:first-child,
+#editor span[data-chance]:hover > button:first-child,
+#editor span[data-type=phrase][data-chance]:hover > button:first-child {
+  border-left: 4px solid #fff;
+  padding-right: 4px;
+}
 #editor span[data-type=phraseset] > button:hover,
 #editor span[data-chance] > button:hover,
 #editor span[data-type=phrase][data-chance] > button:hover,
@@ -1053,18 +1059,20 @@ input[type=checkbox]::after {
 #editor span {
   transition: background 500ms, border-color 100ms, fill 100ms;
 }
+#editor span > button {
+  transition: background 100ms, border-color 100ms, fill 100ms;
+}
 #editor span[editing] {
   transition: background 0s;
 }
+#editor span[data-chance],
+#editor span[data-type=phrase][data-chance],
 #editor span[data-type=phraseset] {
   animation: 2500ms expand;
 }
-#editor span[data-chance],
-#editor span[data-type=phrase][data-chance] {
-  animation: 2500ms expand;
-}
 #editor span[data-chance][collapsed],
-#editor span[data-type=phrase][data-chance][collapsed] {
+#editor span[data-type=phrase][data-chance][collapsed],
+#editor span[data-type=phraseset][collapsed] {
   animation: none;
 }
 #toolbar button,
