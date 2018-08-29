@@ -162,6 +162,10 @@
     <phraseset ref="security_announcement" chance="10"/> Security personnel tour this
     station 24 hours a day.
   </phrase>
+  <phrase>
+    Ticket checks are in operation at this station. Please have your tickets available
+    for inspection.
+  </phrase>
 </phraseset>
 
 <!-- Various parts of other phrases -->
