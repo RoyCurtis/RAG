@@ -6,6 +6,18 @@ type Lengthable = Array<any> | NodeList | HTMLCollection | string;
 /** Represents a platform as a digit and optional letter tuple */
 type Platform = [string, string];
 
+/** Represents a station name, which can be a simple string or complex object */
+type Station = string | StationDef;
+
+/** Represents a complex station name definition */
+interface StationDef
+{
+    /** Canonical name of the station */
+    name      : string;
+    /** Station code to use the same recording of */
+    voxAlias? : string;
+}
+
 /** Represents a generic key-value dictionary, with string keys */
 type Dictionary<T> = { [index: string]: T };
 

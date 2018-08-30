@@ -1391,6 +1391,15 @@ declare class Strings {
 declare type Lengthable = Array<any> | NodeList | HTMLCollection | string;
 /** Represents a platform as a digit and optional letter tuple */
 declare type Platform = [string, string];
+/** Represents a station name, which can be a simple string or complex object */
+declare type Station = string | StationDef;
+/** Represents a complex station name definition */
+interface StationDef {
+    /** Canonical name of the station */
+    name: string;
+    /** Station code to use the same recording of */
+    voxAlias?: string;
+}
 /** Represents a generic key-value dictionary, with string keys */
 declare type Dictionary<T> = {
     [index: string]: T;
@@ -1456,7 +1465,7 @@ declare class Database {
     /** Loaded dataset of service or network names */
     readonly services: string[];
     /** Loaded dictionary of station names, with three-letter code keys (e.g. ABC) */
-    readonly stations: Dictionary<string>;
+    readonly stations: Dictionary<Station>;
     /** Loaded XML document containing phraseset data */
     readonly phrasesets: Document;
     /** Amount of stations in the currently loaded dataset */
@@ -1491,10 +1500,18 @@ declare class Database {
      * Gets the station name from the given three letter code.
      *
      * @param code Three-letter station code to get the name of
-     * @param filtered Whether to filter out parenthesized location context
-     * @returns Station name for the given code, filtered if specified
+     * @returns Station name for the given code
      */
     getStation(code: string): string;
+    /**
+     * Gets the given station code's vox alias, if any. A vox alias is the code of another
+     * station's voice file, that the given code should use instead. This is used for
+     * stations with duplicate names.
+     *
+     * @param code Station code to get the vox alias of
+     * @returns The alias code, else the given code
+     */
+    getStationVox(code: string): string;
     /**
      * Picks a random range of station codes, ensuring there are no duplicates.
      *

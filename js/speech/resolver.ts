@@ -247,8 +247,9 @@ class Resolver
     {
         let ctx     = element.dataset['context']!;
         let station = RAG.state.getStation(ctx);
+        let voxKey  = RAG.database.getStationVox(station);
         let inflect = this.getInflection(idx);
-        let result  = [0.2, `station.${station}.${inflect}`];
+        let result  = [0.2, `station.${voxKey}.${inflect}`];
 
         if (inflect === 'mid')
             result.push(0.2);
@@ -264,12 +265,14 @@ class Resolver
 
         let parts : VoxKey[] = [0.2];
 
-        list.forEach( (v, k) =>
+        list.forEach( (code, k) =>
         {
+            let voxKey = RAG.database.getStationVox(code);
+
             // Handle middle of list inflection
             if (k !== list.length - 1)
             {
-                parts.push(`station.${v}.mid`, 0.25);
+                parts.push(`station.${voxKey}.mid`, 0.25);
                 return;
             }
 
@@ -280,11 +283,11 @@ class Resolver
             // Add "only" if only one station in the calling list
             if (list.length === 1 && ctx === 'calling')
             {
-                parts.push(`station.${v}.mid`);
+                parts.push(`station.${voxKey}.mid`);
                 parts.push(0.2, 'station.parts.only.end');
             }
             else
-                parts.push(`station.${v}.${inflect}`);
+                parts.push(`station.${voxKey}.${inflect}`);
         });
 
         return [...parts, 0.2];

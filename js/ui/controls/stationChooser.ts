@@ -98,7 +98,7 @@ class StationChooser extends Chooser
     /** Populates the chooser with the given station code */
     private addStation(code: string) : void
     {
-        let station = RAG.database.stations[code];
+        let station = RAG.database.getStation(code);
         let letter  = station[0];
         let group   = this.domStations[letter];
 
@@ -118,7 +118,7 @@ class StationChooser extends Chooser
 
         let entry             = document.createElement('dd');
         entry.dataset['code'] = code;
-        entry.innerText       = RAG.database.stations[code];
+        entry.innerText       = station;
         entry.title           = this.itemTitle;
         entry.tabIndex        = -1;
 

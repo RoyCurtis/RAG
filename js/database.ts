@@ -10,7 +10,7 @@ class Database
     /** Loaded dataset of service or network names */
     public  readonly services      : string[];
     /** Loaded dictionary of station names, with three-letter code keys (e.g. ABC) */
-    public  readonly stations      : Dictionary<string>;
+    public  readonly stations      : Dictionary<Station>;
     /** Loaded XML document containing phraseset data */
     public  readonly phrasesets    : Document;
     /** Amount of stations in the currently loaded dataset */
@@ -106,19 +106,45 @@ class Database
      * Gets the station name from the given three letter code.
      *
      * @param code Three-letter station code to get the name of
-     * @param filtered Whether to filter out parenthesized location context
-     * @returns Station name for the given code, filtered if specified
+     * @returns Station name for the given code
      */
     public getStation(code: string) : string
     {
         let station = this.stations[code];
 
-        if      (!station)
+        if (!station)
             return L.DB_UNKNOWN_STATION(code);
-        else if ( Strings.isNullOrEmpty(station) )
-            return L.DB_EMPTY_STATION(code);
 
-        return station;
+        if (typeof station === 'string')
+            return Strings.isNullOrEmpty(station)
+                ? L.DB_EMPTY_STATION(code)
+                : station;
+        else
+            return !station.name
+                ? L.DB_EMPTY_STATION(code)
+                : station.name;
+    }
+
+    /**
+     * Gets the given station code's vox alias, if any. A vox alias is the code of another
+     * station's voice file, that the given code should use instead. This is used for
+     * stations with duplicate names.
+     *
+     * @param code Station code to get the vox alias of
+     * @returns The alias code, else the given code
+     */
+    public getStationVox(code: string) : string
+    {
+        let station = this.stations[code];
+
+        // Unknown station
+        if      (!station)
+            return '???';
+        // Station is just a string; assume no alias
+        else if (typeof station === 'string')
+            return code;
+        else
+            return either(station.voxAlias, code);
     }
 
     /**

@@ -196,10 +196,19 @@ export class Captioner
         // For the "only" at the end of some single-station lists
         this.captionBank[`station.parts.only.end`] = 'only';
 
-        // For stations to be read in the middle of lists or sentences
-        keys.forEach(k => this.captionBank[`station.${k}.mid`] = stations[k]);
+        keys.forEach(code =>
+        {
+            let name   = RAG.database.getStation(code);
+            let voxKey = RAG.database.getStationVox(code);
 
-        // For stations to be read at the end of lists or sentences
-        keys.forEach(k => this.captionBank[`station.${k}.end`] = stations[k]);
+            // Skip stations with aliased vox keys
+            if (code !== voxKey)
+                return;
+
+            // For stations to be read in the middle of lists or sentences
+            this.captionBank[`station.${code}.mid`] = name;
+            // For stations to be read at the end of lists or sentences
+            this.captionBank[`station.${code}.end`] = name;
+        });
     }
 }
