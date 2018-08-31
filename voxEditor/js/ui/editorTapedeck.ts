@@ -114,7 +114,7 @@ export class EditorTapedeck
 
     public handleClipLoad(key: string) : void
     {
-        let hasClip = (VoxEditor.voices.currentClip !== undefined)
+        let hasClip = (VoxEditor.voices.currentClip !== undefined);
         let path    = VoxEditor.voices.currentPath!;
         let title   = hasClip
             ? path
@@ -372,6 +372,9 @@ export class EditorTapedeck
 
     private onScale(scale: number) : void
     {
+        if (!VoxEditor.voices.currentClip)
+            return;
+
         this.dirty = true;
         VoxEditor.voices.scaleClip( scale, this.clipEditor.getBounds() );
         this.clipEditor.redraw(false);
