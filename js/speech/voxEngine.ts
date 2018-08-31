@@ -98,6 +98,11 @@ class VoxEngine
             let impulse = this.impulses[file];
 
             if (!impulse)
+            {
+                // Make sure reverb is off first, else clips will queue in the audio
+                // buffer and all suddenly play at the same time, when reverb loads.
+                this.toggleReverb(false);
+
                 fetch(`${this.dataPath}/${file}`)
                     .then( res => res.arrayBuffer() )
                     .then( buf => Sounds.decode(this.audioContext, buf) )
@@ -109,6 +114,7 @@ class VoxEngine
                         this.toggleReverb(true);
                         console.debug('VOX REVERB LOADED');
                     });
+            }
             else
             {
                 this.reverbNode.buffer = impulse;
