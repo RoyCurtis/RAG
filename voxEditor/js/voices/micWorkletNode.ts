@@ -3,7 +3,10 @@
 /** Audio worklet node for processing raw microphone audio */
 export class MicWorkletNode extends AudioWorkletNode
 {
-    constructor(context: AudioContext)
+    /** Size of samples the worklet node handles each "frame", as per spec */
+    public static readonly QUANTUM_SIZE : number = 128;
+
+    public constructor(context: AudioContext)
     {
         let options : AudioWorkletNodeOptions =
         {

@@ -12,7 +12,7 @@
     "typescript": "^3.0.1"
   },
   "scripts": {
-    "start": "electron ./dist/voxEditor-init.js --experimental-modules",
+    "start": "electron ./dist/voxEditor-init.js --experimental-modules --js-flags=\"--expose-gc\"",
     "watch-tsc": "tsc -w",
     "watch-stylus": "stylus -m -w css/voxEditor.styl",
     "watch": "npm-run-all --parallel watch-tsc watch-stylus"

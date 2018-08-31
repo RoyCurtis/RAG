@@ -11,13 +11,11 @@ export class VoiceMeter
     private readonly context   : CanvasRenderingContext2D;
 
     /** Currently queued animation frame reference number */
-    private frame   : number = 0;
+    private frame  : number = 0;
     /** How many frames remaining to draw a grid line */
-    private grid    : number = 0;
+    private grid   : number = 0;
     /** How many frames remaining to show "peaked" status in the given data */
-    private peaked  : number = 0;
-    /** How many seconds have passed since recording began; inaccurate */
-    private seconds : number = 0;
+    private peaked : number = 0;
 
     public constructor(query: string)
     {
@@ -36,7 +34,6 @@ export class VoiceMeter
         this.frame   = 0;
         this.grid    = 0;
         this.peaked  = 0;
-        this.seconds = 0;
 
         // Set the correct dimensions (and incidentally clears)
         let width  = this.domCanvas.width  = this.dom.clientWidth  * 2;
@@ -51,7 +48,7 @@ export class VoiceMeter
     }
 
     /** Draws the given buffer onto the meter, limited to 60 FPS */
-    public draw(buf: Float32Array) : void
+    public draw(buf: Float32Array, recording: boolean) : void
     {
         if (this.frame)
             return;
@@ -59,18 +56,19 @@ export class VoiceMeter
         // Enforce 60 FPS limit for drawing the voice meter
         this.frame = requestAnimationFrame(_ =>
         {
-            this.drawFrame(buf);
+            this.drawFrame(buf, recording);
             this.frame = 0;
         });
     }
 
     /** Draws the given buffer for one frame */
-    private drawFrame(buf: Float32Array) : void
+    private drawFrame(buf: Float32Array, recording: boolean) : void
     {
         let width     = this.domCanvas.width;
         let height    = this.domCanvas.height;
         let midHeight = height / 2;
         let ctx       = this.context;
+        let color     = recording ? '#CC7E00' : '#AAAAAA';
 
         // Shift the existing image data to the right by 2 pixels
         ctx.putImageData(ctx.getImageData(0, 0, width, height), 2, 0);
@@ -102,16 +100,12 @@ export class VoiceMeter
             this.context.fillStyle = '#444444';
             this.context.fillRect(0, 0, 2, height);
 
-            this.context.fillStyle = '#AAAAAA';
-            ctx.fillText(`${this.seconds}`, 4, height - 8);
-
-            this.grid     = 30;
-            this.seconds += 0.5;
+            this.grid = 30;
         }
 
         // Draw middle line and peak
-        this.context.fillStyle = this.peaked ? '#CC0B00' : '#CC7E00';
-        this.context.fillRect(0, midHeight - 1, width, 3);
+        this.context.fillStyle = this.peaked ? '#CC0B00' : color;
+        this.context.fillRect(0, midHeight - 1, 2, 3);
         this.context.fillRect(0, midHeight - 1, 2, negSum);
         this.context.fillRect(0, midHeight + 1, 2, posSum);
     }

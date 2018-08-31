@@ -8,13 +8,21 @@ export class MicManager
 {
     private readonly audioContext : AudioContext;
 
-    public  micDevice? : MediaStream;
+    public  micDevice?    : MediaStream;
 
-    private workletNode? : MicWorkletNode;
+    private workletNode?  : MicWorkletNode;
 
-    private streamNode?  : MediaStreamAudioSourceNode;
+    private streamNode?   : MediaStreamAudioSourceNode;
 
-    private buffers? : Float32Array[];
+    private idleBuffer    : Float32Array;
+
+    private idleBufferIdx : number;
+
+    private recBuffer     : Float32Array;
+
+    private recBufferIdx  : number;
+
+    private isRecording   : boolean;
 
     public get canRecord() : boolean
     {
@@ -24,7 +32,14 @@ export class MicManager
 
     public constructor()
     {
-        this.audioContext = new AudioContext();
+        this.audioContext  = new AudioContext();
+        // 128 * 344 roughly around 44100 samples, or approx. 1 second of buffer
+        this.idleBuffer    = new Float32Array(MicWorkletNode.QUANTUM_SIZE * 344);
+        // 30 seconds of 44100 sample rate audio maximum for clips
+        this.recBuffer     = new Float32Array(this.audioContext.sampleRate * 30);
+        this.idleBufferIdx = 0;
+        this.recBufferIdx  = 0;
+        this.isRecording   = false;
 
         fetch('dist/voices/micWorklet.js')
             .then( req => req.text() )
@@ -45,13 +60,23 @@ export class MicManager
             .catch(console.error);
     }
 
+    /** Attempts to load the currently configured microphone as a stream */
     public load() : void
     {
         this.stopRecording();
 
+        if (this.workletNode)
+            this.workletNode.port!.onmessage = null;
+
+        if (this.streamNode)
+        {
+            this.streamNode.disconnect();
+            this.streamNode = undefined;
+        }
+
         if (this.micDevice)
         {
-            this.micDevice.getTracks().forEach(track => track.stop() );
+            this.micDevice.getTracks().forEach( track => track.stop() );
             this.micDevice = undefined;
         }
 
@@ -76,8 +101,11 @@ export class MicManager
 
     private onGetMicrophone(stream: MediaStream) : void
     {
-        this.micDevice = stream;
-        this.micDevice.getTracks().forEach(t => t.enabled = false);
+        this.micDevice  = stream;
+        this.streamNode = this.audioContext.createMediaStreamSource(this.micDevice!);
+        this.streamNode.connect(this.workletNode!);
+
+        this.workletNode!.port!.onmessage = this.onMicData.bind(this);
 
         VoxEditor.views.tapedeck.handleMicChange();
     }
@@ -95,47 +123,69 @@ export class MicManager
         if (!this.canRecord)
             return;
 
-        this.micDevice!.getTracks().forEach(t => t.enabled = true);
+        // Force garbage collection to avoid any pauses during recording
+        if ( global.gc() )
+            global.gc();
 
-        this.streamNode = this.audioContext.createMediaStreamSource(this.micDevice!);
-        this.streamNode.connect(this.workletNode!);
-
-        this.buffers  = [];
-
-        this.workletNode!.port!.onmessage = msg =>
-        {
-            let data = msg.data as ArrayBuffer;
-            let buf  = new Float32Array(data);
-
-            this.buffers!.push(buf);
-            VoxEditor.views.tapedeck.handleMicData(buf);
-        };
+        // Prepend idle recording data
+        this.recBuffer.set( this.idleBuffer.slice(0, this.idleBufferIdx) );
+        this.recBufferIdx = this.idleBufferIdx;
+        this.isRecording  = true;
     }
 
     public stopRecording()
     {
-        if (!this.canRecord)
+        if (!this.canRecord || !this.isRecording)
             return;
 
-        if (this.streamNode)
-        {
-            this.streamNode.disconnect();
-            this.streamNode = undefined;
-        }
-
-        this.workletNode!.port!.onmessage = null;
-        this.micDevice!.getTracks().forEach(t => t.enabled = false);
+        this.isRecording = false;
         this.processRecording();
         return;
     }
 
+    private onMicData(msg: MessageEvent) : void
+    {
+        let data = msg.data as ArrayBuffer;
+        let buf  = new Float32Array(data);
+
+        // Recording: Copy the data into the recording buffer
+        if (this.isRecording)
+        {
+            this.recBuffer.set(buf, this.recBufferIdx);
+            this.recBufferIdx += buf.length;
+
+            // End of buffer; stop recording
+            if (this.recBufferIdx >= this.recBuffer.length)
+                this.stopRecording();
+        }
+        // Idle: Keep a small buffer of last-recorded audio to prepend to recordings
+        else
+        {
+            this.idleBuffer.set(buf, this.idleBufferIdx);
+
+            this.idleBufferIdx += buf.length;
+
+            // End of buffer; shift everything back by half and keep going
+            if (this.idleBufferIdx >= this.idleBuffer.length)
+            {
+                // TODO: Check for off-by-one
+                let half           = (this.idleBuffer.length / 2) | 0;
+                this.idleBufferIdx = half;
+
+                this.idleBuffer.copyWithin(0, half);
+            }
+        }
+
+        VoxEditor.views.tapedeck.handleMicData(buf, this.isRecording);
+    }
+
     private processRecording() : void
     {
-        if (!this.buffers)
+        if (this.recBufferIdx === 0)
             return;
 
         let key    = VoxEditor.views.phrases.currentKey!;
-        let length = 128 * this.buffers.length;
+        let length = this.recBufferIdx;
         let buffer = new AudioBuffer(
         {
             length:           length,
@@ -143,12 +193,13 @@ export class MicManager
             sampleRate:       this.audioContext.sampleRate
         });
 
-        let channel = buffer.getChannelData(0);
+        // Transfer data to audio buffer
+        buffer.copyToChannel(this.recBuffer, 0);
 
-        // Write all the smaller buffers into the final buffer
-        this.buffers.forEach( (buf, idx) => channel.set(buf, 128 * idx) );
+        // Reset state
+        this.recBuffer.fill(0);
+        this.recBufferIdx = 0;
 
-        this.buffers = undefined;
         VoxEditor.voices.loadFromBuffer(buffer);
         VoxEditor.views.tapedeck.handleRecDone(key);
     }

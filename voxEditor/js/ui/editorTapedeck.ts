@@ -191,16 +191,15 @@ export class EditorTapedeck
     }
 
     /** Called when raw data from recording is available */
-    public handleMicData(buf: Float32Array) : void
+    public handleMicData(buf: Float32Array, recording: boolean) : void
     {
-        this.voiceMeter.draw(buf);
+        this.voiceMeter.draw(buf, recording);
     }
 
     /** Called when recording from the microphone is finished */
     public handleRecDone(key: string): void
     {
         this.handleClipLoad(key);
-        this.voiceMeter.redraw();
         VoxEditor.views.tapedeck.onPlay();
     }
 

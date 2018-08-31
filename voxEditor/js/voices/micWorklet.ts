@@ -13,10 +13,6 @@ class MicWorklet extends AudioWorkletProcessor
             __:     Dictionary<Float32Array>
     ) : boolean
     {
-        // Skip null segments
-        if (inputs[0][0][0] === 0 || inputs[0][0][127] === 0)
-            return true;
-
         this.port!.postMessage(inputs[0][0].buffer, [inputs[0][0].buffer]);
         return true;
     }
