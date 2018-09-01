@@ -5,6 +5,8 @@
 /** Holds runtime configuration for RAG */
 class Config extends ConfigBase<Config>
 {
+    /** If user has read the disclaimer */
+    public  readDisclaimer  : boolean = false;
     /** If user has clicked shuffle at least once */
     public  clickedGenerate : boolean = false;
     /** Volume for speech to be set at */

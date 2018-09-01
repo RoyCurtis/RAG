@@ -91,6 +91,12 @@ unselectable()
 
 // Global controls
 
+standardButton()
+  pressable()
+  font-size  large
+  min-height 48px
+  margin     16px
+
 input[type=checkbox]
   rect(64px, 32px)
   no-appearance()
@@ -169,9 +175,12 @@ input[type=range]
   display none !important
 
 .warningScreen
-  height  100%
-  padding 16px
-  width   100%
+  flexbox(column)
+  rect(100%, 100%)
+  overflow auto
+
+  > *
+    margin 16px
 
   h1
     font-style italic
@@ -179,3 +188,6 @@ input[type=range]
   p, pre
     line-height 150%
     margin      16px
+
+  button
+    standardButton()

@@ -39,6 +39,9 @@ body
   flexbox(column)
   height 100%
 
+#disclaimerScreen
+  background $bgDarkest
+
 #tooSmallScreen
   display none
 
@@ -52,7 +55,7 @@ body
 
 @media (max-height 400px)
   .javascriptEnabled
-    #mainScreen, .picker, #settingsScreen
+    #mainScreen, .picker, #settingsScreen, #disclaimerScreen
       display none
 
     #tooSmallScreen

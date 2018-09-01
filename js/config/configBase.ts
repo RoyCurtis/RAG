@@ -9,7 +9,7 @@ abstract class ConfigBase<T extends ConfigBase<T>>
     /** Prototype object for creating new copies of self */
     private type : (new () => T);
 
-    protected constructor(type: (new () => T))
+    protected constructor( type: (new () => T) )
     {
         this.type = type;
     }

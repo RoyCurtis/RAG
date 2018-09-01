@@ -444,6 +444,8 @@ declare abstract class ConfigBase<T extends ConfigBase<T>> {
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Holds runtime configuration for RAG */
 declare class Config extends ConfigBase<Config> {
+    /** If user has read the disclaimer */
+    readDisclaimer: boolean;
     /** If user has clicked shuffle at least once */
     clickedGenerate: boolean;
     /** Volume for speech to be set at */
@@ -982,6 +984,29 @@ declare class VoxRequest {
     private onError;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Base class for a view; anything with a base DOM element */
+declare abstract class ViewBase {
+    /** Reference to this view's primary DOM element */
+    protected readonly dom: HTMLElement;
+    /** Creates this base view, attaching it to the element matching the given query */
+    protected constructor(domQuery: string | HTMLElement);
+    /** Gets this view's child element matching the given query */
+    protected attach<T extends HTMLElement>(query: string): T;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Controller for the disclaimer screen */
+declare class Disclaimer extends ViewBase {
+    /** Reference to the "continue" button */
+    private readonly btnDismiss;
+    /** Reference to the last focused element, if any */
+    private lastActive?;
+    constructor();
+    /** Opens the disclaimer for first time users */
+    disclaim(): void;
+    /** Persists the dismissal to storage and restores the main screen */
+    private onDismiss;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the phrase editor */
 declare class Editor {
     /** Reference to the DOM container for the editor */
@@ -1056,16 +1081,6 @@ declare class Marquee {
     stop(): void;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Base class for a view; anything with a base DOM element */
-declare abstract class ViewBase {
-    /** Reference to this view's primary DOM element */
-    protected readonly dom: HTMLElement;
-    /** Creates this base view, attaching it to the element matching the given query */
-    protected constructor(domQuery: string | HTMLElement);
-    /** Gets this view's child element matching the given query */
-    protected attach<T extends HTMLElement>(query: string): T;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the settings screen */
 declare class Settings extends ViewBase {
     private readonly btnReset;
@@ -1137,6 +1152,8 @@ declare class Toolbar {
 declare class Views {
     /** Reference to the main screen */
     readonly main: HTMLElement;
+    /** Reference to the main disclaimer screen */
+    readonly disclaimer: Disclaimer;
     /** Reference to the main editor component */
     readonly editor: Editor;
     /** Reference to the main marquee component */

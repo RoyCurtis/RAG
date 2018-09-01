@@ -36,6 +36,7 @@ class RAG
 
         // Begin
 
+        RAG.views.disclaimer.disclaim();
         RAG.views.marquee.set( L.WELCOME() );
         RAG.generate();
     }

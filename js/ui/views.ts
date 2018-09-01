@@ -4,26 +4,29 @@
 class Views
 {
     /** Reference to the main screen */
-    public  readonly main     : HTMLElement;
+    public  readonly main       : HTMLElement;
+    /** Reference to the main disclaimer screen */
+    public  readonly disclaimer : Disclaimer;
     /** Reference to the main editor component */
-    public  readonly editor   : Editor;
+    public  readonly editor     : Editor;
     /** Reference to the main marquee component */
-    public  readonly marquee  : Marquee;
+    public  readonly marquee    : Marquee;
     /** Reference to the main settings screen */
-    public  readonly settings : Settings;
+    public  readonly settings   : Settings;
     /** Reference to the main toolbar component */
-    public  readonly toolbar  : Toolbar;
+    public  readonly toolbar    : Toolbar;
     /** References to all the pickers, one for each type of XML element */
-    private readonly pickers  : Dictionary<Picker>;
+    private readonly pickers    : Dictionary<Picker>;
 
     public constructor()
     {
-        this.main     = DOM.require('#mainScreen');
-        this.editor   = new Editor();
-        this.marquee  = new Marquee();
-        this.settings = new Settings();
-        this.toolbar  = new Toolbar();
-        this.pickers  = {};
+        this.main       = DOM.require('#mainScreen');
+        this.disclaimer = new Disclaimer();
+        this.editor     = new Editor();
+        this.marquee    = new Marquee();
+        this.settings   = new Settings();
+        this.toolbar    = new Toolbar();
+        this.pickers    = {};
 
         [
             new CoachPicker(),
