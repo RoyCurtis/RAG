@@ -1,5 +1,30 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+// Blinking focus
+// TODO: Make setting for these
+.blinkFocus
+  :focus
+    animation 1.5s infinite steps(1) blink-outline
+
+  #settingsScreen #aboutBlock a:focus
+    animation 1.5s infinite steps(1) blink-link
+
+@keyframes blink-outline
+  0%
+    outline-color $fgFocus
+
+  75%
+    outline-color transparent
+
+@keyframes blink-link
+  0%
+    backAndForeColor($fgBright, $bgDarkest)
+    outline-color $fgBright
+
+  75%
+    backAndForeColor($bgDarkest, $fgBright)
+    outline-color transparent
+
 // Checkbox interactivity prompts
 input[type=checkbox]
   transition border-color 100ms

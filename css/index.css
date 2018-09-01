@@ -185,21 +185,6 @@ input[type=range]::-webkit-slider-thumb {
   background: rgba(128,128,128,0.1);
   border-color: #fff;
 }
-#editor span[data-type=coach]:focus,
-#editor span[data-type=excuse]:focus,
-#editor span[data-type=integer]:focus,
-#editor span[data-type=named]:focus,
-#editor span[data-type=phraseset]:focus,
-#editor span[data-type=platform]:focus,
-#editor span[data-type=service]:focus,
-#editor span[data-type=station]:focus,
-#editor span[data-type=stationlist]:focus,
-#editor span[data-type=time]:focus,
-#editor span[data-type=phrase][data-chance]:focus {
-  background: rgba(128,128,128,0.1);
-  border-color: #cc7e00;
-  outline: none;
-}
 #editor span[data-type=coach][editing],
 #editor span[data-type=excuse][editing],
 #editor span[data-type=integer][editing],
@@ -478,17 +463,12 @@ input[type=range]::-webkit-slider-thumb {
   width: 100%;
 }
 .picker .chooser .chChoicesBox dd {
-  border: 4px solid transparent;
   cursor: pointer;
   display: inline-block;
-  padding: 12px;
+  padding: 16px;
 }
 .picker .chooser .chChoicesBox dd:hover {
   background: #444;
-}
-.picker .chooser .chChoicesBox dd:focus {
-  border-color: #cc7e00;
-  outline: none;
 }
 .picker .chooser .chChoicesBox dd[selected] {
   background: #cc7e00;
@@ -711,11 +691,6 @@ input[type=range]::-webkit-slider-thumb {
   width: 24px;
   height: 24px;
 }
-#toolbar > button:focus {
-  border: 4px solid #ffa500;
-  padding: 4px;
-  outline: none;
-}
 #settingsScreen {
   align-content: flex-start;
   background: #000;
@@ -847,6 +822,7 @@ input[type=range]::-webkit-slider-thumb {
   color: #000;
   fill: #000;
   outline-color: #fff;
+  outline-offset: 0px;
   outline-width: 2px;
 }
 * {
@@ -862,8 +838,9 @@ html {
 }
 :focus {
   outline-color: #cc7e00;
-  outline-width: 4px;
+  outline-offset: -4px;
   outline-style: solid;
+  outline-width: 4px;
 }
 body {
   background: #444;
@@ -909,9 +886,6 @@ body {
   #toolbar > button svg {
     width: 18px;
     height: 18px;
-  }
-  #toolbar > button:focus {
-    z-index: 10;
   }
   #editor {
     font-size: xx-large;
@@ -1089,6 +1063,12 @@ body {
     display: block;
   }
 }
+.blinkFocus :focus {
+  animation: 1.5s infinite steps(1) blink-outline;
+}
+.blinkFocus #settingsScreen #aboutBlock a:focus {
+  animation: 1.5s infinite steps(1) blink-link;
+}
 input[type=checkbox] {
   transition: border-color 100ms;
 }
@@ -1135,6 +1115,94 @@ input[type=checkbox]::after {
   animation: none;
   background: #cc7e00 !important;
   box-shadow: 0 0 16px #995e00 !important;
+}
+@-moz-keyframes blink-outline {
+  0% {
+    outline-color: #cc7e00;
+  }
+  75% {
+    outline-color: transparent;
+  }
+}
+@-webkit-keyframes blink-outline {
+  0% {
+    outline-color: #cc7e00;
+  }
+  75% {
+    outline-color: transparent;
+  }
+}
+@-o-keyframes blink-outline {
+  0% {
+    outline-color: #cc7e00;
+  }
+  75% {
+    outline-color: transparent;
+  }
+}
+@keyframes blink-outline {
+  0% {
+    outline-color: #cc7e00;
+  }
+  75% {
+    outline-color: transparent;
+  }
+}
+@-moz-keyframes blink-link {
+  0% {
+    background: #fff;
+    color: #000;
+    fill: #000;
+    outline-color: #fff;
+  }
+  75% {
+    background: #000;
+    color: #fff;
+    fill: #fff;
+    outline-color: transparent;
+  }
+}
+@-webkit-keyframes blink-link {
+  0% {
+    background: #fff;
+    color: #000;
+    fill: #000;
+    outline-color: #fff;
+  }
+  75% {
+    background: #000;
+    color: #fff;
+    fill: #fff;
+    outline-color: transparent;
+  }
+}
+@-o-keyframes blink-link {
+  0% {
+    background: #fff;
+    color: #000;
+    fill: #000;
+    outline-color: #fff;
+  }
+  75% {
+    background: #000;
+    color: #fff;
+    fill: #fff;
+    outline-color: transparent;
+  }
+}
+@keyframes blink-link {
+  0% {
+    background: #fff;
+    color: #000;
+    fill: #000;
+    outline-color: #fff;
+  }
+  75% {
+    background: #000;
+    color: #fff;
+    fill: #fff;
+    outline-color: transparent;
+  }
 }
 @-moz-keyframes expand {
   0%, 25% {
