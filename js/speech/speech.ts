@@ -6,8 +6,8 @@ class Speech
     /** Instance of the custom voice engine */
     private readonly voxEngine? : VoxEngine;
 
-    /** Array of browser-provided voices available */
-    public  browserVoices : SpeechSynthesisVoice[] = [];
+    /** Dictionary of browser-provided voices available */
+    public  browserVoices : Dictionary<SpeechSynthesisVoice> = {};
     /** Event handler for when speech is audibly spoken */
     public  onspeak?      : () => void;
     /** Event handler for when speech has ended */
@@ -58,10 +58,17 @@ class Speech
     {
         this.stop();
 
+        // VOX engine
         if      ( this.voxEngine && either(settings.useVox, RAG.config.voxEnabled) )
             this.speakVox(phrase, settings);
+
+        // Native browser text-to-speech
         else if (window.speechSynthesis)
             this.speakBrowser(phrase, settings);
+
+        // No speech available; call stop event handler
+        else if (this.onstop)
+            this.onstop();
     }
 
     /** Stops and cancels all queued speech */
@@ -93,7 +100,9 @@ class Speech
     /** Handles async voice list loading on some browsers, and sets default */
     private onVoicesChanged() : void
     {
-        this.browserVoices = window.speechSynthesis.getVoices();
+        this.browserVoices = {};
+
+        window.speechSynthesis.getVoices().forEach(v => this.browserVoices[v.name] = v);
     }
 
     /**
@@ -104,9 +113,15 @@ class Speech
      */
     private speakBrowser(phrase: HTMLElement, settings: SpeechSettings) : void
     {
+        let voiceName = either(settings.voiceName, RAG.config.speechVoice);
+        let voice     = this.browserVoices[voiceName];
+
         // Reset to first voice, if configured choice is missing
-        let voiceIdx = either(settings.voiceIdx, RAG.config.speechVoice);
-        let voice    = this.browserVoices[voiceIdx] || this.browserVoices[0];
+        if (!voice)
+        {
+            let first = Object.keys(this.browserVoices)[0];
+            voice     = this.browserVoices[first];
+        }
 
         // The phrase text is split into sentences, as queueing large sentences that last
         // many seconds can break some TTS engines and browsers.

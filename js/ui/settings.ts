@@ -66,7 +66,7 @@ class Settings extends ViewBase
             this.chkUseVox.disabled   = true;
             this.hintUseVox.innerHTML = '<strong>VOX engine</strong> is unavailable.' +
                 ' Your browser or device may not be supported; please check the console' +
-                ' for more information.'
+                ' for more information.';
         }
         else
             this.chkUseVox.checked = RAG.config.voxEnabled;
@@ -75,7 +75,7 @@ class Settings extends ViewBase
         this.inputVoxPath.value             = RAG.config.voxCustomPath;
         this.selVoxReverb.value             = RAG.config.voxReverb;
         this.selVoxChime.value              = RAG.config.voxChime;
-        this.selSpeechVoice.selectedIndex   = RAG.config.speechVoice;
+        this.selSpeechVoice.value           = RAG.config.speechVoice;
         this.rangeSpeechVol.valueAsNumber   = RAG.config.speechVol;
         this.rangeSpeechPitch.valueAsNumber = RAG.config.speechPitch;
         this.rangeSpeechRate.valueAsNumber  = RAG.config.speechRate;
@@ -102,7 +102,6 @@ class Settings extends ViewBase
         let voxEnabled = this.chkUseVox.checked;
         let voxCustom  = (this.selVoxVoice.value === '');
 
-        // TODO: Migrate all of RAG to use hidden attributes instead, for screen readers
         DOM.toggleHiddenAll(
             [this.selSpeechVoice,   !voxEnabled],
             [this.rangeSpeechPitch, !voxEnabled],
@@ -121,14 +120,14 @@ class Settings extends ViewBase
         let voices = RAG.speech.browserVoices;
 
         // Handle empty list
-        if (voices.length <= 0)
+        if (voices === {})
         {
             let option      = DOM.addOption( this.selSpeechVoice, L.ST_SPEECH_EMPTY() );
             option.disabled = true;
         }
         // https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis
-        else for (let i = 0; i < voices.length ; i++)
-            DOM.addOption(this.selSpeechVoice, `${voices[i].name} (${voices[i].lang})`);
+        else for (let name in voices)
+            DOM.addOption(this.selSpeechVoice, `${name} (${voices[name].lang})`, name);
     }
 
     /** Handles the reset button, with a confirm step that cancels after 15 seconds */
@@ -166,7 +165,7 @@ class Settings extends ViewBase
         RAG.config.voxCustomPath = this.inputVoxPath.value;
         RAG.config.voxReverb     = this.selVoxReverb.value;
         RAG.config.voxChime      = this.selVoxChime.value;
-        RAG.config.speechVoice   = this.selSpeechVoice.selectedIndex;
+        RAG.config.speechVoice   = this.selSpeechVoice.value;
         // parseFloat instead of valueAsNumber; see Architecture.md
         RAG.config.speechVol     = parseFloat(this.rangeSpeechVol.value);
         RAG.config.speechPitch   = parseFloat(this.rangeSpeechPitch.value);
@@ -199,7 +198,7 @@ class Settings extends ViewBase
                     voxPath   : this.selVoxVoice.value || this.inputVoxPath.value,
                     voxReverb : this.selVoxReverb.value,
                     voxChime  : this.selVoxChime.value,
-                    voiceIdx  : this.selSpeechVoice.selectedIndex,
+                    voiceName : this.selSpeechVoice.value,
                     volume    : this.rangeSpeechVol.valueAsNumber,
                     pitch     : this.rangeSpeechPitch.valueAsNumber,
                     rate      : this.rangeSpeechRate.valueAsNumber

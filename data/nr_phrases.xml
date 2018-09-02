@@ -581,8 +581,6 @@
 </phrase>
 
 <phrase id="voxeditor_station_mid">
-  <vox key="phrase.platform_wait.0">Platform</vox> <platform/>
-  <vox key="phrase.platform_wait.2">for the</vox> <time context="main"/>
   <vox key="phrase.platform_wait.4">service to</vox>
   <station context="destination"/> <vox key="phrase.dest_via.0">via</vox>
   <station context="via"/>. <vox key="phraseset.calling_at.0.0">Calling at</vox>
@@ -590,8 +588,6 @@
 </phrase>
 
 <phrase id="voxeditor_station_end">
-  <vox key="phrase.platform_wait.0">Platform</vox> <platform/>
-  <vox key="phrase.platform_wait.2">for the</vox> <time context="main"/>
   <vox key="phrase.platform_wait.4">service to</vox>
   <station context="destination"/>. <vox key="phraseset.calling_at.0.0">Calling at</vox>
   <stationlist context="calling"/>.

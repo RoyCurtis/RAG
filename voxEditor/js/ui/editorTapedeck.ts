@@ -205,7 +205,7 @@ export class EditorTapedeck
 
     private onKeyDown(_: KeyboardEvent) : void
     {
-
+        // TODO: Implement
     }
 
     private onPadDown(ev: GamepadButtonEvent) : void
@@ -221,6 +221,7 @@ export class EditorTapedeck
             case XBOX.RB:    return this.btnNext.click();
             case XBOX.Left:  return this.btnBack.click();
             case XBOX.Right: return this.btnFwd.click();
+            case XBOX.Down:  return this.clipEditor.redraw(true);
             case XBOX.Start: return this.btnSave.click();
             case XBOX.Back:  return this.btnLoad.click();
             case XBOX.LS:    return this.onScale(1 / 0.9);
@@ -259,7 +260,7 @@ export class EditorTapedeck
 
         this.dirty = true;
         this.clipEditor.shiftBounds(
-            (magLeft * 8) + (magRight * 2),
+            (magLeft * 16) + (magRight * 2),
             ev.button === XBOX.RT
         );
     }

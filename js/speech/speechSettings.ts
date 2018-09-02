@@ -11,8 +11,8 @@ interface SpeechSettings
     voxReverb? : string;
     /** Override choice of chime to use */
     voxChime?  : string;
-    /** Override choice of voice */
-    voiceIdx?  : number;
+    /** Override choice of native voice */
+    voiceName? : string;
     /** Override volume of voice */
     volume?    : number;
     /** Override pitch of voice */

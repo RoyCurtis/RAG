@@ -444,34 +444,34 @@ declare abstract class ConfigBase<T extends ConfigBase<T>> {
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Holds runtime configuration for RAG */
 declare class Config extends ConfigBase<Config> {
-    /** If user has read the disclaimer */
-    readDisclaimer: boolean;
     /** If user has clicked shuffle at least once */
     clickedGenerate: boolean;
+    /** If user has read the disclaimer */
+    readDisclaimer: boolean;
     /** Volume for speech to be set at */
     speechVol: number;
     /** Pitch for speech to be set at */
     speechPitch: number;
     /** Rate for speech to be set at */
     speechRate: number;
+    /** VOX key of the chime to use prior to speaking */
+    voxChime: string;
+    /** Relative or absolute URL of the custom VOX voice to use */
+    voxCustomPath: string;
     /** Whether to use the VOX engine */
     voxEnabled: boolean;
     /** Relative or absolute URL of the VOX voice to use */
     voxPath: string;
-    /** Relative or absolute URL of the custom VOX voice to use */
-    voxCustomPath: string;
-    /** VOX key of the chime to use prior to speaking */
-    voxChime: string;
-    /** Choice of speech voice to use, as getVoices index or -1 if unset */
+    /** Choice of speech voice to use as voice name, or '' if unset */
     private _speechVoice;
     /** Impulse response to use for VOX's reverb */
     private _voxReverb;
     /**
-     * Choice of speech voice to use, as getVoices index. Because of the async nature of
+     * Choice of speech voice to use, as a voice name. Because of the async nature of
      * getVoices, the default value will be fetched from it each time.
      */
-    /** Sets the choice of speech to use, as getVoices index */
-    speechVoice: number;
+    /** Sets the choice of speech to use, as voice name */
+    speechVoice: string;
     /** Gets the impulse response file to use for VOX engine's reverb */
     /** Sets the impulse response file to use for VOX engine's reverb */
     voxReverb: string;
@@ -847,48 +847,6 @@ declare class Resolver {
     private resolveVox;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Manages speech synthesis using both native and custom engines */
-declare class Speech {
-    /** Instance of the custom voice engine */
-    private readonly voxEngine?;
-    /** Array of browser-provided voices available */
-    browserVoices: SpeechSynthesisVoice[];
-    /** Event handler for when speech is audibly spoken */
-    onspeak?: () => void;
-    /** Event handler for when speech has ended */
-    onstop?: () => void;
-    /** Reference to the native speech-stopped check timer */
-    private stopTimer;
-    /** Whether any speech engine is currently speaking */
-    readonly isSpeaking: boolean;
-    /** Whether the VOX engine is currently available */
-    readonly voxAvailable: boolean;
-    constructor();
-    /** Begins speaking the given phrase components */
-    speak(phrase: HTMLElement, settings?: SpeechSettings): void;
-    /** Stops and cancels all queued speech */
-    stop(): void;
-    /** Pause and unpause speech if the page is hidden or unhidden */
-    private onVisibilityChange;
-    /** Handles async voice list loading on some browsers, and sets default */
-    private onVoicesChanged;
-    /**
-     * Converts the given phrase to text and speaks it via native browser voices.
-     *
-     * @param phrase Phrase elements to speak
-     * @param settings Settings to use for the voice
-     */
-    private speakBrowser;
-    /**
-     * Synthesizes voice by walking through the given phrase elements, resolving parts to
-     * sound file IDs, and feeding the entire array to the vox engine.
-     *
-     * @param phrase Phrase elements to speak
-     * @param settings Settings to use for the voice
-     */
-    private speakVox;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Type definition for speech config overrides passed to the speak method */
 interface SpeechSettings {
     /** Whether to force use of the VOX engine */
@@ -899,8 +857,8 @@ interface SpeechSettings {
     voxReverb?: string;
     /** Override choice of chime to use */
     voxChime?: string;
-    /** Override choice of voice */
-    voiceIdx?: number;
+    /** Override choice of native voice */
+    voiceName?: string;
     /** Override volume of voice */
     volume?: number;
     /** Override pitch of voice */
@@ -1724,4 +1682,46 @@ declare class State {
      * duplicates in inappropriate places and contexts.
      */
     genDefaultState(): void;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Manages speech synthesis using both native and custom engines */
+declare class Speech {
+    /** Instance of the custom voice engine */
+    private readonly voxEngine?;
+    /** Dictionary of browser-provided voices available */
+    browserVoices: Dictionary<SpeechSynthesisVoice>;
+    /** Event handler for when speech is audibly spoken */
+    onspeak?: () => void;
+    /** Event handler for when speech has ended */
+    onstop?: () => void;
+    /** Reference to the native speech-stopped check timer */
+    private stopTimer;
+    /** Whether any speech engine is currently speaking */
+    readonly isSpeaking: boolean;
+    /** Whether the VOX engine is currently available */
+    readonly voxAvailable: boolean;
+    constructor();
+    /** Begins speaking the given phrase components */
+    speak(phrase: HTMLElement, settings?: SpeechSettings): void;
+    /** Stops and cancels all queued speech */
+    stop(): void;
+    /** Pause and unpause speech if the page is hidden or unhidden */
+    private onVisibilityChange;
+    /** Handles async voice list loading on some browsers, and sets default */
+    private onVoicesChanged;
+    /**
+     * Converts the given phrase to text and speaks it via native browser voices.
+     *
+     * @param phrase Phrase elements to speak
+     * @param settings Settings to use for the voice
+     */
+    private speakBrowser;
+    /**
+     * Synthesizes voice by walking through the given phrase elements, resolving parts to
+     * sound file IDs, and feeding the entire array to the vox engine.
+     *
+     * @param phrase Phrase elements to speak
+     * @param settings Settings to use for the voice
+     */
+    private speakVox;
 }
