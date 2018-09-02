@@ -26,10 +26,14 @@ class VoxEngine
     /** Relative path to fetch impulse response and chime files from */
     private readonly dataPath     : string;
 
+    /** Event handler for when speech has audibly begun */
+    public  onspeak?         : () => void;
     /** Event handler for when speech has ended */
     public  onstop?          : () => void;
     /** Whether this engine is currently running and speaking */
-    private isSpeaking       : boolean      = false;
+    public  isSpeaking       : boolean      = false;
+    /** Whether this engine has begun speaking for a current speech */
+    private begunSpeaking    : boolean      = false;
     /** Reference number for the current pump timer */
     private pumpTimer        : number       = 0;
     /** Tracks the audio context's wall-clock time to schedule next clip */
@@ -85,6 +89,7 @@ class VoxEngine
             this.stop();
 
         this.isSpeaking      = true;
+        this.begunSpeaking   = false;
         this.currentIds      = ids;
         this.currentSettings = settings;
 
@@ -274,6 +279,15 @@ class VoxEngine
 
         this.scheduledBuffers.push(node);
         this.nextBegin += (duration + delay - latency);
+
+        // Fire on-first-speak event
+        if (!this.begunSpeaking)
+        {
+            this.begunSpeaking = true;
+
+            if (this.onspeak)
+                this.onspeak();
+        }
 
         // Have this buffer node remove itself from the schedule when done
         node.onended = _ =>

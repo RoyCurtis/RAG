@@ -8,10 +8,21 @@ class Speech
 
     /** Array of browser-provided voices available */
     public  browserVoices : SpeechSynthesisVoice[] = [];
+    /** Event handler for when speech is audibly spoken */
+    public  onspeak?      : () => void;
     /** Event handler for when speech has ended */
     public  onstop?       : () => void;
     /** Reference to the native speech-stopped check timer */
     private stopTimer     : number = 0;
+
+    /** Whether any speech engine is currently speaking */
+    public get isSpeaking() : boolean
+    {
+        if (this.voxEngine && this.voxEngine.isSpeaking)
+            return true;
+        else
+            return window.speechSynthesis.speaking;
+    }
 
     /** Whether the VOX engine is currently available */
     public get voxAvailable() : boolean
@@ -35,6 +46,9 @@ class Speech
         // not actually fire the event until this call...
         this.onVoicesChanged();
 
+        // For some reason, Chrome needs this called once for native speech to work
+        window.speechSynthesis.cancel();
+
         try         { this.voxEngine = new VoxEngine(); }
         catch (err) { console.error('Could not create VOX engine:', err); }
     }
@@ -48,20 +62,22 @@ class Speech
             this.speakVox(phrase, settings);
         else if (window.speechSynthesis)
             this.speakBrowser(phrase, settings);
-        else if (this.onstop)
-            this.onstop();
     }
 
     /** Stops and cancels all queued speech */
     public stop() : void
     {
-        // TODO: Check for speech synthesis
+        if (!this.isSpeaking)
+            return;
 
         if (window.speechSynthesis)
             window.speechSynthesis.cancel();
 
         if (this.voxEngine)
             this.voxEngine.stop();
+
+        if (this.onstop)
+            this.onstop();
     }
 
     /** Pause and unpause speech if the page is hidden or unhidden */
@@ -113,6 +129,10 @@ class Speech
             window.speechSynthesis.speak(utterance);
         });
 
+        // Fire immediately. I don't trust speech events to be reliable; see below.
+        if (this.onspeak)
+            this.onspeak();
+
         // This checks for when the native engine has stopped speaking, and calls the
         // onstop event handler. I could use SpeechSynthesis.onend instead, but it was
         // found to be unreliable, so I have to poll the speaking property this way.
@@ -142,9 +162,16 @@ class Speech
         let resolver = new Resolver(phrase);
         let voxPath  = RAG.config.voxPath || RAG.config.voxCustomPath;
 
+        this.voxEngine!.onspeak = () =>
+        {
+            if (this.onspeak)
+                this.onspeak();
+        };
+
         this.voxEngine!.onstop = () =>
         {
-            this.voxEngine!.onstop = undefined;
+            this.voxEngine!.onspeak = undefined;
+            this.voxEngine!.onstop  = undefined;
 
             if (this.onstop)
                 this.onstop();

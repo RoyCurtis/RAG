@@ -853,10 +853,14 @@ declare class Speech {
     private readonly voxEngine?;
     /** Array of browser-provided voices available */
     browserVoices: SpeechSynthesisVoice[];
+    /** Event handler for when speech is audibly spoken */
+    onspeak?: () => void;
     /** Event handler for when speech has ended */
     onstop?: () => void;
     /** Reference to the native speech-stopped check timer */
     private stopTimer;
+    /** Whether any speech engine is currently speaking */
+    readonly isSpeaking: boolean;
     /** Whether the VOX engine is currently available */
     readonly voxAvailable: boolean;
     constructor();
@@ -922,10 +926,14 @@ declare class VoxEngine {
     private readonly impulses;
     /** Relative path to fetch impulse response and chime files from */
     private readonly dataPath;
+    /** Event handler for when speech has audibly begun */
+    onspeak?: () => void;
     /** Event handler for when speech has ended */
     onstop?: () => void;
     /** Whether this engine is currently running and speaking */
-    private isSpeaking;
+    isSpeaking: boolean;
+    /** Whether this engine has begun speaking for a current speech */
+    private begunSpeaking;
     /** Reference number for the current pump timer */
     private pumpTimer;
     /** Tracks the audio context's wall-clock time to schedule next clip */
@@ -1136,6 +1144,8 @@ declare class Toolbar {
     constructor();
     /** Handles the play button, playing the editor's current phrase with speech */
     private handlePlay;
+    /** Continuation of handlePlay, executed after a delay */
+    private handlePlay2;
     /** Handles the stop button, stopping the marquee and any speech */
     private handleStop;
     /** Handles the generate button, generating new random state and phrase */

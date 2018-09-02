@@ -28,20 +28,12 @@ class Toolbar
         this.btnRecall   = DOM.require('#btnLoad');
         this.btnOption   = DOM.require('#btnSettings');
 
+        this.btnPlay.onclick     = this.handlePlay.bind(this);
         this.btnStop.onclick     = this.handleStop.bind(this);
         this.btnGenerate.onclick = this.handleGenerate.bind(this);
         this.btnSave.onclick     = this.handleSave.bind(this);
         this.btnRecall.onclick   = this.handleLoad.bind(this);
         this.btnOption.onclick   = this.handleOption.bind(this);
-
-        // Has to execute on a delay, as speech cancel is unreliable without it
-        this.btnPlay.onclick = ev =>
-        {
-            ev.preventDefault();
-            RAG.speech.stop();
-            this.btnPlay.disabled = true;
-            window.setTimeout(this.handlePlay.bind(this), 200);
-        };
 
         // Add throb class if the generate button hasn't been clicked before
         if (!RAG.config.clickedGenerate)
@@ -56,30 +48,94 @@ class Toolbar
     /** Handles the play button, playing the editor's current phrase with speech */
     private handlePlay() : void
     {
-        RAG.speech.onstop = () =>
-        {
-            this.btnPlay.hidden = false;
+        RAG.speech.stop();
+        this.btnPlay.disabled = true;
 
-            if (document.activeElement === this.btnStop)
-                this.btnPlay.focus();
+        // Has to execute on a delay, otherwise native speech cancel becomes unreliable
+        window.setTimeout(this.handlePlay2.bind(this), 200);
+    }
 
-            this.btnStop.hidden = true;
-            RAG.speech.onstop   = undefined;
-        };
-
+    /** Continuation of handlePlay, executed after a delay */
+    private handlePlay2() : void
+    {
+        let hasSpoken         = false;
+        let speechText        = RAG.views.editor.getText();
+        this.btnPlay.hidden   = true;
         this.btnPlay.disabled = false;
         this.btnStop.hidden   = false;
-        this.btnPlay.hidden   = true;
-        RAG.views.marquee.set( RAG.views.editor.getText() );
+
+        // TODO: Localize
+        RAG.views.marquee.set('Loading VOX...', false);
+
+        // If speech takes too long (10 seconds) to load, cancel it
+        let timeout = window.setTimeout(() =>
+        {
+            clearTimeout(timeout);
+            RAG.speech.stop();
+        }, 10 * 1000);
+
+        RAG.speech.onspeak = () =>
+        {
+            clearTimeout(timeout);
+            RAG.views.marquee.set(speechText);
+
+            hasSpoken          = true;
+            RAG.speech.onspeak = undefined;
+        };
+
+        RAG.speech.onstop = () =>
+        {
+            clearTimeout(timeout);
+            this.handleStop();
+
+            // Check if anything was actually spoken. If not, something went wrong.
+            if (!hasSpoken && RAG.config.voxEnabled)
+            {
+                RAG.config.voxEnabled = false;
+
+                // TODO: Localize
+                alert(
+                    'It appears that the VOX engine was unable to say anything.'   +
+                    ' Either the current voice path is unreachable, or the engine' +
+                    ' crashed. Please check the console. The VOX engine has been'  +
+                    ' disabled and native text-to-speech will be used on next play.'
+                );
+            }
+            else if (!hasSpoken)
+                alert(
+                    'It appears that the browser was unable to say anything.'        +
+                    ' Either the current voice failed to load, or this browser does' +
+                    ' not support support text-to-speech. Please check the console.'
+                );
+
+            // Since the marquee would have been stuck on "Loading...", scroll it
+            if (!hasSpoken)
+                RAG.views.marquee.set(speechText);
+        };
+
         RAG.speech.speak( RAG.views.editor.getPhrase() );
         this.btnStop.focus();
     }
 
     /** Handles the stop button, stopping the marquee and any speech */
-    private handleStop() : void
+    private handleStop(ev?: Event) : void
     {
+        RAG.speech.onspeak  = undefined;
+        RAG.speech.onstop   = undefined;
+        this.btnPlay.hidden = false;
+
+        // Only focus play button if user didn't move focus elsewhere. Prevents
+        // annoying surprise of focus suddenly shifting away.
+        if (document.activeElement === this.btnStop)
+            this.btnPlay.focus();
+
+        this.btnStop.hidden = true;
+
         RAG.speech.stop();
-        RAG.views.marquee.stop();
+
+        // If event exists, this stop was called by the user
+        if (ev)
+            RAG.views.marquee.set(RAG.views.editor.getText(), false);
     }
 
     /** Handles the generate button, generating new random state and phrase */
