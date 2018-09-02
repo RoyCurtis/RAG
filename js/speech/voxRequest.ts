@@ -9,6 +9,8 @@ class VoxRequest
     public  readonly delay   : number;
     /** Audio context to use for decoding */
     private readonly context : AudioContext;
+    /** Abort controller to allow the fetch to be aborted */
+    private readonly abort   : AbortController;
 
     /** Whether this request is done and ready for handling (even if failed) */
     public isDone     : boolean = false;
@@ -23,16 +25,21 @@ class VoxRequest
         this.context = context;
         this.path    = path;
         this.delay   = delay;
+        this.abort   = new AbortController();
 
-        fetch(path)
+        // https://developers.google.com/web/updates/2017/09/abortable-fetch
+        fetch(path, { signal : this.abort.signal })
             .then ( this.onFulfill.bind(this) )
             .catch( this.onError.bind(this)   );
+
+        // Timeout all fetches by 10 seconds
+        setTimeout(_ => this.abort.abort(), 10 * 1000);
     }
 
     /** Cancels this request from proceeding any further */
     public cancel() : void
     {
-        // TODO: Cancellation controllers
+        this.abort.abort();
     }
 
     /** Begins decoding the loaded MP3 voice file to raw audio data */

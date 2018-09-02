@@ -973,6 +973,8 @@ declare class VoxRequest {
     readonly delay: number;
     /** Audio context to use for decoding */
     private readonly context;
+    /** Abort controller to allow the fetch to be aborted */
+    private readonly abort;
     /** Whether this request is done and ready for handling (even if failed) */
     isDone: boolean;
     /** Raw audio data from the loaded file, if available */
