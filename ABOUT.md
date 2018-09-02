@@ -25,7 +25,11 @@ Bjarke, Nik, Dylan, rjlan, Fyrrian, CGDoctor8, Mikko, Griffin, Leroy, Maitre, Sh
 Toby and Kerys, [Kristi Kates and her entire community][15] for the love, testing, and
 encouragement.
 
-No user-inputted or generated data is ever sent to a remote server, at any time.
+User-inputted and generated phrases may be sent to a remote server if a remote
+text-to-speech engine (e.g. [Google's][26]) is used, or may be inferred from traffic logs
+of servers hosting any VOX engine voices used.
+
+No analytics, telemetry, or advertising is used, and they never will be.
 
 Local storage is used only to store and recall JSON state, application settings, and user
 choices. This is done implicitly and automatically, but is resettable.
@@ -77,3 +81,4 @@ a hobby of mine, with zero commercial intent. Please enjoy, and thanks!
 [23]: https://old.reddit.com/r/AskUK/comments/9aa1zb/where_can_i_find_audible_examples_of_uk_place/
 [24]: https://forvo.com
 [25]: https://forvo.com/user/mooncow/
+[26]: https://policies.google.com/privacy
