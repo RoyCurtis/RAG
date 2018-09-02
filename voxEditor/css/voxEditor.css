@@ -162,24 +162,42 @@ h1 {
   padding: 16px;
 }
 #partSelector {
-  flex-basis: 40%;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 40%;
+  max-width: 40%;
+}
+#partSelector .progressBar {
+  border: 2px solid #cc7e00;
+  height: 46px;
+  margin: 16px 16px 0 16px;
+  position: relative;
+  width: -webkit-fill-available;
+}
+#partSelector .progressBar .bar {
+  background: #cc7e00;
+  height: 100%;
+}
+#partSelector .progressBar .text {
+  font-size: x-large;
+  position: absolute;
+  text-align: center;
+  top: 8px;
+  width: 100%;
 }
 #partSelector .searchBox {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   margin: 16px 16px 0 16px;
-  position: sticky;
-  top: 16px;
-  z-index: 10;
+  min-height: fit-content;
 }
 #partSelector .searchBox input {
   border: none;
   flex-grow: 1;
   font-size: large;
   padding: 8px;
-  z-index: 10;
 }
 #partSelector .searchBox input.noMatches {
   background: #f2a6a6;
@@ -222,6 +240,7 @@ h1 {
 #partSelector #orphanWarning {
   background: #c21d1d;
   margin: 16px 12px 16px 16px;
+  min-height: fit-content;
   padding: 8px;
 }
 #partSelector > ul {
@@ -232,7 +251,8 @@ h1 {
   user-select: none;
   font-size: 12px;
   list-style: none;
-  margin: 16px 12px 16px 16px;
+  overflow: auto;
+  padding: 16px 0 16px 16px;
   transform: translate3d(0, 0, 1px);
 }
 #partSelector > ul li {
@@ -240,7 +260,7 @@ h1 {
   text-overflow: ellipsis;
   white-space: nowrap;
   background: #222;
-  border-right: 4px solid #000;
+  border-right: 8px solid #000;
   cursor: pointer;
   margin-bottom: 4px;
   padding: 4px;
@@ -265,7 +285,7 @@ h1 {
   fill: #fff;
 }
 #tapeDeck {
-  flex-basis: 60%;
+  max-width: 60%;
 }
 #tapeDeck #frmSetup {
   display: grid;

@@ -8,11 +8,13 @@ import * as fs from "fs";
 export class EditorPhrases
 {
     /** Reference to the entire phrase selector */
-    private readonly dom       : HTMLElement;
+    private readonly dom           : HTMLElement;
     /** Reference to the list of clickable phrase IDs */
-    private readonly domList   : HTMLUListElement;
+    private readonly domList       : HTMLUListElement;
     /** Reference to the orphan files warning */
-    private readonly domOrphan : HTMLElement;
+    private readonly domOrphan     : HTMLElement;
+    /** Reference to the voice set progress bar */
+    private readonly domProgress   : HTMLElement;
 
     private readonly btnGetExcuse  : HTMLButtonElement;
 
@@ -28,7 +30,7 @@ export class EditorPhrases
 
     private readonly btnGetStation : HTMLButtonElement;
     /** Reference to the phrase search box */
-    private readonly inputFind : HTMLInputElement;
+    private readonly inputFind     : HTMLInputElement;
 
     /** Reference to the currently selected phrase's key */
     public  currentKey?   : string;
@@ -40,6 +42,7 @@ export class EditorPhrases
         this.dom           = DOM.require('#partSelector');
         this.domList       = DOM.require('#phraseList',    this.dom);
         this.domOrphan     = DOM.require('#orphanWarning', this.dom);
+        this.domProgress   = DOM.require('.progressBar',   this.dom);
         this.btnGetExcuse  = DOM.require('#btnGetExcuse',  this.dom);
         this.btnGetLetter  = DOM.require('#btnGetLetter',  this.dom);
         this.btnGetNamed   = DOM.require('#btnGetNamed',   this.dom);
@@ -59,7 +62,7 @@ export class EditorPhrases
     public select(item: HTMLElement, scroll: boolean = false) : void
     {
         this.visualSelect(item);
-        this.checkMissing(item);
+        this.checkExists(item);
 
         this.currentKey = item.dataset['key']!;
 
@@ -123,16 +126,22 @@ export class EditorPhrases
     }
 
     /** Visually updates the given phrase entry to reflect whether its file exists */
-    public checkMissing(item: HTMLElement) : void
+    public checkExists(item: HTMLElement) : boolean
     {
         // Ignore if not a child of the list
         if (item.parentElement !== this.domList)
-            return;
+            return false;
 
         if ( VoxEditor.voices.hasClip(item.dataset['key']!) )
+        {
             item.classList.remove('missing');
+            return true;
+        }
         else
+        {
             item.classList.add('missing');
+            return false;
+        }
     }
 
     /** Called when vox editor is ready */
@@ -146,17 +155,21 @@ export class EditorPhrases
     public handleSave() : void
     {
         if (this.currentEntry)
-            this.checkMissing(this.currentEntry);
+            this.checkExists(this.currentEntry);
     }
 
     /** Called when the choice of voice changes, by marking all missing entries */
     public handleVoiceChange() : void
     {
+        let found = 0;
+
         this.domList.hidden = true;
 
         for (let i = 0; i < this.domList.children.length; i++)
-            this.checkMissing(this.domList.children[i] as HTMLElement);
+        if  ( this.checkExists(this.domList.children[i] as HTMLElement) )
+            found++;
 
+        this.setProgress(found, this.domList.children.length);
         this.findOrphans();
         this.domList.hidden = false;
     }
@@ -210,7 +223,8 @@ export class EditorPhrases
         this.currentEntry      = undefined;
         this.domList.innerText = '';
 
-        let keys = Object.keys(VoxEditor.captioner.captionBank).sort();
+        let keys  = Object.keys(VoxEditor.captioner.captionBank).sort();
+        let found = 0;
 
         for (let i = 0; i < keys.length; i++)
         {
@@ -222,11 +236,14 @@ export class EditorPhrases
             element.innerHTML      = `<code>${key}</code> "${value}"`;
 
             this.domList.appendChild(element);
-            this.checkMissing(element);
+
+            if ( this.checkExists(element) )
+                found++;
         }
 
         this.inputFind.disabled = (this.domList.children.length === 0);
 
+        this.setProgress(found, keys.length);
         this.findOrphans();
         this.domList.hidden = false;
     }
@@ -296,5 +313,15 @@ export class EditorPhrases
         }
 
         this.inputFind.classList.add('noMatches');
+    }
+
+    private setProgress(value: number, total: number) : void
+    {
+        let bar  = DOM.require('.bar',  this.domProgress);
+        let text = DOM.require('.text', this.domProgress);
+        let perc = ( (value / total) * 100 ) | 0;
+
+        text.innerText  = `${value} out of ${total} done`;
+        bar.style.width = `${perc}%`;
     }
 }
