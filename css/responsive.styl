@@ -20,8 +20,7 @@
     padding-top 12px
 
     svg
-      width  18px
-      height 18px
+      size(18px)
 
 #editor
   font-size xx-large
@@ -48,10 +47,10 @@
 
     > button, > button:first-child
       backAndForeColor($fgBright, $bgDarkest)
-      rect(38px)
+      size(38px)
 
       svg
-        rect(20px)
+        size(20px)
         padding-bottom 4px
 
     &:hover > button
@@ -75,10 +74,9 @@
       padding   4px
 
   &.modal
+    size()
     border-top 0
     box-shadow none
-    height     100%
-    width      100%
 
     > header
       padding 8px

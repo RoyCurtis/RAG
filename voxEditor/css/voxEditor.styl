@@ -2,18 +2,7 @@
 
 // Must be up here, else global function calls will fail elsewhere (order is important)
 @import "../../css/globals"
-
-// CSS reset
-
-*
-  margin     0
-  padding    0
-  box-sizing border-box
-
-body, html
-  width      100%
-  height     100%
-  overflow-x hidden
+@import "../../css/reset"
 
 // Parts
 
@@ -32,11 +21,10 @@ h1
   max-width 40%
 
   .progressBar
+    size(-webkit-fill-available, 46px)
     border   2px solid $fgFocus
-    height   46px
     margin   16px 16px 0 16px
     position relative
-    width    -webkit-fill-available
 
     .bar
       background $fgFocus
@@ -150,8 +138,7 @@ h1
       padding   8px
 
       svg
-        width  24px
-        height 24px
+        size(24px)
 
       &.recording, &.savePending
         background $fgMarquee
@@ -187,8 +174,8 @@ h1
 
 .clipEditor
   align-self   stretch
-  justify-self flex-end
   height       200px
+  justify-self flex-end
   position     relative
 
   > *
@@ -203,32 +190,27 @@ h1
     width       100%
 
   canvas
+    size()
     background $bgDarker
-    width      100%
-    height     100%
 
   .needle
+    pos()
+    size(2px, 100%)
     background $bgPanic
-    top        0
-    left       0
-    width      2px
-    height     100%
 
   .clipper
+    size(1px, 100%)
     unselectable()
     background alpha($bgDarkest, 0.75)
     cursor     ew-resize
-    width      1px
-    height     100%
 
     &::after
+      size(8px, 30px)
       background $bgDarkest
       border     1px solid $fgDim
       content    ' '
       position   absolute
       top        140px
-      width      8px
-      height     30px
 
     &.left
       border-right 1px solid $fgDim
@@ -256,9 +238,8 @@ h1
   height     50px
 
   canvas
+    size()
     background $bgDarker
-    width      100%
-    height     100%
 
 // Hides embedded phraseset XML documents
 iframe

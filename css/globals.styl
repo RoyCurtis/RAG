@@ -53,7 +53,6 @@ flexbox($dir = row, $justify = flex-start)
   flex-direction  $dir
   justify-content $justify
 
-// TODO: Apply this where needed
 glow($color = $fgFocus, $inset = true)
   text-shadow 0 0 5px $color
 
@@ -65,8 +64,11 @@ glow($color = $fgFocus, $inset = true)
 gradient($dir, $col1, $stop1, $col2, $stop2)
   linear-gradient(to $dir, $col1 $stop1, $col2 $stop2)
 
-// TODO: Apply this where needed
-rect($width, $height = $width)
+pos($left = 0, $top = $left)
+  left $left
+  top  $top
+
+size($width = 100%, $height = $width)
   width  $width
   height $height
 
@@ -98,7 +100,7 @@ standardButton()
   margin     16px
 
 input[type=checkbox]
-  rect(64px, 32px)
+  size(64px, 32px)
   no-appearance()
   unselectable()
 
@@ -109,13 +111,12 @@ input[type=checkbox]
 
   &::after
     glow($bgDarkest, false)
-    rect(24px)
+    pos(2px)
+    size(24px)
     background $bgDark
     content    ' '
     display    block
-    left       2px
     position   relative
-    top        2px
 
   &:active::after
     left  6px
@@ -150,20 +151,19 @@ input[type=range]
   position   relative
 
   &::before
+    size(100%, 3px)
     background $fgFocus
     content    ' '
     display    block
-    height     3px
     position   absolute
     top        14px
-    width      100%
 
   &::-webkit-slider-runnable-track
     background none
     border     none
 
   &::-webkit-slider-thumb
-    rect(32px)
+    size(32px)
     no-appearance()
     background $bgDarker
     border     2px solid $fgFocus
@@ -176,7 +176,7 @@ input[type=range]
 
 .warningScreen
   flexbox(column)
-  rect(100%, 100%)
+  size()
   overflow auto
 
   > *

@@ -18,14 +18,14 @@ input[type=checkbox] {
 input[type=checkbox]::after {
   text-shadow: 0 0 5px #000;
   box-shadow: 0 0 5px #000;
+  left: 2px;
+  top: 2px;
   width: 24px;
   height: 24px;
   background: #444;
   content: ' ';
   display: block;
-  left: 2px;
   position: relative;
-  top: 2px;
 }
 input[type=checkbox]:active::after {
   left: 6px;
@@ -64,13 +64,13 @@ input[type=range] {
   position: relative;
 }
 input[type=range]::before {
+  width: 100%;
+  height: 3px;
   background: #cc7e00;
   content: ' ';
   display: block;
-  height: 3px;
   position: absolute;
   top: 14px;
-  width: 100%;
 }
 input[type=range]::-webkit-slider-runnable-track {
   background: none;
@@ -146,7 +146,7 @@ body,
 html {
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 body {
   background: #000;
@@ -169,11 +169,11 @@ h1 {
   max-width: 40%;
 }
 #partSelector .progressBar {
-  border: 2px solid #cc7e00;
+  width: -webkit-fill-available;
   height: 46px;
+  border: 2px solid #cc7e00;
   margin: 16px 16px 0 16px;
   position: relative;
-  width: -webkit-fill-available;
 }
 #partSelector .progressBar .bar {
   background: #cc7e00;
@@ -387,8 +387,8 @@ h1 {
 }
 .clipEditor {
   align-self: stretch;
-  justify-self: flex-end;
   height: 200px;
+  justify-self: flex-end;
   position: relative;
 }
 .clipEditor > * {
@@ -403,18 +403,20 @@ h1 {
   width: 100%;
 }
 .clipEditor canvas {
-  background: #222;
   width: 100%;
   height: 100%;
+  background: #222;
 }
 .clipEditor .needle {
-  background: #c21d1d;
-  top: 0;
   left: 0;
+  top: 0;
   width: 2px;
   height: 100%;
+  background: #c21d1d;
 }
 .clipEditor .clipper {
+  width: 1px;
+  height: 100%;
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
@@ -422,17 +424,15 @@ h1 {
   user-select: none;
   background: rgba(0,0,0,0.75);
   cursor: ew-resize;
-  width: 1px;
-  height: 100%;
 }
 .clipEditor .clipper::after {
+  width: 8px;
+  height: 30px;
   background: #000;
   border: 1px solid #aaa;
   content: ' ';
   position: absolute;
   top: 140px;
-  width: 8px;
-  height: 30px;
 }
 .clipEditor .clipper.left {
   border-right: 1px solid #aaa;
@@ -462,9 +462,9 @@ h1 {
   height: 50px;
 }
 .voiceMeter canvas {
-  background: #222;
   width: 100%;
   height: 100%;
+  background: #222;
 }
 iframe {
   display: none;
