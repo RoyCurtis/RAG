@@ -120,17 +120,18 @@ class State
      */
     public getPhrasesetIdx(ref: string) : number
     {
-        if (this._phrasesets[ref] !== undefined)
-            return this._phrasesets[ref];
-
         let phraseset = RAG.database.getPhraseset(ref);
+        let idx       = this._phrasesets[ref];
 
         // TODO: is this safe across phraseset changes?
         // TODO: introduce an asserts util, and start using them all over
         if (!phraseset)
             throw Error( L.STATE_NONEXISTANT_PHRASESET(ref) );
 
-        this._phrasesets[ref] = Random.int(0, phraseset.children.length);
+        // Verify index is valid, else reject and pick random
+        if (idx === undefined || phraseset.children[idx] === undefined)
+            this._phrasesets[ref] = Random.int(0, phraseset.children.length - 1);
+
         return this._phrasesets[ref];
     }
 
