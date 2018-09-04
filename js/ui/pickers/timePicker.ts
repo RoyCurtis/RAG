@@ -34,7 +34,7 @@ class TimePicker extends Picker
     protected onChange(_: Event) : void
     {
         if (!this.currentCtx)
-            throw Error( L.P_TIME_MISSING_STATE() );
+            throw Error(L.P_TIME_MISSING_STATE);
 
         RAG.state.setTime(this.currentCtx, this.inputTime.value);
         RAG.views.editor

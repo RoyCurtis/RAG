@@ -70,7 +70,7 @@ class PhrasesetPicker extends Picker
     private onSelect(entry: HTMLElement) : void
     {
         if (!this.currentRef)
-            throw Error( L.P_PSET_MISSING_STATE() );
+            throw Error(L.P_PSET_MISSING_STATE);
 
         let idx = parseInt(entry.dataset['idx']!);
 

@@ -19,7 +19,7 @@ class Editor
         document.body.onclick = this.onClick.bind(this);
         window.onresize       = this.onResize.bind(this);
         this.dom.onscroll     = this.onScroll.bind(this);
-        this.dom.textContent  = L.EDITOR_INIT();
+        this.dom.textContent  = L.EDITOR_INIT;
     }
 
     /** Replaces the editor with a root phraseset reference, and expands it into HTML */

@@ -37,7 +37,7 @@ class CoachPicker extends Picker
     protected onChange(_: Event) : void
     {
         if (!this.currentCtx)
-            throw Error( L.P_COACH_MISSING_STATE() );
+            throw Error(L.P_COACH_MISSING_STATE);
 
         RAG.state.setCoach(this.currentCtx, this.inputLetter.value);
         RAG.views.editor

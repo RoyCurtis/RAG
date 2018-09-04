@@ -67,6 +67,6 @@ class Phraser
         if (level < 20)
             this.process(container, level + 1);
         else
-            throw Error( L.PHRASER_TOO_RECURSIVE() );
+            throw Error(L.PHRASER_TOO_RECURSIVE);
     }
 }

@@ -50,7 +50,7 @@ class ServicePicker extends Picker
     private onSelect(entry: HTMLElement) : void
     {
         if (!this.currentCtx)
-            throw Error( L.P_SERVICE_MISSING_STATE() );
+            throw Error(L.P_SERVICE_MISSING_STATE);
 
         RAG.state.setService(this.currentCtx, entry.innerText);
         RAG.views.editor

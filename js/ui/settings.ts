@@ -122,7 +122,7 @@ class Settings extends ViewBase
         // Handle empty list
         if (voices === {})
         {
-            let option      = DOM.addOption( this.selSpeechVoice, L.ST_SPEECH_EMPTY() );
+            let option      = DOM.addOption(this.selSpeechVoice, L.ST_SPEECH_EMPTY);
             option.disabled = true;
         }
         // https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis
@@ -136,8 +136,8 @@ class Settings extends ViewBase
         if (!this.resetTimeout)
         {
             this.resetTimeout       = setTimeout(this.cancelReset.bind(this), 15000);
-            this.btnReset.innerText = L.ST_RESET_CONFIRM();
-            this.btnReset.title     = L.ST_RESET_CONFIRM_T();
+            this.btnReset.innerText = L.ST_RESET_CONFIRM;
+            this.btnReset.title     = L.ST_RESET_CONFIRM_T;
             return;
         }
 
@@ -145,15 +145,15 @@ class Settings extends ViewBase
         RAG.speech.stop();
         this.cancelReset();
         this.open();
-        alert( L.ST_RESET_DONE() );
+        alert(L.ST_RESET_DONE);
     }
 
     /** Cancel the reset timeout and restore the reset button to normal */
     private cancelReset() : void
     {
         window.clearTimeout(this.resetTimeout);
-        this.btnReset.innerText = L.ST_RESET();
-        this.btnReset.title     = L.ST_RESET_T();
+        this.btnReset.innerText = L.ST_RESET;
+        this.btnReset.title     = L.ST_RESET_T;
         this.resetTimeout       = undefined;
     }
 

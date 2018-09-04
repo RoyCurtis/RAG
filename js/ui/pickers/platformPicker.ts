@@ -16,7 +16,7 @@ class PlatformPicker extends Picker
 
         this.inputDigit          = DOM.require('input', this.dom);
         this.inputLetter         = DOM.require('select', this.dom);
-        this.domHeader.innerText = L.HEADER_PLATFORM();
+        this.domHeader.innerText = L.HEADER_PLATFORM;
 
         // iOS needs different type and pattern to show a numerical keyboard
         if (DOM.isiOS)

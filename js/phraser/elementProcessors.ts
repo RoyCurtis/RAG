@@ -22,7 +22,7 @@ class ElementProcessors
     /** Fills in the excuse, for a delay or cancellation */
     public static excuse(ctx: PhraseContext)
     {
-        ctx.newElement.title       = L.TITLE_EXCUSE();
+        ctx.newElement.title       = L.TITLE_EXCUSE;
         ctx.newElement.textContent = RAG.state.excuse;
         ctx.newElement.tabIndex    = 1;
     }
@@ -59,7 +59,7 @@ class ElementProcessors
     /** Fills in the named train */
     public static named(ctx: PhraseContext)
     {
-        ctx.newElement.title       = L.TITLE_NAMED();
+        ctx.newElement.title       = L.TITLE_NAMED;
         ctx.newElement.textContent = RAG.state.named;
         ctx.newElement.tabIndex    = 1;
     }
@@ -117,7 +117,7 @@ class ElementProcessors
     /** Fills in the current platform */
     public static platform(ctx: PhraseContext)
     {
-        ctx.newElement.title       = L.TITLE_PLATFORM();
+        ctx.newElement.title       = L.TITLE_PLATFORM;
         ctx.newElement.textContent = RAG.state.platform.join('');
         ctx.newElement.tabIndex    = 1;
     }

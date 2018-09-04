@@ -45,8 +45,8 @@ class Chooser
             Chooser.init();
 
         let target      = DOM.require('chooser', parent);
-        let placeholder = DOM.getAttr( target, 'placeholder', L.P_GENERIC_PH() );
-        let title       = DOM.getAttr( target, 'title', L.P_GENERIC_T() );
+        let placeholder = DOM.getAttr(target, 'placeholder', L.P_GENERIC_PH);
+        let title       = DOM.getAttr(target, 'title', L.P_GENERIC_T);
         this.itemTitle  = DOM.getAttr(target, 'itemTitle', this.itemTitle);
         this.groupByABC = target.hasAttribute('groupByABC');
 

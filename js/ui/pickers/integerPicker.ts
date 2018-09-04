@@ -62,7 +62,7 @@ class IntegerPicker extends Picker
     protected onChange(_: Event) : void
     {
         if (!this.currentCtx)
-            throw Error( L.P_INT_MISSING_STATE() );
+            throw Error(L.P_INT_MISSING_STATE);
 
         // Can't use valueAsNumber due to iOS input type workarounds
         let int    = parseInt(this.inputDigit.value);

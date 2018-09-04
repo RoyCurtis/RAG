@@ -1,7 +1,7 @@
 /// <reference path="vendor/draggable.d.ts" />
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Global reference to the language container, set at init */
-declare let L: EnglishLanguage | BaseLanguage;
+declare let L: EnglishLanguage;
 declare class I18n {
     /** Constant regex to match for translation keys */
     private static readonly TAG_REGEX;
@@ -362,56 +362,6 @@ declare class StationPicker extends Picker {
     private onSelectStation;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Controller for the station list picker dialog */
-declare class StationListPicker extends StationPicker {
-    /** Reference to this picker's container for the list control */
-    private readonly domList;
-    /** Reference to the mobile-only add station button */
-    private readonly btnAdd;
-    /** Reference to the mobile-only close picker button */
-    private readonly btnClose;
-    /** Reference to the drop zone for deleting station elements */
-    private readonly domDel;
-    /** Reference to the actual sortable list of stations */
-    private readonly inputList;
-    /** Reference to placeholder shown if the list is empty */
-    private readonly domEmptyList;
-    constructor();
-    /**
-     * Populates the station list builder, with the selected list. Because this picker
-     * extends from StationList, this handler overrides the 'onOpen' delegate property
-     * of StationList.
-     *
-     * @param target Station list editor element to open for
-     */
-    protected onStationListPickerOpen(target: HTMLElement): void;
-    protected onSubmit(ev: Event): void;
-    /** Handles pickers' click events, for choosing items */
-    protected onClick(ev: MouseEvent): void;
-    /** Handles keyboard navigation for the station list builder */
-    protected onInput(ev: KeyboardEvent): void;
-    /** Handler for when a station is chosen */
-    private onAddStation;
-    /** Fixes mirrors not having correct width of the source element, on create */
-    private onDragMirrorCreate;
-    /** Handles draggable station name being dropped */
-    private onDragStop;
-    /**
-     * Creates and adds a new entry for the builder list.
-     *
-     * @param code Three-letter station code to create an item for
-     */
-    private add;
-    /**
-     * Removes the given station entry element from the builder.
-     *
-     * @param entry Element of the station entry to remove
-     */
-    private remove;
-    /** Updates the station list element and state currently being edited */
-    private update;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the time picker dialog */
 declare class TimePicker extends Picker {
     /** Reference to this picker's time input control */
@@ -480,171 +430,22 @@ declare class Config extends ConfigBase<Config> {
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Language entries are template delegates */
 declare type LanguageEntry = (...parts: string[]) => string;
-declare abstract class BaseLanguage {
+/** Language definitions for English; also acts as the base language */
+declare class EnglishLanguage {
     [index: string]: LanguageEntry | string | string[];
-    /** Welcome message, shown on marquee on first load */
-    readonly abstract WELCOME: LanguageEntry;
-    /** Required DOM element is missing */
-    readonly abstract DOM_MISSING: LanguageEntry;
-    /** Required element attribute is missing */
-    readonly abstract ATTR_MISSING: LanguageEntry;
-    /** Required dataset entry is missing */
-    readonly abstract DATA_MISSING: LanguageEntry;
-    /** Bad direction argument given to directional function */
-    readonly abstract BAD_DIRECTION: LanguageEntry;
-    /** Bad boolean string */
-    readonly abstract BAD_BOOLEAN: LanguageEntry;
-    /** State successfully loaded from storage */
-    readonly abstract STATE_FROM_STORAGE: LanguageEntry;
-    /** State successfully saved to storage */
-    readonly abstract STATE_TO_STORAGE: LanguageEntry;
-    /** Instructions for copy/pasting saved state */
-    readonly abstract STATE_COPY_PASTE: LanguageEntry;
-    /** Header for dumped raw state JSON */
-    readonly abstract STATE_RAW_JSON: LanguageEntry;
-    /** Could not save state to storage */
-    readonly abstract STATE_SAVE_FAIL: LanguageEntry;
-    /** No state was available to load */
-    readonly abstract STATE_SAVE_MISSING: LanguageEntry;
-    /** Non-existent phraseset reference when getting from state */
-    readonly abstract STATE_NONEXISTANT_PHRASESET: LanguageEntry;
-    /** Config failed to load from storage */
-    readonly abstract CONFIG_LOAD_FAIL: LanguageEntry;
-    /** Config failed to save to storage */
-    readonly abstract CONFIG_SAVE_FAIL: LanguageEntry;
-    /** Config failed to clear from storage */
-    readonly abstract CONFIG_RESET_FAIL: LanguageEntry;
-    /** Given element isn't a phraseset iFrame */
-    readonly abstract DB_ELEMENT_NOT_PHRASESET_IFRAME: LanguageEntry;
-    /** Unknown station code */
-    readonly abstract DB_UNKNOWN_STATION: LanguageEntry;
-    /** Station code with blank name */
-    readonly abstract DB_EMPTY_STATION: LanguageEntry;
-    /** Picking too many station codes in one go */
-    readonly abstract DB_TOO_MANY_STATIONS: LanguageEntry;
-    readonly abstract TOOLBAR_PLAY: LanguageEntry;
-    readonly abstract TOOLBAR_STOP: LanguageEntry;
-    readonly abstract TOOLBAR_SHUFFLE: LanguageEntry;
-    readonly abstract TOOLBAR_SAVE: LanguageEntry;
-    readonly abstract TOOLBAR_LOAD: LanguageEntry;
-    readonly abstract TOOLBAR_SETTINGS: LanguageEntry;
-    readonly abstract TITLE_COACH: LanguageEntry;
-    readonly abstract TITLE_EXCUSE: LanguageEntry;
-    readonly abstract TITLE_INTEGER: LanguageEntry;
-    readonly abstract TITLE_NAMED: LanguageEntry;
-    readonly abstract TITLE_OPT_OPEN: LanguageEntry;
-    readonly abstract TITLE_OPT_CLOSE: LanguageEntry;
-    readonly abstract TITLE_PHRASESET: LanguageEntry;
-    readonly abstract TITLE_PLATFORM: LanguageEntry;
-    readonly abstract TITLE_SERVICE: LanguageEntry;
-    readonly abstract TITLE_STATION: LanguageEntry;
-    readonly abstract TITLE_STATIONLIST: LanguageEntry;
-    readonly abstract TITLE_TIME: LanguageEntry;
-    /** Initial message when setting up editor */
-    readonly abstract EDITOR_INIT: LanguageEntry;
-    /** Replacement text for unknown editor elements */
-    readonly abstract EDITOR_UNKNOWN_ELEMENT: LanguageEntry;
-    /** Replacement text for editor phrases with unknown reference ids */
-    readonly abstract EDITOR_UNKNOWN_PHRASE: LanguageEntry;
-    /** Replacement text for editor phrasesets with unknown reference ids */
-    readonly abstract EDITOR_UNKNOWN_PHRASESET: LanguageEntry;
-    /** Too many levels of recursion in the phraser */
-    readonly abstract PHRASER_TOO_RECURSIVE: LanguageEntry;
-    readonly abstract HEADER_COACH: LanguageEntry;
-    readonly abstract HEADER_EXCUSE: LanguageEntry;
-    readonly abstract HEADER_INTEGER: LanguageEntry;
-    readonly abstract HEADER_NAMED: LanguageEntry;
-    readonly abstract HEADER_PHRASESET: LanguageEntry;
-    readonly abstract HEADER_PLATFORM: LanguageEntry;
-    readonly abstract HEADER_SERVICE: LanguageEntry;
-    readonly abstract HEADER_STATION: LanguageEntry;
-    readonly abstract HEADER_STATIONLIST: LanguageEntry;
-    readonly abstract HEADER_TIME: LanguageEntry;
-    readonly abstract P_GENERIC_T: LanguageEntry;
-    readonly abstract P_GENERIC_PH: LanguageEntry;
-    readonly abstract P_COACH_T: LanguageEntry;
-    readonly abstract P_EXCUSE_T: LanguageEntry;
-    readonly abstract P_EXCUSE_PH: LanguageEntry;
-    readonly abstract P_EXCUSE_ITEM_T: LanguageEntry;
-    readonly abstract P_INT_T: LanguageEntry;
-    readonly abstract P_NAMED_T: LanguageEntry;
-    readonly abstract P_NAMED_PH: LanguageEntry;
-    readonly abstract P_NAMED_ITEM_T: LanguageEntry;
-    readonly abstract P_PSET_T: LanguageEntry;
-    readonly abstract P_PSET_PH: LanguageEntry;
-    readonly abstract P_PSET_ITEM_T: LanguageEntry;
-    readonly abstract P_PLAT_NUMBER_T: LanguageEntry;
-    readonly abstract P_PLAT_LETTER_T: LanguageEntry;
-    readonly abstract P_SERV_T: LanguageEntry;
-    readonly abstract P_SERV_PH: LanguageEntry;
-    readonly abstract P_SERV_ITEM_T: LanguageEntry;
-    readonly abstract P_STATION_T: LanguageEntry;
-    readonly abstract P_STATION_PH: LanguageEntry;
-    readonly abstract P_STATION_ITEM_T: LanguageEntry;
-    readonly abstract P_SL_ADD: LanguageEntry;
-    readonly abstract P_SL_ADD_T: LanguageEntry;
-    readonly abstract P_SL_CLOSE: LanguageEntry;
-    readonly abstract P_SL_CLOSE_T: LanguageEntry;
-    readonly abstract P_SL_EMPTY: LanguageEntry;
-    readonly abstract P_SL_DRAG_T: LanguageEntry;
-    readonly abstract P_SL_DELETE: LanguageEntry;
-    readonly abstract P_SL_DELETE_T: LanguageEntry;
-    readonly abstract P_SL_ITEM_T: LanguageEntry;
-    readonly abstract P_TIME_T: LanguageEntry;
-    /** Coach picker's onChange fired without context */
-    readonly abstract P_COACH_MISSING_STATE: LanguageEntry;
-    /** Integer picker's onChange fired without context */
-    readonly abstract P_INT_MISSING_STATE: LanguageEntry;
-    /** Phraseset picker's onSelect fired without reference */
-    readonly abstract P_PSET_MISSING_STATE: LanguageEntry;
-    /** Service picker's onSelect fired without reference */
-    readonly abstract P_SERVICE_MISSING_STATE: LanguageEntry;
-    /** Service picker's onChange fired without reference */
-    readonly abstract P_TIME_MISSING_STATE: LanguageEntry;
-    /** Phraseset picker opened for unknown phraseset */
-    readonly abstract P_PSET_UNKNOWN: LanguageEntry;
-    /** Drag mirror create event in station list missing state */
-    readonly abstract P_SL_DRAG_MISSING: LanguageEntry;
-    readonly abstract ST_RESET: LanguageEntry;
-    readonly abstract ST_RESET_T: LanguageEntry;
-    readonly abstract ST_RESET_CONFIRM: LanguageEntry;
-    readonly abstract ST_RESET_CONFIRM_T: LanguageEntry;
-    readonly abstract ST_RESET_DONE: LanguageEntry;
-    readonly abstract ST_SAVE: LanguageEntry;
-    readonly abstract ST_SAVE_T: LanguageEntry;
-    readonly abstract ST_SPEECH: LanguageEntry;
-    readonly abstract ST_SPEECH_CHOICE: LanguageEntry;
-    readonly abstract ST_SPEECH_EMPTY: LanguageEntry;
-    readonly abstract ST_SPEECH_VOL: LanguageEntry;
-    readonly abstract ST_SPEECH_PITCH: LanguageEntry;
-    readonly abstract ST_SPEECH_RATE: LanguageEntry;
-    readonly abstract ST_SPEECH_TEST: LanguageEntry;
-    readonly abstract ST_SPEECH_TEST_T: LanguageEntry;
-    readonly abstract ST_LEGAL: LanguageEntry;
-    /** Header for the "too small" warning */
-    readonly abstract WARN_SHORT_HEADER: LanguageEntry;
-    /** Body text for the "too small" warning */
-    readonly abstract WARN_SHORT: LanguageEntry;
-    /** Array of the entire alphabet of the language, for coach letters */
-    readonly abstract LETTERS: string;
-    /** Array of numbers as words (e.g. zero, one, two), matching their index */
-    readonly abstract DIGITS: string[];
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-declare class EnglishLanguage extends BaseLanguage {
-    WELCOME: () => string;
+    WELCOME: string;
     DOM_MISSING: (q: string) => string;
     ATTR_MISSING: (a: string) => string;
     DATA_MISSING: (k: string) => string;
     BAD_DIRECTION: (v: string) => string;
     BAD_BOOLEAN: (v: string) => string;
-    STATE_FROM_STORAGE: () => string;
-    STATE_TO_STORAGE: () => string;
-    STATE_COPY_PASTE: () => string;
-    STATE_RAW_JSON: () => string;
+    STATE_FROM_STORAGE: string;
+    STATE_TO_STORAGE: string;
+    STATE_COPY_PASTE: string;
+    STATE_RAW_JSON: string;
+    STATE_SAVE_MISSING: string;
     STATE_SAVE_FAIL: (msg: string) => string;
-    STATE_SAVE_MISSING: () => string;
-    STATE_NONEXISTANT_PHRASESET: (r: string) => string;
+    STATE_BAD_PHRASESET: (r: string) => string;
     CONFIG_LOAD_FAIL: (msg: string) => string;
     CONFIG_SAVE_FAIL: (msg: string) => string;
     CONFIG_RESET_FAIL: (msg: string) => string;
@@ -652,95 +453,95 @@ declare class EnglishLanguage extends BaseLanguage {
     DB_UNKNOWN_STATION: (c: string) => string;
     DB_EMPTY_STATION: (c: string) => string;
     DB_TOO_MANY_STATIONS: () => string;
-    TOOLBAR_PLAY: () => string;
-    TOOLBAR_STOP: () => string;
-    TOOLBAR_SHUFFLE: () => string;
-    TOOLBAR_SAVE: () => string;
-    TOOLBAR_LOAD: () => string;
-    TOOLBAR_SETTINGS: () => string;
+    TOOLBAR_PLAY: string;
+    TOOLBAR_STOP: string;
+    TOOLBAR_SHUFFLE: string;
+    TOOLBAR_SAVE: string;
+    TOOLBAR_LOAD: string;
+    TOOLBAR_SETTINGS: string;
     TITLE_COACH: (c: string) => string;
-    TITLE_EXCUSE: () => string;
+    TITLE_EXCUSE: string;
     TITLE_INTEGER: (c: string) => string;
-    TITLE_NAMED: () => string;
+    TITLE_NAMED: string;
     TITLE_OPT_OPEN: (t: string, r: string) => string;
     TITLE_OPT_CLOSE: (t: string, r: string) => string;
     TITLE_PHRASESET: (r: string) => string;
-    TITLE_PLATFORM: () => string;
+    TITLE_PLATFORM: string;
     TITLE_SERVICE: (c: string) => string;
     TITLE_STATION: (c: string) => string;
     TITLE_STATIONLIST: (c: string) => string;
     TITLE_TIME: (c: string) => string;
-    EDITOR_INIT: () => string;
+    EDITOR_INIT: string;
     EDITOR_UNKNOWN_ELEMENT: (n: string) => string;
     EDITOR_UNKNOWN_PHRASE: (r: string) => string;
     EDITOR_UNKNOWN_PHRASESET: (r: string) => string;
-    PHRASER_TOO_RECURSIVE: () => string;
+    PHRASER_TOO_RECURSIVE: string;
     HEADER_COACH: (c: string) => string;
-    HEADER_EXCUSE: () => string;
+    HEADER_EXCUSE: string;
     HEADER_INTEGER: (c: string) => string;
-    HEADER_NAMED: () => string;
+    HEADER_NAMED: string;
     HEADER_PHRASESET: (r: string) => string;
-    HEADER_PLATFORM: () => string;
+    HEADER_PLATFORM: string;
     HEADER_SERVICE: (c: string) => string;
     HEADER_STATION: (c: string) => string;
     HEADER_STATIONLIST: (c: string) => string;
     HEADER_TIME: (c: string) => string;
-    P_GENERIC_T: () => string;
-    P_GENERIC_PH: () => string;
-    P_COACH_T: () => string;
-    P_EXCUSE_T: () => string;
-    P_EXCUSE_PH: () => string;
-    P_EXCUSE_ITEM_T: () => string;
-    P_INT_T: () => string;
-    P_NAMED_T: () => string;
-    P_NAMED_PH: () => string;
-    P_NAMED_ITEM_T: () => string;
-    P_PSET_T: () => string;
-    P_PSET_PH: () => string;
-    P_PSET_ITEM_T: () => string;
-    P_PLAT_NUMBER_T: () => string;
-    P_PLAT_LETTER_T: () => string;
-    P_SERV_T: () => string;
-    P_SERV_PH: () => string;
-    P_SERV_ITEM_T: () => string;
-    P_STATION_T: () => string;
-    P_STATION_PH: () => string;
-    P_STATION_ITEM_T: () => string;
-    P_SL_ADD: () => string;
-    P_SL_ADD_T: () => string;
-    P_SL_CLOSE: () => string;
-    P_SL_CLOSE_T: () => string;
-    P_SL_EMPTY: () => string;
-    P_SL_DRAG_T: () => string;
-    P_SL_DELETE: () => string;
-    P_SL_DELETE_T: () => string;
-    P_SL_ITEM_T: () => string;
-    P_TIME_T: () => string;
-    P_COACH_MISSING_STATE: () => string;
-    P_INT_MISSING_STATE: () => string;
-    P_PSET_MISSING_STATE: () => string;
-    P_SERVICE_MISSING_STATE: () => string;
-    P_TIME_MISSING_STATE: () => string;
+    P_GENERIC_T: string;
+    P_GENERIC_PH: string;
+    P_COACH_T: string;
+    P_EXCUSE_T: string;
+    P_EXCUSE_PH: string;
+    P_EXCUSE_ITEM_T: string;
+    P_INT_T: string;
+    P_NAMED_T: string;
+    P_NAMED_PH: string;
+    P_NAMED_ITEM_T: string;
+    P_PSET_T: string;
+    P_PSET_PH: string;
+    P_PSET_ITEM_T: string;
+    P_PLAT_NUMBER_T: string;
+    P_PLAT_LETTER_T: string;
+    P_SERV_T: string;
+    P_SERV_PH: string;
+    P_SERV_ITEM_T: string;
+    P_STATION_T: string;
+    P_STATION_PH: string;
+    P_STATION_ITEM_T: string;
+    P_SL_ADD: string;
+    P_SL_ADD_T: string;
+    P_SL_CLOSE: string;
+    P_SL_CLOSE_T: string;
+    P_SL_EMPTY: string;
+    P_SL_DRAG_T: string;
+    P_SL_DELETE: string;
+    P_SL_DELETE_T: string;
+    P_SL_ITEM_T: string;
+    P_TIME_T: string;
+    P_COACH_MISSING_STATE: string;
+    P_INT_MISSING_STATE: string;
+    P_PSET_MISSING_STATE: string;
+    P_SERVICE_MISSING_STATE: string;
+    P_TIME_MISSING_STATE: string;
     P_PSET_UNKNOWN: (r: string) => string;
-    P_SL_DRAG_MISSING: () => string;
-    ST_RESET: () => string;
-    ST_RESET_T: () => string;
-    ST_RESET_CONFIRM: () => string;
-    ST_RESET_CONFIRM_T: () => string;
-    ST_RESET_DONE: () => string;
-    ST_SAVE: () => string;
-    ST_SAVE_T: () => string;
-    ST_SPEECH: () => string;
-    ST_SPEECH_CHOICE: () => string;
-    ST_SPEECH_EMPTY: () => string;
-    ST_SPEECH_VOL: () => string;
-    ST_SPEECH_PITCH: () => string;
-    ST_SPEECH_RATE: () => string;
-    ST_SPEECH_TEST: () => string;
-    ST_SPEECH_TEST_T: () => string;
-    ST_LEGAL: () => string;
-    WARN_SHORT_HEADER: () => string;
-    WARN_SHORT: () => string;
+    P_SL_DRAG_MISSING: string;
+    ST_RESET: string;
+    ST_RESET_T: string;
+    ST_RESET_CONFIRM: string;
+    ST_RESET_CONFIRM_T: string;
+    ST_RESET_DONE: string;
+    ST_SAVE: string;
+    ST_SAVE_T: string;
+    ST_SPEECH: string;
+    ST_SPEECH_CHOICE: string;
+    ST_SPEECH_EMPTY: string;
+    ST_SPEECH_VOL: string;
+    ST_SPEECH_PITCH: string;
+    ST_SPEECH_RATE: string;
+    ST_SPEECH_TEST: string;
+    ST_SPEECH_TEST_T: string;
+    ST_LEGAL: string;
+    WARN_SHORT_HEADER: string;
+    WARN_SHORT: string;
     LETTERS: string;
     DIGITS: string[];
 }
@@ -845,6 +646,48 @@ declare class Resolver {
     private resolveStationList;
     private resolveTime;
     private resolveVox;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Manages speech synthesis using both native and custom engines */
+declare class Speech {
+    /** Instance of the custom voice engine */
+    private readonly voxEngine?;
+    /** Dictionary of browser-provided voices available */
+    browserVoices: Dictionary<SpeechSynthesisVoice>;
+    /** Event handler for when speech is audibly spoken */
+    onspeak?: () => void;
+    /** Event handler for when speech has ended */
+    onstop?: () => void;
+    /** Reference to the native speech-stopped check timer */
+    private stopTimer;
+    /** Whether any speech engine is currently speaking */
+    readonly isSpeaking: boolean;
+    /** Whether the VOX engine is currently available */
+    readonly voxAvailable: boolean;
+    constructor();
+    /** Begins speaking the given phrase components */
+    speak(phrase: HTMLElement, settings?: SpeechSettings): void;
+    /** Stops and cancels all queued speech */
+    stop(): void;
+    /** Pause and unpause speech if the page is hidden or unhidden */
+    private onVisibilityChange;
+    /** Handles async voice list loading on some browsers, and sets default */
+    private onVoicesChanged;
+    /**
+     * Converts the given phrase to text and speaks it via native browser voices.
+     *
+     * @param phrase Phrase elements to speak
+     * @param settings Settings to use for the voice
+     */
+    private speakBrowser;
+    /**
+     * Synthesizes voice by walking through the given phrase elements, resolving parts to
+     * sound file IDs, and feeding the entire array to the vox engine.
+     *
+     * @param phrase Phrase elements to speak
+     * @param settings Settings to use for the voice
+     */
+    private speakVox;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Type definition for speech config overrides passed to the speak method */
@@ -1684,44 +1527,52 @@ declare class State {
     genDefaultState(): void;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Manages speech synthesis using both native and custom engines */
-declare class Speech {
-    /** Instance of the custom voice engine */
-    private readonly voxEngine?;
-    /** Dictionary of browser-provided voices available */
-    browserVoices: Dictionary<SpeechSynthesisVoice>;
-    /** Event handler for when speech is audibly spoken */
-    onspeak?: () => void;
-    /** Event handler for when speech has ended */
-    onstop?: () => void;
-    /** Reference to the native speech-stopped check timer */
-    private stopTimer;
-    /** Whether any speech engine is currently speaking */
-    readonly isSpeaking: boolean;
-    /** Whether the VOX engine is currently available */
-    readonly voxAvailable: boolean;
+/** Controller for the station list picker dialog */
+declare class StationListPicker extends StationPicker {
+    /** Reference to this picker's container for the list control */
+    private readonly domList;
+    /** Reference to the mobile-only add station button */
+    private readonly btnAdd;
+    /** Reference to the mobile-only close picker button */
+    private readonly btnClose;
+    /** Reference to the drop zone for deleting station elements */
+    private readonly domDel;
+    /** Reference to the actual sortable list of stations */
+    private readonly inputList;
+    /** Reference to placeholder shown if the list is empty */
+    private readonly domEmptyList;
     constructor();
-    /** Begins speaking the given phrase components */
-    speak(phrase: HTMLElement, settings?: SpeechSettings): void;
-    /** Stops and cancels all queued speech */
-    stop(): void;
-    /** Pause and unpause speech if the page is hidden or unhidden */
-    private onVisibilityChange;
-    /** Handles async voice list loading on some browsers, and sets default */
-    private onVoicesChanged;
     /**
-     * Converts the given phrase to text and speaks it via native browser voices.
+     * Populates the station list builder, with the selected list. Because this picker
+     * extends from StationList, this handler overrides the 'onOpen' delegate property
+     * of StationList.
      *
-     * @param phrase Phrase elements to speak
-     * @param settings Settings to use for the voice
+     * @param target Station list editor element to open for
      */
-    private speakBrowser;
+    protected onStationListPickerOpen(target: HTMLElement): void;
+    protected onSubmit(ev: Event): void;
+    /** Handles pickers' click events, for choosing items */
+    protected onClick(ev: MouseEvent): void;
+    /** Handles keyboard navigation for the station list builder */
+    protected onInput(ev: KeyboardEvent): void;
+    /** Handler for when a station is chosen */
+    private onAddStation;
+    /** Fixes mirrors not having correct width of the source element, on create */
+    private onDragMirrorCreate;
+    /** Handles draggable station name being dropped */
+    private onDragStop;
     /**
-     * Synthesizes voice by walking through the given phrase elements, resolving parts to
-     * sound file IDs, and feeding the entire array to the vox engine.
+     * Creates and adds a new entry for the builder list.
      *
-     * @param phrase Phrase elements to speak
-     * @param settings Settings to use for the voice
+     * @param code Three-letter station code to create an item for
      */
-    private speakVox;
+    private add;
+    /**
+     * Removes the given station entry element from the builder.
+     *
+     * @param entry Element of the station entry to remove
+     */
+    private remove;
+    /** Updates the station list element and state currently being edited */
+    private update;
 }

@@ -156,12 +156,12 @@ class Toolbar
             let raw = JSON.stringify(RAG.state);
             window.localStorage.setItem('state', raw);
 
-            console.log(L.STATE_COPY_PASTE(), css);
+            console.log(L.STATE_COPY_PASTE, css);
             console.log("RAG.load('", raw.replace("'", "\\'"), "')");
-            console.log(L.STATE_RAW_JSON(), css);
+            console.log(L.STATE_RAW_JSON, css);
             console.log(raw);
 
-            RAG.views.marquee.set( L.STATE_TO_STORAGE() );
+            RAG.views.marquee.set(L.STATE_TO_STORAGE);
         }
         catch (e)
         {
@@ -176,7 +176,7 @@ class Toolbar
 
         return data
             ? RAG.load(data)
-            : RAG.views.marquee.set( L.STATE_SAVE_MISSING() );
+            : RAG.views.marquee.set(L.STATE_SAVE_MISSING);
     }
 
     /** Handles the settings button, opening the settings screen */

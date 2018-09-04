@@ -1,7 +1,7 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
 /** Global reference to the language container, set at init */
-let L : EnglishLanguage | BaseLanguage;
+let L : EnglishLanguage;
 
 class I18n
 {
@@ -9,9 +9,9 @@ class I18n
     private static readonly TAG_REGEX : RegExp = /%[A-Z_]+%/;
 
     /** Languages currently available */
-    private static languages   : Dictionary<BaseLanguage>;
+    private static languages   : Dictionary<EnglishLanguage>;
     /** Reference to language currently in use */
-    private static currentLang : BaseLanguage;
+    private static currentLang : EnglishLanguage;
 
     /** Picks a language, and transforms all translation keys in the document */
     public static init() : void
