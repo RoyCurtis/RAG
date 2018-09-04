@@ -12,19 +12,19 @@ class Random
      */
     public static int(min: number = 0, max: number = 1) : number
     {
-        return Math.floor( Math.random() * (max - min) ) + min;
+        return Math.round( Math.random() * (max - min) ) + min;
     }
 
     /** Picks a random element from a given array-like object with a length property */
     public static array(arr: Lengthable) : any
     {
-        return arr[ Random.int(0, arr.length) ];
+        return arr[ Random.int(0, arr.length - 1) ];
     }
 
     /** Splices a random element from a given array */
     public static arraySplice<T>(arr: T[]) : T
     {
-        return arr.splice(Random.int(0, arr.length), 1)[0];
+        return arr.splice(Random.int(0, arr.length - 1), 1)[0];
     }
 
     /** Picks a random key from a given object */
