@@ -726,8 +726,6 @@ var DATA_STATIONS = {
   "DFR" : "Drumfrochar",
   "DRU" : "Drumgelloch",
   "DMY" : "Drumry",
-  "DFP" : "Dublin Ferryport",
-  "DPS" : "Dublin Port - Stena",
   "DUD" : "Duddeston",
   "DDP" : "Dudley Port",
   "DFI" : "Duffield",
