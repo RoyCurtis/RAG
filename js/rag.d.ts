@@ -362,6 +362,56 @@ declare class StationPicker extends Picker {
     private onSelectStation;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Controller for the station list picker dialog */
+declare class StationListPicker extends StationPicker {
+    /** Reference to this picker's container for the list control */
+    private readonly domList;
+    /** Reference to the mobile-only add station button */
+    private readonly btnAdd;
+    /** Reference to the mobile-only close picker button */
+    private readonly btnClose;
+    /** Reference to the drop zone for deleting station elements */
+    private readonly domDel;
+    /** Reference to the actual sortable list of stations */
+    private readonly inputList;
+    /** Reference to placeholder shown if the list is empty */
+    private readonly domEmptyList;
+    constructor();
+    /**
+     * Populates the station list builder, with the selected list. Because this picker
+     * extends from StationList, this handler overrides the 'onOpen' delegate property
+     * of StationList.
+     *
+     * @param target Station list editor element to open for
+     */
+    protected onStationListPickerOpen(target: HTMLElement): void;
+    protected onSubmit(ev: Event): void;
+    /** Handles pickers' click events, for choosing items */
+    protected onClick(ev: MouseEvent): void;
+    /** Handles keyboard navigation for the station list builder */
+    protected onInput(ev: KeyboardEvent): void;
+    /** Handler for when a station is chosen */
+    private onAddStation;
+    /** Fixes mirrors not having correct width of the source element, on create */
+    private onDragMirrorCreate;
+    /** Handles draggable station name being dropped */
+    private onDragStop;
+    /**
+     * Creates and adds a new entry for the builder list.
+     *
+     * @param code Three-letter station code to create an item for
+     */
+    private add;
+    /**
+     * Removes the given station entry element from the builder.
+     *
+     * @param entry Element of the station entry to remove
+     */
+    private remove;
+    /** Updates the station list element and state currently being edited */
+    private update;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Controller for the time picker dialog */
 declare class TimePicker extends Picker {
     /** Reference to this picker's time input control */
@@ -1525,54 +1575,4 @@ declare class State {
      * duplicates in inappropriate places and contexts.
      */
     genDefaultState(): void;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** Controller for the station list picker dialog */
-declare class StationListPicker extends StationPicker {
-    /** Reference to this picker's container for the list control */
-    private readonly domList;
-    /** Reference to the mobile-only add station button */
-    private readonly btnAdd;
-    /** Reference to the mobile-only close picker button */
-    private readonly btnClose;
-    /** Reference to the drop zone for deleting station elements */
-    private readonly domDel;
-    /** Reference to the actual sortable list of stations */
-    private readonly inputList;
-    /** Reference to placeholder shown if the list is empty */
-    private readonly domEmptyList;
-    constructor();
-    /**
-     * Populates the station list builder, with the selected list. Because this picker
-     * extends from StationList, this handler overrides the 'onOpen' delegate property
-     * of StationList.
-     *
-     * @param target Station list editor element to open for
-     */
-    protected onStationListPickerOpen(target: HTMLElement): void;
-    protected onSubmit(ev: Event): void;
-    /** Handles pickers' click events, for choosing items */
-    protected onClick(ev: MouseEvent): void;
-    /** Handles keyboard navigation for the station list builder */
-    protected onInput(ev: KeyboardEvent): void;
-    /** Handler for when a station is chosen */
-    private onAddStation;
-    /** Fixes mirrors not having correct width of the source element, on create */
-    private onDragMirrorCreate;
-    /** Handles draggable station name being dropped */
-    private onDragStop;
-    /**
-     * Creates and adds a new entry for the builder list.
-     *
-     * @param code Three-letter station code to create an item for
-     */
-    private add;
-    /**
-     * Removes the given station entry element from the builder.
-     *
-     * @param entry Element of the station entry to remove
-     */
-    private remove;
-    /** Updates the station list element and state currently being edited */
-    private update;
 }

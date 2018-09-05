@@ -98,7 +98,8 @@ class I18n
             console.error('Missing translation key:', match);
             return match;
         }
-        else
-            return value();
+        else return (typeof value === 'function')
+            ? value()
+            : value;
     }
 }
