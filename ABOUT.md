@@ -13,12 +13,14 @@ The VOX editor uses the [ElectronJS framework][18], the [LAME MP3 encoder][19] v
 Matt DesLauriers and Matt Diamond][21].
 
 With thanks to: [Paul Casillas][10] for his recordings of station announcements on
-YouTube, [WhatDoTheyKnow][11] for hosting freedom of information request responses that
-contain announcement data, "Mark" for making said FOI requests, [John Ball][17] for his
-Welsh place name pronunciations, [various users on /r/AskUK for their help][23],
+YouTube; [WhatDoTheyKnow][11] for hosting freedom of information request responses that
+contain announcement data; "Mark" for making said FOI requests; [John Ball][17] for his
+Welsh place name pronunciations; [various users on /r/AskUK for their help][23];
 [Forvo][24] for their pronunciation commons (especially user [mooncow][25] for his
-recordings of many UK place names), and various StackOverflow contributors (where
-attributed) for code snippets and advice.
+recordings of many UK place names); [Joe Thorpe][27], [Northwest Trainspotter 390][28],
+and other YouTubers for their recordings of stations and level crossings with
+pronunciations, and various StackOverflow contributors (where attributed) for code
+snippets and advice.
 
 Thank you also to [Stitch][12], [Spin][13], Tropic, Poster, Devon, [Robro][14], Grant,
 Bjarke, Nik, Dylan, rjlan, Fyrrian, CGDoctor8, Mikko, Griffin, Leroy, Maitre, Shilo, Pat,
@@ -82,3 +84,5 @@ a hobby of mine, with zero commercial intent. Please enjoy, and thanks!
 [24]: https://forvo.com
 [25]: https://forvo.com/user/mooncow/
 [26]: https://policies.google.com/privacy
+[27]: https://www.youtube.com/channel/UC8936kidbxPN9mw-Uejq2bw/videos
+[28]: https://www.youtube.com/channel/UCoJvgqTPnOQS52-ebrrNVGw/videos
