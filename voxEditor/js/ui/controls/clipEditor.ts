@@ -137,39 +137,18 @@ export class ClipEditor
         if (!buffer)
             return;
 
-        let channel = buffer.getChannelData(0);
-        let sums    = this.summarize(channel, width);
-
-        // Draw the summarized data
+        // Summarize and draw the data. Inlined here for least garbage generation.
+        // http://joesul.li/van/2014/03/drawing-waveforms/
         this.context.fillStyle = '#CC7E00';
-        for (let x = 0; x < width; x++)
-        {
-            this.context.fillRect(x, midHeight - 1, 1, (sums[x][0] * height) * 0.75);
-            this.context.fillRect(x, midHeight + 1, 1, (sums[x][1] * height) * 0.75);
-        }
-    }
-
-    public setTitle(title: string) : void
-    {
-        this.domTitle.innerText = title;
-    }
-
-    /**
-     *
-     * @see http://joesul.li/van/2014/03/drawing-waveforms/
-     * @param data
-     * @param width
-     */
-    private summarize(data: Float32Array, width: number) : [number, number][]
-    {
-        let values : [number, number][] = [];
 
         // Define a minimum sample size per pixel
-        let pixelLength = data.length / width;
+        let sampleRate  = buffer.sampleRate;
+        let channel     = buffer.getChannelData(0);
+        let pixelLength = channel.length / width;
         let sampleSize  = Math.min(pixelLength, 512);
-        
+
         // For each pixel column we draw...
-        for (let i = 0; i < width; i++)
+        for (let x = 0; x < width; x++)
         {
             let posSum = 0,
                 negSum = 0;
@@ -178,18 +157,25 @@ export class ClipEditor
             // Don't cycle through more than sampleSize frames per pixel.
             for (let j = 0; j < sampleSize; j++)
             {
-                let idx = Math.floor(i * pixelLength + j);
-                let val = data[idx];
+                let idx = Math.floor(x * pixelLength + j);
+                let val = channel[idx];
 
                 // Keep track of positive and negative values separately
                 if (val > 0) posSum += val;
                 else         negSum += val;
             }
 
-            values.push( [negSum / sampleSize, posSum / sampleSize] );
-        }
+            posSum = ( (posSum / sampleSize) * height ) * 0.75;
+            negSum = ( (negSum / sampleSize) * height ) * 0.75;
 
-        return values;
+            this.context.fillRect(x, midHeight + 1, 1, posSum);
+            this.context.fillRect(x, midHeight - 1, 1, negSum);
+        }
+    }
+
+    public setTitle(title: string) : void
+    {
+        this.domTitle.innerText = title;
     }
 
     private onClipperInteract(ev: MouseEvent) : void
