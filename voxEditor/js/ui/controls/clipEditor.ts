@@ -165,20 +165,21 @@ export class ClipEditor
         let values : [number, number][] = [];
 
         // Define a minimum sample size per pixel
-        let pixelLength = Math.round(data.length / width);
+        let pixelLength = data.length / width;
         let sampleSize  = Math.min(pixelLength, 512);
-
-        // For each pixel we display
+        
+        // For each pixel column we draw...
         for (let i = 0; i < width; i++)
         {
             let posSum = 0,
                 negSum = 0;
 
-            // Cycle through the data-points relevant to the pixel
+            // Cycle through the data-points relevant to the column.
             // Don't cycle through more than sampleSize frames per pixel.
             for (let j = 0; j < sampleSize; j++)
             {
-                let val = data[i * pixelLength + j];
+                let idx = Math.floor(i * pixelLength + j);
+                let val = data[idx];
 
                 // Keep track of positive and negative values separately
                 if (val > 0) posSum += val;
