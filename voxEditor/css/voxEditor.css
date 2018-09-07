@@ -394,13 +394,16 @@ h1 {
 .clipEditor > * {
   position: absolute;
 }
-.clipEditor .title {
-  font-size: large;
+.clipEditor > span {
   font-family: monospace;
-  margin-top: 8px;
+  margin: 8px;
   text-align: center;
   text-shadow: 0 0 10px #000;
   width: 100%;
+  word-break: break-all;
+}
+.clipEditor > span.subtitle {
+  bottom: 0;
 }
 .clipEditor canvas {
   width: 100%;

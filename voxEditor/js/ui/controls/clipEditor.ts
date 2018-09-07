@@ -11,6 +11,8 @@ export class ClipEditor
 
     private readonly domTitle     : HTMLSpanElement;
 
+    private readonly domSubtitle  : HTMLSpanElement;
+
     private readonly domNeedle    : HTMLElement;
 
     private readonly clipperLeft  : HTMLElement;
@@ -30,6 +32,7 @@ export class ClipEditor
         this.dom          = DOM.require(query);
         this.domCanvas    = DOM.require('canvas',         this.dom);
         this.domTitle     = DOM.require('.title',         this.dom);
+        this.domSubtitle  = DOM.require('.subtitle',      this.dom);
         this.domNeedle    = DOM.require('.needle',        this.dom);
         this.clipperLeft  = DOM.require('.clipper.left',  this.dom);
         this.clipperRight = DOM.require('.clipper.right', this.dom);
@@ -139,12 +142,11 @@ export class ClipEditor
 
         // Summarize and draw the data. Inlined here for least garbage generation.
         // http://joesul.li/van/2014/03/drawing-waveforms/
-        this.context.fillStyle = '#CC7E00';
 
         // Define a minimum sample size per pixel
-        let sampleRate  = buffer.sampleRate;
         let channel     = buffer.getChannelData(0);
         let pixelLength = channel.length / width;
+        let gridLength  = (buffer.sampleRate / 20) / pixelLength;
         let sampleSize  = Math.min(pixelLength, 512);
 
         // For each pixel column we draw...
@@ -152,6 +154,14 @@ export class ClipEditor
         {
             let posSum = 0,
                 negSum = 0;
+
+            // If it's roughly 50ms, draw a grid line
+            if (x % (gridLength | 0) === 0)
+            {
+                this.context.fillStyle = '#444444';
+                this.context.fillRect(x, 0, 1, height);
+                this.context.fillStyle = '#CC7E00';
+            }
 
             // Cycle through the data-points relevant to the column.
             // Don't cycle through more than sampleSize frames per pixel.
@@ -165,17 +175,22 @@ export class ClipEditor
                 else         negSum += val;
             }
 
-            posSum = ( (posSum / sampleSize) * height ) * 0.75;
-            negSum = ( (negSum / sampleSize) * height ) * 0.75;
+            posSum = ( (posSum / sampleSize) * height ) * 2;
+            negSum = ( (negSum / sampleSize) * height ) * 2;
 
             this.context.fillRect(x, midHeight + 1, 1, posSum);
             this.context.fillRect(x, midHeight - 1, 1, negSum);
         }
     }
 
-    public setTitle(title: string) : void
+    public setTitle(text: string) : void
     {
-        this.domTitle.innerText = title;
+        this.domTitle.innerText = text;
+    }
+
+    public setSubtitle(text: string) : void
+    {
+        this.domSubtitle.innerText = text;
     }
 
     private onClipperInteract(ev: MouseEvent) : void

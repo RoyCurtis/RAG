@@ -181,13 +181,16 @@ h1
   > *
     position absolute
 
-  .title
-    font-size   large
+  > span
     font-family monospace
-    margin-top  8px
+    margin      8px
     text-align  center
     text-shadow 0 0 10px $bgDarkest
     width       100%
+    word-break  break-all
+
+    &.subtitle
+      bottom 0
 
   canvas
     size()

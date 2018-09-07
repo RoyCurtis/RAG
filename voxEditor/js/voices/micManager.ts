@@ -168,7 +168,6 @@ export class MicManager
             // End of buffer; shift everything back by half and keep going
             if (this.idleBufferIdx >= this.idleBuffer.length)
             {
-                // TODO: Check for off-by-one
                 let half           = (this.idleBuffer.length / 2) | 0;
                 this.idleBufferIdx = half;
 
