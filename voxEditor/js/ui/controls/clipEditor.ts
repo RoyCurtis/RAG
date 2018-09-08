@@ -136,9 +136,24 @@ export class ClipEditor
         this.context.fillStyle = buffer ? 'orange' : '#AAAAAA';
         this.context.fillRect(0, midHeight - 1, width, 3);
 
-        // Don't proceed if there's no buffer to work with
+        // Don't proceed if there's no buffer to work with, else set text
         if (!buffer)
+        {
+            this.domSubtitle.innerText = '--/--';
+            this.domTitle.innerText    = VoxEditor.voices.currentPath
+                ? `New file, will be saved at: ${VoxEditor.voices.currentPath}`
+                : 'No data available';
+
             return;
+        }
+        else
+        {
+            let duration = buffer.duration.toPrecision(3);
+            let length   = buffer.length;
+
+            this.domTitle.innerText    = VoxEditor.voices.currentPath!;
+            this.domSubtitle.innerText = `${duration} seconds, ${length} samples`;
+        }
 
         // Summarize and draw the data. Inlined here for least garbage generation.
         // http://joesul.li/van/2014/03/drawing-waveforms/
@@ -181,16 +196,6 @@ export class ClipEditor
             this.context.fillRect(x, midHeight + 1, 1, posSum);
             this.context.fillRect(x, midHeight - 1, 1, negSum);
         }
-    }
-
-    public setTitle(text: string) : void
-    {
-        this.domTitle.innerText = text;
-    }
-
-    public setSubtitle(text: string) : void
-    {
-        this.domSubtitle.innerText = text;
     }
 
     private onClipperInteract(ev: MouseEvent) : void

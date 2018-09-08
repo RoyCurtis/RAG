@@ -116,7 +116,7 @@ export class VoiceManager
                 this.currentClip = audio;
                 VoxEditor.views.tapedeck.handleClipLoad(key!);
             })
-            .catch( err => VoxEditor.views.tapedeck.handleClipFail(key!, err) );
+            .catch( _ => VoxEditor.views.tapedeck.handleClipFail(key!) );
     }
 
     /** Unloads the current clip from memory */

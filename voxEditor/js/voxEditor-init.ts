@@ -21,8 +21,6 @@ app.on('ready', () =>
 
     window.loadFile( path.join(__dirname, "../index.html") );
 
-    window.webContents.openDevTools();
-
     window.on('closed', () => window = null);
 });
 

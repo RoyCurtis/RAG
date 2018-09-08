@@ -114,15 +114,8 @@ export class EditorTapedeck
 
     public handleClipLoad(key: string) : void
     {
-        let clip    = VoxEditor.voices.currentClip;
-        let path    = VoxEditor.voices.currentPath!;
-        let title   = (clip !== undefined)
-            ? path
-            : `New file, will be saved at: ${path}`;
-
-        let subtitle = (clip !== undefined)
-            ? `${clip.duration.toPrecision(3)} seconds, ${clip.length} samples`
-            : '--/--';
+        let clip  = VoxEditor.voices.currentClip;
+        let path  = VoxEditor.voices.currentPath!;
 
         this.previewer.generateExample(key);
         this.lblId.innerText  = key;
@@ -135,8 +128,6 @@ export class EditorTapedeck
         this.btnSave.disabled =
         this.btnLoad.disabled = (clip === undefined);
 
-        this.clipEditor.setTitle(title);
-        this.clipEditor.setSubtitle(subtitle);
         this.clipEditor.redraw(true);
 
         // Don't record duplicates or back entries into history
@@ -158,13 +149,11 @@ export class EditorTapedeck
         this.btnFwd.disabled  = (this.historyIdx === this.history.length - 1);
     }
 
-    public handleClipFail(key: string, err: any) : void
+    public handleClipFail(key: string) : void
     {
         this.previewer.generateExample(key);
+        this.clipEditor.redraw(true);
         this.lblId.innerText = key;
-
-        this.clipEditor.setTitle(`Could not load clip: ${err}`);
-        this.clipEditor.setSubtitle('--/--');
     }
 
     public handleClipUnload() : void
