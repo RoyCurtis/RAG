@@ -19,10 +19,11 @@ class VoxEngine
     private readonly gainNode     : GainNode;
     /** Audio node that applies the tannoy filter */
     private readonly filterNode   : BiquadFilterNode;
-    /** Audio node that adds a reverb to the voice, if available */
-    private readonly reverbNode   : ConvolverNode;
-    /** Cache of impulse responses audio data, for reverb */
-    private readonly impulses     : Dictionary<AudioBuffer> = {};
+    /**
+     * Cache of impulse responses reverb nodes, for reverb. This used to be a dictionary
+     * of AudioBuffers, but ConvolverNodes cannot have their buffers changed.
+     */
+    private readonly impulses     : Dictionary<ConvolverNode> = {};
     /** Relative path to fetch impulse response and chime files from */
     private readonly dataPath     : string;
 
@@ -46,6 +47,8 @@ class VoxEngine
     private currentIds?      : VoxKey[];
     /** Speech settings currently being used */
     private currentSettings? : SpeechSettings;
+    /** Reverb node currently being used */
+    private currentReverb?   : ConvolverNode;
 
     public constructor(dataPath: string = 'data/vox')
     {
@@ -63,9 +66,7 @@ class VoxEngine
         this.dataPath   = dataPath;
         this.gainNode   = this.audioContext.createGain();
         this.filterNode = this.audioContext.createBiquadFilter();
-        this.reverbNode = this.audioContext.createConvolver();
 
-        this.reverbNode.normalize = true;
         this.filterNode.type      = 'highpass';
         this.filterNode.Q.value   = 0.4;
 
@@ -96,35 +97,25 @@ class VoxEngine
         // Set reverb
 
         if ( Strings.isNullOrEmpty(settings.voxReverb) )
-            this.toggleReverb(false);
+            this.setReverb();
         else
         {
-            let file    = settings.voxReverb!;
-            let impulse = this.impulses[file];
+            let file   = settings.voxReverb!;
+            let reverb = this.impulses[file];
 
-            if (!impulse)
+            if (!reverb)
             {
                 // Make sure reverb is off first, else clips will queue in the audio
                 // buffer and all suddenly play at the same time, when reverb loads.
-                this.toggleReverb(false);
+                this.setReverb();
 
                 fetch(`${this.dataPath}/${file}`)
                     .then( res => res.arrayBuffer() )
                     .then( buf => Sounds.decode(this.audioContext, buf) )
-                    .then( imp =>
-                    {
-                        // Cache buffer for later
-                        this.impulses[file]    = imp;
-                        this.reverbNode.buffer = imp;
-                        this.toggleReverb(true);
-                        console.debug('VOX REVERB LOADED');
-                    });
+                    .then( imp => this.createReverb(file, imp) );
             }
             else
-            {
-                this.reverbNode.buffer = impulse;
-                this.toggleReverb(true);
-            }
+                this.setReverb(reverb);
         }
 
         // Set volume
@@ -300,15 +291,30 @@ class VoxEngine
         };
     }
 
-    private toggleReverb(state: boolean) : void
+    private createReverb(file: string, impulse: AudioBuffer) : void
     {
-        this.reverbNode.disconnect();
+        this.impulses[file]           = this.audioContext.createConvolver();
+        this.impulses[file].buffer    = impulse;
+        this.impulses[file].normalize = true;
+        this.setReverb(this.impulses[file]);
+        console.debug('VOX REVERB LOADED:', file);
+    }
+
+    private setReverb(reverb?: ConvolverNode) : void
+    {
+        if (this.currentReverb)
+        {
+            this.currentReverb.disconnect();
+            this.currentReverb = undefined;
+        }
+
         this.filterNode.disconnect();
 
-        if (state)
+        if (reverb)
         {
-            this.filterNode.connect(this.reverbNode);
-            this.reverbNode.connect(this.audioContext.destination);
+            this.currentReverb = reverb;
+            this.filterNode.connect(reverb);
+            reverb.connect(this.audioContext.destination);
         }
         else
             this.filterNode.connect(this.audioContext.destination);

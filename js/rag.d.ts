@@ -771,9 +771,10 @@ declare class VoxEngine {
     private readonly gainNode;
     /** Audio node that applies the tannoy filter */
     private readonly filterNode;
-    /** Audio node that adds a reverb to the voice, if available */
-    private readonly reverbNode;
-    /** Cache of impulse responses audio data, for reverb */
+    /**
+     * Cache of impulse responses reverb nodes, for reverb. This used to be a dictionary
+     * of AudioBuffers, but ConvolverNodes cannot have their buffers changed.
+     */
     private readonly impulses;
     /** Relative path to fetch impulse response and chime files from */
     private readonly dataPath;
@@ -797,6 +798,8 @@ declare class VoxEngine {
     private currentIds?;
     /** Speech settings currently being used */
     private currentSettings?;
+    /** Reverb node currently being used */
+    private currentReverb?;
     constructor(dataPath?: string);
     /**
      * Begins loading and speaking a set of vox files. Stops any speech.
@@ -813,7 +816,8 @@ declare class VoxEngine {
      */
     private pump;
     private schedule;
-    private toggleReverb;
+    private createReverb;
+    private setReverb;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Represents a request for a vox file, immediately begun on creation */
