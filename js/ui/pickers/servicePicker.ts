@@ -49,9 +49,6 @@ class ServicePicker extends Picker
     /** Handles chooser selection by updating the service element and state */
     private onSelect(entry: HTMLElement) : void
     {
-        if (!this.currentCtx)
-            throw Error(L.P_SERVICE_MISSING_STATE);
-
         RAG.state.setService(this.currentCtx, entry.innerText);
         RAG.views.editor
             .getElementsByQuery(`[data-type=service][data-context=${this.currentCtx}]`)

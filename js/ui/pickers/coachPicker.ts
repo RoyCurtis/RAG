@@ -36,9 +36,6 @@ class CoachPicker extends Picker
     /** Updates the coach element and state currently being edited */
     protected onChange(_: Event) : void
     {
-        if (!this.currentCtx)
-            throw Error(L.P_COACH_MISSING_STATE);
-
         RAG.state.setCoach(this.currentCtx, this.inputLetter.value);
         RAG.views.editor
             .getElementsByQuery(`[data-type=coach][data-context=${this.currentCtx}]`)

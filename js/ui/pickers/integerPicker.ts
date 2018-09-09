@@ -11,13 +11,13 @@ class IntegerPicker extends Picker
     private readonly domLabel   : HTMLLabelElement;
 
     /** Holds the context for the current integer element being edited */
-    private currentCtx? : string;
+    private currentCtx : string = '';
     /** Holds the optional singular suffix for the current integer being edited */
-    private singular?   : string;
+    private singular?  : string;
     /** Holds the optional plural suffix for the current integer being edited */
-    private plural?     : string;
+    private plural?    : string;
     /** Whether the current integer being edited wants word digits */
-    private words?      : boolean;
+    private words?     : boolean;
 
     public constructor()
     {
@@ -61,9 +61,6 @@ class IntegerPicker extends Picker
     /** Updates the integer element and state currently being edited */
     protected onChange(_: Event) : void
     {
-        if (!this.currentCtx)
-            throw Error(L.P_INT_MISSING_STATE);
-
         // Can't use valueAsNumber due to iOS input type workarounds
         let int    = parseInt(this.inputDigit.value);
         let intStr = (this.words)

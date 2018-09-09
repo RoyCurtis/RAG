@@ -27,6 +27,28 @@ declare class I18n {
     private static replace;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** UI element for toggling the state of collapsible editor elements */
+declare class CollapseToggle {
+    /** Reference to the toggle button DOM template to clone */
+    private static TEMPLATE;
+    /** Creates and detaches the template on first create */
+    private static init;
+    /** Creates and attaches toggle element for toggling collapsibles */
+    static createAndAttach(parent: Element): void;
+    /** Updates the given collapse toggle's title text, depending on state */
+    static update(span: HTMLElement): void;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** UI element for opening the picker for phraseset editor elements */
+declare class PhrasesetButton {
+    /** Reference to the phraseset button DOM template to clone */
+    private static TEMPLATE;
+    /** Creates and detaches the template on first create */
+    private static init;
+    /** Creates and attaches a button for the given phraseset element */
+    static createAndAttach(phraseset: Element): void;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Delegate type for chooser select event handlers */
 declare type SelectDelegate = (entry: HTMLElement) => void;
 /** UI element with a filterable and keyboard navigable list of choices */
@@ -101,28 +123,6 @@ declare class Chooser {
     protected owns(target: HTMLElement): boolean;
     /** Whether the given element is a choosable one owned by this chooser */
     protected isChoice(target?: HTMLElement): boolean;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** UI element for toggling the state of collapsible editor elements */
-declare class CollapseToggle {
-    /** Reference to the toggle button DOM template to clone */
-    private static TEMPLATE;
-    /** Creates and detaches the template on first create */
-    private static init;
-    /** Creates and attaches toggle element for toggling collapsibles */
-    static createAndAttach(parent: Element): void;
-    /** Updates the given collapse toggle's title text, depending on state */
-    static update(span: HTMLElement): void;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-/** UI element for opening the picker for phraseset editor elements */
-declare class PhrasesetButton {
-    /** Reference to the phraseset button DOM template to clone */
-    private static TEMPLATE;
-    /** Creates and detaches the template on first create */
-    private static init;
-    /** Creates and attaches a button for the given phraseset element */
-    static createAndAttach(phraseset: Element): void;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /**
@@ -255,7 +255,7 @@ declare class IntegerPicker extends Picker {
     /** Reference to this picker's optional suffix label */
     private readonly domLabel;
     /** Holds the context for the current integer element being edited */
-    private currentCtx?;
+    private currentCtx;
     /** Holds the optional singular suffix for the current integer being edited */
     private singular?;
     /** Holds the optional plural suffix for the current integer being edited */
@@ -293,7 +293,7 @@ declare class PhrasesetPicker extends Picker {
     /** Reference to this picker's chooser control */
     private readonly domChooser;
     /** Holds the reference tag for the current phraseset element being edited */
-    private currentRef?;
+    private currentRef;
     constructor();
     /** Populates the chooser with the current phraseset's list of phrases */
     open(target: HTMLElement): void;
@@ -484,11 +484,11 @@ declare type LanguageEntry = (...parts: string[]) => string;
 declare class EnglishLanguage {
     [index: string]: LanguageEntry | string | string[];
     WELCOME: string;
-    DOM_MISSING: (q: string) => string;
-    ATTR_MISSING: (a: string) => string;
-    DATA_MISSING: (k: string) => string;
-    BAD_DIRECTION: (v: string) => string;
-    BAD_BOOLEAN: (v: string) => string;
+    DOM_MISSING: (q: any) => string;
+    ATTR_MISSING: (a: any) => string;
+    DATA_MISSING: (k: any) => string;
+    BAD_DIRECTION: (v: any) => string;
+    BAD_BOOLEAN: (v: any) => string;
     STATE_FROM_STORAGE: string;
     STATE_TO_STORAGE: string;
     STATE_COPY_PASTE: string;
@@ -496,12 +496,12 @@ declare class EnglishLanguage {
     STATE_SAVE_MISSING: string;
     STATE_SAVE_FAIL: (msg: string) => string;
     STATE_BAD_PHRASESET: (r: string) => string;
-    CONFIG_LOAD_FAIL: (msg: string) => string;
-    CONFIG_SAVE_FAIL: (msg: string) => string;
-    CONFIG_RESET_FAIL: (msg: string) => string;
+    CONFIG_LOAD_FAIL: (msg: any) => string;
+    CONFIG_SAVE_FAIL: (msg: any) => string;
+    CONFIG_RESET_FAIL: (msg: any) => string;
     DB_ELEMENT_NOT_PHRASESET_IFRAME: (e: string) => string;
-    DB_UNKNOWN_STATION: (c: string) => string;
-    DB_EMPTY_STATION: (c: string) => string;
+    DB_UNKNOWN_STATION: (c: any) => string;
+    DB_EMPTY_STATION: (c: any) => string;
     DB_TOO_MANY_STATIONS: () => string;
     TOOLBAR_PLAY: string;
     TOOLBAR_STOP: string;
@@ -509,33 +509,33 @@ declare class EnglishLanguage {
     TOOLBAR_SAVE: string;
     TOOLBAR_LOAD: string;
     TOOLBAR_SETTINGS: string;
-    TITLE_COACH: (c: string) => string;
+    TITLE_COACH: (c: any) => string;
     TITLE_EXCUSE: string;
-    TITLE_INTEGER: (c: string) => string;
+    TITLE_INTEGER: (c: any) => string;
     TITLE_NAMED: string;
-    TITLE_OPT_OPEN: (t: string, r: string) => string;
-    TITLE_OPT_CLOSE: (t: string, r: string) => string;
-    TITLE_PHRASESET: (r: string) => string;
+    TITLE_OPT_OPEN: (t: any, r: any) => string;
+    TITLE_OPT_CLOSE: (t: any, r: any) => string;
+    TITLE_PHRASESET: (r: any) => string;
     TITLE_PLATFORM: string;
-    TITLE_SERVICE: (c: string) => string;
-    TITLE_STATION: (c: string) => string;
-    TITLE_STATIONLIST: (c: string) => string;
-    TITLE_TIME: (c: string) => string;
+    TITLE_SERVICE: (c: any) => string;
+    TITLE_STATION: (c: any) => string;
+    TITLE_STATIONLIST: (c: any) => string;
+    TITLE_TIME: (c: any) => string;
     EDITOR_INIT: string;
-    EDITOR_UNKNOWN_ELEMENT: (n: string) => string;
-    EDITOR_UNKNOWN_PHRASE: (r: string) => string;
-    EDITOR_UNKNOWN_PHRASESET: (r: string) => string;
+    EDITOR_UNKNOWN_ELEMENT: (n: any) => string;
+    EDITOR_UNKNOWN_PHRASE: (r: any) => string;
+    EDITOR_UNKNOWN_PHRASESET: (r: any) => string;
     PHRASER_TOO_RECURSIVE: string;
-    HEADER_COACH: (c: string) => string;
+    HEADER_COACH: (c: any) => string;
     HEADER_EXCUSE: string;
-    HEADER_INTEGER: (c: string) => string;
+    HEADER_INTEGER: (c: any) => string;
     HEADER_NAMED: string;
-    HEADER_PHRASESET: (r: string) => string;
+    HEADER_PHRASESET: (r: any) => string;
     HEADER_PLATFORM: string;
-    HEADER_SERVICE: (c: string) => string;
-    HEADER_STATION: (c: string) => string;
-    HEADER_STATIONLIST: (c: string) => string;
-    HEADER_TIME: (c: string) => string;
+    HEADER_SERVICE: (c: any) => string;
+    HEADER_STATION: (c: any) => string;
+    HEADER_STATIONLIST: (c: any) => string;
+    HEADER_TIME: (c: any) => string;
     P_GENERIC_T: string;
     P_GENERIC_PH: string;
     P_COACH_T: string;
@@ -567,13 +567,6 @@ declare class EnglishLanguage {
     P_SL_DELETE_T: string;
     P_SL_ITEM_T: string;
     P_TIME_T: string;
-    P_COACH_MISSING_STATE: string;
-    P_INT_MISSING_STATE: string;
-    P_PSET_MISSING_STATE: string;
-    P_SERVICE_MISSING_STATE: string;
-    P_TIME_MISSING_STATE: string;
-    P_PSET_UNKNOWN: (r: string) => string;
-    P_SL_DRAG_MISSING: string;
     ST_RESET: string;
     ST_RESET_T: string;
     ST_RESET_CONFIRM: string;
@@ -758,66 +751,6 @@ interface SpeechSettings {
     pitch?: number;
     /** Override rate of voice */
     rate?: number;
-}
-/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
-declare type VoxKey = string | number;
-/** Synthesizes speech by dynamically loading and piecing together voice files */
-declare class VoxEngine {
-    /** List of impulse responses that come with RAG */
-    static readonly REVERBS: Dictionary<string>;
-    /** The core audio context that handles audio effects and playback */
-    private readonly audioContext;
-    /** Audio node that amplifies or attenuates voice */
-    private readonly gainNode;
-    /** Audio node that applies the tannoy filter */
-    private readonly filterNode;
-    /**
-     * Cache of impulse responses reverb nodes, for reverb. This used to be a dictionary
-     * of AudioBuffers, but ConvolverNodes cannot have their buffers changed.
-     */
-    private readonly impulses;
-    /** Relative path to fetch impulse response and chime files from */
-    private readonly dataPath;
-    /** Event handler for when speech has audibly begun */
-    onspeak?: () => void;
-    /** Event handler for when speech has ended */
-    onstop?: () => void;
-    /** Whether this engine is currently running and speaking */
-    isSpeaking: boolean;
-    /** Whether this engine has begun speaking for a current speech */
-    private begunSpeaking;
-    /** Reference number for the current pump timer */
-    private pumpTimer;
-    /** Tracks the audio context's wall-clock time to schedule next clip */
-    private nextBegin;
-    /** References to currently pending requests, as a FIFO queue */
-    private pendingReqs;
-    /** References to currently scheduled audio buffers */
-    private scheduledBuffers;
-    /** List of vox IDs currently being run through */
-    private currentIds?;
-    /** Speech settings currently being used */
-    private currentSettings?;
-    /** Reverb node currently being used */
-    private currentReverb?;
-    constructor(dataPath?: string);
-    /**
-     * Begins loading and speaking a set of vox files. Stops any speech.
-     *
-     * @param ids List of vox ids to load as files, in speaking order
-     * @param settings Voice settings to use
-     */
-    speak(ids: VoxKey[], settings: SpeechSettings): void;
-    /** Stops playing any currently spoken speech and resets state */
-    stop(): void;
-    /**
-     * Pumps the speech queue, by keeping up to 10 fetch requests for voice files going,
-     * and then feeding their data (in enforced order) to the audio chain, one at a time.
-     */
-    private pump;
-    private schedule;
-    private createReverb;
-    private setReverb;
 }
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 /** Represents a request for a vox file, immediately begun on creation */
@@ -1305,15 +1238,18 @@ interface DataRefs {
 interface Window {
     onunhandledrejection: ErrorEventHandler;
 }
-interface String {
-    padStart(targetLength: number, padString?: string): string;
-    padEnd(targetLength: number, padString?: string): string;
-}
 interface Array<T> {
     includes(searchElement: T, fromIndex?: number): boolean;
 }
+interface ErrorConstructor {
+    captureStackTrace(target: any, ctor?: Function): void;
+}
 interface HTMLElement {
     labels: NodeListOf<HTMLElement>;
+}
+interface String {
+    padStart(targetLength: number, padString?: string): string;
+    padEnd(targetLength: number, padString?: string): string;
 }
 interface AudioContextBase {
     audioWorklet: AudioWorklet;
@@ -1580,3 +1516,70 @@ declare class State {
      */
     genDefaultState(): void;
 }
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+declare type VoxKey = string | number;
+/** Synthesizes speech by dynamically loading and piecing together voice files */
+declare class VoxEngine {
+    /** List of impulse responses that come with RAG */
+    static readonly REVERBS: Dictionary<string>;
+    /** The core audio context that handles audio effects and playback */
+    private readonly audioContext;
+    /** Audio node that amplifies or attenuates voice */
+    private readonly gainNode;
+    /** Audio node that applies the tannoy filter */
+    private readonly filterNode;
+    /**
+     * Cache of impulse responses reverb nodes, for reverb. This used to be a dictionary
+     * of AudioBuffers, but ConvolverNodes cannot have their buffers changed.
+     */
+    private readonly impulses;
+    /** Relative path to fetch impulse response and chime files from */
+    private readonly dataPath;
+    /** Event handler for when speech has audibly begun */
+    onspeak?: () => void;
+    /** Event handler for when speech has ended */
+    onstop?: () => void;
+    /** Whether this engine is currently running and speaking */
+    isSpeaking: boolean;
+    /** Whether this engine has begun speaking for a current speech */
+    private begunSpeaking;
+    /** Reference number for the current pump timer */
+    private pumpTimer;
+    /** Tracks the audio context's wall-clock time to schedule next clip */
+    private nextBegin;
+    /** References to currently pending requests, as a FIFO queue */
+    private pendingReqs;
+    /** References to currently scheduled audio buffers */
+    private scheduledBuffers;
+    /** List of vox IDs currently being run through */
+    private currentIds?;
+    /** Speech settings currently being used */
+    private currentSettings?;
+    /** Reverb node currently being used */
+    private currentReverb?;
+    constructor(dataPath?: string);
+    /**
+     * Begins loading and speaking a set of vox files. Stops any speech.
+     *
+     * @param ids List of vox ids to load as files, in speaking order
+     * @param settings Voice settings to use
+     */
+    speak(ids: VoxKey[], settings: SpeechSettings): void;
+    /** Stops playing any currently spoken speech and resets state */
+    stop(): void;
+    /**
+     * Pumps the speech queue, by keeping up to 10 fetch requests for voice files going,
+     * and then feeding their data (in enforced order) to the audio chain, one at a time.
+     */
+    private pump;
+    private schedule;
+    private createReverb;
+    private setReverb;
+}
+/** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
+/** Asserts that the given value exists; neither undefined nor null */
+declare function assert<T>(value: T): T;
+/** Asserts that the given value exists and is a number */
+declare function assertNumber(value: number): void;
+/** Creates an assertion error that begins the stack at the assert's call site  */
+declare function AssertError(message: any, caller: Function): Error;

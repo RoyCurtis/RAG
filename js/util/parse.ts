@@ -8,7 +8,7 @@ class Parse
     {
         str = str.toLowerCase();
 
-        if (str === 'true' || str === '1')
+        if (str === 'true'  || str === '1')
             return true;
         if (str === 'false' || str === '0')
             return false;

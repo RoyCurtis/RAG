@@ -147,10 +147,7 @@ class StationListPicker extends StationPicker
     /** Fixes mirrors not having correct width of the source element, on create */
     private onDragMirrorCreate(ev: Draggable.DragEvent) : void
     {
-        if (!ev.data.source || !ev.data.originalSource)
-            throw Error(L.P_SL_DRAG_MISSING);
-
-        ev.data.source.style.width = ev.data.originalSource.clientWidth + 'px';
+        ev.data.source!.style.width = ev.data.originalSource!.clientWidth + 'px';
     }
 
     /** Handles draggable station name being dropped */

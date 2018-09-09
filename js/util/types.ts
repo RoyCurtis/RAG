@@ -43,20 +43,25 @@ interface Window
     onunhandledrejection: ErrorEventHandler;
 }
 
-interface String
-{
-    padStart(targetLength: number, padString?: string) : string;
-    padEnd(targetLength: number, padString?: string) : string;
-}
-
 interface Array<T>
 {
     includes(searchElement: T, fromIndex?: number) : boolean;
 }
 
+interface ErrorConstructor
+{
+    captureStackTrace(target: any, ctor?: Function) : void;
+}
+
 interface HTMLElement
 {
     labels : NodeListOf<HTMLElement>;
+}
+
+interface String
+{
+    padStart(targetLength: number, padString?: string) : string;
+    padEnd(targetLength: number, padString?: string) : string;
 }
 
 interface AudioContextBase

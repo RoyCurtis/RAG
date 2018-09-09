@@ -39,13 +39,12 @@ class DOM
      * @returns The first element to match the given query
      */
     public static require<T extends HTMLElement>
-        (query: string, parent: ParentNode = window.document)
-        : T
+        (query: string, parent: ParentNode = window.document) : T
     {
         let result = parent.querySelector(query) as T;
 
         if (!result)
-            throw Error( L.DOM_MISSING(query) );
+            throw AssertError(L.DOM_MISSING(query), DOM.require);
 
         return result;
     }
@@ -61,7 +60,7 @@ class DOM
     public static requireAttr(element: HTMLElement, attr: string) : string
     {
         if ( !element.hasAttribute(attr) )
-            throw Error( L.ATTR_MISSING(attr) );
+            throw AssertError(L.ATTR_MISSING(attr), DOM.requireAttr);
 
         return element.getAttribute(attr)!;
     }
@@ -79,7 +78,7 @@ class DOM
         let value = element.dataset[key];
 
         if ( Strings.isNullOrEmpty(value) )
-            throw Error( L.DATA_MISSING(key) );
+            throw AssertError(L.DATA_MISSING(key), DOM.requireData);
 
         return value!;
     }
@@ -202,6 +201,9 @@ class DOM
     public static getNextFocusableSibling(from: HTMLElement, dir: number)
         : HTMLElement | null
     {
+        if (dir === 0)
+            throw Error( L.BAD_DIRECTION(dir) );
+
         let current = from;
         let parent  = from.parentElement;
 
@@ -217,8 +219,6 @@ class DOM
             else if (dir > 0)
                 current = current.nextElementSibling as HTMLElement
                     || parent.firstElementChild as HTMLElement;
-            else
-                throw Error( L.BAD_DIRECTION( dir.toString() ) );
 
             // If we've come back to the starting element, nothing was found
             if (current === from)

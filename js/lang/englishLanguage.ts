@@ -11,11 +11,11 @@ class EnglishLanguage
     // RAG
 
     WELCOME       = 'Welcome to Rail Announcement Generator.';
-    DOM_MISSING   = (q: string) => `Required DOM element is missing: '${q}'`;
-    ATTR_MISSING  = (a: string) => `Required attribute is missing: '${a}'`;
-    DATA_MISSING  = (k: string) => `Required dataset key is missing or empty: '${k}'`;
-    BAD_DIRECTION = (v: string) => `Direction needs to be -1 or 1, not '${v}'`;
-    BAD_BOOLEAN   = (v: string) => `Given string does not represent a boolean: '${v}'`;
+    DOM_MISSING   = (q: any) => `Required DOM element is missing: '${q}'`;
+    ATTR_MISSING  = (a: any) => `Required attribute is missing: '${a}'`;
+    DATA_MISSING  = (k: any) => `Required dataset key is missing or empty: '${k}'`;
+    BAD_DIRECTION = (v: any) => `Direction needs to be -1 or 1, not '${v}'`;
+    BAD_BOOLEAN   = (v: any) => `Given string does not represent a boolean: '${v}'`;
 
     // State
 
@@ -31,17 +31,17 @@ class EnglishLanguage
 
     // Config
 
-    CONFIG_LOAD_FAIL  = (msg: string) => `Could not load settings: ${msg}`;
-    CONFIG_SAVE_FAIL  = (msg: string) => `Could not save settings: ${msg}`;
-    CONFIG_RESET_FAIL = (msg: string) => `Could not clear settings: ${msg}`;
+    CONFIG_LOAD_FAIL  = (msg: any) => `Could not load settings: ${msg}`;
+    CONFIG_SAVE_FAIL  = (msg: any) => `Could not save settings: ${msg}`;
+    CONFIG_RESET_FAIL = (msg: any) => `Could not clear settings: ${msg}`;
 
     // Database
 
     DB_ELEMENT_NOT_PHRASESET_IFRAME = (e: string) =>
         `Configured phraseset element query '${e}' does not point to an iframe embed.`;
 
-    DB_UNKNOWN_STATION   = (c: string) => `UNKNOWN STATION: ${c}`;
-    DB_EMPTY_STATION     = (c: string) =>
+    DB_UNKNOWN_STATION   = (c: any) => `UNKNOWN STATION: ${c}`;
+    DB_EMPTY_STATION     = (c: any) =>
         `Station database appears to contain an empty name for code '${c}'.`;
     DB_TOO_MANY_STATIONS = () => 'Picking too many stations than there are available';
 
@@ -56,26 +56,26 @@ class EnglishLanguage
 
     // Editor
 
-    TITLE_COACH       = (c: string) => `Click to change this coach ('${c}')`;
+    TITLE_COACH       = (c: any) => `Click to change this coach ('${c}')`;
     TITLE_EXCUSE      = 'Click to change this excuse';
-    TITLE_INTEGER     = (c: string) => `Click to change this number ('${c}')`;
+    TITLE_INTEGER     = (c: any) => `Click to change this number ('${c}')`;
     TITLE_NAMED       = 'Click to change this train\'s name';
-    TITLE_OPT_OPEN    = (t: string, r: string) =>
+    TITLE_OPT_OPEN    = (t: any, r: any) =>
         `Click to open this optional ${t} ('${r}')`;
-    TITLE_OPT_CLOSE   = (t: string, r: string) =>
+    TITLE_OPT_CLOSE   = (t: any, r: any) =>
         `Click to close this optional ${t} ('${r}')`;
-    TITLE_PHRASESET   = (r: string) =>
+    TITLE_PHRASESET   = (r: any) =>
         `Click to change the phrase used in this section ('${r}')`;
     TITLE_PLATFORM    = 'Click to change this train\'s platform';
-    TITLE_SERVICE     = (c: string) => `Click to change this service ('${c}')`;
-    TITLE_STATION     = (c: string) => `Click to change this station ('${c}')`;
-    TITLE_STATIONLIST = (c: string) => `Click to change this station list ('${c}')`;
-    TITLE_TIME        = (c: string) => `Click to change this time ('${c}')`;
+    TITLE_SERVICE     = (c: any) => `Click to change this service ('${c}')`;
+    TITLE_STATION     = (c: any) => `Click to change this station ('${c}')`;
+    TITLE_STATIONLIST = (c: any) => `Click to change this station list ('${c}')`;
+    TITLE_TIME        = (c: any) => `Click to change this time ('${c}')`;
 
     EDITOR_INIT              = 'Please wait...';
-    EDITOR_UNKNOWN_ELEMENT   = (n: string) => `(UNKNOWN XML ELEMENT: ${n})`;
-    EDITOR_UNKNOWN_PHRASE    = (r: string) => `(UNKNOWN PHRASE: ${r})`;
-    EDITOR_UNKNOWN_PHRASESET = (r: string) => `(UNKNOWN PHRASESET: ${r})`;
+    EDITOR_UNKNOWN_ELEMENT   = (n: any) => `(UNKNOWN XML ELEMENT: ${n})`;
+    EDITOR_UNKNOWN_PHRASE    = (r: any) => `(UNKNOWN PHRASE: ${r})`;
+    EDITOR_UNKNOWN_PHRASESET = (r: any) => `(UNKNOWN PHRASESET: ${r})`;
 
     // Phraser
 
@@ -83,16 +83,16 @@ class EnglishLanguage
 
     // Pickers
 
-    HEADER_COACH       = (c: string) => `Pick a coach letter for the '${c}' context`;
+    HEADER_COACH       = (c: any) => `Pick a coach letter for the '${c}' context`;
     HEADER_EXCUSE      = 'Pick an excuse';
-    HEADER_INTEGER     = (c: string) => `Pick a number for the '${c}' context`;
+    HEADER_INTEGER     = (c: any) => `Pick a number for the '${c}' context`;
     HEADER_NAMED       = 'Pick a named train';
-    HEADER_PHRASESET   = (r: string) => `Pick a phrase for the '${r}' section`;
+    HEADER_PHRASESET   = (r: any) => `Pick a phrase for the '${r}' section`;
     HEADER_PLATFORM    = 'Pick a platform';
-    HEADER_SERVICE     = (c: string) => `Pick a service for the '${c}' context`;
-    HEADER_STATION     = (c: string) => `Pick a station for the '${c}' context`;
-    HEADER_STATIONLIST = (c: string) => `Build a station list for the '${c}' context`;
-    HEADER_TIME        = (c: string) => `Pick a time for the '${c}' context`;
+    HEADER_SERVICE     = (c: any) => `Pick a service for the '${c}' context`;
+    HEADER_STATION     = (c: any) => `Pick a station for the '${c}' context`;
+    HEADER_STATIONLIST = (c: any) => `Build a station list for the '${c}' context`;
+    HEADER_TIME        = (c: any) => `Pick a time for the '${c}' context`;
 
     P_GENERIC_T      = 'List of choices';
     P_GENERIC_PH     = 'Filter choices...';
@@ -125,14 +125,6 @@ class EnglishLanguage
     P_SL_DELETE_T    = 'Drop station here to delete it from this list';
     P_SL_ITEM_T      = 'Drag to reorder; double-click or drag into delete zone to remove';
     P_TIME_T         = 'Time editor';
-
-    P_COACH_MISSING_STATE   = 'onChange fired for coach picker without state.';
-    P_INT_MISSING_STATE     = 'onChange fired for integer picker without state.';
-    P_PSET_MISSING_STATE    = 'onSelect fired for phraseset picker without state.';
-    P_SERVICE_MISSING_STATE = 'onSelect fired for service picker without state.';
-    P_TIME_MISSING_STATE    = 'onChange fired for time picker without state.';
-    P_PSET_UNKNOWN          = (r: string) => `Phraseset '${r}' doesn't exist`;
-    P_SL_DRAG_MISSING       = '[Draggable] Missing source elements for mirror event.';
 
     // Settings
 

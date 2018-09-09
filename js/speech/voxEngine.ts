@@ -23,9 +23,9 @@ class VoxEngine
      * Cache of impulse responses reverb nodes, for reverb. This used to be a dictionary
      * of AudioBuffers, but ConvolverNodes cannot have their buffers changed.
      */
-    private readonly impulses     : Dictionary<ConvolverNode> = {};
+    private readonly impulses : Dictionary<ConvolverNode> = {};
     /** Relative path to fetch impulse response and chime files from */
-    private readonly dataPath     : string;
+    private readonly dataPath : string;
 
     /** Event handler for when speech has audibly begun */
     public  onspeak?         : () => void;

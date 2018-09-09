@@ -33,9 +33,6 @@ class TimePicker extends Picker
     /** Updates the time element and state currently being edited */
     protected onChange(_: Event) : void
     {
-        if (!this.currentCtx)
-            throw Error(L.P_TIME_MISSING_STATE);
-
         RAG.state.setTime(this.currentCtx, this.inputTime.value);
         RAG.views.editor
             .getElementsByQuery(`[data-type=time][data-context=${this.currentCtx}]`)

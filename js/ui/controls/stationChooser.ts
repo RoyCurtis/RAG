@@ -1,5 +1,7 @@
 /** Rail Announcements Generator. By Roy Curtis, MIT license, 2018 */
 
+///<reference path="chooser.ts"/>
+
 // TODO: Search by station code
 
 /**

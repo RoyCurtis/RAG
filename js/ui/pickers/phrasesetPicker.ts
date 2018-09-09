@@ -9,7 +9,7 @@ class PhrasesetPicker extends Picker
     private readonly domChooser : Chooser;
 
     /** Holds the reference tag for the current phraseset element being edited */
-    private currentRef? : string;
+    private currentRef : string = '';
 
     public constructor()
     {
@@ -24,13 +24,9 @@ class PhrasesetPicker extends Picker
     {
         super.open(target);
 
-        let ref = DOM.requireData(target, 'ref');
-        let idx = parseInt( DOM.requireData(target, 'idx') );
-
-        let phraseset = RAG.database.getPhraseset(ref);
-
-        if (!phraseset)
-            throw Error( L.P_PSET_UNKNOWN(ref) );
+        let ref       = DOM.requireData(target, 'ref');
+        let idx       = parseInt( DOM.requireData(target, 'idx') );
+        let phraseset = assert( RAG.database.getPhraseset(ref)! );
 
         this.currentRef          = ref;
         this.domHeader.innerText = L.HEADER_PHRASESET(ref);
@@ -69,9 +65,6 @@ class PhrasesetPicker extends Picker
     /** Handles chooser selection by updating the phraseset element and state */
     private onSelect(entry: HTMLElement) : void
     {
-        if (!this.currentRef)
-            throw Error(L.P_PSET_MISSING_STATE);
-
         let idx = parseInt(entry.dataset['idx']!);
 
         RAG.state.setPhrasesetIdx(this.currentRef, idx);
